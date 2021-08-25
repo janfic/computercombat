@@ -1,0 +1,89 @@
+package com.janfic.games.computercombat.model;
+
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Json.Serializable;
+import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.data.Deck;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Jan Fic
+ */
+public class Profile implements Serializable {
+
+    private int uid;
+    private String name;
+    private Class<Player> activePlayer;
+    private List<Deck> decks;
+    private Deck collection;
+
+    private Profile() {
+        this(0);
+    }
+
+    public Profile(int uid) {
+        this.uid = uid;
+        this.decks = new ArrayList<>();
+        this.collection = new Deck("Collection");
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setActivePlayer(Class<Player> activePlayer) {
+        this.activePlayer = activePlayer;
+    }
+
+    public int getUID() {
+        return uid;
+    }
+
+    public Player getActivePlayer() {
+        try {
+            Player p = activePlayer.getConstructor().newInstance(uid, buildDeck(), buildComputer());
+            return p;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Deck getCollection() {
+        return collection;
+    }
+
+    public List<Deck> getDecks() {
+        return decks;
+    }
+    
+    private SoftwareDeck buildDeck() {
+        return null;
+    }
+
+    private Computer buildComputer() {
+        return null;
+    }
+
+    @Override
+    public void write(Json json) {
+        json.writeValue("uid", this.uid);
+        json.writeValue("name", this.name);
+        json.writeValue("decks", this.decks);
+        json.writeValue("collection", this.collection);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jv) {
+        this.uid = json.readValue("uid", Integer.class, jv);
+        this.name = json.readValue("name", String.class, jv);
+        this.decks = json.readValue("decks", List.class, jv);
+        this.collection = json.readValue("collection", Deck.class, jv);
+    }
+}

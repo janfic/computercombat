@@ -1,0 +1,173 @@
+
+computer_combat_skin.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+white-pixel
+  rotate: false
+  xy: 12, 14
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+border
+  rotate: false
+  xy: 1, 17
+  size: 16, 16
+  split: 6, 9, 6, 9
+  pad: 7, 7, 7, 7
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+button_down
+  rotate: false
+  xy: 775, 798
+  size: 9, 9
+  split: 4, 4, 4, 4
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
+button_over
+  rotate: false
+  xy: 1, 6
+  size: 9, 9
+  split: 4, 4, 4, 4
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
+button_up
+  rotate: false
+  xy: 19, 24
+  size: 9, 9
+  split: 4, 4, 4, 4
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
+grid
+  rotate: false
+  xy: 277, 285
+  size: 6, 6
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
+led_border
+  rotate: false
+  xy: 528, 544
+  size: 5, 5
+  orig: 5, 5
+  offset: 0, 0
+  index: -1
+led_glow
+  rotate: false
+  xy: 517, 540
+  size: 9, 9
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
+led_light
+  rotate: false
+  xy: 775, 791
+  size: 5, 5
+  orig: 5, 5
+  offset: 0, 0
+  index: -1
+lucidaConsole12px_0
+  rotate: false
+  xy: 1, 551
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaConsole16px_0
+  rotate: false
+  xy: 1, 293
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaFax16px_0
+  rotate: false
+  xy: 1, 293
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaFax12px_0
+  rotate: false
+  xy: 259, 551
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaFax3pt_0
+  rotate: false
+  xy: 1, 35
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaFax6px_0
+  rotate: false
+  xy: 259, 293
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaFax8px_0
+  rotate: false
+  xy: 517, 551
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+panel
+  rotate: false
+  xy: 259, 254
+  size: 7, 7
+  split: 3, 3, 3, 3
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+progress_bar
+  rotate: false
+  xy: 517, 533
+  size: 5, 5
+  split: 2, 2, 2, 2
+  pad: 1, 1, 1, 1
+  orig: 5, 5
+  offset: 0, 0
+  index: -1
+progress_bar_before_horizontall
+  rotate: false
+  xy: 786, 804
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+progress_bar_before_vertical
+  rotate: false
+  xy: 786, 804
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+screen
+  rotate: false
+  xy: 1, 1
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+window
+  rotate: false
+  xy: 259, 263
+  size: 16, 28
+  split: 6, 9, 18, 9
+  pad: 7, 7, 19, 7
+  orig: 16, 28
+  offset: 0, 0
+  index: -1

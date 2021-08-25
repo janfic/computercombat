@@ -1,0 +1,215 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	lucidaConsole12px: {
+		file: lucidaConsole12px.fnt
+	}
+	lucidaConsole16px: {
+		file: lucidaConsole16px.fnt
+	}
+	lucidaFax12px: {
+		file: lucidaFax12px.fnt
+	}
+	lucidaFax16px: {
+		file: lucidaFax16px.fnt
+	}
+	lucidaFax3pt: {
+		file: lucidaFax3pt.fnt
+	}
+	lucidaFax6px: {
+		file: lucidaFax6px.fnt
+	}
+	lucidaFax8px: {
+		file: lucidaFax8px.fnt
+	}
+}
+com.badlogic.gdx.graphics.Color: {
+	BLACK: {
+		r: 0
+		g: 0
+		b: 0
+		a: 1
+	}
+	BUG: {
+		r: 0.8745098
+		g: 0.24313726
+		b: 0.09803922
+		a: 1
+	}
+	CPU: {
+		r: 0.98039216
+		g: 0.41568628
+		b: 0.039215688
+		a: 1
+	}
+	LIGHT_GREY: {
+		r: 0.54509807
+		g: 0.5764706
+		b: 0.6862745
+		a: 1
+	}
+	NETWORK: {
+		r: 0.34901962
+		g: 0.75686276
+		b: 0.20784314
+		a: 1
+	}
+	POWER: {
+		r: 1
+		g: 0.9882353
+		b: 0.2509804
+		a: 1
+	}
+	RAM: {
+		r: 0.7372549
+		g: 0.2901961
+		b: 0.60784316
+		a: 1
+	}
+	RGBA_255_255_255_128: {
+		r: 1
+		g: 1
+		b: 1
+		a: 0.25
+	}
+	RGBA_255_255_255_255: {
+		r: 1
+		g: 1
+		b: 1
+		a: 1
+	}
+	STORAGE: {
+		r: 0.14117648
+		g: 0.62352943
+		b: 0.87058824
+		a: 1
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+	WHITE: {
+		name: white-pixel
+		color: RGBA_255_255_255_255
+	}
+	WHITE_TRANSPARENT: {
+		name: white-pixel
+		color: RGBA_255_255_255_128
+	}
+}
+com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable: {
+	grid_tiled: {
+		region: grid
+		color: RGBA_255_255_255_255
+		minWidth: 6
+		minHeight: 6
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+	default: {
+		up: button_up
+		down: button_down
+		over: button_over
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
+	default: {
+		font: lucidaConsole12px
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: {
+		font: lucidaConsole12px
+		fontColor: RGBA_255_255_255_255
+	}
+	title: {
+		font: lucidaConsole16px
+		fontColor: RGBA_255_255_255_255
+		background: border
+	}
+	paneled: {
+		font: lucidaConsole12px
+		fontColor: RGBA_255_255_255_255
+		background: panel
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
+	default: {
+		font: lucidaConsole12px
+		fontColorSelected: RGBA_255_255_255_255
+		fontColorUnselected: RGBA_255_255_255_255
+		selection: button_up
+		down: button_down
+		over: button_over
+		background: border
+	}
+	no-background: {
+		font: lucidaConsole12px
+		fontColorSelected: RGBA_255_255_255_255
+		fontColorUnselected: RGBA_255_255_255_255
+		selection: panel
+		down: panel
+		over: panel
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+	default-horizontal: {
+		background: progress_bar
+		knobBefore: progress_bar_before_horizontall
+	}
+	default-vertical: {
+		background: progress_bar
+		knobBefore: progress_bar_before_vertical
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+	default: {
+		background: border
+		corner: led_border
+		hScrollKnob: button_up
+		vScrollKnob: button_up
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
+	default: {
+		font: lucidaConsole12px
+		fontColor: RGBA_255_255_255_255
+		background: button_up
+		scrollStyle: default
+		listStyle: no-background
+		backgroundOver: button_over
+		backgroundDisabled: border
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	default: {
+		font: lucidaConsole12px
+		fontColor: RGBA_255_255_255_255
+		up: button_up
+		down: button_down
+		over: button_over
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: {
+		font: lucidaConsole12px
+		fontColor: LIGHT_GREY
+		focusedFontColor: RGBA_255_255_255_255
+		background: border
+		cursor: WHITE
+		selection: WHITE_TRANSPARENT
+		messageFont: lucidaFax12px
+		messageFontColor: LIGHT_GREY
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+	default: {
+		label: default
+		background: border
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+	default: {
+		background: window
+		titleFont: lucidaConsole12px
+		titleFontColor: RGBA_255_255_255_255
+	}
+}
+}

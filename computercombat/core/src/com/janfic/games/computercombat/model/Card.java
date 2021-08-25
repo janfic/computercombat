@@ -1,0 +1,245 @@
+package com.janfic.games.computercombat.model;
+
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Jan Fic
+ */
+public abstract class Card implements Json.Serializable {
+
+    protected int health, armor, attack, magic;
+    protected int level;
+    protected int maxHealth, maxArmor, maxAttack;
+    protected Ability ability;
+    protected Class<? extends Component>[] runComponents;
+    protected int runProgress, runRequirements;
+    protected Class<? extends Trait>[] traits;
+    protected int traitsUnlocked;
+
+    public Card() {
+        this(1, 0, 0, 0, 0, new Class[]{}, 0, null);
+    }
+
+    public Card(int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
+        this.health = startingHealth + ((3 + level - 1) / 4);
+        this.armor = startingArmor + ((2 + level - 1) / 4);
+        this.attack = startingAttack + ((1 + level - 1) / 4);
+        this.magic = startingMagic + ((level - 1) / 4);
+        this.maxHealth = health;
+        this.maxArmor = armor;
+        this.maxAttack = attack;
+        this.ability = ability;
+        this.runComponents = runComponents;
+        this.level = level;
+        this.runProgress = 0;
+        this.runRequirements = 0;
+        this.traitsUnlocked = 0;
+    }
+
+    public boolean isDead() {
+        return health <= 0;
+    }
+
+    public abstract void beginMatch(MatchState state);
+
+    /**
+     * Called every time it is a player's new turn
+     *
+     * @param state
+     */
+    public abstract void newTurn(MatchState state);
+
+    /**
+     *
+     * @return health
+     */
+    public int getHealth() {
+        return health;
+    }
+
+    /**
+     *
+     * @return armor
+     */
+    public int getArmor() {
+        return armor;
+    }
+
+    /**
+     *
+     * @return attack
+     */
+    public int getAttack() {
+        return attack;
+    }
+
+    /**
+     *
+     * @return magic
+     */
+    public int getMagic() {
+        return magic;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public Ability getAbility() {
+        return this.ability;
+    }
+
+    /**
+     * Called when software receives health
+     *
+     * @param health
+     * @return actual health received
+     */
+    public int recieveHealth(int health) {
+        this.health += health;
+        return health;
+    }
+
+    /**
+     * Called when this software receives damage.
+     *
+     * @param damage
+     * @return actual damage received
+     */
+    public int recieveDamage(int damage) {
+        if (armor > 0) {
+            if (damage >= armor) {
+                damage = damage - armor;
+                armor = 0;
+            } else {
+                armor -= damage;
+                damage = 0;
+            }
+        }
+        this.health -= damage;
+        return damage;
+    }
+
+    /**
+     * Called when this software receives armor
+     *
+     * @param armor
+     * @return amount armor is actually changed by
+     */
+    public int changeArmor(int armor) {
+        this.armor += armor;
+        return armor;
+    }
+
+    /**
+     * Called when this software receives or reduces magic.
+     *
+     * @param magic
+     * @return amount magic is actually changed
+     */
+    public int changeMagic(int magic) {
+        this.magic += magic;
+        return magic;
+    }
+
+    /**
+     * Called when this software has its attack changed.
+     *
+     * @param attack
+     * @return amount attack is actually changed
+     */
+    public int changeAttack(int attack) {
+        this.attack += attack;
+        return attack;
+    }
+
+    /**
+     *
+     * @param type
+     * @param amount
+     * @return amount of components left over
+     */
+    public int recieveComponents(Class<? extends Component> type, int amount) {
+        for (Class<? extends Component> t : runComponents) {
+            if (type == t) {
+                if (runProgress < runRequirements) {
+                    runProgress += amount;
+                    amount = 0;
+                    if (runProgress > runRequirements) {
+                        amount += runProgress - runRequirements;
+                    }
+                }
+                return amount;
+            }
+        }
+        return amount;
+    }
+
+    public Class<? extends Component>[] getRunComponents() {
+        return runComponents;
+    }
+
+    public int getRunRequirements() {
+        return runRequirements;
+    }
+
+    public int getRunProgress() {
+        return runProgress;
+    }
+
+    @Override
+    public void write(Json json) {
+        json.writeValue("health", this.health);
+        json.writeValue("armor", this.armor);
+        json.writeValue("attack", this.attack);
+        json.writeValue("level", this.level);
+        json.writeValue("magic", this.magic);
+        json.writeValue("maxHealth", this.maxHealth);
+        json.writeValue("maxArmor", this.maxArmor);
+        json.writeValue("runProgress", this.runProgress);
+        json.writeValue("runRequirements", this.runRequirements);
+        json.writeArrayStart("runComponents");
+        for (Class<? extends Component> runComponent : runComponents) {
+            json.writeValue((Object) runComponent.getName(), String.class);
+        }
+        json.writeArrayEnd();
+        json.writeValue("ability", ability != null ? this.ability.getClass().toString() : null);
+
+    }
+
+    @Override
+    public void read(Json json, JsonValue jv) {
+        this.health = json.readValue("health", Integer.class, jv);
+        this.armor = json.readValue("armor", Integer.class, jv);
+        this.attack = json.readValue("attack", Integer.class, jv);
+        this.level = json.readValue("level", Integer.class, jv);
+        this.maxHealth = json.readValue("maxHealth", Integer.class, jv);
+        this.maxArmor = json.readValue("maxArmor", Integer.class, jv);
+        this.runProgress = json.readValue("runProgress", Integer.class, jv);
+        this.runRequirements = json.readValue("runRequirements", Integer.class, jv);
+        String[] components = jv.get("runComponents").asStringArray();
+        List<Class<? extends Component>> foundComponents = new ArrayList<>();
+        for (String component : components) {
+            try {
+                Class c = Class.forName(component);
+                foundComponents.add(c);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        this.runComponents = foundComponents.toArray(this.runComponents);
+        try {
+            String ability = json.readValue("ability", String.class, jv);
+            if (ability != null) {
+                this.ability = (Ability) Class.forName(ability).getConstructor().newInstance();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}

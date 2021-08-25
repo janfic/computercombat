@@ -1,0 +1,51 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	lucidaConsole12px: {
+		file: lucidaConsole12px.fnt
+	}
+	lucidaConsole16px: {
+		file: lucidaConsole16px.fnt
+	}
+	lucidaFax12px: {
+		file: lucidaFax12px.fnt
+	}
+	lucidaFax16px: {
+		file: lucidaFax16px.fnt
+	}
+}
+com.badlogic.gdx.graphics.Color: {
+	RGBA_255_255_255_255: {
+		r: 1
+		g: 1
+		b: 1
+		a: 1
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: {
+		font: lucidaFax16px
+		fontColor: RGBA_255_255_255_255
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+	default-horizontal: {
+		background: progress_bar
+		knobBefore: progress_bar_before_horizontall
+	}
+	default-vertical: {
+		background: progress_bar
+		knobBefore: progress_bar_before_vertical
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: {
+		font: lucidaFax16px
+		fontColor: RGBA_255_255_255_255
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+	default: {
+		label: default
+	}
+}
+}

@@ -1,0 +1,68 @@
+
+computer_combat_skin.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+border
+  rotate: false
+  xy: 1, 6
+  size: 13, 13
+  split: 6, 6, 6, 6
+  orig: 13, 13
+  offset: 0, 0
+  index: -1
+lucidaConsole12px_0
+  rotate: false
+  xy: 1, 279
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaConsole16px_0
+  rotate: false
+  xy: 1, 21
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaFax16px_0
+  rotate: false
+  xy: 1, 21
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+lucidaFax12px_0
+  rotate: false
+  xy: 259, 279
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+progress_bar
+  rotate: false
+  xy: 259, 272
+  size: 6, 5
+  split: 2, 3, 2, 2
+  orig: 6, 5
+  offset: 0, 0
+  index: -1
+progress_bar_before_horizontall
+  rotate: false
+  xy: 1, 1
+  size: 3, 3
+  split: 0, 0, 1, 1
+  pad: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+progress_bar_before_vertical
+  rotate: false
+  xy: 517, 532
+  size: 3, 3
+  split: 0, 0, 1, 1
+  pad: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
