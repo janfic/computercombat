@@ -27,3 +27,4 @@ hs_err_pid*
 /computercombat/server/build/
 /computercombat/desktop/build/
 computercombat/.gradle/*
+computercombat/.gradle/*/
