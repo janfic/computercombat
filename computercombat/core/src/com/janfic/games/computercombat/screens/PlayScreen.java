@@ -7,9 +7,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
+import com.janfic.games.computercombat.actors.BorderedArea;
+import com.janfic.games.computercombat.actors.BorderedGrid;
 
 public class PlayScreen implements Screen {
 
@@ -61,17 +64,37 @@ public class PlayScreen implements Screen {
         stage.addActor(settingsButton);
         stage.addActor(downloadButton);
 
-        playButton.setPosition(200, 160);
+        playButton.setPosition(190, 170);
         playButton.setWidth(collectionButton.getWidth());
         settingsButton.setPosition(290, 230);
         settingsButton.setWidth(collectionButton.getWidth());
-        upgradeButton.setPosition(300, 140);
+        upgradeButton.setPosition(300, 90);
         upgradeButton.setWidth(collectionButton.getWidth());
         downloadButton.setPosition(20, 230);
         downloadButton.setWidth(collectionButton.getWidth());
         decksButton.setPosition(240, 20);
         decksButton.setWidth(collectionButton.getWidth());
         collectionButton.setPosition(20, 100);
+
+        Table table = new Table();
+        table.setFillParent(true);
+
+        BorderedGrid grid = new BorderedGrid(skin);
+        grid.pad(9);
+        grid.defaults().space(5).growX();
+        grid.top();
+
+        BorderedArea imageArea = new BorderedArea(skin);
+        TextButton profileButton = new TextButton("Profile", skin);
+        TextButton defenseButton = new TextButton("Defense", skin);
+
+        grid.add(imageArea).growX().height(80).row();
+        grid.add(profileButton).row();
+        grid.add(defenseButton).row();
+
+        table.add(grid).expand().growY().right().width(100);
+
+        stage.addActor(table);
     }
 
     @Override

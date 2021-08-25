@@ -17,8 +17,6 @@ import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ServerAPI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -84,8 +82,8 @@ public class LoadingScreen implements Screen {
         progressBar.setValue(assetManager.getProgress());
         if (progressBar.getValue() >= 1) {
             statusLabel.setText("Connecting to Server...");
-            game.setScreen(new PlayScreen(game));
             if (game.getServerAPI() != null && game.getServerAPI().isConnected()) {
+                game.setScreen(new MainMenuScreen(game));
             }
         }
     }

@@ -217,7 +217,7 @@ public class LoginScreen implements Screen {
                         });
                         break;
                     case PROFILE_INFO:
-                        game.setScreen(new MatchScreen(game));
+                        game.setScreen(new PlayScreen(game));
                         break;
                     case VERIFY_WITH_CODE:
                         popup.getTitleLabel().setText("Verification");
