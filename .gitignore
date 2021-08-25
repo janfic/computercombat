@@ -21,3 +21,23 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/computercombat/.gradle/
+/computercombat/core/build/
+/computercombat/html/build/
+/computercombat/server/build/
+/computercombat/desktop/build/
+/computercombat/.gradle/*
+computercombat/.gradle/6.3/executionHistory/executionHistory.bin
+computercombat/.gradle/6.3/executionHistory/executionHistory.bin
+computercombat/.gradle/6.3/executionHistory/executionHistory.lock
+computercombat/.gradle/6.3/fileHashes/fileHashes.bin
+computercombat/.gradle/6.3/fileHashes/fileHashes.lock
+computercombat/.gradle/6.3/fileHashes/resourceHashesCache.bin
+computercombat/.gradle/6.3/javaCompile/classAnalysis.bin
+computercombat/.gradle/6.3/javaCompile/jarAnalysis.bin
+computercombat/.gradle/6.3/javaCompile/javaCompile.lock
+computercombat/.gradle/6.3/javaCompile/taskHistory.bin
+computercombat/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+computercombat/.gradle/buildOutputCleanup/outputFiles.bin
+computercombat/.gradle/checksums/checksums.lock
+computercombat/.gradle/checksums/sha1-checksums.bin
