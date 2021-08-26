@@ -3,8 +3,10 @@ package com.janfic.games.computercombat.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -39,7 +41,10 @@ public class MainMenuScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(true);
-        table.defaults().pad(10);
+        table.defaults().space(10);
+        table.pad(10);
+
+        Image image = new Image(game.getAssetManager().get(Assets.TITLE, Texture.class));
 
         BorderedGrid grid = new BorderedGrid(skin);
         TextButton loginButton = new TextButton("Login", skin);
@@ -70,6 +75,7 @@ public class MainMenuScreen implements Screen {
             }
         });
 
+        table.add(image).width(220).height(70).row();
         table.add(grid).width(150).height(150).expand();
 
         stage.addActor(table);
