@@ -27,10 +27,12 @@ public class MainMenuScreen implements Screen {
     OrthographicCamera camera;
 
     Skin skin;
+    Texture background;
 
     public MainMenuScreen(ComputerCombatGame game) {
         this.game = game;
         this.skin = game.getAssetManager().get(Assets.SKIN);
+        this.background = game.getAssetManager().get(Assets.MAIN_MENU_BACKGROUND);
     }
 
     @Override
@@ -45,6 +47,7 @@ public class MainMenuScreen implements Screen {
         table.pad(10);
 
         Image image = new Image(game.getAssetManager().get(Assets.TITLE, Texture.class));
+        Image backgroundImage = new Image(game.getAssetManager().get(Assets.MAIN_MENU_BACKGROUND, Texture.class));
 
         BorderedGrid grid = new BorderedGrid(skin);
         TextButton loginButton = new TextButton("Login", skin);
@@ -78,6 +81,9 @@ public class MainMenuScreen implements Screen {
         table.add(image).width(220).height(70).row();
         table.add(grid).width(150).height(150).expand();
 
+        backgroundImage.setSize(1920 / 4, 1080 / 4);
+
+        stage.addActor(backgroundImage);
         stage.addActor(table);
     }
 

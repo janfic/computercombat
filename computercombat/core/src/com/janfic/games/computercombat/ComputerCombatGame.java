@@ -32,6 +32,7 @@ public class ComputerCombatGame extends Game {
         assetManager.load(Assets.COMPONENT_ATLAS, TextureAtlas.class);
         assetManager.load(Assets.PLAY_BACKGROUND, Texture.class);
         assetManager.load(Assets.TITLE, Texture.class);
+        assetManager.load(Assets.MAIN_MENU_BACKGROUND, Texture.class);
         setScreen(new LoadingScreen(this));
     }
 
