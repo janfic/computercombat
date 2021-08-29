@@ -58,7 +58,7 @@ public class LoadingScreen implements Screen {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "3.87.196.190", 7272, new SocketHints())));
+                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "44.196.13.213", 7272, new SocketHints())));
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {
@@ -83,7 +83,8 @@ public class LoadingScreen implements Screen {
         if (progressBar.getValue() >= 1) {
             statusLabel.setText("Connecting to Server...");
             if (game.getServerAPI() != null && game.getServerAPI().isConnected()) {
-                game.setScreen(new MainMenuScreen(game));
+                game.popScreen();
+                game.pushScreen(new MainMenuScreen(game));
             }
         }
     }

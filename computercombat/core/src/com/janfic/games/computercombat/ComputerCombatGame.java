@@ -12,28 +12,44 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.network.client.ServerAPI;
 import com.janfic.games.computercombat.screens.LoadingScreen;
-import com.janfic.games.computercombat.screens.MatchScreen;
+import java.util.Stack;
 
 public class ComputerCombatGame extends Game {
 
     SpriteBatch batch;
-    Screen matchScreen;
     AssetManager assetManager;
     ServerAPI serverAPI;
+    Stack<Screen> screenStack;
+    Profile currentProfile;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         assetManager = new AssetManager();
-        matchScreen = new MatchScreen(this);
+        screenStack = new Stack<>();
         assetManager.load(Assets.SKIN, Skin.class);
         assetManager.load(Assets.COMPONENT_ATLAS, TextureAtlas.class);
+        assetManager.load(Assets.SOFTWARES_ATLAS, TextureAtlas.class);
         assetManager.load(Assets.PLAY_BACKGROUND, Texture.class);
         assetManager.load(Assets.TITLE, Texture.class);
         assetManager.load(Assets.MAIN_MENU_BACKGROUND, Texture.class);
-        setScreen(new LoadingScreen(this));
+        pushScreen(new LoadingScreen(this));
+    }
+
+    public Screen popScreen() {
+        Screen s = screenStack.pop();
+        if (screenStack.isEmpty() == false) {
+            screenStack.peek().show();
+        }
+        return s;
+    }
+
+    public void pushScreen(Screen screen) {
+        screenStack.push(screen);
+        screen.show();
     }
 
     @Override
@@ -43,7 +59,9 @@ public class ComputerCombatGame extends Game {
         batch.begin();
         //batch.draw(img, 0, 0);
         batch.end();
-        screen.render(Gdx.graphics.getDeltaTime());
+        if (screenStack.isEmpty() == false) {
+            screenStack.peek().render(Gdx.graphics.getDeltaTime());
+        }
         if (serverAPI != null) {
             //serverAPI.update();
         }
@@ -70,4 +88,11 @@ public class ComputerCombatGame extends Game {
         this.serverAPI = serverAPI;
     }
 
+    public void setCurrentProfile(Profile profile) {
+        this.currentProfile = profile;
+    }
+
+    public Profile getCurrentProfile() {
+        return currentProfile;
+    }
 }

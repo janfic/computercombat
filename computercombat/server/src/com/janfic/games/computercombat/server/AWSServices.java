@@ -1,6 +1,6 @@
 package com.janfic.games.computercombat.server;
 
-import com.janfic.games.computercombat.network.Message;
+import com.amazonaws.regions.Regions;
 import com.janfic.games.computercombat.network.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +21,18 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUsersRe
 import software.amazon.awssdk.services.cognitoidentityprovider.model.NotAuthorizedException;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotConfirmedException;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotFoundException;
+import com.amazonaws.services.s3.*;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.StringInputStream;
+import com.badlogic.gdx.utils.Json;
+import com.janfic.games.computercombat.network.Message;
+import com.janfic.games.computercombat.model.Profile;
+import java.io.IOException;
+import java.util.List;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequest;
 
 /**
  *
@@ -30,10 +42,12 @@ public class AWSServices {
 
     private final String userPoolID;
     CognitoIdentityProviderClient cognito;
+    AmazonS3 s3;
 
     public AWSServices(String userPoolID) {
         this.userPoolID = userPoolID;
         cognito = CognitoIdentityProviderClient.create();
+        s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_1).build();
     }
 
     public boolean isUsernameAvailable(String userName) {
@@ -55,7 +69,7 @@ public class AWSServices {
         return response.users().size() > 0;
     }
 
-    public void createUser(String username, String email, String password) {
+    public String createUser(String username, String email, String password) {
 
         AttributeType emailAttribute = AttributeType.builder().name("email").value(email).build();
         //AttributeType passwordAttribute = AttributeType.builder().name("password").value(password).build();
@@ -67,10 +81,23 @@ public class AWSServices {
                 .clientId("7ivqqa7m71v3ob6qnof7djh90t")
                 .build();
         SignUpResponse response = cognito.signUp(request);
-        System.out.println(response.toString());
+        String userSub = response.userSub();
+
+        return userSub;
     }
 
-    public Message getUser(String username, String password) {
+    public void saveProfile(Profile profile) {
+        Json json = new Json();
+        try {
+            StringInputStream is = new StringInputStream(json.toJson(profile));
+            PutObjectRequest request = new PutObjectRequest("computer-combat-player-data", "player_data/" + profile.getUID(), is, new ObjectMetadata());
+            s3.putObject(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Message userLogin(String username, String password) {
 
         Map<String, String> params = new HashMap<>();
         params.put("USERNAME", username);
@@ -81,16 +108,30 @@ public class AWSServices {
                 .authParameters(params)
                 .authFlow(AuthFlowType.USER_PASSWORD_AUTH)
                 .build();
+
         try {
             InitiateAuthResponse response = cognito.initiateAuth(request);
-            System.out.println(response.challengeName());
-            Message m = new Message(Type.PROFILE_INFO, response.authenticationResult().toString());
+            GetUserRequest userRequest = GetUserRequest.builder().accessToken(response.authenticationResult().accessToken()).build();
+            List<AttributeType> userAttributes = cognito.getUser(userRequest).userAttributes();
+            String data = "";
+            for (AttributeType userAttribute : userAttributes) {
+                if (userAttribute.name().equals("sub")) {
+                    String sub = userAttribute.value();
+                    GetObjectRequest getProfileDataRequest = new GetObjectRequest("computer-combat-player-data", "player_data/" + sub);
+                    S3Object object = s3.getObject(getProfileDataRequest);
+                    data = new String(object.getObjectContent().readAllBytes());
+                }
+            }
+            Message m = new Message(Type.PROFILE_INFO, data);
             return m;
+
         } catch (NotAuthorizedException e) {
             return new Message(Type.NO_AUTH, "NO AUTH");
         } catch (UserNotConfirmedException e) {
             return new Message(Type.VERIFY_WITH_CODE, "Please use verification code");
         } catch (AwsServiceException | SdkClientException e) {
+            return new Message(Type.ERROR, "UNKOWN ERROR : \n" + e.getMessage());
+        } catch (IOException e) {
             return new Message(Type.ERROR, "UNKOWN ERROR : \n" + e.getMessage());
         }
     }

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.Board;
@@ -22,7 +23,8 @@ import com.janfic.games.computercombat.actors.ComponentActor;
 import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
-import com.janfic.games.computercombat.model.components.BugComponent;
+import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.components.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,12 +82,23 @@ public class MatchScreen implements Screen {
             }
         }
 
-        softwareActors.add(new SoftwareActor(skin, false));
-        softwareActors.add(new SoftwareActor(skin, false));
-        softwareActors.add(new SoftwareActor(skin, true));
-        softwareActors.add(new SoftwareActor(skin, true));
-        softwareActors.add(new SoftwareActor(skin, true));
-        softwareActors.add(new SoftwareActor(skin, true));
+        Software fireWall = new Software("Fire Wall", "computer_pack", "firewall", 1, 3, 5, 1, 1, new Class[]{CPUComponent.class}, 3, null);
+        Software virus = new Software("Virus", "computer_pack", "virus", 1, 3, 5, 1, 1, new Class[]{CPUComponent.class}, 3, null);
+        Software disk_defrag = new Software("Disk Defragmenter", "computer_pack", "disk_defragmenter", 1, 3, 5, 1, 1, new Class[]{StorageComponent.class, RAMComponent.class}, 3, null);
+        Software worm = new Software("Worm", "computer_pack", "worm", 1, 3, 5, 1, 1, new Class[]{PowerComponent.class, CPUComponent.class, NetworkComponent.class}, 3, null);
+        Software bubble = new Software("Bubble Sort", "computer_pack", "bubble_sort", 1, 3, 5, 1, 1, new Class[]{CPUComponent.class, RAMComponent.class}, 3, null);
+        Software rng = new Software("Random Number Generator", "computer_pack", "rng", 1, 3, 5, 1, 1, new Class[]{CPUComponent.class}, 3, null);
+        Software web_search = new Software("Web Search", "computer_pack", "web_search", 1, 3, 5, 1, 1, new Class[]{NetworkComponent.class, RAMComponent.class}, 3, null);
+        Software directory = new Software("Directory", "computer_pack", "directory", 1, 3, 5, 1, 1, new Class[]{StorageComponent.class}, 3, null);
+
+        softwareActors.add(new SoftwareActor(skin, false, fireWall, game));
+        softwareActors.add(new SoftwareActor(skin, false, virus, game));
+        softwareActors.add(new SoftwareActor(skin, false, disk_defrag, game));
+        softwareActors.add(new SoftwareActor(skin, false, worm, game));
+        softwareActors.add(new SoftwareActor(skin, true, bubble, game));
+        softwareActors.add(new SoftwareActor(skin, true, rng, game));
+        softwareActors.add(new SoftwareActor(skin, true, web_search, game));
+        softwareActors.add(new SoftwareActor(skin, true, directory, game));
         computerActors.add(new ComputerActor(skin));
         computerActors.add(new ComputerActor(skin));
 
@@ -95,16 +108,18 @@ public class MatchScreen implements Screen {
         leftPanel.defaults().space(2);
         leftPanel.add(softwareActors.get(0)).row();
         leftPanel.add(softwareActors.get(1)).row();
+        leftPanel.add(softwareActors.get(2)).row();
+        leftPanel.add(softwareActors.get(3)).row();
         leftPanel.add(computerActors.get(0)).expandY().growX().bottom();
 
         BorderedGrid rightPanel = new BorderedGrid(skin);
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
-        rightPanel.add(softwareActors.get(2)).row();
-        rightPanel.add(softwareActors.get(3)).row();
         rightPanel.add(softwareActors.get(4)).row();
         rightPanel.add(softwareActors.get(5)).row();
+        rightPanel.add(softwareActors.get(6)).row();
+        rightPanel.add(softwareActors.get(7)).row();
         rightPanel.add(computerActors.get(1)).expandY().growX().bottom();
 
         Panel buttons = new Panel(skin);
@@ -116,11 +131,12 @@ public class MatchScreen implements Screen {
 
         table.setFillParent(true);
 
-        VerticalGroup middleSection = new VerticalGroup();
-        middleSection.addActor(buttons);
-        middleSection.addActor(board);
-        middleSection.addActor(infoPanel);
-        middleSection.space(3).top().expand();
+        Table middleSection = new Table();
+        middleSection.pad(0, 5, 0, 5);
+        middleSection.add(buttons).grow().row();
+        middleSection.add(board).row();
+        middleSection.add(infoPanel).grow().row();
+        middleSection.defaults().pad(5).top().expand();
 
         table.add(leftPanel).pad(1).growY().left();
         table.add(middleSection).grow();
@@ -154,7 +170,7 @@ public class MatchScreen implements Screen {
                     Label l = overlayActors.get(textBox);
                     l.setWidth(8);
                     l.setHeight(8);
-                    l.setText("" + 9);
+                    l.setText("" + 99);
                     boolean two = l.getText().length() == 2;
                     Vector2 stageCoords = new Vector2(v.x + textBox.getWidth() / 2 + 1 + (two ? -3 : 0), Gdx.graphics.getHeight() - v.y + textBox.getHeight() / 2 + 1);
                     l.setPosition(stageCoords.x, stageCoords.y);

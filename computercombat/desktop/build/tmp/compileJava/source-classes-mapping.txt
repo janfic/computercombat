@@ -1,2 +1,0 @@
-com/janfic/games/computercombat/desktop/DesktopLauncher.java
- com.janfic.games.computercombat.desktop.DesktopLauncher

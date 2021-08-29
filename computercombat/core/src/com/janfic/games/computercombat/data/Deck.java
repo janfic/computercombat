@@ -3,7 +3,6 @@ package com.janfic.games.computercombat.data;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
-import com.janfic.games.computercombat.model.Card;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +13,7 @@ import java.util.Map;
 public class Deck implements Serializable {
 
     private String name;
-    private Map<Class<? extends Card>, Integer> cards;
+    private Map<String, Integer> cards;
 
     public Deck() {
         this.name = "New Deck";
@@ -26,11 +25,11 @@ public class Deck implements Serializable {
         this.cards = new HashMap<>();
     }
 
-    public void addCard(Class<? extends Card> card, int amount) {
+    public void addCard(String card, int amount) {
         cards.put(card, cards.getOrDefault(card, 0) + amount);
     }
 
-    public void removeCard(Class<? extends Card> card, int amount) {
+    public void removeCard(String card, int amount) {
         int a = cards.getOrDefault(card, 0) - amount;
         if (a > 0) {
             cards.put(card, a);
@@ -39,7 +38,7 @@ public class Deck implements Serializable {
         }
     }
 
-    public int getCardCount(Class<? extends Card> card) {
+    public int getCardCount(String card) {
         return cards.getOrDefault(card, 0);
     }
 

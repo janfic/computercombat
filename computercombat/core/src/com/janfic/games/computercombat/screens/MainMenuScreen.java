@@ -60,14 +60,14 @@ public class MainMenuScreen implements Screen {
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LoginScreen(game));
+                game.pushScreen(new LoginScreen(game));
             }
         });
 
         accountButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SignUpScreen(game));
+                game.pushScreen(new SignUpScreen(game));
             }
         });
 

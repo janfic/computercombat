@@ -1,12 +1,23 @@
 package com.janfic.games.computercombat.actors;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.Json;
+import com.janfic.games.computercombat.ComputerCombatGame;
+import com.janfic.games.computercombat.model.Component;
+import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.components.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -17,8 +28,27 @@ public class SoftwareActor extends Panel {
     ProgressBar magicBar, healthBar, defenseBar, attackBar;
     BorderedArea imageArea;
 
-    public SoftwareActor(Skin skin, boolean flipped) {
+    public static final Map<Class<? extends Component>, String> components;
+
+    static {
+        components = new HashMap<>();
+        components.put(CPUComponent.class, "CPU");
+        components.put(BugComponent.class, "BUG");
+        components.put(PowerComponent.class, "POWER");
+        components.put(NetworkComponent.class, "NETWORK");
+        components.put(RAMComponent.class, "RAM");
+        components.put(StorageComponent.class, "STORAGE");
+    }
+
+    Software software;
+
+    public SoftwareActor(Skin skin, boolean flipped, Software software, ComputerCombatGame game) {
         super(skin);
+
+        this.software = software;
+        Json json = new Json();
+        FileHandle file = Gdx.files.local(software.getName() + ".json");
+        file.writeString(json.toJson(this.software), false);
 
         this.defaults().height(48).space(1);
 
@@ -36,6 +66,7 @@ public class SoftwareActor extends Panel {
         defenseBar = new ProgressBar(0, 10, 1, true, grey);
         attackBar = new ProgressBar(0, 10, 1, true, red);
         imageArea = new BorderedArea(skin);
+        imageArea.add(new Image(game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName())));
 
         magicBar.setValue(5);
         healthBar.setValue(5);
@@ -67,12 +98,9 @@ public class SoftwareActor extends Panel {
         attackStack.add(attackOverlay);
 
         VerticalGroup leds = new VerticalGroup();
-        leds.addActor(new LEDActor(skin, "NETWORK"));
-        leds.addActor(new LEDActor(skin, "CPU"));
-        leds.addActor(new LEDActor(skin, "STORAGE"));
-        //leds.addActor(new LEDActor(skin, "POWER"));
-        leds.addActor(new LEDActor(skin, "RAM"));
-        leds.addActor(new LEDActor(skin, "BUG"));
+        for (Class<? extends Component> runComponent : software.getRunComponents()) {
+            leds.addActor(new LEDActor(skin, components.get(runComponent)));
+        }
 
         leds.space(3).center();
 

@@ -210,6 +210,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 		background: window
 		titleFont: lucidaConsole12px
 		titleFontColor: RGBA_255_255_255_255
+		stageBackground: border
 	}
 }
 }

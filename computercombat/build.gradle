@@ -120,6 +120,7 @@ project(":server") {
         implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
         implementation platform('software.amazon.awssdk:bom:2.17.22')
         implementation 'software.amazon.awssdk:cognitoidentityprovider'
+        implementation 'com.amazonaws:aws-java-sdk-s3'
         compile "junit:junit:4.11"
         testCompile "junit:junit:4.11"
         testCompileClasspath "junit:junit:4.11"

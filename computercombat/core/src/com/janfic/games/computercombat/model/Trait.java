@@ -6,4 +6,7 @@ package com.janfic.games.computercombat.model;
  */
 public interface Trait {
 
+    public void beginMatch(MatchState state);
+
+    public void newTurn(MatchState state);
 }

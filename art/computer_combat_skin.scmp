@@ -325,6 +325,25 @@ atlasData: {
 			type: NINE_PATCH
 			hidden: false
 		}
+		{
+			file: E:/PROJECTS/computercombat/art/skin_assets/magnifying_class_icon.png
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: magnifying_class_icon
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: TEXTURE
+			hidden: false
+		}
 	]
 	fontDrawables: [
 		{

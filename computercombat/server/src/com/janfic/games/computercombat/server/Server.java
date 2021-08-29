@@ -88,7 +88,9 @@ public class Server {
                                     } else if (services.isEmailUsed(email)) {
                                         r = new Message(Type.ERROR, "This email is already being used");
                                     } else {
-                                        services.createUser(userName, email, password);
+                                        String sub = services.createUser(userName, email, password);
+                                        Profile p = new Profile(sub);
+                                        services.saveProfile(p);
                                         r = new Message(Type.PROFILE_INFO, content);
                                     }
                                 }
@@ -98,7 +100,7 @@ public class Server {
                                     String userName = content.split(",")[0];
                                     String password = content.split(",")[1];
                                     AWSServices services = new AWSServices("us-east-1_pLAKB2Mxw");
-                                    r = services.getUser(userName, password);
+                                    r = services.userLogin(userName, password);
                                 }
                                 break;
                                 case VERIFICATION_CODE: {

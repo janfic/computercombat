@@ -22,9 +22,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedGrid;
+import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import java.util.regex.Pattern;
@@ -144,7 +146,7 @@ public class LoginScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game));
+                game.popScreen();
             }
         });
 
@@ -217,7 +219,11 @@ public class LoginScreen implements Screen {
                         });
                         break;
                     case PROFILE_INFO:
-                        game.setScreen(new PlayScreen(game));
+                        Json json = new Json();
+                        Profile profile = json.fromJson(Profile.class, message.getMessage());
+                        System.out.println(profile);
+                        game.setCurrentProfile(profile);
+                        game.pushScreen(new PlayScreen(game));
                         break;
                     case VERIFY_WITH_CODE:
                         popup.getTitleLabel().setText("Verification");
@@ -287,7 +293,7 @@ public class LoginScreen implements Screen {
                         Gdx.app.postRunnable(new Runnable() {
                             @Override
                             public void run() {
-                                game.setScreen(new MatchScreen(game));
+                                window.remove();
                             }
                         });
                     }

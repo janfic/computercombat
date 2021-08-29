@@ -13,17 +13,17 @@ import java.util.List;
  */
 public class Profile implements Serializable {
 
-    private int uid;
+    private String uid;
     private String name;
     private Class<Player> activePlayer;
     private List<Deck> decks;
     private Deck collection;
 
     private Profile() {
-        this(0);
+        this("defaultUID");
     }
 
-    public Profile(int uid) {
+    public Profile(String uid) {
         this.uid = uid;
         this.decks = new ArrayList<>();
         this.collection = new Deck("Collection");
@@ -41,7 +41,7 @@ public class Profile implements Serializable {
         this.activePlayer = activePlayer;
     }
 
-    public int getUID() {
+    public String getUID() {
         return uid;
     }
 
@@ -62,7 +62,7 @@ public class Profile implements Serializable {
     public List<Deck> getDecks() {
         return decks;
     }
-    
+
     private SoftwareDeck buildDeck() {
         return null;
     }
@@ -81,7 +81,7 @@ public class Profile implements Serializable {
 
     @Override
     public void read(Json json, JsonValue jv) {
-        this.uid = json.readValue("uid", Integer.class, jv);
+        this.uid = json.readValue("uid", String.class, jv);
         this.name = json.readValue("name", String.class, jv);
         this.decks = json.readValue("decks", List.class, jv);
         this.collection = json.readValue("collection", Deck.class, jv);

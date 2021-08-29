@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -43,7 +44,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-
+        
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
         Gdx.input.setInputProcessor(stage);
@@ -97,13 +98,21 @@ public class PlayScreen implements Screen {
         table.add(grid).expand().growY().right().width(100);
 
         stage.addActor(table);
-        
+
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MatchScreen(game));
+                game.pushScreen(new MatchScreen(game));
             }
-            
+
+        });
+
+        collectionButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.pushScreen(new CollectionScreen(game));
+            }
+
         });
     }
 

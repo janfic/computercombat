@@ -9,7 +9,7 @@ import java.util.List;
 public class SoftwareDeck extends Card {
 
     public SoftwareDeck() {
-        super(1, 0, 0, 0, 0, new Class[]{}, 0, null);
+        super("", "", "", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
     }
 
     @Override

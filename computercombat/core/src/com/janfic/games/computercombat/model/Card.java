@@ -17,14 +17,18 @@ public abstract class Card implements Json.Serializable {
     protected Ability ability;
     protected Class<? extends Component>[] runComponents;
     protected int runProgress, runRequirements;
-    protected Class<? extends Trait>[] traits;
+    protected Trait[] traits;
     protected int traitsUnlocked;
+    protected String name, pack, textureName;
 
     public Card() {
-        this(1, 0, 0, 0, 0, new Class[]{}, 0, null);
+        this("CARD", "Computer", "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
     }
 
-    public Card(int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
+    public Card(String name, String pack, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
+        this.name = name;
+        this.pack = pack;
+        this.textureName = textureName;
         this.health = startingHealth + ((3 + level - 1) / 4);
         this.armor = startingArmor + ((2 + level - 1) / 4);
         this.attack = startingAttack + ((1 + level - 1) / 4);
@@ -34,6 +38,7 @@ public abstract class Card implements Json.Serializable {
         this.maxAttack = attack;
         this.ability = ability;
         this.runComponents = runComponents;
+        this.runRequirements = runRequirements;
         this.level = level;
         this.runProgress = 0;
         this.runRequirements = 0;
@@ -44,14 +49,22 @@ public abstract class Card implements Json.Serializable {
         return health <= 0;
     }
 
-    public abstract void beginMatch(MatchState state);
+    public void beginMatch(MatchState state) {
+        for (Trait trait : traits) {
+            trait.beginMatch(state);
+        }
+    }
 
     /**
      * Called every time it is a player's new turn
      *
      * @param state
      */
-    public abstract void newTurn(MatchState state);
+    public void newTurn(MatchState state) {
+        for (Trait trait : traits) {
+            trait.newTurn(state);
+        }
+    }
 
     /**
      *
@@ -191,8 +204,23 @@ public abstract class Card implements Json.Serializable {
         return runProgress;
     }
 
+    public String getPack() {
+        return pack;
+    }
+
+    public String getTextureName() {
+        return textureName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Override
     public void write(Json json) {
+        json.writeValue("name", this.name);
+        json.writeValue("pack", this.pack);
+        json.writeValue("textureName", this.textureName);
         json.writeValue("health", this.health);
         json.writeValue("armor", this.armor);
         json.writeValue("attack", this.attack);
@@ -213,6 +241,7 @@ public abstract class Card implements Json.Serializable {
 
     @Override
     public void read(Json json, JsonValue jv) {
+        this.name = json.readValue("name", String.class, jv);
         this.health = json.readValue("health", Integer.class, jv);
         this.armor = json.readValue("armor", Integer.class, jv);
         this.attack = json.readValue("attack", Integer.class, jv);
