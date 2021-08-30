@@ -32,6 +32,8 @@ import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.model.Profile;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequest;
 
 /**
@@ -72,7 +74,6 @@ public class AWSServices {
     public String createUser(String username, String email, String password) {
 
         AttributeType emailAttribute = AttributeType.builder().name("email").value(email).build();
-        //AttributeType passwordAttribute = AttributeType.builder().name("password").value(password).build();
 
         SignUpRequest request = SignUpRequest.builder()
                 .username(username)
@@ -90,11 +91,22 @@ public class AWSServices {
         Json json = new Json();
         try {
             StringInputStream is = new StringInputStream(json.toJson(profile));
-            PutObjectRequest request = new PutObjectRequest("computer-combat-player-data", "player_data/" + profile.getUID(), is, new ObjectMetadata());
+            PutObjectRequest request = new PutObjectRequest("computer-combat-player-data", "player_data/" + profile.getUID() + ".json", is, new ObjectMetadata());
             s3.putObject(request);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getFileAsString(String fileKey) {
+        try {
+            GetObjectRequest getProfileDataRequest = new GetObjectRequest("computer-combat-player-data", fileKey);
+            S3Object object = s3.getObject(getProfileDataRequest);
+            return new String(object.getObjectContent().readAllBytes());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public Message userLogin(String username, String password) {
@@ -117,7 +129,7 @@ public class AWSServices {
             for (AttributeType userAttribute : userAttributes) {
                 if (userAttribute.name().equals("sub")) {
                     String sub = userAttribute.value();
-                    GetObjectRequest getProfileDataRequest = new GetObjectRequest("computer-combat-player-data", "player_data/" + sub);
+                    GetObjectRequest getProfileDataRequest = new GetObjectRequest("computer-combat-player-data", "player_data/" + sub + ".json");
                     S3Object object = s3.getObject(getProfileDataRequest);
                     data = new String(object.getObjectContent().readAllBytes());
                 }

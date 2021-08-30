@@ -43,11 +43,6 @@ public class LEDActor extends Actor {
         if(lightOn) ledGlow.draw(batch, getX() - 2, getY() - 2, getWidth() + 4, getHeight() + 4);
         batch.setColor(Color.WHITE);
     }
-
-    @Override
-    public void act(float delta) {
-        if(Math.random() < 0.02) lightOn = !lightOn;
-    }
     
     public void setLightOn(boolean lightOn) {
         this.lightOn = lightOn;

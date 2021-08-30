@@ -8,7 +8,9 @@ import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Json;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import java.io.BufferedReader;
@@ -64,6 +66,7 @@ public class Server {
             @Override
             public void run() {
                 Json json = new Json();
+                AWSServices services = new AWSServices("us-east-1_pLAKB2Mxw");
                 while (true) {
                     for (Integer key : clients.keySet()) {
                         Client client = clients.get(key);
@@ -82,7 +85,7 @@ public class Server {
                                     String userName = content.split(",")[0];
                                     String email = content.split(",")[1].trim();
                                     String password = content.split(",")[2];
-                                    AWSServices services = new AWSServices("us-east-1_pLAKB2Mxw");
+
                                     if (!services.isUsernameAvailable(userName)) {
                                         r = new Message(Type.ERROR, userName + " is not an available username");
                                     } else if (services.isEmailUsed(email)) {
@@ -90,6 +93,11 @@ public class Server {
                                     } else {
                                         String sub = services.createUser(userName, email, password);
                                         Profile p = new Profile(sub);
+                                        String string = services.getFileAsString("cards/default_collection.json");
+                                        List<String> cards = json.fromJson(List.class, string);
+                                        for (String card : cards) {
+                                            p.getCollection().addCard(card, 1);
+                                        }
                                         services.saveProfile(p);
                                         r = new Message(Type.PROFILE_INFO, content);
                                     }
@@ -99,7 +107,6 @@ public class Server {
                                     String content = m.getMessage();
                                     String userName = content.split(",")[0];
                                     String password = content.split(",")[1];
-                                    AWSServices services = new AWSServices("us-east-1_pLAKB2Mxw");
                                     r = services.userLogin(userName, password);
                                 }
                                 break;
@@ -107,7 +114,6 @@ public class Server {
                                     String content = m.getMessage();
                                     String username = content.split(",")[0];
                                     String code = content.split(",")[1];
-                                    AWSServices services = new AWSServices("us-east-1_pLAKB2Mxw");
                                     if (services.verifyUser(username, code)) {
                                         r = new Message(Type.SUCCESS, "User Verified");
                                     } else {
@@ -140,6 +146,17 @@ public class Server {
                                         Profile profile = profiles.get(uid);
                                         r = new Message(Type.PROFILE_INFO, json.toJson(profile));
                                     }
+                                    break;
+                                case CARD_INFO_REQUEST:
+                                    String content = m.getMessage();
+                                    List<String> cards = json.fromJson(List.class, content);
+                                    List<Card> cardInfo = new ArrayList<>();
+                                    for (String card : cards) {
+                                        String data = services.getFileAsString("cards/" + card + ".json");
+                                        Software c = json.fromJson(Software.class, data);
+                                        cardInfo.add(c);
+                                    }
+                                    r = new Message(Type.CARD_INFO_RESPONSE, json.toJson(cardInfo));
                                     break;
                                 default:
                                     r = new Message(Type.ERROR, "INVALID MESSAGE TYPE");

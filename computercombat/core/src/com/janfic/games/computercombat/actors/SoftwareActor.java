@@ -46,9 +46,9 @@ public class SoftwareActor extends Panel {
         super(skin);
 
         this.software = software;
-        Json json = new Json();
-        FileHandle file = Gdx.files.local(software.getName() + ".json");
-        file.writeString(json.toJson(this.software), false);
+//        Json json = new Json();
+//        FileHandle file = Gdx.files.local(software.getName() + ".json");
+//        file.writeString(json.toJson(this.software), false);
 
         this.defaults().height(48).space(1);
 

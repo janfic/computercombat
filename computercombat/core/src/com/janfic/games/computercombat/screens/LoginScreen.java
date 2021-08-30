@@ -221,7 +221,6 @@ public class LoginScreen implements Screen {
                     case PROFILE_INFO:
                         Json json = new Json();
                         Profile profile = json.fromJson(Profile.class, message.getMessage());
-                        System.out.println(profile);
                         game.setCurrentProfile(profile);
                         game.pushScreen(new PlayScreen(game));
                         break;

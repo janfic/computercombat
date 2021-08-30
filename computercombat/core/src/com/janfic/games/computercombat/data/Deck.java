@@ -3,7 +3,9 @@ package com.janfic.games.computercombat.data;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +46,10 @@ public class Deck implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public List<String> getCards() {
+        return new ArrayList<>(cards.keySet());
     }
 
     public void setName(String name) {

@@ -242,6 +242,8 @@ public abstract class Card implements Json.Serializable {
     @Override
     public void read(Json json, JsonValue jv) {
         this.name = json.readValue("name", String.class, jv);
+        this.pack = json.readValue("pack", String.class, jv);
+        this.textureName = json.readValue("textureName", String.class, jv);
         this.health = json.readValue("health", Integer.class, jv);
         this.armor = json.readValue("armor", Integer.class, jv);
         this.attack = json.readValue("attack", Integer.class, jv);

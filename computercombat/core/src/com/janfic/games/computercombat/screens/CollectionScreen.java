@@ -2,6 +2,7 @@ package com.janfic.games.computercombat.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,12 +16,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedGrid;
+import com.janfic.games.computercombat.actors.CollectionCard;
 import com.janfic.games.computercombat.actors.Panel;
+import com.janfic.games.computercombat.data.Deck;
+import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
+import java.util.List;
 
 /**
  *
@@ -34,6 +41,8 @@ public class CollectionScreen implements Screen {
     OrthographicCamera camera;
 
     Skin skin;
+    Table collection;
+    BorderedGrid filterBar;
 
     public CollectionScreen(ComputerCombatGame game) {
         this.game = game;
@@ -54,10 +63,12 @@ public class CollectionScreen implements Screen {
         Label title = new Label("Collection", skin, "title");
         title.setAlignment(Align.center);
 
-        Table collection = new Table();
+        collection = new Table();
+        collection.defaults().space(5).growY();
+
         ScrollPane collectionScrollPane = new ScrollPane(collection, skin);
 
-        BorderedGrid filterBar = new BorderedGrid(skin);
+        filterBar = new BorderedGrid(skin);
         filterBar.pad(10);
         filterBar.defaults().space(5);
         filterBar.top();
@@ -73,13 +84,13 @@ public class CollectionScreen implements Screen {
 
         filterBar.add(filterTitle).row();
         filterBar.add(searchPanel).row();
-        filterBar.add(applyButton).row();
+        filterBar.add(applyButton).expand().bottom().row();
 
         TextButton backButton = new TextButton("Back", skin);
 
         table.add(title).colspan(2).growX().row();
-        table.add(collectionScrollPane).grow();
-        table.add(filterBar).growY().row();
+        table.add(filterBar).growY();
+        table.add(collectionScrollPane).grow().row();
         table.add(backButton).expandX().width(150).left().row();
 
         stage.addActor(table);
@@ -90,11 +101,14 @@ public class CollectionScreen implements Screen {
                 game.popScreen();
             }
         });
+
+        Gdx.app.postRunnable(requestProfileInfoRunnable);
     }
 
     @Override
     public void render(float f) {
         stage.act(f);
+        filterBar.setColor(Color.WHITE);
         stage.draw();
     }
 
@@ -123,7 +137,29 @@ public class CollectionScreen implements Screen {
     final Runnable requestProfileInfoRunnable = new Runnable() {
         @Override
         public void run() {
-            Message request = new Message(Type.PROFILE_INFO_REQUEST, "");
+            Json json = new Json();
+            Profile profile = game.getCurrentProfile();
+            Deck playerCollection = profile.getCollection();
+
+            Message request = new Message(Type.CARD_INFO_REQUEST, json.toJson(playerCollection.getCards()));
+
+            game.getServerAPI().sendMessage(request);
+
+            while (game.getServerAPI().hasMessage() == false) {
+            }
+
+            Message response = game.getServerAPI().readMessage();
+            List<Software> cardInfo = json.fromJson(List.class, response.getMessage());
+            collection.clearChildren();
+            boolean isEven = false;
+
+            for (Software card : cardInfo) {
+                collection.add(new CollectionCard(game, skin, card, profile.getCollection().getCardCount(card.getPack() + "/" + card.getName())));
+                if (isEven) {
+                    collection.row();
+                }
+                isEven = !isEven;
+            }
         }
     };
 
