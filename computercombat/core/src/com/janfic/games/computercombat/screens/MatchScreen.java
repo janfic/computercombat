@@ -21,6 +21,7 @@ import com.janfic.games.computercombat.actors.BorderedArea;
 import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.actors.ComponentActor;
 import com.janfic.games.computercombat.actors.ComputerActor;
+import com.janfic.games.computercombat.actors.OverlayTextLabelArea;
 import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Software;
@@ -145,13 +146,8 @@ public class MatchScreen implements Screen {
         mainStage.addActor(table);
 
         for (SoftwareActor softwareActor : softwareActors) {
-            for (Actor actor : softwareActor.getChildren()) {
-                if (actor instanceof Stack) {
-                    BorderedArea textBox = (BorderedArea) ((Table) ((Stack) actor).getChild(1)).getChild(0);
-                    Label label = new Label("", skin);
-                    overlayActors.put(textBox, label);
-                    statsStage.addActor(label);
-                }
+            for (OverlayTextLabelArea<Software> overlayTextLabelArea : softwareActor.getOverlayTextLabelAreas()) {
+                statsStage.addActor(overlayTextLabelArea.getOverlayLabel());
             }
         }
     }
@@ -162,22 +158,6 @@ public class MatchScreen implements Screen {
         mainStage.draw();
         statsStage.act(f);
         statsStage.draw();
-        for (SoftwareActor softwareActor : softwareActors) {
-            for (Actor actor : softwareActor.getChildren()) {
-                if (actor instanceof Stack) {
-                    BorderedArea textBox = (BorderedArea) ((Table) ((Stack) actor).getChild(1)).getChild(0);
-                    Vector2 v = textBox.localToScreenCoordinates(new Vector2(0, 0));
-                    Label l = overlayActors.get(textBox);
-                    l.setWidth(8);
-                    l.setHeight(8);
-                    l.setText("" + 99);
-                    boolean two = l.getText().length() == 2;
-                    Vector2 stageCoords = new Vector2(v.x + textBox.getWidth() / 2 + 1 + (two ? -3 : 0), Gdx.graphics.getHeight() - v.y + textBox.getHeight() / 2 + 1);
-                    l.setPosition(stageCoords.x, stageCoords.y);
-
-                }
-            }
-        }
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.janfic.games.computercombat.actors;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -11,12 +9,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.components.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,11 +40,13 @@ public class SoftwareActor extends Panel {
     }
 
     Software software;
+    List<OverlayTextLabelArea<Software>> areas;
 
     public SoftwareActor(Skin skin, boolean flipped, Software software, ComputerCombatGame game) {
         super(skin);
 
         this.software = software;
+        this.areas = new ArrayList<>();
 //        Json json = new Json();
 //        FileHandle file = Gdx.files.local(software.getName() + ".json");
 //        file.writeString(json.toJson(this.software), false);
@@ -76,25 +77,53 @@ public class SoftwareActor extends Panel {
         Stack magicStack = new Stack();
         magicStack.add(magicBar);
         Table magicOverlay = new Table();
-        magicOverlay.add(new BorderedArea(skin, "magicTextBox")).expand().fillX().height(9);
+        OverlayTextLabelArea<Software> magicLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+            @Override
+            public String updateLabel(Software dataObject) {
+                return "" + dataObject.getMagic();
+            }
+        };
+        this.areas.add(magicLabelArea);
+        magicOverlay.add(magicLabelArea).expand().fillX().height(9);
         magicStack.add(magicOverlay);
 
         Stack healthStack = new Stack();
         healthStack.add(healthBar);
         Table healthOverlay = new Table();
-        healthOverlay.add(new BorderedArea(skin, "attackTextBox")).expand().fillX().height(9);
+        OverlayTextLabelArea<Software> healthLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+            @Override
+            public String updateLabel(Software dataObject) {
+                return "" + dataObject.getHealth();
+            }
+        };
+        this.areas.add(healthLabelArea);
+        healthOverlay.add(healthLabelArea).expand().fillX().height(9);
         healthStack.add(healthOverlay);
 
         Stack defenseStack = new Stack();
         defenseStack.add(defenseBar);
         Table defenseOverlay = new Table();
-        defenseOverlay.add(new BorderedArea(skin, "defenseTextBox")).expand().fillX().height(9);
+        OverlayTextLabelArea<Software> defenseLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+            @Override
+            public String updateLabel(Software dataObject) {
+                return "" + dataObject.getArmor();
+            }
+        };
+        this.areas.add(defenseLabelArea);
+        defenseOverlay.add(defenseLabelArea).expand().fillX().height(9);
         defenseStack.add(defenseOverlay);
 
         Stack attackStack = new Stack();
         attackStack.add(attackBar);
         Table attackOverlay = new Table();
-        attackOverlay.add(new BorderedArea(skin, "attackTextBox")).expand().fillX().height(9);
+        OverlayTextLabelArea<Software> attackLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+            @Override
+            public String updateLabel(Software dataObject) {
+                return "" + dataObject.getAttack();
+            }
+        };
+        this.areas.add(attackLabelArea);
+        attackOverlay.add(attackLabelArea).expand().fillX().height(9);
         attackStack.add(attackOverlay);
 
         VerticalGroup leds = new VerticalGroup();
@@ -121,4 +150,7 @@ public class SoftwareActor extends Panel {
         }
     }
 
+    public List<OverlayTextLabelArea<Software>> getOverlayTextLabelAreas() {
+        return areas;
+    }
 }

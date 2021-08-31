@@ -106,6 +106,18 @@ public abstract class Card implements Json.Serializable {
         return this.ability;
     }
 
+    public int getMaxArmor() {
+        return maxArmor;
+    }
+
+    public int getMaxAttack() {
+        return maxAttack;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
     /**
      * Called when software receives health
      *
