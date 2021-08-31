@@ -6,14 +6,14 @@ filter: Nearest,Nearest
 repeat: none
 white-pixel
   rotate: false
-  xy: 19, 21
+  xy: 30, 34
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 border
   rotate: false
-  xy: 1, 17
+  xy: 1, 19
   size: 16, 16
   split: 6, 9, 6, 9
   pad: 7, 7, 7, 7
@@ -22,7 +22,7 @@ border
   index: -1
 button_down
   rotate: false
-  xy: 1, 6
+  xy: 1, 8
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -30,7 +30,7 @@ button_down
   index: -1
 button_over
   rotate: false
-  xy: 19, 24
+  xy: 19, 26
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -38,99 +38,107 @@ button_over
   index: -1
 button_up
   rotate: false
-  xy: 259, 252
+  xy: 259, 254
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
   offset: 0, 0
   index: -1
+decked_panel
+  rotate: false
+  xy: 517, 524
+  size: 7, 13
+  split: 3, 3, 3, 9
+  orig: 7, 13
+  offset: 0, 0
+  index: -1
 grid
   rotate: false
-  xy: 517, 529
+  xy: 531, 545
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
   index: -1
 led_border
   rotate: false
-  xy: 775, 791
+  xy: 786, 804
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
 led_glow
   rotate: false
-  xy: 775, 798
+  xy: 775, 800
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
 led_light
   rotate: false
-  xy: 786, 802
+  xy: 1, 1
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
 lucidaConsole12px_0
   rotate: false
-  xy: 1, 551
+  xy: 1, 553
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaConsole16px_0
   rotate: false
-  xy: 1, 293
+  xy: 1, 295
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax16px_0
   rotate: false
-  xy: 1, 293
+  xy: 1, 295
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax12px_0
   rotate: false
-  xy: 259, 551
+  xy: 259, 553
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax3pt_0
   rotate: false
-  xy: 1, 35
+  xy: 1, 37
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax6px_0
   rotate: false
-  xy: 259, 293
+  xy: 259, 295
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax8px_0
   rotate: false
-  xy: 517, 551
+  xy: 517, 553
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 magnifying_class_icon
   rotate: false
-  xy: 517, 537
+  xy: 517, 539
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 panel
   rotate: false
-  xy: 277, 284
+  xy: 277, 286
   size: 7, 7
   split: 3, 3, 3, 3
   orig: 7, 7
@@ -138,7 +146,7 @@ panel
   index: -1
 progress_bar
   rotate: false
-  xy: 531, 544
+  xy: 775, 793
   size: 5, 5
   split: 2, 2, 2, 2
   pad: 1, 1, 1, 1
@@ -147,7 +155,7 @@ progress_bar
   index: -1
 progress_bar_before_horizontall
   rotate: false
-  xy: 1, 1
+  xy: 12, 14
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -155,7 +163,7 @@ progress_bar_before_horizontall
   index: -1
 progress_bar_before_vertical
   rotate: false
-  xy: 1, 1
+  xy: 12, 14
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -163,7 +171,7 @@ progress_bar_before_vertical
   index: -1
 screen
   rotate: false
-  xy: 12, 12
+  xy: 19, 21
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -171,7 +179,7 @@ screen
   index: -1
 window
   rotate: false
-  xy: 259, 263
+  xy: 259, 265
   size: 16, 28
   split: 6, 9, 18, 9
   pad: 7, 7, 19, 7

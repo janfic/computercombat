@@ -44,7 +44,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        
+
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
         Gdx.input.setInputProcessor(stage);
@@ -111,6 +111,14 @@ public class PlayScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.pushScreen(new CollectionScreen(game));
+            }
+
+        });
+
+        decksButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.pushScreen(new DecksScreen(game));
             }
 
         });

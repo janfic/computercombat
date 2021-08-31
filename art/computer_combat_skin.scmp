@@ -344,6 +344,25 @@ atlasData: {
 			type: TEXTURE
 			hidden: false
 		}
+		{
+			file: E:/PROJECTS/computercombat/art/skin_assets/decked_panel.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: decked_panel
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: NINE_PATCH
+			hidden: false
+		}
 	]
 	fontDrawables: [
 		{
