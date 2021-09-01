@@ -32,8 +32,6 @@ import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.model.Profile;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequest;
 
 /**

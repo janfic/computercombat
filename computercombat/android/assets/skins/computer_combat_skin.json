@@ -47,6 +47,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0.6862745
 		a: 1
 	}
+	LIGHT_GREY_SEE_THROUGH: {
+		r: 0.54509807
+		g: 0.5764706
+		b: 0.6862745
+		a: 0.3764706
+	}
 	NETWORK: {
 		r: 0.34901962
 		g: 0.75686276
@@ -92,6 +98,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	WHITE_TRANSPARENT: {
 		name: white-pixel
 		color: RGBA_255_255_255_128
+	}
+	popup_background: {
+		name: white-pixel
+		color: LIGHT_GREY_SEE_THROUGH
 	}
 }
 com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable: {
@@ -210,7 +220,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 		background: window
 		titleFont: lucidaConsole12px
 		titleFontColor: RGBA_255_255_255_255
-		stageBackground: border
+		stageBackground: popup_background
 	}
 }
 }

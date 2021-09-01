@@ -6,7 +6,7 @@ filter: Nearest,Nearest
 repeat: none
 white-pixel
   rotate: false
-  xy: 30, 34
+  xy: 259, 251
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -22,7 +22,7 @@ border
   index: -1
 button_down
   rotate: false
-  xy: 1, 8
+  xy: 19, 26
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -30,7 +30,7 @@ button_down
   index: -1
 button_over
   rotate: false
-  xy: 19, 26
+  xy: 259, 254
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -38,7 +38,7 @@ button_over
   index: -1
 button_up
   rotate: false
-  xy: 259, 254
+  xy: 277, 284
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -46,7 +46,7 @@ button_up
   index: -1
 decked_panel
   rotate: false
-  xy: 517, 524
+  xy: 775, 782
   size: 7, 13
   split: 3, 3, 3, 9
   orig: 7, 13
@@ -61,21 +61,21 @@ grid
   index: -1
 led_border
   rotate: false
-  xy: 786, 804
+  xy: 1, 1
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
 led_glow
   rotate: false
-  xy: 775, 800
+  xy: 1, 8
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
 led_light
   rotate: false
-  xy: 1, 1
+  xy: 12, 12
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
@@ -136,9 +136,16 @@ magnifying_class_icon
   orig: 12, 12
   offset: 0, 0
   index: -1
+mouse
+  rotate: false
+  xy: 775, 797
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
 panel
   rotate: false
-  xy: 277, 286
+  xy: 517, 530
   size: 7, 7
   split: 3, 3, 3, 3
   orig: 7, 7
@@ -146,7 +153,7 @@ panel
   index: -1
 progress_bar
   rotate: false
-  xy: 775, 793
+  xy: 789, 804
   size: 5, 5
   split: 2, 2, 2, 2
   pad: 1, 1, 1, 1
@@ -155,7 +162,7 @@ progress_bar
   index: -1
 progress_bar_before_horizontall
   rotate: false
-  xy: 12, 14
+  xy: 19, 21
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -163,7 +170,7 @@ progress_bar_before_horizontall
   index: -1
 progress_bar_before_vertical
   rotate: false
-  xy: 12, 14
+  xy: 19, 21
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -171,7 +178,7 @@ progress_bar_before_vertical
   index: -1
 screen
   rotate: false
-  xy: 19, 21
+  xy: 30, 32
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3

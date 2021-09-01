@@ -363,6 +363,44 @@ atlasData: {
 			type: NINE_PATCH
 			hidden: false
 		}
+		{
+			file: null
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: LIGHT_GREY_SEE_THROUGH
+			name: popup_background
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: PIXEL
+			hidden: false
+		}
+		{
+			file: E:/PROJECTS/computercombat/art/skin_assets/mouse.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: mouse
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: TEXTURE
+			hidden: false
+		}
 	]
 	fontDrawables: [
 		{
@@ -541,6 +579,16 @@ jsonData: {
 				a: 1
 			}
 			name: LIGHT_GREY
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 0.54509807
+				g: 0.5764706
+				b: 0.6862745
+				a: 0.3764706
+			}
+			name: LIGHT_GREY_SEE_THROUGH
 		}
 		{
 			class: com.ray3k.skincomposer.data.ColorData
@@ -1391,7 +1439,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: stageBackground
 						optional: true
-						value: border
+						value: popup_background
 					}
 				}
 				deletable: false

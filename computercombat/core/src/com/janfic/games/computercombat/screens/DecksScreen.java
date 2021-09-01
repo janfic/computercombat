@@ -16,7 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
@@ -56,9 +58,13 @@ public class DecksScreen implements Screen {
     Table decksTable, deckTable, collectionTable, collection;
     Group collectionOverlayGroup;
 
+    TextButton createButton, deleteButton;
+
     DragAndDrop deckToCollectionDragAndDrop, collectionToDeckDragAndDrop;
 
     DeckActor selectedDeck;
+
+    boolean isPopup;
 
     public DecksScreen(ComputerCombatGame game) {
         this.game = game;
@@ -70,6 +76,7 @@ public class DecksScreen implements Screen {
         this.stageCamera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.overlayCamera = new OrthographicCamera(1920 / 2, 1080 / 2);
         this.collectionOverlayGroup = new Group();
+        this.isPopup = false;
 
         this.stage = ComputerCombatGame.makeNewStage(stageCamera);
         this.overlay = new Stage(new FitViewport(1920 / 2, 1080 / 2, overlayCamera));
@@ -107,36 +114,110 @@ public class DecksScreen implements Screen {
 
         decks = new Table();
         decks.defaults().space(5).height(60).width(70);
-        game.getCurrentProfile().getCollection().setName("Starter Deck");
-        game.getCurrentProfile().getDecks().add(game.getCurrentProfile().getCollection());
-        for (Deck deck : game.getCurrentProfile().getDecks()) {
-            DeckActor d = new DeckActor(deck, skin);
-            d.setColor(Color.LIGHT_GRAY);
-            d.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    if (selectedDeck != null) {
-                        selectedDeck.setColor(Color.LIGHT_GRAY);
-                    }
-                    selectedDeck = d;
-                    selectedDeck.setColor(Color.WHITE);
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateDeckCards();
-                        }
-                    });
-                }
-            });
-            decks.add(d).row();
-        }
+        populateDecks();
         ScrollPane decksScroll = new ScrollPane(decks, skin);
         decksScroll.setFadeScrollBars(false);
-        TextButton createButton = new TextButton("Create", skin);
+        createButton = new TextButton("Create", skin);
+
+        createButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Window window = new Window("Create New Deck", skin);
+                window.setSize(stage.getWidth() / 2, stage.getHeight() / 2);
+                window.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
+
+                Table table = new Table();
+                TextButton doneButton = new TextButton("Done", skin);
+                TextButton cancelButton = new TextButton("Cancel", skin);
+                TextField deckNameField = new TextField("", skin);
+
+                doneButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        Deck deck = new Deck(deckNameField.getText());
+                        game.getCurrentProfile().getDecks().add(deck);
+                        populateDecks();
+                        window.remove();
+                        isPopup = false;
+                    }
+                });
+                cancelButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        window.remove();
+                        isPopup = false;
+                    }
+                });
+
+                table.add(new Label("Enter New Deck Name:", skin)).center().expand().row();
+                table.add(deckNameField).expand().row();
+                table.add(doneButton).growX().row();
+                table.add(cancelButton).growX().row();
+                window.add(table).grow();
+
+                isPopup = true;
+                stage.addActor(window);
+            }
+        });
+
+        deleteButton = new TextButton("Delete", skin);
+        deleteButton.setColor(Color.LIGHT_GRAY);
+        deleteButton.setDisabled(true);
+
+        deleteButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (selectedDeck == null) {
+                    return;
+                }
+                Window window = new Window("Delete Deck", skin);
+                window.setSize(stage.getWidth() / 2, stage.getHeight() / 2);
+                window.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
+
+                Table table = new Table();
+                TextButton doneButton = new TextButton("Delete Deck", skin);
+                TextButton cancelButton = new TextButton("Cancel", skin);
+
+                doneButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        if (selectedDeck == null) {
+                            return;
+                        }
+                        game.getCurrentProfile().getDecks().remove(selectedDeck.getDeck());
+                        selectedDeck = null;
+                        deckCards.clearChildren();
+                        populateDecks();
+                        window.remove();
+                        deleteButton.setColor(Color.LIGHT_GRAY);
+                        isPopup = false;
+                    }
+                });
+                cancelButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        window.remove();
+                        isPopup = false;
+                    }
+                });
+
+                Label l = new Label("Are you sure you want to delete deck: \"" + selectedDeck.getDeck().getName() + "\"?\nThis action cannot be undone!", skin);
+                l.setAlignment(Align.center);
+                l.setWrap(true);
+                table.add(l).grow().row();
+                table.add(doneButton).growX().row();
+                table.add(cancelButton).growX().row();
+                window.add(table).grow();
+
+                isPopup = true;
+                stage.addActor(window);
+            }
+        });
 
         decksTable.add(decksTitle).growX().row();
         decksTable.add(decksScroll).grow().row();
         decksTable.add(createButton).growX().row();
+        decksTable.add(deleteButton).growX().row();
 
         deckTable = new Table(skin);
         deckTable.defaults().space(3);
@@ -145,6 +226,7 @@ public class DecksScreen implements Screen {
         cardsTitle.setAlignment(Align.center);
 
         deckCards = new Table();
+        deckCards.defaults().space(5);
 
         ScrollPane deckCardsPane = new ScrollPane(deckCards, skin);
         deckCardsPane.setFadeScrollBars(false);
@@ -200,6 +282,15 @@ public class DecksScreen implements Screen {
 
             @Override
             public void drop(Source source, Payload payload, float x, float y, int pointer) {
+                if(selectedDeck == null) return;
+                Software card = (Software) payload.getObject();
+                selectedDeck.getDeck().removeCard(card.getPack() + "/" + card.getName(), 1);
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateDeckCards();
+                    }
+                });
             }
         });
 
@@ -211,6 +302,15 @@ public class DecksScreen implements Screen {
 
             @Override
             public void drop(Source source, Payload payload, float x, float y, int pointer) {
+                if(selectedDeck == null) return;
+                Software card = (Software) payload.getObject();
+                selectedDeck.getDeck().addCard(card.getPack() + "/" + card.getName(), 1);
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateDeckCards();
+                    }
+                });
             }
         });
     }
@@ -220,7 +320,9 @@ public class DecksScreen implements Screen {
         stage.act(f);
         overlay.act(f);
         stage.draw();
-        overlay.draw();
+        if (!isPopup) {
+            overlay.draw();
+        }
 
         Rectangle r = collection.getCullingArea();
         Vector2 cSize = new Vector2(r.width - 5, r.height - 5);
@@ -250,6 +352,33 @@ public class DecksScreen implements Screen {
 
     @Override
     public void dispose() {
+    }
+
+    public void populateDecks() {
+        decks.clearChildren();
+        for (Deck deck : game.getCurrentProfile().getDecks()) {
+            DeckActor d = new DeckActor(deck, skin);
+            d.setColor(Color.LIGHT_GRAY);
+            d.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (selectedDeck != null) {
+                        selectedDeck.setColor(Color.LIGHT_GRAY);
+                    }
+                    deleteButton.setColor(Color.WHITE);
+                    deleteButton.setDisabled(false);
+                    selectedDeck = d;
+                    selectedDeck.setColor(Color.WHITE);
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateDeckCards();
+                        }
+                    });
+                }
+            });
+            decks.add(d).row();
+        }
     }
 
     public void updateDeckCards() {
@@ -334,4 +463,5 @@ public class DecksScreen implements Screen {
             }
         }
     };
+
 }
