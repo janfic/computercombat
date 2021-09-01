@@ -107,6 +107,7 @@ public class DecksScreen implements Screen {
 
         decks = new Table();
         decks.defaults().space(5).height(60).width(70);
+        game.getCurrentProfile().getCollection().setName("Starter Deck");
         game.getCurrentProfile().getDecks().add(game.getCurrentProfile().getCollection());
         for (Deck deck : game.getCurrentProfile().getDecks()) {
             DeckActor d = new DeckActor(deck, skin);
