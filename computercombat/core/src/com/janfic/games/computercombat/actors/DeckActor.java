@@ -11,19 +11,23 @@ import com.janfic.games.computercombat.data.Deck;
  * @author Jan Fic
  */
 public class DeckActor extends Table {
-    
+
     Deck deck;
     Skin skin;
-    
+
     public DeckActor(Deck deck, Skin skin) {
         super(skin);
         this.deck = deck;
         this.skin = skin;
         this.setBackground("decked_panel");
         pad(4, 4, 12, 4);
-        Label name = new Label("Deck Test with more characters", skin);
+        Label name = new Label(deck.getName(), skin);
         name.setWrap(true);
         name.setAlignment(Align.center);
         this.add(name).grow().center();
+    }
+
+    public Deck getDeck() {
+        return deck;
     }
 }

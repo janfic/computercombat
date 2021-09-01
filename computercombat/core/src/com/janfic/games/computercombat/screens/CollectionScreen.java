@@ -130,7 +130,6 @@ public class CollectionScreen implements Screen {
 
     @Override
     public void render(float f) {
-        collectionScrollPane.setCullingArea(new Rectangle(collectionScrollPane.getX(), collectionScrollPane.getY(), collectionScrollPane.getWidth(), collectionScrollPane.getHeight()));
         stage.act(f);
         statsStage.act(f);
         stage.draw();

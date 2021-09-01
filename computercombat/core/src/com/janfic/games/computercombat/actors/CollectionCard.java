@@ -45,7 +45,7 @@ public class CollectionCard extends BorderedGrid {
     Software software;
     int amount;
     List<OverlayTextLabelArea<Software>> areas;
-
+    
     public CollectionCard(ComputerCombatGame game, Skin skin, Software software, int amount) {
         super(skin);
         this.software = software;
