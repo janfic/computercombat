@@ -28,5 +28,6 @@ public enum Type {
     SUCCESS,
     READY,
     CARD_INFO_REQUEST,
-    CARD_INFO_RESPONSE
+    CARD_INFO_RESPONSE,
+    UPDATE_PROFILE
 }

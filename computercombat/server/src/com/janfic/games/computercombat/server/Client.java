@@ -37,7 +37,8 @@ public class Client {
     public void sendMessage(Message message) {
         try {
             Json json = new Json();
-            System.out.println("[SERVER]: Sending Message to Client (" + this.clientUID + ") : { " + message.getType() + " : " + message.getMessage() + " }");
+            String out = message.getMessage().length() > 50 ? message.getMessage().substring(0, 25) + " .... " + message.getMessage().substring(message.getMessage().length() - 25, message.getMessage().length() - 1) : message.getMessage();
+            System.out.println("[SERVER]: Sending Message to Client (" + this.clientUID + ") : { " + message.getType() + " : " + out + " }");
             String m = json.toJson(message) + "\nEND";
             socket.getOutputStream().write(m.getBytes());
         } catch (Exception e) {

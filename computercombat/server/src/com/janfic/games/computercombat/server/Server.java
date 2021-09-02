@@ -147,7 +147,7 @@ public class Server {
                                         r = new Message(Type.PROFILE_INFO, json.toJson(profile));
                                     }
                                     break;
-                                case CARD_INFO_REQUEST:
+                                case CARD_INFO_REQUEST: {
                                     String content = m.getMessage();
                                     List<String> cards = json.fromJson(List.class, content);
                                     List<Card> cardInfo = new ArrayList<>();
@@ -157,7 +157,15 @@ public class Server {
                                         cardInfo.add(c);
                                     }
                                     r = new Message(Type.CARD_INFO_RESPONSE, json.toJson(cardInfo));
-                                    break;
+                                }
+                                break;
+                                case UPDATE_PROFILE: {
+                                    String content = m.getMessage();
+                                    Profile profile = json.fromJson(Profile.class, content);
+                                    services.saveProfile(profile);
+                                    r = new Message(Type.SUCCESS, "PROFILE UPDATED");
+                                }
+                                break;
                                 default:
                                     r = new Message(Type.ERROR, "INVALID MESSAGE TYPE");
                                     break;

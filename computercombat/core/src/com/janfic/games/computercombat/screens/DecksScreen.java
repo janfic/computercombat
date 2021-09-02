@@ -10,30 +10,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Source;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
-import com.janfic.games.computercombat.actors.BorderedArea;
-import com.janfic.games.computercombat.actors.CollectionCard;
-import com.janfic.games.computercombat.actors.DeckActor;
-import com.janfic.games.computercombat.actors.DeckCardActor;
-import com.janfic.games.computercombat.actors.OverlayTextLabelArea;
+import com.janfic.games.computercombat.actors.*;
 import com.janfic.games.computercombat.data.Deck;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
@@ -233,6 +220,30 @@ public class DecksScreen implements Screen {
 
         TextButton saveButton = new TextButton("Save", skin);
 
+        saveButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        Json json = new Json();
+                        String data = json.toJson(game.getCurrentProfile());
+                        game.getServerAPI().sendMessage(new Message(Type.UPDATE_PROFILE, data));
+
+                        while (game.getServerAPI().hasMessage() == false) {
+                        }
+
+                        Message response = game.getServerAPI().readMessage();
+
+                        if (response.type == Type.SUCCESS) {
+                            saveButton.addAction(Actions.sequence(Actions.color(Color.GREEN), Actions.color(Color.WHITE, 2)));
+                        }
+                    }
+                });
+
+            }
+        });
+
         deckTable.add(cardsTitle).growX().row();
         deckTable.add(deckCardsPane).grow().row();
         deckTable.add(saveButton).growX().row();
@@ -282,7 +293,9 @@ public class DecksScreen implements Screen {
 
             @Override
             public void drop(Source source, Payload payload, float x, float y, int pointer) {
-                if(selectedDeck == null) return;
+                if (selectedDeck == null) {
+                    return;
+                }
                 Software card = (Software) payload.getObject();
                 selectedDeck.getDeck().removeCard(card.getPack() + "/" + card.getName(), 1);
                 Gdx.app.postRunnable(new Runnable() {
@@ -302,7 +315,9 @@ public class DecksScreen implements Screen {
 
             @Override
             public void drop(Source source, Payload payload, float x, float y, int pointer) {
-                if(selectedDeck == null) return;
+                if (selectedDeck == null) {
+                    return;
+                }
                 Software card = (Software) payload.getObject();
                 selectedDeck.getDeck().addCard(card.getPack() + "/" + card.getName(), 1);
                 Gdx.app.postRunnable(new Runnable() {
