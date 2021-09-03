@@ -75,7 +75,7 @@ public class PlayScreen implements Screen {
         upgradeButton.setWidth(collectionButton.getWidth());
         downloadButton.setPosition(20, 230);
         downloadButton.setWidth(collectionButton.getWidth());
-        decksButton.setPosition(240, 20);
+        decksButton.setPosition(220, 20);
         decksButton.setWidth(collectionButton.getWidth());
         collectionButton.setPosition(20, 100);
 
