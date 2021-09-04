@@ -60,7 +60,6 @@ public class MatchScreen implements Screen {
 
     @Override
     public void show() {
-        System.out.println("HERER");
         this.skin = assetManager.get("skins/computer_combat_skin.json");
         this.componentAtlas = assetManager.get("texture_packs/components.atlas");
 

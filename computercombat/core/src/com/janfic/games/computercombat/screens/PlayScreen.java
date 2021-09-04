@@ -101,7 +101,7 @@ public class PlayScreen implements Screen {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.pushScreen(new MatchScreen(game));
+                game.pushScreen(new QueueScreen(game));
             }
 
         });
