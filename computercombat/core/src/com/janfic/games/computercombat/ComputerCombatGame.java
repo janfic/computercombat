@@ -58,7 +58,7 @@ public class ComputerCombatGame extends Game {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(35f / 255f, 103f / 255f, 78f / 255f, 1);
+        Gdx.gl.glClearColor(36f / 255f, 82f / 255f, 59f / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         //batch.draw(img, 0, 0);
