@@ -96,6 +96,7 @@ public class Server {
                                     } else {
                                         String sub = services.createUser(userName, email, password);
                                         Profile p = new Profile(sub);
+                                        p.setName(userName);
                                         String string = services.getFileAsString("cards/default_collection.json");
                                         List<String> cards = json.fromJson(List.class, string);
                                         for (String card : cards) {
@@ -112,6 +113,7 @@ public class Server {
                                     String password = content.split(",")[1];
                                     r = services.userLogin(userName, password);
                                     Profile p = json.fromJson(Profile.class, r.getMessage());
+                                    p.setName(userName);
                                     profiles.put(p.getUID(), p);
                                 }
                                 break;
@@ -170,6 +172,23 @@ public class Server {
                                     Profile profile = json.fromJson(Profile.class, content);
                                     services.saveProfile(profile);
                                     r = new Message(Type.SUCCESS, "PROFILE UPDATED");
+                                }
+                                break;
+                                case CANCEL_QUEUE: {
+                                    String content = m.getMessage();
+                                    Profile p = profiles.get(content);
+                                    boolean isRemoved = false;
+                                    for (MatchClient matchClient : queue) {
+                                        if (matchClient.getProfile().getUID().equals(p.getUID())) {
+                                            queue.remove(matchClient);
+                                            r = new Message(Type.SUCCESS, "REMOVED FROM QUEUE");
+                                            isRemoved = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!isRemoved) {
+                                        r = new Message(Type.ERROR, "NOT IN QUEUE");
+                                    }
                                 }
                                 break;
                                 default:
@@ -289,7 +308,6 @@ public class Server {
                 } catch (IOException e) {
 
                 }
-
             }
         }
     }

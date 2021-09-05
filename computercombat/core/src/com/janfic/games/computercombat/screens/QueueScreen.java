@@ -43,8 +43,10 @@ public class QueueScreen implements Screen {
     DeckActor selectedDeck;
 
     Label queueStatus;
+    Table queueStatusTable;
+    TextButton cancelQueue;
 
-    boolean queued;
+    boolean queued, canceled;
     boolean isRanked, isLive;
 
     public QueueScreen(ComputerCombatGame game) {
@@ -75,6 +77,7 @@ public class QueueScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.getServerAPI().sendMessage(new Message(Type.CANCEL_QUEUE, game.getCurrentProfile().getUID()));
                 game.popScreen();
             }
         });
@@ -102,6 +105,14 @@ public class QueueScreen implements Screen {
         updateButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.getServerAPI().sendMessage(new Message(Type.CANCEL_QUEUE, game.getCurrentProfile().getUID()));
+                while (game.getServerAPI().hasMessage() == false) {
+                }
+
+                game.getServerAPI().readMessage();
+                queued = false;
+                canceled = false;
+
                 game.pushScreen(new DecksScreen(game));
             }
         });
@@ -185,17 +196,26 @@ public class QueueScreen implements Screen {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (!queued) {
+                if (!queued && selectedDeck != null) {
                     Gdx.app.postRunnable(queue);
                 }
             }
         });
 
-        Table queueStatusTable = new Table(skin);
+        queueStatusTable = new Table(skin);
         queueStatusTable.setBackground("border");
 
-        TextButton cancelQueue = new TextButton("Cancel", skin);
-        queueStatus = new Label("Not Queued", skin);
+        cancelQueue = new TextButton("Cancel", skin);
+
+        cancelQueue.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.getServerAPI().sendMessage(new Message(Type.CANCEL_QUEUE, game.getCurrentProfile().getUID()));
+                canceled = true;
+            }
+        });
+
+        queueStatus = new Label("Press Play to Queue", skin);
         queueStatus.setAlignment(Align.center);
 
         queueStatusTable.add(queueStatus).growX().row();
@@ -219,6 +239,16 @@ public class QueueScreen implements Screen {
         stage.draw();
         if (game.getServerAPI().hasMessage()) {
             Message m = game.getServerAPI().readMessage();
+            if (m.type == Type.QUEUE_POSITION) {
+                queueStatus.setText("Queued: Position " + m.getMessage() + " in queue");
+            }
+            if (m.type == Type.SUCCESS && canceled) {
+                queueStatusTable.clearChildren();
+                queueStatus.setText("Press Play to Queue");
+                queueStatusTable.add(queueStatus).growX().row();
+                canceled = false;
+                queued = false;
+            }
         }
     }
 
@@ -280,9 +310,12 @@ public class QueueScreen implements Screen {
 
             if (response.type == Type.QUEUE_POSITION) {
                 queued = true;
-                queueStatus.setText("Queued: " + response.getMessage() + " in queue");
+                queueStatus.setText("Queued: Position " + response.getMessage() + " in queue");
             }
 
+            queueStatusTable.clearChildren();
+            queueStatusTable.add(cancelQueue);
+            queueStatusTable.add(queueStatus).growX().row();
         }
     };
 

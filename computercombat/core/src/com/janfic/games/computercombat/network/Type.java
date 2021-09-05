@@ -25,6 +25,7 @@ public enum Type {
     JOIN_QUEUE_REQUEST,
     QUEUE_POSITION,
     FOUND_MATCH,
+    CANCEL_QUEUE,
     SUCCESS,
     READY,
     CARD_INFO_REQUEST,

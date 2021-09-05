@@ -22,7 +22,7 @@ public class ServerMatchRoom extends Thread {
 
                 try {
                     player1.sendMessage(message1);
-                    player1.sendMessage(message2);
+                    player2.sendMessage(message2);
                 } catch (IOException e) {
 
                 }
