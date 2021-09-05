@@ -11,14 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.actors.DeckActor;
 import com.janfic.games.computercombat.data.Deck;
+import com.janfic.games.computercombat.network.Message;
+import com.janfic.games.computercombat.network.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -38,6 +42,11 @@ public class QueueScreen implements Screen {
 
     DeckActor selectedDeck;
 
+    Label queueStatus;
+
+    boolean queued;
+    boolean isRanked, isLive;
+
     public QueueScreen(ComputerCombatGame game) {
         this.game = game;
         this.skin = game.getAssetManager().get(Assets.SKIN, Skin.class);
@@ -47,6 +56,8 @@ public class QueueScreen implements Screen {
     public void show() {
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
+        isRanked = false;
+        isLive = true;
 
         Gdx.input.setInputProcessor(stage);
 
@@ -122,6 +133,7 @@ public class QueueScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 rankedButton.setColor(Color.WHITE);
                 casualButton.setColor(Color.LIGHT_GRAY);
+                isRanked = true;
             }
         });
 
@@ -130,6 +142,7 @@ public class QueueScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 rankedButton.setColor(Color.LIGHT_GRAY);
                 casualButton.setColor(Color.WHITE);
+                isRanked = false;
             }
         });
 
@@ -151,6 +164,7 @@ public class QueueScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 raidMatchButton.setColor(Color.LIGHT_GRAY);
                 liveMatchButton.setColor(Color.WHITE);
+                isLive = true;
             }
         });
 
@@ -159,6 +173,7 @@ public class QueueScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 liveMatchButton.setColor(Color.LIGHT_GRAY);
                 raidMatchButton.setColor(Color.WHITE);
+                isLive = false;
             }
         });
 
@@ -167,14 +182,24 @@ public class QueueScreen implements Screen {
 
         TextButton playButton = new TextButton("Play", skin);
 
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!queued) {
+                    Gdx.app.postRunnable(queue);
+                }
+            }
+        });
+
         Table queueStatusTable = new Table(skin);
         queueStatusTable.setBackground("border");
 
         TextButton cancelQueue = new TextButton("Cancel", skin);
-        Label queueStatus = new Label("", skin);
+        queueStatus = new Label("Not Queued", skin);
+        queueStatus.setAlignment(Align.center);
 
-        queueStatusTable.add(cancelQueue).left();
-        queueStatusTable.add(queueStatus).growX();
+        queueStatusTable.add(queueStatus).growX().row();
+        //queueStatusTable.add(cancelQueue);
 
         playTable.add(toggleRankedButton).row();
         playTable.add(modeToggleButton).grow().row();
@@ -192,6 +217,9 @@ public class QueueScreen implements Screen {
     public void render(float f) {
         stage.act(f);
         stage.draw();
+        if (game.getServerAPI().hasMessage()) {
+            Message m = game.getServerAPI().readMessage();
+        }
     }
 
     @Override
@@ -232,4 +260,30 @@ public class QueueScreen implements Screen {
             decks.add(d).row();
         }
     }
+
+    private Runnable queue = new Runnable() {
+        @Override
+        public void run() {
+            Json json = new Json();
+            List<String> data = new ArrayList<>();
+            data.add(json.toJson(game.getCurrentProfile()));
+            data.add(json.toJson(selectedDeck.getDeck()));
+            data.add(json.toJson(new boolean[]{isRanked, isLive}));
+            Message requestQueue = new Message(Type.JOIN_QUEUE_REQUEST, json.toJson(data));
+
+            game.getServerAPI().sendMessage(requestQueue);
+
+            while (game.getServerAPI().hasMessage() == false) {
+            }
+
+            Message response = game.getServerAPI().readMessage();
+
+            if (response.type == Type.QUEUE_POSITION) {
+                queued = true;
+                queueStatus.setText("Queued: " + response.getMessage() + " in queue");
+            }
+
+        }
+    };
+
 }

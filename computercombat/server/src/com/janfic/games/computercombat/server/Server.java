@@ -8,14 +8,17 @@ import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Json;
+import com.janfic.games.computercombat.data.Deck;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +32,8 @@ public class Server {
 
     private ServerSocket socket;
     private final Map<Integer, Client> clients;
-    private final Map<Integer, Profile> profiles;
-    private final List<Client> queue;
+    private final Map<String, Profile> profiles;
+    private final List<MatchClient> queue;
     private final List<ServerMatchRoom> matches;
     private int MAX_MATCHES = 2;
     private Thread acceptConnections, maintainConnections, maintainQueue;
@@ -108,6 +111,8 @@ public class Server {
                                     String userName = content.split(",")[0];
                                     String password = content.split(",")[1];
                                     r = services.userLogin(userName, password);
+                                    Profile p = json.fromJson(Profile.class, r.getMessage());
+                                    profiles.put(p.getUID(), p);
                                 }
                                 break;
                                 case VERIFICATION_CODE: {
@@ -124,22 +129,23 @@ public class Server {
                                 case CONNECTION_REQUEST:
                                     r = new Message(Type.CONNECTION_ACCEPT, "ALREADY ACCEPTED");
                                     break;
-                                case JOIN_QUEUE_REQUEST:
-                                    if (!queue.contains(client)) {
-                                        queue.add(client);
-                                        r = new Message(Type.QUEUE_POSITION, "" + queue.size());
+                                case JOIN_QUEUE_REQUEST: {
+                                    String content = m.getMessage();
+                                    List<String> data = json.fromJson(List.class, content);
+                                    Profile profile = json.fromJson(Profile.class, data.get(0));
+                                    Deck deck = json.fromJson(Deck.class, data.get(1));
+                                    boolean[] matchRequest = json.fromJson(boolean[].class, data.get(2));
+                                    MatchClient matchClient = new MatchClient(profile, deck, client);
+                                    if (queue.contains(matchClient)) {
+                                        r = new Message(Type.QUEUE_POSITION, "" + (queue.indexOf(matchClient) + 1));
                                     } else {
-                                        r = new Message(Type.QUEUE_POSITION, "" + queue.indexOf(client));
+                                        queue.add(matchClient);
+                                        r = new Message(Type.QUEUE_POSITION, "" + (queue.indexOf(matchClient) + 1));
                                     }
-                                    break;
+                                }
+                                break;
                                 case PROFILE_INFO_REQUEST:
-                                    int uid;
-                                    try {
-                                        uid = Integer.parseInt(m.getMessage());
-                                    } catch (NumberFormatException e) {
-                                        r = new Message(Type.ERROR, "UNABLE TO PARSE MESSAGE AS UID");
-                                        break;
-                                    }
+                                    String uid = m.getMessage();
                                     if (profiles.containsKey(uid) == false) {
                                         r = new Message(Type.PROFILE_NOT_FOUND, "NO PROFILE MATCHES GIVEN UID");
                                     } else {
@@ -171,7 +177,11 @@ public class Server {
                                     break;
                             }
                             if (r != null) {
-                                client.sendMessage(r);
+                                try {
+                                    client.sendMessage(r);
+                                } catch (IOException e) {
+                                    clients.remove(client.getClientUID());
+                                }
                             }
                         }
                     }
@@ -189,19 +199,34 @@ public class Server {
             public void run() {
                 while (true) {
                     if (matches.size() < MAX_MATCHES && queue.size() > 1) {
-                        Client a = queue.get(0);
-                        Client b = queue.get(1);
+                        MatchClient a = queue.get(0);
+                        MatchClient b = queue.get(1);
                         ServerMatchRoom room = new ServerMatchRoom(a, b);
                         queue.remove(a);
                         queue.remove(b);
+                        room.start();
 
                         assert ((queue.contains(a) || queue.contains(b)) == false);
                     }
 
+                    List<MatchClient> removed = new ArrayList<>();
+
                     for (int i = 0; i < queue.size(); i++) {
-                        Client c = queue.get(i);
-                        c.sendMessage(new Message(Type.QUEUE_POSITION, "" + i));
+                        MatchClient c = queue.get(i);
+                        System.out.println(c.getSocket().isConnected());
+                        if (c.getSocket().isConnected()) {
+                            try {
+                                c.sendMessage(new Message(Type.QUEUE_POSITION, "" + (i + 1)));
+                            } catch (IOException e) {
+                                removed.add(c);
+                            }
+                        } else {
+                            c.getSocket().dispose();
+                            removed.add(c);
+                        }
                     }
+
+                    queue.removeAll(removed);
 
                     try {
                         Thread.sleep(2000);
@@ -259,7 +284,12 @@ public class Server {
                 }
                 clients.put(client.getClientUID(), client);
                 Message r = new Message(Type.CONNECTION_ACCEPT, "SERVER UID:" + client.getClientUID());
-                client.sendMessage(r);
+                try {
+                    client.sendMessage(r);
+                } catch (IOException e) {
+
+                }
+
             }
         }
     }

@@ -1,8 +1,9 @@
 package com.janfic.games.computercombat.server;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.net.ServerSocket;
+import com.janfic.games.computercombat.network.Message;
+import com.janfic.games.computercombat.network.Type;
+import java.io.IOException;
+import java.net.SocketException;
 
 /**
  *
@@ -10,14 +11,21 @@ import com.badlogic.gdx.net.ServerSocket;
  */
 public class ServerMatchRoom extends Thread {
 
-    private ServerSocket socket;
-    private Client player1, player2;
+    private final MatchClient player1, player2;
 
-    public ServerMatchRoom(Client player1, Client player2) {
+    public ServerMatchRoom(MatchClient player1, MatchClient player2) {
         super(new Runnable() {
             @Override
             public void run() {
+                Message message1 = new Message(Type.FOUND_MATCH, player2.getProfile().getName());
+                Message message2 = new Message(Type.FOUND_MATCH, player1.getProfile().getName());
 
+                try {
+                    player1.sendMessage(message1);
+                    player1.sendMessage(message2);
+                } catch (IOException e) {
+
+                }
             }
         });
         this.player1 = player1;

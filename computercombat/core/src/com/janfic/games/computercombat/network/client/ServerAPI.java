@@ -70,4 +70,8 @@ public class ServerAPI {
     public boolean isConnected() {
         return socket.isConnected();
     }
+
+    public Socket getSocket() {
+        return socket;
+    }
 }

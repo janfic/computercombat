@@ -73,7 +73,9 @@ public class ComputerCombatGame extends Game {
 
     @Override
     public void dispose() {
+        System.out.println("here");
         batch.dispose();
+        serverAPI.getSocket().dispose();
     }
 
     public static Stage makeNewStage(Camera cam) {

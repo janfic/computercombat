@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 
 /**
  *
@@ -22,6 +23,15 @@ public class Client {
         this.clientUID = (int) (Math.random() * Integer.MAX_VALUE);
     }
 
+    public Client(Client client) {
+        socket = client.socket;
+        this.clientUID = client.clientUID;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
     public int getClientUID() {
         return clientUID;
     }
@@ -34,16 +44,16 @@ public class Client {
         return socket.getRemoteAddress();
     }
 
-    public void sendMessage(Message message) {
-        try {
-            Json json = new Json();
-            String out = message.getMessage().length() > 50 ? message.getMessage().substring(0, 25) + " .... " + message.getMessage().substring(message.getMessage().length() - 25, message.getMessage().length() - 1) : message.getMessage();
-            System.out.println("[SERVER]: Sending Message to Client (" + this.clientUID + ") : { " + message.getType() + " : " + out + " }");
-            String m = json.toJson(message) + "\nEND";
-            socket.getOutputStream().write(m.getBytes());
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void sendMessage(Message message) throws IOException {
+        if (!socket.isConnected()) {
+            return;
         }
+        Json json = new Json();
+        String out = message.getMessage().length() > 50 ? message.getMessage().substring(0, 25) + " .... " + message.getMessage().substring(message.getMessage().length() - 25, message.getMessage().length() - 1) : message.getMessage();
+        System.out.println("[SERVER]: Sending Message to Client (" + this.clientUID + ") : { " + message.getType() + " : " + out + " }");
+        String m = json.toJson(message) + "\nEND";
+        socket.getOutputStream().write(m.getBytes());
+
     }
 
     public boolean hasMessage() {
