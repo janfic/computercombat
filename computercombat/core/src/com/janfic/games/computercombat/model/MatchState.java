@@ -14,12 +14,14 @@ public class MatchState {
     public final Map<Player, List<Card>> activeEntities;
     public final Map<Player, Computer> computers;
     public final Map<Player, SoftwareDeck> decks;
+    public final Player currentPlayerMove;
 
     public MatchState(Player player1, Player player2, Component[][] componentBoard, Map<Player, List<Card>> activeEntities, Map<Player, Computer> computers, Map<Player, SoftwareDeck> decks) {
         this.componentBoard = componentBoard;
         this.activeEntities = activeEntities;
         this.computers = computers;
         this.decks = decks;
+        this.currentPlayerMove = player1;
     }
 
     public Component[][] getComponentBoard() {
@@ -31,5 +33,11 @@ public class MatchState {
         this.activeEntities = Map.copyOf(state.activeEntities);
         this.computers = Map.copyOf(state.computers);
         this.decks = Map.copyOf(state.decks);
+        this.currentPlayerMove = state.currentPlayerMove;
+    }
+
+    public MatchState(MatchState state, Player filterInfo) {
+        this(state);
+        this.decks.remove(filterInfo);
     }
 }
