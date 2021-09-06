@@ -223,6 +223,7 @@ public class Server {
                         ServerMatchRoom room = new ServerMatchRoom(a, b);
                         queue.remove(a);
                         queue.remove(b);
+                        matches.add(room);
                         room.start();
 
                         assert ((queue.contains(a) || queue.contains(b)) == false);
@@ -232,7 +233,6 @@ public class Server {
 
                     for (int i = 0; i < queue.size(); i++) {
                         MatchClient c = queue.get(i);
-                        System.out.println(c.getSocket().isConnected());
                         if (c.getSocket().isConnected()) {
                             try {
                                 c.sendMessage(new Message(Type.QUEUE_POSITION, "" + (i + 1)));

@@ -5,19 +5,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.Board;
-import com.janfic.games.computercombat.actors.BorderedArea;
 import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.actors.ComponentActor;
 import com.janfic.games.computercombat.actors.ComputerActor;
@@ -26,6 +21,7 @@ import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.components.*;
+import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +45,8 @@ public class MatchScreen implements Screen {
     List<SoftwareActor> softwareActors;
     List<ComputerActor> computerActors;
     Map<Actor, Label> overlayActors;
+    
+    ClientMatch match;
 
     public MatchScreen(ComputerCombatGame game) {
         this.game = game;
