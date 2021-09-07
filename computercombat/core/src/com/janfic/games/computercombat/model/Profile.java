@@ -15,7 +15,7 @@ public class Profile implements Serializable {
 
     private String uid;
     private String name;
-    private Class<Player> activePlayer;
+    private Class<? extends Player> activePlayer;
     private List<Deck> decks;
     private Deck collection;
 
@@ -37,7 +37,7 @@ public class Profile implements Serializable {
         this.name = name;
     }
 
-    public void setActivePlayer(Class<Player> activePlayer) {
+    public void setActivePlayer(Class<? extends Player> activePlayer) {
         this.activePlayer = activePlayer;
     }
 
@@ -47,7 +47,7 @@ public class Profile implements Serializable {
 
     public Player getActivePlayer() {
         try {
-            Player p = activePlayer.getConstructor().newInstance(uid, buildDeck(), buildComputer());
+            Player p = activePlayer.getConstructor(String.class, SoftwareDeck.class, Computer.class).newInstance(uid, buildDeck(), buildComputer());
             return p;
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,9 +12,9 @@ import com.janfic.games.computercombat.model.SoftwareDeck;
  */
 public class HumanPlayer extends Player {
 
-    public int uid;
-
-    public HumanPlayer(int uid, SoftwareDeck activeDeck, Computer computer) {
+    public String uid;
+    
+    public HumanPlayer(String uid, SoftwareDeck activeDeck, Computer computer) {
         super(uid, activeDeck, computer);
         this.uid = uid;
     }

@@ -21,6 +21,7 @@ public enum Type {
     MATCH_STATE_DATA,
     MOVE_REQUEST,
     MOVE_ACCEPT,
+    MOVE_REJECT,
     NO_AUTH,
     JOIN_QUEUE_REQUEST,
     QUEUE_POSITION,

@@ -6,13 +6,13 @@ package com.janfic.games.computercombat.model;
  */
 public abstract class Player {
 
-    private final int uid;
+    private final String uid;
 
-    public Player(int uid, SoftwareDeck activeDeck, Computer computer) {
+    public Player(String uid, SoftwareDeck activeDeck, Computer computer) {
         this.uid = uid;
     }
 
-    public int getUid() {
+    public String getUID() {
         return uid;
     }
 
