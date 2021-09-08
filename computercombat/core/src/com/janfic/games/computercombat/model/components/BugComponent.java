@@ -15,5 +15,4 @@ public class BugComponent extends Component {
     public BugComponent() {
         super(null, null, 0, 0, "bug");
     }
-
 }

@@ -13,6 +13,9 @@ public abstract class Move implements Serializable {
 
     protected String playerUID;
 
+    public Move() {
+    }
+
     public Move(String playerUID) {
         this.playerUID = playerUID;
     }
@@ -23,9 +26,23 @@ public abstract class Move implements Serializable {
         return playerUID;
     }
 
+    @Override
+    public void write(Json json) {
+        json.writeType(this.getClass());
+        json.writeValue("playerUID", playerUID);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jv) {
+        this.playerUID = json.readValue("playerUID", String.class, jv);
+    }
+
     public static class MatchComponentsMove extends Move {
 
         private Component a, b;
+
+        public MatchComponentsMove() {
+        }
 
         public MatchComponentsMove(String playerUID, Component a, Component b) {
             super(playerUID);
@@ -44,6 +61,7 @@ public abstract class Move implements Serializable {
 
         @Override
         public void write(Json json) {
+            json.writeType(this.getClass());
             json.writeValue("playerUID", playerUID);
             json.writeValue("a", a);
             json.writeValue("b", b);
@@ -53,7 +71,7 @@ public abstract class Move implements Serializable {
         public void read(Json json, JsonValue jv) {
             this.playerUID = json.readValue("playerUID", String.class, jv);
             this.a = json.readValue("a", Component.class, jv);
-            this.a = json.readValue("b", Component.class, jv);
+            this.b = json.readValue("b", Component.class, jv);
         }
 
         public Component getA() {
@@ -68,17 +86,9 @@ public abstract class Move implements Serializable {
         public boolean equals(Object obj) {
             if (obj instanceof MatchComponentsMove) {
                 MatchComponentsMove o = (MatchComponentsMove) obj;
-                return o.hashCode() == this.hashCode();
+                return (o.a.equals(this.a) && o.b.equals(this.b)) || (o.a.equals(this.b) && o.b.equals(this.a));
             }
             return super.equals(obj);
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 53 * hash + Objects.hashCode(this.a);
-            hash = 53 * hash + Objects.hashCode(this.b);
-            return hash;
         }
     }
 

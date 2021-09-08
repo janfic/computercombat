@@ -1,26 +1,36 @@
 package com.janfic.games.computercombat.actors;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.janfic.games.computercombat.ComputerCombatGame;
+import com.janfic.games.computercombat.model.GameRules;
+import com.janfic.games.computercombat.model.Move;
+import com.janfic.games.computercombat.model.Move.MatchComponentsMove;
+import com.janfic.games.computercombat.network.client.ClientMatch;
 
 /**
  *
  * @author Jan Fic
  */
 public class Board extends BorderedGrid {
-
+    
     ComponentActor selected1, selected2;
-
+    
+    ClientMatch matchData;
+    ComputerCombatGame game;
+    
+    Move move;
+    
     Cell<ComponentActor>[][] board;
-
+    
     private final static int[][] neighbors = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     boolean canSelect = true;
-
+    
     Runnable removeActions = new Runnable() {
         @Override
         public void run() {
@@ -29,11 +39,12 @@ public class Board extends BorderedGrid {
             canSelect = true;
         }
     };
-
-    public Board(Skin skin) {
+    
+    public Board(Skin skin, ClientMatch matchData, ComputerCombatGame game) {
         super(skin);
         this.pad(7);
-
+        this.matchData = matchData;
+        this.game = game;
         this.defaults().space(2);
         this.selected1 = null;
         this.board = new Cell[8][8];
@@ -44,13 +55,24 @@ public class Board extends BorderedGrid {
             this.row();
         }
     }
-
+    
+    @Override
+    public void act(float delta) {
+        super.act(delta); //To change body of generated methods, choose Tools | Templates.
+        if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+            this.setTouchable(Touchable.disabled);
+        }
+        else {
+            this.setTouchable(Touchable.enabled);
+        }
+    }
+    
     public void addComponent(ComponentActor actor, int x, int y) {
         board[x][y].setActor(actor);
         actor.addListener(new ClickListener() {
-
+            
             float dragStartX = -10, dragStartY = -10;
-
+            
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 super.enter(event, x, y, pointer, fromActor);
@@ -58,7 +80,7 @@ public class Board extends BorderedGrid {
                     actor.addAction(Actions.scaleTo(1.2f, 1.2f, 0.5f));
                 }
             }
-
+            
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 super.exit(event, x, y, pointer, toActor);
@@ -67,34 +89,34 @@ public class Board extends BorderedGrid {
                     actor.addAction(Actions.scaleTo(1, 1, 0.25f));
                 }
             }
-
+            
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 dragStartX = x;
                 dragStartY = y;
                 return true;
             }
-
+            
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 if (!canSelect) {
                     return;
                 }
-
+                
                 selected1 = null;
                 selected2 = null;
-
+                
                 int ax = actor.getComponent().getX();
                 int ay = actor.getComponent().getY();
-
+                
                 if (dragStartX > 0 && dragStartY > 0) {
                     float deltaX = dragStartX - x;
                     float deltaY = dragStartY - y;
                     if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
-
+                        
                         int bx = 0;
                         int by = 0;
-
+                        
                         if (deltaX < -10) {
                             bx++;
                         } else if (deltaX > 10) {
@@ -104,42 +126,44 @@ public class Board extends BorderedGrid {
                         } else if (deltaY > 10) {
                             by++;
                         }
-
+                        
                         if (ax + bx >= 0 && ax + bx < 8 && ay + by >= 0 && ay + by < 8) {
                             ComponentActor other = board[ax + bx][ay + by].getActor();
-
+                            
                             float s1x = actor.getX();
                             float s1y = actor.getY();
                             float s2x = other.getX();
                             float s2y = other.getY();
-
+                            
                             canSelect = false;
                             dragStartX = -10;
                             dragStartY = -10;
                             other.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
                             actor.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
                         }
-
+                        
                     }
                 }
             }
-
+            
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
                 dragStartX = -10;
                 dragStartY = -10;
-
+                
                 if (!canSelect) {
                     return;
                 }
 
+                //Select 1st Component
                 if (selected1 == null) {
                     selected1 = actor;
                     selected1.addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
                     return;
                 }
 
+                //Selected already selected Component
                 if (actor == selected1) {
                     selected1.clearActions();
                     selected1.addAction(Actions.scaleTo(1, 1, 0.25f));
@@ -147,11 +171,13 @@ public class Board extends BorderedGrid {
                     return;
                 }
 
+                //Selected New Actor
                 int ax = actor.getComponent().getX();
                 int ay = actor.getComponent().getY();
                 int sx = selected1.getComponent().getX();
                 int sy = selected1.getComponent().getY();
 
+                //Check if can switch
                 if (isNeighbor(ax, ay, sx, sy) && canSelect) {
                     //switch anim
                     canSelect = false;
@@ -163,9 +189,17 @@ public class Board extends BorderedGrid {
                     float s2y = selected2.getY();
                     selected2.clearActions();
                     selected1.clearActions();
-
-                    selected2.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f)));
-                    selected1.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
+                    
+                    Move move = new MatchComponentsMove(game.getCurrentProfile().getUID(), selected1.getComponent(), selected2.getComponent());
+                    boolean isLegalMove = GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move);
+                    if (!isLegalMove) {
+                        selected2.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f)));
+                        selected1.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
+                    } else {
+                        selected2.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f)));
+                        selected1.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f)));
+                        Board.this.move = move;
+                    }
                 } else {
                     if (!canSelect) {
                         return;
@@ -179,7 +213,23 @@ public class Board extends BorderedGrid {
             }
         });
     }
-
+    
+    public boolean attemptedMove() {
+        return move != null;
+    }
+    
+    public Move getMove() {
+        return move;
+    }
+    
+    public void consumeMove() {
+        this.move = null;
+    }
+    
+    public void updateBoard(ClientMatch data) {
+        
+    }
+    
     private static boolean isNeighbor(int x1, int y1, int x2, int y2) {
         for (int i = 0; i < neighbors.length; i++) {
             if (x1 - x2 == neighbors[i][0] && y1 - y2 == neighbors[i][1]) {

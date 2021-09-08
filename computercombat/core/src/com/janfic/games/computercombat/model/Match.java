@@ -1,6 +1,6 @@
 package com.janfic.games.computercombat.model;
 
-import com.janfic.games.computercombat.model.components.*;
+import com.janfic.games.computercombat.model.GameRules.MoveResult;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,9 +20,9 @@ public class Match {
 
         this.player1 = player1;
         this.player2 = player2;
-        Map<Player, List<Card>> activeEntities = new HashMap<>();
-        Map<Player, Computer> computers = new HashMap<>();
-        Map<Player, SoftwareDeck> decks = new HashMap<>();
+        Map<Profile, List<Card>> activeEntities = new HashMap<>();
+        Map<Profile, Computer> computers = new HashMap<>();
+        Map<Profile, SoftwareDeck> decks = new HashMap<>();
 
         //activeEntities.put(player1.getActivePlayer(), new ArrayList<>());
         //activeEntities.put(player2.getActivePlayer(), new ArrayList<>());
@@ -31,8 +31,7 @@ public class Match {
 //        decks.put(player1.getActivePlayer(), new ArrayList<>());
 //        decks.put(player2.getActivePlayer(), new ArrayList<>());
         try {
-            System.out.println(player1.getActivePlayer());
-            this.currentState = new MatchState(player1.getActivePlayer(), player2.getActivePlayer(), makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
+            this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
         } catch (Exception e) {
             System.err.println("Something went wrong when creating the initial match state: ");
             e.printStackTrace();
@@ -78,12 +77,12 @@ public class Match {
         return currentState;
     }
 
-    public void makeMove(Move move) {
+    public List<MoveResult> makeMove(Move move) {
         List<Move> availableMoves = GameRules.getAvailableMoves(currentState);
         if (availableMoves.contains(move)) {
-
+            return GameRules.makeMove(currentState, move);
         } else {
-
+            return null;
         }
     }
 

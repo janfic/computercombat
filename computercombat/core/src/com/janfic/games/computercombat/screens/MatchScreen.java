@@ -22,6 +22,7 @@ import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.Move;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
@@ -45,6 +46,8 @@ public class MatchScreen implements Screen {
     TextureAtlas componentAtlas;
 
     ComputerCombatGame game;
+
+    Board board;
 
     List<SoftwareActor> softwareActors;
     List<ComputerActor> computerActors;
@@ -83,13 +86,15 @@ public class MatchScreen implements Screen {
         Message matchStateData = game.getServerAPI().readMessage();
         Json json = new Json();
 
+        System.out.println(matchStateData.getMessage());
+
         if (matchStateData.type == Type.MATCH_STATE_DATA) {
             MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
             this.match.setCurrentState(state);
         }
 
         Component[][] componentBoard = this.match.getCurrentState().componentBoard;
-        Board board = new Board(skin);
+        board = new Board(skin, match, game);
         for (int x = 0; x < componentBoard.length; x++) {
             for (int y = 0; y < componentBoard[x].length; y++) {
 
@@ -148,6 +153,15 @@ public class MatchScreen implements Screen {
         mainStage.draw();
         statsStage.act(f);
         statsStage.draw();
+        if (board.attemptedMove() && match.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+            Move move = board.getMove();
+            Json json = new Json();
+            game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
+            board.consumeMove();
+        }
+        if (game.getServerAPI().hasMessage()) {
+            System.out.println(game.getServerAPI().readMessage());
+        }
     }
 
     @Override

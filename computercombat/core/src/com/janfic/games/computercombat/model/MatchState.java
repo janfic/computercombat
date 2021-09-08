@@ -12,11 +12,11 @@ import java.util.Map;
 public class MatchState {
 
     public final Component[][] componentBoard;
-    public final Map<Player, List<Card>> activeEntities;
-    public final Map<Player, Computer> computers;
-    public final Map<Player, SoftwareDeck> decks;
-    public final List<Player> players;
-    public final Player currentPlayerMove;
+    public final Map<Profile, List<Card>> activeEntities;
+    public final Map<Profile, Computer> computers;
+    public final Map<Profile, SoftwareDeck> decks;
+    public final List<Profile> players;
+    public final Profile currentPlayerMove;
 
     public MatchState() {
         this.componentBoard = null;
@@ -27,7 +27,7 @@ public class MatchState {
         this.currentPlayerMove = null;
     }
 
-    public MatchState(Player player1, Player player2, Component[][] componentBoard, Map<Player, List<Card>> activeEntities, Map<Player, Computer> computers, Map<Player, SoftwareDeck> decks) {
+    public MatchState(Profile player1, Profile player2, Component[][] componentBoard, Map<Profile, List<Card>> activeEntities, Map<Profile, Computer> computers, Map<Profile, SoftwareDeck> decks) {
         this.componentBoard = componentBoard;
         this.activeEntities = activeEntities;
         this.computers = computers;
@@ -56,26 +56,26 @@ public class MatchState {
             }
         }
 
-        for (Player key : state.activeEntities.keySet()) {
+        for (Profile key : state.activeEntities.keySet()) {
             this.activeEntities.put(key, state.activeEntities.get(key));
         }
 
-        for (Player key : state.computers.keySet()) {
+        for (Profile key : state.computers.keySet()) {
             this.computers.put(key, state.computers.get(key));
         }
 
-        for (Player key : state.decks.keySet()) {
+        for (Profile key : state.decks.keySet()) {
             this.decks.put(key, state.decks.get(key));
         }
 
-        for (Player player : state.players) {
+        for (Profile player : state.players) {
             this.players.add(player);
         }
     }
 
     public MatchState(MatchState state, String playerUID) {
         this(state);
-        for (Player player : players) {
+        for (Profile player : players) {
             this.decks.remove(player);
         }
     }

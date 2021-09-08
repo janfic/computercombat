@@ -48,8 +48,10 @@ public class Profile implements Serializable {
     }
 
     public Player getActivePlayer() {
+        System.out.println(uid);
         try {
             Player p = (Player) Class.forName(activePlayer).getConstructor(String.class, SoftwareDeck.class, Computer.class).newInstance(uid, buildDeck(), buildComputer());
+            System.out.println(p.getUID());
             return p;
         } catch (Exception e) {
             e.printStackTrace();

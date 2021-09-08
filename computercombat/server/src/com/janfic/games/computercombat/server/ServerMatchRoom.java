@@ -1,12 +1,15 @@
 package com.janfic.games.computercombat.server;
 
 import com.badlogic.gdx.utils.Json;
-import com.janfic.games.computercombat.model.GameRules;
+import com.janfic.games.computercombat.model.GameRules.MoveResult;
 import com.janfic.games.computercombat.model.Match;
 import com.janfic.games.computercombat.model.Move;
+import com.janfic.games.computercombat.model.Move.MatchComponentsMove;
+import com.janfic.games.computercombat.model.Move.UseAbilityMove;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -34,8 +37,6 @@ public class ServerMatchRoom extends Thread {
                     Message response1 = player1.readMessage();
                     Message response2 = player2.readMessage();
 
-                    System.out.println(response1);
-                    System.out.println(response2);
                     if (response1.type == Type.CANCEL_QUEUE) {
                         Message error = new Message(Type.ERROR, "A PLAYER WASNT READY");
                         player1.sendMessage(new Message(Type.SUCCESS, "LEFT QUEUE"));
@@ -59,6 +60,7 @@ public class ServerMatchRoom extends Thread {
                     while (true) {
                         String currentPlayersMove = match.whosMove();
                         MatchClient currentPlayer = player1.getProfile().getUID().equals(currentPlayersMove) ? player1 : player2;
+                        MatchClient otherPlayer = player1.getProfile().getUID().equals(currentPlayersMove) ? player2 : player1;
 
                         while (currentPlayer.hasMessage() == false) {
                         }
@@ -67,11 +69,19 @@ public class ServerMatchRoom extends Thread {
 
                         if (moveMessage.type == Type.MOVE_REQUEST) {
                             String content = moveMessage.getMessage();
-                            Move move = json.fromJson(Move.class, content);
+                            Move move;
+                            try {
+                                move = json.fromJson(MatchComponentsMove.class, content);
+                            } catch (Exception e) {
+                                move = json.fromJson(UseAbilityMove.class, content);
+                            }
 
                             boolean isValid = match.isValidMove(move);
                             if (isValid) {
-
+                                List<MoveResult> results = match.makeMove(move);
+                                Message response = new Message(Type.MOVE_ACCEPT, json.toJson(results, List.class));
+                                currentPlayer.sendMessage(response);
+                                otherPlayer.sendMessage(response);
                             } else {
                                 Message notValidMessage = new Message(Type.MOVE_REJECT, "NOT VALID MOVE");
                                 currentPlayer.sendMessage(notValidMessage);
