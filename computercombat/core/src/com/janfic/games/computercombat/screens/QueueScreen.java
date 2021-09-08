@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
@@ -21,6 +22,7 @@ import com.janfic.games.computercombat.actors.DeckActor;
 import com.janfic.games.computercombat.data.Deck;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
+import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +80,9 @@ public class QueueScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.getServerAPI().sendMessage(new Message(Type.CANCEL_QUEUE, game.getCurrentProfile().getUID()));
+                while (game.getServerAPI().hasMessage() == false) {
+                }
+                game.getServerAPI().readMessage();
                 game.popScreen();
             }
         });
@@ -248,6 +253,44 @@ public class QueueScreen implements Screen {
                 queueStatusTable.add(queueStatus).growX().row();
                 canceled = false;
                 queued = false;
+            }
+            if (m.type == Type.FOUND_MATCH && queued) {
+                String content = m.getMessage();
+                Window window = new Window("Found Match!", skin);
+                Table t = new Table(skin);
+                Label label = new Label("Accept Match from " + content + "?", skin);
+                label.setAlignment(Align.center);
+                label.setWrap(true);
+                TextButton accept = new TextButton("Ready", skin);
+                TextButton deny = new TextButton("Cancel", skin);
+                t.add(label).grow().row();
+                t.add(accept).growX().row();
+                t.add(deny).growX().row();
+                window.add(t).grow();
+                stage.addActor(window);
+
+                accept.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        window.remove();
+                        game.getServerAPI().sendMessage(new Message(Type.READY, "READY"));
+                        ClientMatch clientMatch = new ClientMatch(content);
+                        queued = false;
+                        game.pushScreen(new MatchScreen(game, clientMatch));
+                    }
+                });
+
+                deny.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        window.remove();
+                        game.getServerAPI().sendMessage(new Message(Type.CANCEL_QUEUE, "CANCEL"));
+                        canceled = true;
+                    }
+                });
+
+                window.setSize(stage.getWidth() / 2, stage.getHeight() / 2);
+                window.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
             }
         }
     }

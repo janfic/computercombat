@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.data.Deck;
+import com.janfic.games.computercombat.model.players.HumanPlayer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class Profile implements Serializable {
 
     private String uid;
     private String name;
-    private Class<? extends Player> activePlayer;
+    private String activePlayer;
     private List<Deck> decks;
     private Deck collection;
 
@@ -27,6 +28,7 @@ public class Profile implements Serializable {
         this.uid = uid;
         this.decks = new ArrayList<>();
         this.collection = new Deck("Collection");
+        this.activePlayer = HumanPlayer.class.getName();
     }
 
     public String getName() {
@@ -37,7 +39,7 @@ public class Profile implements Serializable {
         this.name = name;
     }
 
-    public void setActivePlayer(Class<? extends Player> activePlayer) {
+    public void setActivePlayer(String activePlayer) {
         this.activePlayer = activePlayer;
     }
 
@@ -47,7 +49,7 @@ public class Profile implements Serializable {
 
     public Player getActivePlayer() {
         try {
-            Player p = activePlayer.getConstructor(String.class, SoftwareDeck.class, Computer.class).newInstance(uid, buildDeck(), buildComputer());
+            Player p = (Player) Class.forName(activePlayer).getConstructor(String.class, SoftwareDeck.class, Computer.class).newInstance(uid, buildDeck(), buildComputer());
             return p;
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,6 +79,7 @@ public class Profile implements Serializable {
         json.writeValue("name", this.name);
         json.writeValue("decks", this.decks);
         json.writeValue("collection", this.collection);
+        json.writeValue("activePlayer", this.activePlayer);
     }
 
     @Override
@@ -85,5 +88,7 @@ public class Profile implements Serializable {
         this.name = json.readValue("name", String.class, jv);
         this.decks = json.readValue("decks", List.class, jv);
         this.collection = json.readValue("collection", Deck.class, jv);
+        this.activePlayer = json.readValue("activePlayer", String.class, jv);
+        System.out.println(activePlayer);
     }
 }

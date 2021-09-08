@@ -13,7 +13,7 @@ import com.janfic.games.computercombat.model.SoftwareDeck;
 public class HumanPlayer extends Player {
 
     public String uid;
-    
+
     public HumanPlayer(String uid, SoftwareDeck activeDeck, Computer computer) {
         super(uid, activeDeck, computer);
         this.uid = uid;
@@ -26,6 +26,10 @@ public class HumanPlayer extends Player {
     @Override
     public Move getMove(MatchState state) {
         return null;
+    }
+
+    public HumanPlayer() {
+        super(null, null, null);
     }
 
 }

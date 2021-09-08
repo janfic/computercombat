@@ -10,13 +10,15 @@ public abstract class Component {
 
     private final String name;
     private final String colorHex;
+    private final String textureName;
     private int x, y;
 
-    public Component(String name, String hex, int x, int y) {
+    public Component(String name, String hex, int x, int y, String textureName) {
         this.name = name;
         this.colorHex = hex;
         this.x = x;
         this.y = y;
+        this.textureName = textureName;
     }
 
     public String getName() {
@@ -25,6 +27,10 @@ public abstract class Component {
 
     public String getColorHex() {
         return colorHex;
+    }
+
+    public String getTextureName() {
+        return textureName;
     }
 
     public int getX() {

@@ -9,6 +9,11 @@ import com.janfic.games.computercombat.model.Component;
 public class NetworkComponent extends Component {
 
     public NetworkComponent(int x, int y) {
-        super("Network Component", "", x, y);
+        super("Network Component", "", x, y, "network");
     }
+
+    public NetworkComponent() {
+        super(null, null, 0, 0, "network");
+    }
+
 }

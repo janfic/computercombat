@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.Board;
@@ -19,8 +20,11 @@ import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.OverlayTextLabelArea;
 import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
+import com.janfic.games.computercombat.model.Component;
+import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.model.components.*;
+import com.janfic.games.computercombat.network.Message;
+import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,15 +49,16 @@ public class MatchScreen implements Screen {
     List<SoftwareActor> softwareActors;
     List<ComputerActor> computerActors;
     Map<Actor, Label> overlayActors;
-    
+
     ClientMatch match;
 
-    public MatchScreen(ComputerCombatGame game) {
+    public MatchScreen(ComputerCombatGame game, ClientMatch match) {
         this.game = game;
         this.assetManager = game.getAssetManager();
         this.softwareActors = new ArrayList<>();
         this.computerActors = new ArrayList<>();
         this.overlayActors = new HashMap<>();
+        this.match = match;
     }
 
     @Override
@@ -73,30 +78,25 @@ public class MatchScreen implements Screen {
         //table.defaults().grow().space(5);
         //table.debugAll();
 
+        while (game.getServerAPI().hasMessage() == false) {
+        }
+        Message matchStateData = game.getServerAPI().readMessage();
+        Json json = new Json();
+
+        if (matchStateData.type == Type.MATCH_STATE_DATA) {
+            MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
+            this.match.setCurrentState(state);
+        }
+
+        Component[][] componentBoard = this.match.getCurrentState().componentBoard;
         Board board = new Board(skin);
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                board.addComponent(new ComponentActor(this.componentAtlas, new BugComponent(x, y)), x, y);
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+
+                board.addComponent(new ComponentActor(this.componentAtlas, componentBoard[x][y]), x, y);
             }
         }
 
-        Software fireWall = new Software("Fire Wall", "computer_pack", "firewall", 1, 3, 5, 1, 1, new Class[]{CPUComponent.class}, 3, null);
-        Software virus = new Software("Virus", "computer_pack", "virus", 1, 3, 5, 1, 1, new Class[]{CPUComponent.class}, 3, null);
-        Software disk_defrag = new Software("Disk Defragmenter", "computer_pack", "disk_defragmenter", 1, 3, 5, 1, 1, new Class[]{StorageComponent.class, RAMComponent.class}, 3, null);
-        Software worm = new Software("Worm", "computer_pack", "worm", 1, 3, 5, 1, 1, new Class[]{PowerComponent.class, CPUComponent.class, NetworkComponent.class}, 3, null);
-        Software bubble = new Software("Bubble Sort", "computer_pack", "bubble_sort", 1, 3, 5, 1, 1, new Class[]{CPUComponent.class, RAMComponent.class}, 3, null);
-        Software rng = new Software("Random Number Generator", "computer_pack", "rng", 1, 3, 5, 1, 1, new Class[]{CPUComponent.class}, 3, null);
-        Software web_search = new Software("Web Search", "computer_pack", "web_search", 1, 3, 5, 1, 1, new Class[]{NetworkComponent.class, RAMComponent.class}, 3, null);
-        Software directory = new Software("Directory", "computer_pack", "directory", 1, 3, 5, 1, 1, new Class[]{StorageComponent.class}, 3, null);
-
-        softwareActors.add(new SoftwareActor(skin, false, fireWall, game));
-        softwareActors.add(new SoftwareActor(skin, false, virus, game));
-        softwareActors.add(new SoftwareActor(skin, false, disk_defrag, game));
-        softwareActors.add(new SoftwareActor(skin, false, worm, game));
-        softwareActors.add(new SoftwareActor(skin, true, bubble, game));
-        softwareActors.add(new SoftwareActor(skin, true, rng, game));
-        softwareActors.add(new SoftwareActor(skin, true, web_search, game));
-        softwareActors.add(new SoftwareActor(skin, true, directory, game));
         computerActors.add(new ComputerActor(skin));
         computerActors.add(new ComputerActor(skin));
 
@@ -104,20 +104,12 @@ public class MatchScreen implements Screen {
         leftPanel.pad(7);
         leftPanel.top();
         leftPanel.defaults().space(2);
-        leftPanel.add(softwareActors.get(0)).row();
-        leftPanel.add(softwareActors.get(1)).row();
-        leftPanel.add(softwareActors.get(2)).row();
-        leftPanel.add(softwareActors.get(3)).row();
         leftPanel.add(computerActors.get(0)).expandY().growX().bottom();
 
         BorderedGrid rightPanel = new BorderedGrid(skin);
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
-        rightPanel.add(softwareActors.get(4)).row();
-        rightPanel.add(softwareActors.get(5)).row();
-        rightPanel.add(softwareActors.get(6)).row();
-        rightPanel.add(softwareActors.get(7)).row();
         rightPanel.add(computerActors.get(1)).expandY().growX().bottom();
 
         Panel buttons = new Panel(skin);
@@ -125,6 +117,7 @@ public class MatchScreen implements Screen {
         BorderedGrid infoPanel = new BorderedGrid(skin);
         infoPanel.setSize(220, 43);
         Panel info = new Panel(skin);
+        info.add(new Label(game.getCurrentProfile().getName() + " vs. " + match.getOpponentName(), skin));
         infoPanel.add(info).grow();
 
         table.setFillParent(true);

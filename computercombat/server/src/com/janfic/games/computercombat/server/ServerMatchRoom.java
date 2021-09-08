@@ -28,18 +28,24 @@ public class ServerMatchRoom extends Thread {
                     player1.sendMessage(message1);
                     player2.sendMessage(message2);
 
-                    while (player1.hasMessage() == false) {
-                    }
-                    while (player2.hasMessage() == false) {
+                    while (player1.hasMessage() == false || player2.hasMessage() == false) {
                     }
 
                     Message response1 = player1.readMessage();
                     Message response2 = player2.readMessage();
 
-                    if (response1.type != Type.READY || response2.type != Type.READY) {
+                    System.out.println(response1);
+                    System.out.println(response2);
+                    if (response1.type == Type.CANCEL_QUEUE) {
                         Message error = new Message(Type.ERROR, "A PLAYER WASNT READY");
-                        player1.sendMessage(error);
+                        player1.sendMessage(new Message(Type.SUCCESS, "LEFT QUEUE"));
                         player2.sendMessage(error);
+                    }
+
+                    if (response2.type == Type.CANCEL_QUEUE) {
+                        Message error = new Message(Type.ERROR, "A PLAYER WASNT READY");
+                        player2.sendMessage(new Message(Type.SUCCESS, "LEFT QUEUE"));
+                        player1.sendMessage(error);
                     }
 
                     Json json = new Json();
@@ -65,7 +71,7 @@ public class ServerMatchRoom extends Thread {
 
                             boolean isValid = match.isValidMove(move);
                             if (isValid) {
-                                
+
                             } else {
                                 Message notValidMessage = new Message(Type.MOVE_REJECT, "NOT VALID MOVE");
                                 currentPlayer.sendMessage(notValidMessage);

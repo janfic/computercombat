@@ -202,6 +202,7 @@ public class Server {
                                     clients.remove(client.getClientUID());
                                 }
                             }
+                            System.out.println(r);
                         }
                     }
 
@@ -223,6 +224,8 @@ public class Server {
                         ServerMatchRoom room = new ServerMatchRoom(a, b);
                         queue.remove(a);
                         queue.remove(b);
+                        clients.remove(a.getClientUID());
+                        clients.remove(b.getClientUID());
                         matches.add(room);
                         room.start();
 

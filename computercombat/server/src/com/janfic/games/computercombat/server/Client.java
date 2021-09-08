@@ -24,7 +24,7 @@ public class Client {
     }
 
     public Client(Client client) {
-        socket = client.socket;
+        this(client.socket);
         this.clientUID = client.clientUID;
     }
 

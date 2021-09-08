@@ -31,6 +31,7 @@ public class Match {
 //        decks.put(player1.getActivePlayer(), new ArrayList<>());
 //        decks.put(player2.getActivePlayer(), new ArrayList<>());
         try {
+            System.out.println(player1.getActivePlayer());
             this.currentState = new MatchState(player1.getActivePlayer(), player2.getActivePlayer(), makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
         } catch (Exception e) {
             System.err.println("Something went wrong when creating the initial match state: ");
