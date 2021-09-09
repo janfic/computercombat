@@ -56,6 +56,9 @@ public abstract class Move implements Serializable {
             Component[][] board = copy.getComponentBoard();
             board[b.getX()][b.getY()] = a;
             board[a.getX()][a.getY()] = b;
+            int oldBX = b.getX(), oldBY = b.getY();
+            b.setPosition(a.getX(), a.getY());
+            a.setPosition(oldBX, oldBY);
             return copy;
         }
 

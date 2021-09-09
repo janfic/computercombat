@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.janfic.games.computercombat.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -222,7 +217,6 @@ public class LoginScreen implements Screen {
                     case PROFILE_INFO:
                         Json json = new Json();
                         Profile profile = json.fromJson(Profile.class, message.getMessage());
-                        profile.setActivePlayer(HumanPlayer.class.getName());
                         game.setCurrentProfile(profile);
                         game.pushScreen(new PlayScreen(game));
                         break;

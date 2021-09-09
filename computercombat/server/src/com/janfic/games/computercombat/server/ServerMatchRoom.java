@@ -64,8 +64,8 @@ public class ServerMatchRoom extends Thread {
 
                         while (currentPlayer.hasMessage() == false) {
                         }
-
                         Message moveMessage = currentPlayer.readMessage();
+                        System.out.println("currentPlayer made move: " + moveMessage);
 
                         if (moveMessage.type == Type.MOVE_REQUEST) {
                             String content = moveMessage.getMessage();
@@ -77,11 +77,13 @@ public class ServerMatchRoom extends Thread {
                             }
 
                             boolean isValid = match.isValidMove(move);
+                            System.out.println("isValid: " + isValid);
                             if (isValid) {
                                 List<MoveResult> results = match.makeMove(move);
                                 Message response = new Message(Type.MOVE_ACCEPT, json.toJson(results, List.class));
                                 currentPlayer.sendMessage(response);
                                 otherPlayer.sendMessage(response);
+                                System.out.println(response);
                             } else {
                                 Message notValidMessage = new Message(Type.MOVE_REJECT, "NOT VALID MOVE");
                                 currentPlayer.sendMessage(notValidMessage);

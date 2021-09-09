@@ -21,6 +21,7 @@ import com.janfic.games.computercombat.actors.OverlayTextLabelArea;
 import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
+import com.janfic.games.computercombat.model.GameRules.MoveResult;
 import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.Move;
 import com.janfic.games.computercombat.model.Software;
@@ -86,8 +87,6 @@ public class MatchScreen implements Screen {
         Message matchStateData = game.getServerAPI().readMessage();
         Json json = new Json();
 
-        System.out.println(matchStateData.getMessage());
-
         if (matchStateData.type == Type.MATCH_STATE_DATA) {
             MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
             this.match.setCurrentState(state);
@@ -97,7 +96,6 @@ public class MatchScreen implements Screen {
         board = new Board(skin, match, game);
         for (int x = 0; x < componentBoard.length; x++) {
             for (int y = 0; y < componentBoard[x].length; y++) {
-
                 board.addComponent(new ComponentActor(this.componentAtlas, componentBoard[x][y]), x, y);
             }
         }
@@ -160,7 +158,12 @@ public class MatchScreen implements Screen {
             board.consumeMove();
         }
         if (game.getServerAPI().hasMessage()) {
-            System.out.println(game.getServerAPI().readMessage());
+            Message response = game.getServerAPI().readMessage();
+            if (response.type == Type.MOVE_ACCEPT) {
+                Json json = new Json();
+                List<MoveResult> results = json.fromJson(List.class, response.getMessage());
+                board.animate(results);
+            }
         }
     }
 

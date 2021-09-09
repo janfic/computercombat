@@ -1,6 +1,8 @@
 package com.janfic.games.computercombat.model;
 
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Json.Serializable;
+import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.Move.MatchComponentsMove;
 import com.janfic.games.computercombat.model.components.BugComponent;
 import com.janfic.games.computercombat.model.components.CPUComponent;
@@ -9,7 +11,6 @@ import com.janfic.games.computercombat.model.components.PowerComponent;
 import com.janfic.games.computercombat.model.components.RAMComponent;
 import com.janfic.games.computercombat.model.components.StorageComponent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -80,8 +81,8 @@ public class GameRules {
         int[][] marks = new int[8][8];
         int currentMark = 1;
         Map<Integer, List<Component>> r = new HashMap<>();
-        for (int x = 0; x < components.length - 2; x++) {
-            for (int y = 0; y < components[x].length - 2; y++) {
+        for (int x = 0; x < components.length; x++) {
+            for (int y = 0; y < components[x].length; y++) {
                 if (marks[x][y] != 0) {
                     continue;
                 }
@@ -227,17 +228,23 @@ public class GameRules {
     }
 
     public static List<MoveResult> makeMove(MatchState state, Move move) {
+        Json json = new Json();
         List<MoveResult> results = new ArrayList<>();
         List<Move> validMoves = getAvailableMoves(state);
-//        if (!validMoves.contains(move)) {
-//            return results;
-//        }
+        if (!validMoves.contains(move)) {
+            return results;
+        }
         if (move instanceof MatchComponentsMove) {
+            System.out.println("IN IF");
             MatchComponentsMove matchMove = (MatchComponentsMove) move;
             MatchState currentState = matchMove.doMove(state);
 
-            while (areCurrentComponentMatches(currentState)) {
-                Map<Integer, List<Component>> collect = getCurrentComponentMatches(state.getComponentBoard());
+            MatchState oldState = currentState, newState;
+
+            System.out.println(areCurrentComponentMatches(oldState));
+            System.out.println(json.prettyPrint(getCurrentComponentMatches(oldState.getComponentBoard())));
+            while (areCurrentComponentMatches(oldState)) {
+                Map<Integer, List<Component>> collect = getCurrentComponentMatches(oldState.getComponentBoard());
                 List<Component> newComponents = new ArrayList<>();
                 List<Integer> marks = new ArrayList<>(collect.keySet());
                 List<Class<? extends Component>> componentTypes = new ArrayList<>();
@@ -245,6 +252,8 @@ public class GameRules {
                     int frequency = componentFrequencies.get(type);
                     componentTypes.addAll(Collections.nCopies(frequency, type));
                 }
+                newState = new MatchState(oldState);
+
                 for (Integer mark : marks) {
                     List<Component> components = collect.get(mark);
                     for (Component component : components) {
@@ -252,20 +261,18 @@ public class GameRules {
                             int i = (int) (Math.random() * componentTypes.size());
                             Component newComponent = componentTypes.get(i).getConstructor(int.class, int.class).newInstance(component.getX(), component.getY());
                             newComponents.add(newComponent);
+                            newState.componentBoard[component.getX()][component.getY()] = newComponent;
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
                 }
-                MoveResult m = new MoveResult(move, state, currentState, collect, newComponents);
-                Json json = new Json();
-                System.out.println(json.prettyPrint(m.collectedComponents));
-                for (Component[] components : state.componentBoard) {
-                    System.out.println(Arrays.toString(components));
-                }
-                break;
+                MoveResult m = new MoveResult(move, oldState, newState, collect, newComponents);
+                oldState = newState;
+                results.add(m);
             }
         }
+        System.out.println(json.prettyPrint(results));
         return results;
     }
 
@@ -302,6 +309,14 @@ public class GameRules {
 
         public MatchState getOldState() {
             return oldState;
+        }
+
+        public MoveResult() {
+            this.collectedComponents = null;
+            this.newComponents = null;
+            this.oldState = null;
+            this.newState = null;
+            this.move = null;
         }
     }
 }

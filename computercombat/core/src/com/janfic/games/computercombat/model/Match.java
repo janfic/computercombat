@@ -80,7 +80,9 @@ public class Match {
     public List<MoveResult> makeMove(Move move) {
         List<Move> availableMoves = GameRules.getAvailableMoves(currentState);
         if (availableMoves.contains(move)) {
-            return GameRules.makeMove(currentState, move);
+            List<MoveResult> r = GameRules.makeMove(currentState, move);
+            this.currentState = r.get(r.size() - 1).getNewState();
+            return r;
         } else {
             return null;
         }
