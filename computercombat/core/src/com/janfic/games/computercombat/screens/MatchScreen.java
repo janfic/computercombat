@@ -157,7 +157,7 @@ public class MatchScreen implements Screen {
             game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             board.consumeMove();
         }
-        if (game.getServerAPI().hasMessage()) {
+        if (game.getServerAPI().hasMessage() && board.isAnimating() == false) {
             Message response = game.getServerAPI().readMessage();
             if (response.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();

@@ -83,7 +83,6 @@ public class ServerMatchRoom extends Thread {
                                 Message response = new Message(Type.MOVE_ACCEPT, json.toJson(results, List.class));
                                 currentPlayer.sendMessage(response);
                                 otherPlayer.sendMessage(response);
-                                System.out.println(response);
                             } else {
                                 Message notValidMessage = new Message(Type.MOVE_REJECT, "NOT VALID MOVE");
                                 currentPlayer.sendMessage(notValidMessage);

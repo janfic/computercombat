@@ -227,22 +227,18 @@ public class GameRules {
         return nextState;
     }
 
-    public static List<MoveResult> makeMove(MatchState state, Move move) {
+    public static List<MoveResult> makeMove(MatchState originalState, Move move) {
         Json json = new Json();
         List<MoveResult> results = new ArrayList<>();
-        List<Move> validMoves = getAvailableMoves(state);
+        List<Move> validMoves = getAvailableMoves(originalState);
         if (!validMoves.contains(move)) {
             return results;
         }
         if (move instanceof MatchComponentsMove) {
-            System.out.println("IN IF");
             MatchComponentsMove matchMove = (MatchComponentsMove) move;
-            MatchState currentState = matchMove.doMove(state);
-
+            MatchState currentState = matchMove.doMove(originalState);
             MatchState oldState = currentState, newState;
 
-            System.out.println(areCurrentComponentMatches(oldState));
-            System.out.println(json.prettyPrint(getCurrentComponentMatches(oldState.getComponentBoard())));
             while (areCurrentComponentMatches(oldState)) {
                 Map<Integer, List<Component>> collect = getCurrentComponentMatches(oldState.getComponentBoard());
                 List<Component> newComponents = new ArrayList<>();
@@ -272,7 +268,6 @@ public class GameRules {
                 results.add(m);
             }
         }
-        System.out.println(json.prettyPrint(results));
         return results;
     }
 

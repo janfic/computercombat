@@ -10,18 +10,18 @@ import java.util.Objects;
  * @author Jan Fic
  */
 public abstract class Component implements Serializable {
-    
+
     private String name;
     private String colorHex;
     private String textureName;
     private int x, y;
-    
+
     public Component() {
         this.name = null;
         this.colorHex = null;
         this.textureName = null;
     }
-    
+
     public Component(String name, String hex, int x, int y, String textureName) {
         this.name = name;
         this.colorHex = hex;
@@ -29,37 +29,45 @@ public abstract class Component implements Serializable {
         this.y = y;
         this.textureName = textureName;
     }
-    
+
+    public Component(Component component) {
+        this.name = component.name;
+        this.colorHex = component.colorHex;
+        this.textureName = component.textureName;
+        this.x = component.x;
+        this.y = component.y;
+    }
+
     public String getName() {
         return this.name;
     }
-    
+
     public String getColorHex() {
         return colorHex;
     }
-    
+
     public String getTextureName() {
         return textureName;
     }
-    
+
     public int getX() {
         return x;
     }
-    
+
     public int getY() {
         return y;
     }
-    
+
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
     }
-    
+
     @Override
     public String toString() {
-        return name;
+        return name + " (" + x + "," + y + ")";
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Component) {
@@ -67,7 +75,7 @@ public abstract class Component implements Serializable {
         }
         return super.equals(obj);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -76,7 +84,7 @@ public abstract class Component implements Serializable {
         hash = 43 * hash + this.y;
         return hash;
     }
-    
+
     @Override
     public void write(Json json) {
         json.writeType(this.getClass());
@@ -86,7 +94,7 @@ public abstract class Component implements Serializable {
         json.writeValue("textureName", textureName);
         json.writeValue("colorHex", colorHex);
     }
-    
+
     @Override
     public void read(Json json, JsonValue jv) {
         this.name = json.readValue("name", String.class, jv);

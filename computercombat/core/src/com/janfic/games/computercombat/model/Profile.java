@@ -89,6 +89,5 @@ public class Profile implements Serializable {
         this.decks = json.readValue("decks", List.class, jv);
         this.collection = json.readValue("collection", Deck.class, jv);
         this.activePlayer = json.readValue("activePlayer", String.class, jv);
-        System.out.println(activePlayer);
     }
 }

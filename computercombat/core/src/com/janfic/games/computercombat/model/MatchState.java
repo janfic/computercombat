@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model;
 
+import com.badlogic.gdx.utils.Json;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,34 +44,15 @@ public class MatchState {
     }
 
     public MatchState(MatchState state) {
-        this.componentBoard = new Component[state.componentBoard.length][state.componentBoard[0].length];
-        this.activeEntities = new HashMap<>();
-        this.computers = new HashMap<>();
-        this.decks = new HashMap<>();
-        this.currentPlayerMove = state.currentPlayerMove;
-        this.players = new ArrayList<>();
+        Json json = new Json();
 
-        for (int x = 0; x < state.componentBoard.length; x++) {
-            for (int y = 0; y < state.componentBoard[x].length; y++) {
-                this.componentBoard[x][y] = state.componentBoard[x][y];
-            }
-        }
-
-        for (Profile key : state.activeEntities.keySet()) {
-            this.activeEntities.put(key, state.activeEntities.get(key));
-        }
-
-        for (Profile key : state.computers.keySet()) {
-            this.computers.put(key, state.computers.get(key));
-        }
-
-        for (Profile key : state.decks.keySet()) {
-            this.decks.put(key, state.decks.get(key));
-        }
-
-        for (Profile player : state.players) {
-            this.players.add(player);
-        }
+        MatchState s = json.fromJson(MatchState.class, json.toJson(state));
+        this.componentBoard = s.componentBoard;
+        this.activeEntities = s.activeEntities;
+        this.computers = s.computers;
+        this.decks = s.decks;
+        this.currentPlayerMove = s.currentPlayerMove;
+        this.players = s.players;
     }
 
     public MatchState(MatchState state, String playerUID) {

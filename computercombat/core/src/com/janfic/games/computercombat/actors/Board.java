@@ -1,10 +1,11 @@
 package com.janfic.games.computercombat.actors;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -16,6 +17,7 @@ import com.janfic.games.computercombat.model.Move;
 import com.janfic.games.computercombat.model.Move.MatchComponentsMove;
 import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -29,6 +31,8 @@ public class Board extends BorderedGrid {
 
     ComponentActor selected1, selected2;
 
+    TextureAtlas componentAtlas;
+
     ClientMatch matchData;
     ComputerCombatGame game;
 
@@ -37,7 +41,7 @@ public class Board extends BorderedGrid {
     Cell<ComponentActor>[][] board;
     List<ComponentActor> components;
 
-    Queue<List<TemporalAction>> animation;
+    Queue<List<Action>> animation;
 
     private final static int[][] neighbors = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     boolean canSelect = true;
@@ -56,6 +60,7 @@ public class Board extends BorderedGrid {
         this.pad(7);
         this.matchData = matchData;
         this.game = game;
+        this.componentAtlas = game.getAssetManager().get("texture_packs/components.atlas");
         this.defaults().space(2);
         this.selected1 = null;
         this.board = new Cell[8][8];
@@ -77,20 +82,18 @@ public class Board extends BorderedGrid {
             this.setTouchable(Touchable.disabled);
         }
         if (animation.isEmpty() == false) {
-            List<TemporalAction> a = animation.peek();
+            List<Action> a = animation.peek();
             boolean allDone = true;
-            List<TemporalAction> r = new ArrayList<>();
-            for (TemporalAction temporalAction : a) {
-                if (temporalAction.getActor() == null) {
-                    r.add(temporalAction);
+            List<Action> r = new ArrayList<>();
+            for (Action action : a) {
+                if (action.getActor() == null) {
+                    r.add(action);
                     continue;
                 }
-                if (temporalAction.getTime() == 0) {
-                    temporalAction.getActor().addAction(temporalAction);
-                } else if (!temporalAction.isComplete()) {
+                if (!action.act(delta)) {
                     allDone = false;
                 } else {
-                    r.add(temporalAction);
+                    r.add(action);
                 }
             }
             a.removeAll(r);
@@ -226,11 +229,23 @@ public class Board extends BorderedGrid {
                     Move move = new MatchComponentsMove(game.getCurrentProfile().getUID(), selected1.getComponent(), selected2.getComponent());
                     boolean isLegalMove = GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move);
                     if (!isLegalMove) {
-                        selected2.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f)));
-                        selected1.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
+                        List<Action> as = new ArrayList<>();
+                        Action a = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
+                        Action a2 = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions));
+                        a.setActor(selected2);
+                        a2.setActor(selected1);
+                        as.add(a);
+                        as.add(a2);
+                        animation.add(as);
                     } else {
-                        selected2.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f)));
-                        selected1.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f)));
+                        List<Action> as = new ArrayList<>();
+                        Action a = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
+                        Action a2 = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
+                        a.setActor(selected2);
+                        a2.setActor(selected1);
+                        as.add(a);
+                        as.add(a2);
+                        animation.add(as);
                         Board.this.move = move;
                     }
                 } else {
@@ -261,33 +276,72 @@ public class Board extends BorderedGrid {
 
     public void updateBoard(ClientMatch data) {
         this.matchData = data;
+        this.clear();
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                board[x][y] = this.add();
+            }
+            this.row();
+        }
+        Component[][] componentBoard = this.matchData.getCurrentState().componentBoard;
         for (int x = 0; x < board.length; x++) {
-            
+            for (int y = 0; y < board[x].length; y++) {
+                this.addComponent(new ComponentActor(componentAtlas, componentBoard[x][y]), x, y);
+            }
         }
     }
 
+    public boolean isAnimating() {
+        return animation.isEmpty() == false;
+    }
+
     public void animate(List<MoveResult> moveResults) {
+
+        //animate move 
+        //change state
+        //animate
         for (MoveResult moveResult : moveResults) {
-            int matchesCount = moveResult.getCollectedComponents().size();
-            Set set = moveResult.getCollectedComponents().keySet();
-            List<TemporalAction> actions = new ArrayList<>();
-            for (Object i : new ArrayList<>(set)) {
-                Integer mark = Integer.parseInt(i.toString());
-                for (Component component : moveResult.getCollectedComponents().get("" + mark)) {
-                    for (Cell<ComponentActor>[] cells : board) {
-                        for (Cell<ComponentActor> cell : cells) {
-                            if (cell.getActor().getComponent().equals(component)) {
-                                TemporalAction a = Actions.scaleTo(2, 2, 1);
-                                a.setActor(cell.getActor());
-                                actions.add(a);
-                                animation.add(actions);
+            List<Action> updateData = new ArrayList<>();
+            Action a = Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    Board.this.matchData.setCurrentState(moveResult.getOldState());
+                    updateBoard(matchData);
+                    System.out.println("END OF UPDATE DATA");
+                }
+            });
+            a.setActor(this);
+            updateData.add(a);
+            final List<Action> animate = new ArrayList<>();
+            List<Action> calculateAnimations = new ArrayList<>();
+            Action b = Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    Set set = moveResult.getCollectedComponents().keySet();
+                    for (Object i : new ArrayList<>(set)) {
+                        Integer mark = Integer.parseInt(i.toString());
+                        for (Component component : moveResult.getCollectedComponents().get("" + mark)) {
+                            for (Cell<ComponentActor>[] cells : board) {
+                                for (Cell<ComponentActor> cell : cells) {
+                                    if (cell.getActor().getComponent().equals(component)) {
+                                        System.out.println(component);
+                                        Action a = Actions.parallel(Actions.scaleTo(1.5f, 1.5f, 0.2f), Actions.fadeOut(0.2f));
+                                        a.setActor(cell.getActor());
+                                        animate.add(a);
 //                                cell.getActor().addAction(Actions.scaleTo(2, 2, 1));
+                                    }
+                                }
                             }
                         }
                     }
+                    System.out.println("END OF CALCULATE ANIMS" + animate);
                 }
-            }
-            System.out.println(moveResult.getCollectedComponents());
+            });
+            b.setActor(this);
+            calculateAnimations.add(b);
+            animation.add(updateData);
+            animation.add(calculateAnimations);
+            animation.add(animate);
         }
     }
 

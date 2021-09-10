@@ -54,11 +54,13 @@ public abstract class Move implements Serializable {
         public MatchState doMove(MatchState state) {
             MatchState copy = new MatchState(state);
             Component[][] board = copy.getComponentBoard();
-            board[b.getX()][b.getY()] = a;
-            board[a.getX()][a.getY()] = b;
+            Component bb = board[b.getX()][b.getY()];
+            Component ba = board[a.getX()][a.getY()];
             int oldBX = b.getX(), oldBY = b.getY();
-            b.setPosition(a.getX(), a.getY());
-            a.setPosition(oldBX, oldBY);
+            bb.setPosition(a.getX(), a.getY());
+            ba.setPosition(oldBX, oldBY);
+            board[ba.getX()][ba.getY()] = ba;
+            board[bb.getX()][bb.getY()] = bb;
             return copy;
         }
 
@@ -92,6 +94,11 @@ public abstract class Move implements Serializable {
                 return (o.a.equals(this.a) && o.b.equals(this.b)) || (o.a.equals(this.b) && o.b.equals(this.a));
             }
             return super.equals(obj);
+        }
+
+        @Override
+        public String toString() {
+            return "Moved Components: [ " + a.getTextureName() + " , " + a.getX() + " , " + a.getY() + " , " + b.getTextureName() + " , " + b.getX() + " , " + b.getY() + " ]";
         }
     }
 
