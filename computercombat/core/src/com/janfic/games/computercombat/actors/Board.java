@@ -1,6 +1,5 @@
 package com.janfic.games.computercombat.actors;
 
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -38,7 +37,7 @@ public class Board extends BorderedGrid {
     Cell<ComponentActor>[][] board;
     List<ComponentActor> components;
 
-    Queue<TemporalAction> animation;
+    Queue<List<TemporalAction>> animation;
 
     private final static int[][] neighbors = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     boolean canSelect = true;
@@ -78,10 +77,24 @@ public class Board extends BorderedGrid {
             this.setTouchable(Touchable.disabled);
         }
         if (animation.isEmpty() == false) {
-            TemporalAction a = animation.peek();
-            if (a.getTime() == 0) {
-                a.getActor().addAction(a);
-            } else if (a.isComplete()) {
+            List<TemporalAction> a = animation.peek();
+            boolean allDone = true;
+            List<TemporalAction> r = new ArrayList<>();
+            for (TemporalAction temporalAction : a) {
+                if (temporalAction.getActor() == null) {
+                    r.add(temporalAction);
+                    continue;
+                }
+                if (temporalAction.getTime() == 0) {
+                    temporalAction.getActor().addAction(temporalAction);
+                } else if (!temporalAction.isComplete()) {
+                    allDone = false;
+                } else {
+                    r.add(temporalAction);
+                }
+            }
+            a.removeAll(r);
+            if (allDone) {
                 animation.poll();
             }
         }
@@ -247,13 +260,17 @@ public class Board extends BorderedGrid {
     }
 
     public void updateBoard(ClientMatch data) {
-
+        this.matchData = data;
+        for (int x = 0; x < board.length; x++) {
+            
+        }
     }
 
     public void animate(List<MoveResult> moveResults) {
         for (MoveResult moveResult : moveResults) {
             int matchesCount = moveResult.getCollectedComponents().size();
             Set set = moveResult.getCollectedComponents().keySet();
+            List<TemporalAction> actions = new ArrayList<>();
             for (Object i : new ArrayList<>(set)) {
                 Integer mark = Integer.parseInt(i.toString());
                 for (Component component : moveResult.getCollectedComponents().get("" + mark)) {
@@ -262,7 +279,8 @@ public class Board extends BorderedGrid {
                             if (cell.getActor().getComponent().equals(component)) {
                                 TemporalAction a = Actions.scaleTo(2, 2, 1);
                                 a.setActor(cell.getActor());
-                                animation.add(a);
+                                actions.add(a);
+                                animation.add(actions);
 //                                cell.getActor().addAction(Actions.scaleTo(2, 2, 1));
                             }
                         }
