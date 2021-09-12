@@ -17,7 +17,7 @@ public class MatchState {
     public final Map<Profile, Computer> computers;
     public final Map<Profile, SoftwareDeck> decks;
     public final List<Profile> players;
-    public final Profile currentPlayerMove;
+    public Profile currentPlayerMove;
 
     public MatchState() {
         this.componentBoard = null;
@@ -60,5 +60,29 @@ public class MatchState {
         for (Profile player : players) {
             this.decks.remove(player);
         }
+    }
+
+    public String toStringBoard() {
+        String s = "";
+        for (int y = 0; y < componentBoard[0].length; y++) {
+            for (int x = 0; x < componentBoard.length; x++) {
+                if (componentBoard[x][y] != null) {
+                    s += componentBoard[x][y].getTextureName() + " , ";
+                } else {
+                    s += "null , ";
+                }
+            }
+            s += "\n";
+        }
+        return s;
+    }
+
+    public Profile getOtherProfile(Profile profile) {
+        for (Profile player : players) {
+            if (!player.getUID().equals(profile.getUID())) {
+                return player;
+            }
+        }
+        return null;
     }
 }

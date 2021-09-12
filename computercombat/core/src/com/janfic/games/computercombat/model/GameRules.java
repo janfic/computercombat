@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.model;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.model.GameRules.MoveResult.CascadeData;
 import com.janfic.games.computercombat.model.Move.MatchComponentsMove;
 import com.janfic.games.computercombat.model.components.BugComponent;
 import com.janfic.games.computercombat.model.components.CPUComponent;
@@ -48,11 +49,13 @@ public class GameRules {
         return moves;
     }
 
+    @Deprecated
     public static boolean areCurrentComponentMatches(MatchState state) {
         Component[][] components = state.getComponentBoard();
         return areCurrentComponentMatches(components);
     }
 
+    @Deprecated
     public static boolean areCurrentComponentMatches(Component[][] components) {
         for (int x = 0; x < components.length - 2; x++) {
             for (int y = 0; y < components[x].length - 2; y++) {
@@ -75,6 +78,25 @@ public class GameRules {
         {-1, 0, -2, 0},
         {0, -1, 0, 1},
         {1, 0, -1, 0}
+    };
+
+    private static final int[][] possibleMatchesCoords = {
+        {-1, -1, 0, 1, -1, -1, 0, -1},
+        {1, -1, 0, 1, 1, -1, 0, -1},
+        {0, -2, 0, 1, 0, -2, 0, -1},
+        {0, -1, 0, 2, 0, 2, 0, 1},
+        {-1, 1, 0, -1, -1, 1, 0, 1},
+        {1, 1, 0, -1, 1, 1, 0, 1},
+        {-1, -1, 1, 0, -1, -1, -1, 0},
+        {-1, 1, 1, 0, -1, 1, -1, 0},
+        {-2, 0, 1, 0, -2, 0, -1, 0},
+        {-1, 0, 1, -1, 1, -1, 1, 0},
+        {-1, 0, 1, 1, 1, 1, 1, 0},
+        {-1, 0, 2, 0, 2, 0, 1, 0},
+        {-1, -1, 1, -1, 0, 0, 0, -1},
+        {-1, 1, 1, 1, 0, 0, 1, 0},
+        {1, -1, 1, 1, 0, 0, 0, 1},
+        {-1, -1, -1, 1, 0, 0, -1, 0}
     };
 
     public static Map<Integer, List<Component>> getCurrentComponentMatches(Component[][] components) {
@@ -124,7 +146,7 @@ public class GameRules {
                     }
                 }
             }
-            if (c.size() > 1) {
+            if (c.size() > 2) {
                 r.put(i, c);
             }
         }
@@ -139,61 +161,19 @@ public class GameRules {
 
     public static List<Integer[]> areAvailableComponentMatches(Component[][] components) {
         List<Integer[]> possibleMatches = new ArrayList<>();
-        for (int x = 0; x < components.length - 1; x++) {
-            for (int y = 0; y < components[x].length - 1; y++) {
-                //Horrizontal
-                if (components[x][y].getClass() == components[x + 1][y].getClass()) {
-                    //Top Left
-                    if (x > 0 && y > 0) {
-                        if (components[x][y].getClass() == components[x - 1][y - 1].getClass()) {
-                            possibleMatches.add(new Integer[]{x - 1, y - 1, x - 1, y});
-                        }
+        for (int x = 0; x < components.length; x++) {
+            for (int y = 0; y < components[x].length ; y++) {
+                for (int[] possibleMatch : possibleMatchesCoords) {
+                    if (x + possibleMatch[0] < 0 || x + possibleMatch[0] > 7 || y + possibleMatch[1] < 0 || y + possibleMatch[1] > 7) {
+                        continue;
                     }
-                    //Top Right
-                    if (x < components.length - 2 && y > 0) {
-                        if (components[x][y].getClass() == components[x + 2][y - 1].getClass()) {
-                            possibleMatches.add(new Integer[]{x + 2, y - 1, x + 2, y});
-                        }
+                    if (x + possibleMatch[2] < 0 || x + possibleMatch[2] > 7 || y + possibleMatch[3] < 0 || y + possibleMatch[3] > 7) {
+                        continue;
                     }
-                    //Bottom Left
-                    if (x > 0 && y < components[x].length - 1) {
-                        if (components[x][y].getClass() == components[x - 1][y + 1].getClass()) {
-                            possibleMatches.add(new Integer[]{x - 1, y + 1, x - 1, y});
-                        }
-                    }
-                    //Bottom Right
-                    if (x < components.length - 2 && y < components[x].length - 1) {
-                        if (components[x][y].getClass() == components[x + 2][y + 1].getClass()) {
-                            possibleMatches.add(new Integer[]{x + 2, y + 1, x + 2, y});
-                        }
-                    }
-                }
-
-                //Verticle
-                if (components[x][y].getClass() == components[x][y + 1].getClass()) {
-                    //Top Left
-                    if (x > 0 && y > 0) {
-                        if (components[x][y].getClass() == components[x - 1][y - 1].getClass()) {
-                            possibleMatches.add(new Integer[]{x - 1, y - 1, x, y - 1});
-                        }
-                    }
-                    //Top Right
-                    if (x < components.length - 1 && y > 0) {
-                        if (components[x][y].getClass() == components[x + 1][y - 1].getClass()) {
-                            possibleMatches.add(new Integer[]{x + 1, y - 1, x, y - 1});
-                        }
-                    }
-                    //Bottom Left
-                    if (x > 0 && y < components[x].length - 2) {
-                        if (components[x][y].getClass() == components[x - 1][y + 2].getClass()) {
-                            possibleMatches.add(new Integer[]{x - 1, y + 2, x, y + 2});
-                        }
-                    }
-                    //Bottom Right
-                    if (x < components.length - 1 && y < components[x].length - 2) {
-                        if (components[x][y].getClass() == components[x + 1][y + 2].getClass()) {
-                            possibleMatches.add(new Integer[]{x + 1, y + 2, x, y + 2});
-                        }
+                    int x2 = x + possibleMatch[0], y2 = y + possibleMatch[1];
+                    int x3 = x + possibleMatch[2], y3 = y + possibleMatch[3];
+                    if (components[x][y].getClass().equals(components[x2][y2].getClass()) && components[x][y].getClass().equals(components[x3][y3].getClass())) {
+                        possibleMatches.add(new Integer[]{x + possibleMatch[4], y + possibleMatch[5], x + possibleMatch[6], y + possibleMatch[7]});
                     }
                 }
             }
@@ -230,26 +210,25 @@ public class GameRules {
     public static List<MoveResult> makeMove(MatchState originalState, Move move) {
         Json json = new Json();
         List<MoveResult> results = new ArrayList<>();
-        List<Move> validMoves = getAvailableMoves(originalState);
-        if (!validMoves.contains(move)) {
-            return results;
-        }
         if (move instanceof MatchComponentsMove) {
             MatchComponentsMove matchMove = (MatchComponentsMove) move;
             MatchState currentState = matchMove.doMove(originalState);
             MatchState oldState = currentState, newState;
 
-            while (areCurrentComponentMatches(oldState)) {
+            boolean extraTurn = false;
+            while (getCurrentComponentMatches(oldState.getComponentBoard()).isEmpty() == false) {
                 Map<Integer, List<Component>> collect = getCurrentComponentMatches(oldState.getComponentBoard());
                 List<Component> newComponents = new ArrayList<>();
                 List<Integer> marks = new ArrayList<>(collect.keySet());
                 List<Class<? extends Component>> componentTypes = new ArrayList<>();
+                List<CascadeData> cascade = new ArrayList<>();
                 for (Class<? extends Component> type : componentFrequencies.keySet()) {
                     int frequency = componentFrequencies.get(type);
                     componentTypes.addAll(Collections.nCopies(frequency, type));
                 }
                 newState = new MatchState(oldState);
-
+                int largestMatch = 0;
+                //Remove Collected
                 for (Integer mark : marks) {
                     List<Component> components = collect.get(mark);
                     for (Component component : components) {
@@ -257,15 +236,58 @@ public class GameRules {
                             int i = (int) (Math.random() * componentTypes.size());
                             Component newComponent = componentTypes.get(i).getConstructor(int.class, int.class).newInstance(component.getX(), component.getY());
                             newComponents.add(newComponent);
-                            newState.componentBoard[component.getX()][component.getY()] = newComponent;
+                            newState.componentBoard[component.getX()][component.getY()] = null;
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
+                    if (components.size() > largestMatch) {
+                        largestMatch = components.size();
+                    }
                 }
-                MoveResult m = new MoveResult(move, oldState, newState, collect, newComponents);
+                //Cascade
+                for (int x = 0; x < newState.componentBoard.length; x++) {
+                    for (int y = newState.componentBoard[x].length - 1; y >= 0; y--) {
+                        if (newState.componentBoard[x][y] == null) {
+                            Component above = null;
+                            for (int fy = y - 1; fy >= 0; fy--) {
+                                if (newState.componentBoard[x][fy] != null) {
+                                    above = newState.componentBoard[x][fy];
+                                    newState.componentBoard[x][fy] = null;
+                                    break;
+                                }
+                            }
+                            if (above != null) {
+                                int px = above.getX(), py = above.getY();
+                                above.setPosition(x, y);
+                                cascade.add(new CascadeData(above, px, py));
+                            }
+                            newState.componentBoard[x][y] = above;
+                        }
+                    }
+                }
+                //Fill with New Components
+                int n = 0;
+                for (int x = 0; x < newState.componentBoard.length; x++) {
+                    for (int y = newState.componentBoard[x].length - 1; y >= 0; y--) {
+                        if (newState.componentBoard[x][y] == null) {
+                            newState.componentBoard[x][y] = newComponents.get(n);
+                            newComponents.get(n).setPosition(x, y);
+                            cascade.add(new CascadeData(newComponents.get(n), x, (-y) - 1));
+                            n++;
+                        }
+                    }
+                }
+                if (largestMatch <= 3) {
+                    extraTurn = true;
+                }
+                MoveResult m = new MoveResult(move, oldState, newState, collect, newComponents, cascade);
                 oldState = newState;
                 results.add(m);
+            }
+            if (extraTurn) {
+                MoveResult lastResult = results.get(results.size() - 1);
+                lastResult.getNewState().currentPlayerMove = lastResult.getNewState().getOtherProfile(lastResult.getNewState().currentPlayerMove);
             }
         }
         return results;
@@ -276,14 +298,57 @@ public class GameRules {
         private final Map<Integer, List<Component>> collectedComponents;
         private final List<Component> newComponents;
         private final MatchState oldState, newState;
+        private final List<CascadeData> cascade;
         private final Move move;
 
-        public MoveResult(Move move, MatchState oldState, MatchState newState, Map<Integer, List<Component>> collectedComponents, List<Component> newComponents) {
+        public static class CascadeData implements Serializable {
+
+            Component originalComponent;
+            Component fallenComponent;
+
+            public CascadeData(Component fallenComponent, int ox, int oy) {
+                Json json = new Json();
+                int fx = fallenComponent.getX();
+                int fy = fallenComponent.getY();
+                fallenComponent.setPosition(ox, oy);
+                originalComponent = json.fromJson(Component.class, json.toJson(fallenComponent));
+                fallenComponent.setPosition(fx, fy);
+                this.fallenComponent = fallenComponent;
+            }
+
+            public CascadeData() {
+            }
+
+            public Component getFallenComponent() {
+                return fallenComponent;
+            }
+
+            public Component getOriginalComponent() {
+                return originalComponent;
+            }
+
+            @Override
+            public void write(Json json) {
+                json.writeType(this.getClass());
+                json.writeValue("originalComponent", this.originalComponent);
+                json.writeValue("fallenComponent", this.fallenComponent);
+            }
+
+            @Override
+            public void read(Json json, JsonValue jv) {
+                this.originalComponent = json.readValue("originalComponent", Component.class, jv);
+                this.fallenComponent = json.readValue("fallenComponent", Component.class, jv);
+            }
+
+        }
+
+        public MoveResult(Move move, MatchState oldState, MatchState newState, Map<Integer, List<Component>> collectedComponents, List<Component> newComponents, List<CascadeData> cascade) {
             this.collectedComponents = collectedComponents;
             this.newComponents = newComponents;
             this.move = move;
             this.newState = newState;
             this.oldState = oldState;
+            this.cascade = cascade;
         }
 
         public Map<Integer, List<Component>> getCollectedComponents() {
@@ -306,12 +371,17 @@ public class GameRules {
             return oldState;
         }
 
+        public List<CascadeData> getCascade() {
+            return cascade;
+        }
+
         public MoveResult() {
             this.collectedComponents = null;
             this.newComponents = null;
             this.oldState = null;
             this.newState = null;
             this.move = null;
+            this.cascade = null;
         }
     }
 }

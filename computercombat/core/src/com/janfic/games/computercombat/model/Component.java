@@ -71,18 +71,10 @@ public abstract class Component implements Serializable {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Component) {
-            return this.hashCode() == obj.hashCode();
+            Component c = (Component) obj;
+            return this.x == c.x && this.y == c.y && this.name.equals(c.name);
         }
         return super.equals(obj);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 43 * hash + Objects.hashCode(this.name);
-        hash = 43 * hash + this.x;
-        hash = 43 * hash + this.y;
-        return hash;
     }
 
     @Override
