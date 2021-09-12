@@ -39,8 +39,8 @@ import java.util.Map;
  */
 public class MatchScreen implements Screen {
 
-    OrthographicCamera mainCamera, statsCamera;
-    Stage mainStage, statsStage;
+    OrthographicCamera mainCamera;
+    Stage mainStage;
 
     AssetManager assetManager;
     Skin skin;
@@ -52,7 +52,6 @@ public class MatchScreen implements Screen {
 
     List<SoftwareActor> softwareActors;
     List<ComputerActor> computerActors;
-    Map<Actor, Label> overlayActors;
 
     ClientMatch match;
 
@@ -61,7 +60,6 @@ public class MatchScreen implements Screen {
         this.assetManager = game.getAssetManager();
         this.softwareActors = new ArrayList<>();
         this.computerActors = new ArrayList<>();
-        this.overlayActors = new HashMap<>();
         this.match = match;
     }
 
@@ -71,10 +69,8 @@ public class MatchScreen implements Screen {
         this.componentAtlas = assetManager.get("texture_packs/components.atlas");
 
         this.mainCamera = new OrthographicCamera(1920 / 4, 1080 / 4);
-        this.statsCamera = new OrthographicCamera(1920 / 2, 1080 / 2);
 
         this.mainStage = ComputerCombatGame.makeNewStage(mainCamera);
-        this.statsStage = new Stage(new FitViewport(1920 / 2, 1080 / 2, statsCamera));
 
         Gdx.input.setInputProcessor(mainStage);
 
@@ -137,20 +133,12 @@ public class MatchScreen implements Screen {
         table.add(rightPanel).pad(1).growY().right();
 
         mainStage.addActor(table);
-
-        for (SoftwareActor softwareActor : softwareActors) {
-            for (OverlayTextLabelArea<Software> overlayTextLabelArea : softwareActor.getOverlayTextLabelAreas()) {
-                statsStage.addActor(overlayTextLabelArea.getOverlayLabel());
-            }
-        }
     }
 
     @Override
     public void render(float f) {
         mainStage.act(f);
         mainStage.draw();
-        statsStage.act(f);
-        statsStage.draw();
         if (board.attemptedMove() && match.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             Move move = board.getMove();
             Json json = new Json();
@@ -171,8 +159,6 @@ public class MatchScreen implements Screen {
     public void resize(int width, int height) {
         mainStage.getViewport().update(width, height);
         mainCamera.update();
-        statsStage.getViewport().update(width, height);
-        statsCamera.update();
     }
 
     @Override

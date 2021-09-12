@@ -6,14 +6,14 @@ filter: Nearest,Nearest
 repeat: none
 white-pixel
   rotate: false
-  xy: 259, 251
+  xy: 546, 561
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 border
   rotate: false
-  xy: 1, 19
+  xy: 1, 30
   size: 16, 16
   split: 6, 9, 6, 9
   pad: 7, 7, 7, 7
@@ -22,7 +22,7 @@ border
   index: -1
 button_down
   rotate: false
-  xy: 19, 26
+  xy: 19, 37
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -30,7 +30,7 @@ button_down
   index: -1
 button_over
   rotate: false
-  xy: 259, 254
+  xy: 259, 265
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -38,7 +38,7 @@ button_over
   index: -1
 button_up
   rotate: false
-  xy: 277, 284
+  xy: 277, 295
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -46,7 +46,7 @@ button_up
   index: -1
 decked_panel
   rotate: false
-  xy: 775, 782
+  xy: 288, 291
   size: 7, 13
   split: 3, 3, 3, 9
   orig: 7, 13
@@ -54,98 +54,119 @@ decked_panel
   index: -1
 grid
   rotate: false
-  xy: 531, 545
+  xy: 30, 40
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
   index: -1
 led_border
   rotate: false
-  xy: 1, 1
+  xy: 19, 30
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
 led_glow
   rotate: false
-  xy: 1, 8
+  xy: 1, 19
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
 led_light
   rotate: false
-  xy: 12, 12
+  xy: 270, 269
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
+left_arrow
+  rotate: false
+  xy: 517, 528
+  size: 9, 16
+  orig: 9, 16
+  offset: 0, 0
+  index: -1
+left_arrow_over
+  rotate: false
+  xy: 535, 546
+  size: 9, 16
+  orig: 9, 16
+  offset: 0, 0
+  index: -1
+left_arrow_pressed
+  rotate: false
+  xy: 775, 790
+  size: 9, 16
+  orig: 9, 16
+  offset: 0, 0
+  index: -1
 lucidaConsole12px_0
   rotate: false
-  xy: 1, 553
+  xy: 1, 564
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaConsole16px_0
   rotate: false
-  xy: 1, 295
+  xy: 1, 306
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax16px_0
   rotate: false
-  xy: 1, 295
+  xy: 1, 306
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax12px_0
   rotate: false
-  xy: 259, 553
+  xy: 259, 564
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax3pt_0
   rotate: false
-  xy: 1, 37
+  xy: 1, 48
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax6px_0
   rotate: false
-  xy: 259, 295
+  xy: 259, 306
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax8px_0
   rotate: false
-  xy: 517, 553
+  xy: 517, 564
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 magnifying_class_icon
   rotate: false
-  xy: 517, 539
+  xy: 775, 808
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 mouse
   rotate: false
-  xy: 775, 797
-  size: 12, 12
-  orig: 12, 12
+  xy: 517, 546
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: -1
 panel
   rotate: false
-  xy: 517, 530
+  xy: 789, 813
   size: 7, 7
   split: 3, 3, 3, 3
   orig: 7, 7
@@ -153,7 +174,7 @@ panel
   index: -1
 progress_bar
   rotate: false
-  xy: 789, 804
+  xy: 12, 23
   size: 5, 5
   split: 2, 2, 2, 2
   pad: 1, 1, 1, 1
@@ -162,7 +183,7 @@ progress_bar
   index: -1
 progress_bar_before_horizontall
   rotate: false
-  xy: 19, 21
+  xy: 517, 523
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -170,15 +191,36 @@ progress_bar_before_horizontall
   index: -1
 progress_bar_before_vertical
   rotate: false
-  xy: 19, 21
+  xy: 517, 523
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
   offset: 0, 0
   index: -1
+right_arrow
+  rotate: false
+  xy: 1, 1
+  size: 9, 16
+  orig: 9, 16
+  offset: 0, 0
+  index: -1
+right_arrow_over
+  rotate: false
+  xy: 259, 247
+  size: 9, 16
+  orig: 9, 16
+  offset: 0, 0
+  index: -1
+right_arrow_pressed
+  rotate: false
+  xy: 277, 277
+  size: 9, 16
+  orig: 9, 16
+  offset: 0, 0
+  index: -1
 screen
   rotate: false
-  xy: 30, 32
+  xy: 528, 541
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -186,7 +228,7 @@ screen
   index: -1
 window
   rotate: false
-  xy: 259, 265
+  xy: 259, 276
   size: 16, 28
   split: 6, 9, 18, 9
   pad: 7, 7, 19, 7

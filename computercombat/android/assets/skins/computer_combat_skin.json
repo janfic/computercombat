@@ -118,6 +118,16 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 		down: button_down
 		over: button_over
 	}
+	left_arrow: {
+		up: left_arrow
+		down: left_arrow_pressed
+		over: left_arrow_over
+	}
+	right_arrow: {
+		up: right_arrow
+		down: right_arrow_pressed
+		over: right_arrow_over
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {

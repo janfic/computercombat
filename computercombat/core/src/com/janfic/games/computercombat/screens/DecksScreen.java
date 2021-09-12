@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -38,12 +39,11 @@ public class DecksScreen implements Screen {
 
     Skin skin;
 
-    OrthographicCamera stageCamera, overlayCamera;
-    Stage stage, overlay;
+    OrthographicCamera stageCamera;
+    Stage stage;
 
     Table table, decks, deckCards;
     Table decksTable, deckTable, collectionTable, collection;
-    Group collectionOverlayGroup;
 
     TextButton createButton, deleteButton;
 
@@ -61,12 +61,9 @@ public class DecksScreen implements Screen {
     @Override
     public void show() {
         this.stageCamera = new OrthographicCamera(1920 / 4, 1080 / 4);
-        this.overlayCamera = new OrthographicCamera(1920 / 2, 1080 / 2);
-        this.collectionOverlayGroup = new Group();
         this.isPopup = false;
 
         this.stage = ComputerCombatGame.makeNewStage(stageCamera);
-        this.overlay = new Stage(new FitViewport(1920 / 2, 1080 / 2, overlayCamera));
 
         Gdx.input.setInputProcessor(stage);
 
@@ -275,11 +272,6 @@ public class DecksScreen implements Screen {
 
         stage.addActor(table);
 
-        collectionOverlayGroup.setPosition(0, 0);
-        collectionOverlayGroup.setSize(overlay.getWidth(), overlay.getHeight());
-
-        overlay.addActor(collectionOverlayGroup);
-
         Gdx.app.postRunnable(requestProfileInfoRunnable);
 
         this.deckToCollectionDragAndDrop = new DragAndDrop();
@@ -333,20 +325,7 @@ public class DecksScreen implements Screen {
     @Override
     public void render(float f) {
         stage.act(f);
-        overlay.act(f);
         stage.draw();
-        if (!isPopup) {
-            overlay.draw();
-        }
-
-        Rectangle r = collection.getCullingArea();
-        Vector2 cSize = new Vector2(r.width - 5, r.height - 5);
-        Vector2 cPos = collection.getParent().localToStageCoordinates(new Vector2(10, 10));
-        cSize = stage.stageToScreenCoordinates(cSize);
-        cPos = stage.stageToScreenCoordinates(cPos);
-        cSize = overlay.screenToStageCoordinates(cSize);
-        cPos = overlay.screenToStageCoordinates(cPos);
-        collectionOverlayGroup.setCullingArea(new Rectangle(cPos.x, cPos.y, cSize.x, cSize.y));
     }
 
     @Override
@@ -467,9 +446,6 @@ public class DecksScreen implements Screen {
                         return payload;
                     }
                 });
-                for (OverlayTextLabelArea<Software> area : cc.getAreas()) {
-                    collectionOverlayGroup.addActor(area.getOverlayLabel());
-                }
                 collection.add(cc);
                 if (isEven) {
                     collection.row();

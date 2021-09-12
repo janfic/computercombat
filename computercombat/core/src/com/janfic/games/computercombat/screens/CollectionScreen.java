@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
@@ -50,9 +52,6 @@ public class CollectionScreen implements Screen {
     Table collection;
     BorderedGrid filterBar;
     ScrollPane collectionScrollPane;
-    private OrthographicCamera statsCamera;
-    private Stage statsStage;
-    Group collectionOverlayGroup;
 
     ShapeRenderer sr;
 
@@ -66,9 +65,6 @@ public class CollectionScreen implements Screen {
     public void show() {
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
-        this.statsCamera = new OrthographicCamera(1920 / 2, 1080 / 2);
-        this.statsStage = new Stage(new FitViewport(1920 / 2, 1080 / 2, statsCamera));
-        this.collectionOverlayGroup = new Group();
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -120,28 +116,13 @@ public class CollectionScreen implements Screen {
             }
         });
 
-        collectionOverlayGroup.setPosition(0, 0);
-        collectionOverlayGroup.setSize(statsStage.getWidth(), statsStage.getHeight());
-
-        statsStage.addActor(collectionOverlayGroup);
-
         Gdx.app.postRunnable(requestProfileInfoRunnable);
     }
 
     @Override
     public void render(float f) {
         stage.act(f);
-        statsStage.act(f);
         stage.draw();
-        statsStage.draw();
-        Rectangle r = collection.getCullingArea();
-        Vector2 cSize = new Vector2(r.width - 5, r.height - 5);
-        Vector2 cPos = collection.getParent().localToStageCoordinates(new Vector2(10, 10));
-        cSize = stage.stageToScreenCoordinates(cSize);
-        cPos = stage.stageToScreenCoordinates(cPos);
-        cSize = statsStage.screenToStageCoordinates(cSize);
-        cPos = statsStage.screenToStageCoordinates(cPos);
-        collectionOverlayGroup.setCullingArea(new Rectangle(cPos.x, cPos.y, cSize.x, cSize.y));
     }
 
     @Override
@@ -190,9 +171,6 @@ public class CollectionScreen implements Screen {
 
             for (Software card : cardInfo) {
                 CollectionCard cc = new CollectionCard(game, skin, card, profile.getCollection().getCardCount(card.getPack() + "/" + card.getName()));
-                for (OverlayTextLabelArea<Software> area : cc.getAreas()) {
-                    collectionOverlayGroup.addActor(area.getOverlayLabel());
-                }
                 collection.add(cc);
                 if (isEven) {
                     collection.row();

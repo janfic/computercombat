@@ -3,12 +3,16 @@ package com.janfic.games.computercombat.actors;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Component;
@@ -44,13 +48,12 @@ public class CollectionCard extends BorderedGrid {
 
     Software software;
     int amount;
-    List<OverlayTextLabelArea<Software>> areas;
-    
+    EventListener newWindowOnClick;
+
     public CollectionCard(ComputerCombatGame game, Skin skin, Software software, int amount) {
         super(skin);
         this.software = software;
         this.amount = amount;
-        this.areas = new ArrayList<>();
         this.defaults().space(3);
         this.pad(5);
         this.top();
@@ -90,8 +93,7 @@ public class CollectionCard extends BorderedGrid {
                 return "" + dataObject.getMaxArmor();
             }
         };
-        this.areas.add(defenseOverlayTextLabelArea);
-        defenseOverlay.add(defenseOverlayTextLabelArea).width(9).height(9);
+        defenseOverlay.add(defenseOverlayTextLabelArea).width(12).height(9);
         defenseStack.add(defenseOverlay);
         Stack runRequirementsStack = new Stack();
         runRequirementsStack.add(runBar);
@@ -102,8 +104,7 @@ public class CollectionCard extends BorderedGrid {
                 return "" + dataObject.getRunRequirements();
             }
         };
-        this.areas.add(runOverlayTextLabelArea);
-        runRequirementsOverlay.add(runOverlayTextLabelArea).width(9).height(9);
+        runRequirementsOverlay.add(runOverlayTextLabelArea).width(12).height(9);
         runRequirementsStack.add(runRequirementsOverlay);
         Stack healthStack = new Stack();
         healthStack.add(healthBar);
@@ -114,8 +115,7 @@ public class CollectionCard extends BorderedGrid {
                 return "" + dataObject.getMaxHealth();
             }
         };
-        this.areas.add(healthOverlayTextLabelArea);
-        healthOverlay.add(healthOverlayTextLabelArea).width(9).height(9);
+        healthOverlay.add(healthOverlayTextLabelArea).width(12).height(9);
         healthStack.add(healthOverlay);
         Stack attackStack = new Stack();
         attackStack.add(attackBar);
@@ -126,12 +126,11 @@ public class CollectionCard extends BorderedGrid {
                 return "" + dataObject.getMaxAttack();
             }
         };
-        this.areas.add(attackOverlayTextLabelArea);
-        attackOverlay.add(attackOverlayTextLabelArea).width(9).height(9);
+        attackOverlay.add(attackOverlayTextLabelArea).width(12).height(9);
         attackStack.add(attackOverlay);
 
-        this.add(defenseStack).width(90).height(9).row();
         this.add(attackStack).width(90).height(9).row();
+        this.add(defenseStack).width(90).height(9).row();
         this.add(healthStack).width(90).height(9).row();
         this.add(runRequirementsStack).width(90).height(9).row();
 
@@ -146,15 +145,25 @@ public class CollectionCard extends BorderedGrid {
         amountLabel.setAlignment(Align.center);
         this.add(amountLabel).expand().minWidth(20).bottom().row();
         this.add(leds).growX().bottom().expand().row();
-
+        newWindowOnClick = new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Window w = new CardInfoWindow(game, software, skin);
+                w.setSize(2 * getStage().getWidth() / 3f, getStage().getHeight());
+                w.setPosition(getStage().getWidth() / 6f, getStage().getHeight());
+                CollectionCard.this.getStage().addActor(w);
+            }
+        };
+        this.addListener(newWindowOnClick);
     }
 
     @Override
+
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
     }
 
-    public List<OverlayTextLabelArea<Software>> getAreas() {
-        return areas;
+    public EventListener getNewWindowOnClick() {
+        return newWindowOnClick;
     }
 }
