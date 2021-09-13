@@ -102,10 +102,11 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
-        
+                
         compile "junit:junit:4.11"
         testCompile "junit:junit:4.11"
         testCompileClasspath "junit:junit:4.11"
+        compile files('../lib/mysql-connector-java-8.0.26.jar')
     }
 }
 
