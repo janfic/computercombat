@@ -2,7 +2,7 @@ package com.janfic.games.computercombat.network.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import com.mysql.jdbc.Driver;
+//import com.mysql.jdbc.Driver;
 
 /**
  *

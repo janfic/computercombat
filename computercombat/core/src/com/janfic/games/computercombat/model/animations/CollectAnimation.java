@@ -1,6 +1,9 @@
 package com.janfic.games.computercombat.model.animations;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.actors.ComponentActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
@@ -15,8 +18,8 @@ import java.util.Map;
  */
 public class CollectAnimation implements MoveAnimation {
 
-    private final Map<Integer, List<Component>> collected;
-    private final List<Component> allComponents;
+    private Map<Integer, List<Component>> collected;
+    private List<Component> allComponents;
 
     public CollectAnimation(Map<Integer, List<Component>> collected) {
         this.collected = collected;
@@ -26,9 +29,25 @@ public class CollectAnimation implements MoveAnimation {
         }
     }
 
+    private CollectAnimation() {
+        this.collected = null;
+        this.allComponents = null;
+    }
+
     @Override
     public List<List<Action>> animate(List<ComponentActor> componentActors, List<SoftwareActor> softwareActors) {
         List<List<Action>> actions = new ArrayList<>();
+        List<Action> popAction = new ArrayList<>();
+        for (Component component : getAllComponents()) {
+            for (ComponentActor componentActor : componentActors) {
+                if (componentActor.getComponent().equals(component)) {
+                    Action a = Actions.parallel(Actions.scaleTo(1.25f, 1.25f, .35f), Actions.fadeOut(0.35f));
+                    a.setActor(componentActor);
+                    popAction.add(a);
+                }
+            }
+        }
+        actions.add(popAction);
         return actions;
     }
 
@@ -38,5 +57,18 @@ public class CollectAnimation implements MoveAnimation {
 
     public Map<Integer, List<Component>> getCollected() {
         return collected;
+    }
+
+    @Override
+    public void write(Json json) {
+        json.writeType(this.getClass());
+        json.writeValue("collected", this.collected, Map.class);
+        json.writeValue("allComponents", this.allComponents, List.class);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jv) {
+        this.allComponents = json.readValue("allComponents", List.class, jv);
+        this.collected = json.readValue("collected", Map.class, jv);
     }
 }

@@ -1,11 +1,11 @@
 package com.janfic.games.computercombat.server;
 
 import com.badlogic.gdx.utils.Json;
-import com.janfic.games.computercombat.model.GameRules.MoveResult;
+import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.Match;
-import com.janfic.games.computercombat.model.Move;
-import com.janfic.games.computercombat.model.Move.MatchComponentsMove;
-import com.janfic.games.computercombat.model.Move.UseAbilityMove;
+import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
+import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import java.io.IOException;

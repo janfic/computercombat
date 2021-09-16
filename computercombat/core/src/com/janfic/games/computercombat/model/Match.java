@@ -13,12 +13,12 @@ import java.util.Map;
  * @author Jan Fic
  */
 public class Match {
-    
+
     private MatchState currentState;
     private Profile player1, player2;
-    
+
     public Match(Profile player1, Profile player2) {
-        
+
         this.player1 = player1;
         this.player2 = player2;
         Map<Profile, List<Card>> activeEntities = new HashMap<>();
@@ -38,7 +38,7 @@ public class Match {
             e.printStackTrace();
         }
     }
-    
+
     private Component[][] makeBoard(Map<Class<? extends Component>, Integer> componentFrequencies) throws Exception {
         Component[][] componentBoard = new Component[8][8];
         List<Class<? extends Component>> components = new ArrayList<>();
@@ -46,7 +46,7 @@ public class Match {
             int frequency = componentFrequencies.get(type);
             components.addAll(Collections.nCopies(frequency, type));
         }
-        
+
         for (int x = 0; x < componentBoard.length; x++) {
             for (int y = 0; y < componentBoard[x].length; y++) {
                 Collections.shuffle(components);
@@ -55,7 +55,7 @@ public class Match {
                 componentBoard[x][y] = c;
             }
         }
-        
+
         while (GameRules.areAvailableComponentMatches(componentBoard).isEmpty() || !GameRules.getCurrentComponentMatches(componentBoard).isEmpty()) {
             for (int x = 0; x < componentBoard.length; x++) {
                 for (int y = 0; y < componentBoard[x].length; y++) {
@@ -68,31 +68,26 @@ public class Match {
         }
         return componentBoard;
     }
-    
+
     public MatchState getPlayerMatchState(String playerUID) {
         MatchState copy = new MatchState(currentState, playerUID);
         return copy;
     }
-    
+
     private MatchState getCurrentState() {
         return currentState;
     }
-    
+
     public List<MoveResult> makeMove(Move move) {
-        List<Move> availableMoves = GameRules.getAvailableMoves(currentState);
-        if (availableMoves.contains(move)) {
-            List<MoveResult> r = GameRules.makeMove(currentState, move);
-            this.currentState = r.get(r.size() - 1).getNewState();
-            return r;
-        } else {
-            return null;
-        }
+        List<MoveResult> r = GameRules.makeMove(currentState, move);
+        this.currentState = r.get(r.size() - 1).getNewState();
+        return r;
     }
-    
+
     public String whosMove() {
         return currentState.currentPlayerMove.getUID();
     }
-    
+
     public boolean isValidMove(Move move) {
         return GameRules.getAvailableMoves(currentState).contains(move);
     }

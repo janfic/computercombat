@@ -16,10 +16,14 @@ import java.util.List;
  */
 public class CascadeAnimation implements MoveAnimation {
 
-    private final List<CascadeData> cascade;
+    private List<CascadeData> cascade;
 
     public CascadeAnimation(List<CascadeData> cascade) {
         this.cascade = cascade;
+    }
+
+    private CascadeAnimation() {
+        this.cascade = null;
     }
 
     @Override
@@ -30,6 +34,17 @@ public class CascadeAnimation implements MoveAnimation {
 
     public List<CascadeData> getCascade() {
         return cascade;
+    }
+
+    @Override
+    public void write(Json json) {
+        json.writeType(this.getClass());
+        json.writeValue("cascade", cascade);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jv) {
+        this.cascade = json.readValue("cascade", List.class, jv);
     }
 
     public static class CascadeData implements Json.Serializable {
