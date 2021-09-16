@@ -30,6 +30,10 @@ public class MoveResult {
         return oldState;
     }
 
+    public List<MoveAnimation> getAnimations() {
+        return animations;
+    }
+    
     public MoveResult() {
         this.oldState = null;
         this.newState = null;

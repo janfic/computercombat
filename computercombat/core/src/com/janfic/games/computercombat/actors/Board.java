@@ -1,7 +1,6 @@
 package com.janfic.games.computercombat.actors;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -17,16 +16,13 @@ import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveResult;
-import com.janfic.games.computercombat.model.animations.CascadeAnimation.CascadeData;
 import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
+import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
 
 /**
  *
@@ -47,7 +43,7 @@ public class Board extends BorderedGrid {
     Cell<Group> newComponentSpawn;
     List<ComponentActor> components;
 
-    Queue<List<Action>> animation;
+    List<List<Action>> animation;
 
     private final static int[][] neighbors = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     boolean canSelect = true;
@@ -71,6 +67,7 @@ public class Board extends BorderedGrid {
         this.selected1 = null;
         this.board = new Cell[8][8];
         this.animation = new LinkedList<>();
+        this.components = new ArrayList<>();
         this.newComponentSpawn = this.add(new Group()).height(0).pad(0).space(0).growX().colspan(8);
         this.row();
         for (int y = 0; y < 8; y++) {
@@ -91,7 +88,7 @@ public class Board extends BorderedGrid {
             this.setTouchable(Touchable.disabled);
         }
         if (animation.isEmpty() == false) {
-            List<Action> a = animation.peek();
+            List<Action> a = animation.get(0);
             boolean allDone = true;
             List<Action> r = new ArrayList<>();
             for (Action action : a) {
@@ -107,7 +104,7 @@ public class Board extends BorderedGrid {
             }
             a.removeAll(r);
             if (allDone) {
-                animation.poll();
+                animation.remove(0);
             }
         } else {
             canSelect = true;
@@ -116,6 +113,7 @@ public class Board extends BorderedGrid {
 
     public void addComponent(ComponentActor actor, int x, int y) {
         board[x][y].setActor(actor);
+        components.add(actor);
         actor.addListener(new ClickListener() {
 
             float dragStartX = -10, dragStartY = -10;
@@ -288,6 +286,8 @@ public class Board extends BorderedGrid {
     public void updateBoard(ClientMatch data) {
         this.matchData = data;
         this.clear();
+        components.clear();
+        newComponentSpawn.getActor().clear();
         this.newComponentSpawn = this.add(new Group()).height(0).pad(0).space(0).growX().colspan(8);
         this.row();
         for (int y = 0; y < 8; y++) {
@@ -315,107 +315,26 @@ public class Board extends BorderedGrid {
         //animate
         for (MoveResult moveResult : moveResults) {
             List<Action> updateData = new ArrayList<>();
+            List<List<Action>> anim = new ArrayList<>();
             Action a = Actions.run(new Runnable() {
                 @Override
                 public void run() {
                     Board.this.matchData.setCurrentState(moveResult.getOldState());
                     updateBoard(matchData);
+                    int offset = 0;
+                    for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
+                        List<List<Action>> animations = moveAnimation.animate(Board.this, null);
+                        int indexOfUpdate = animation.indexOf(updateData);
+                        animation.addAll(indexOfUpdate + 1 + offset, animations);
+                        offset += animations.size();
+                        System.out.println(animation);
+                    }
                     System.out.println("END OF UPDATE DATA");
                 }
             });
             a.setActor(this);
             updateData.add(a);
-            final List<Action> collectAnimation = new ArrayList<>();
-            List<Action> calculateCollectAnimation = new ArrayList<>();
-            Action b = Actions.run(new Runnable() {
-                @Override
-                public void run() {
-//                    Set set = moveResult.getCollectedComponents().keySet();
-//                    for (Object i : new ArrayList<>(set)) {
-//                        Integer mark = Integer.parseInt(i.toString());
-//                        for (Component component : moveResult.getCollectedComponents().get("" + mark)) {
-//                            for (Cell<ComponentActor>[] cells : board) {
-//                                for (Cell<ComponentActor> cell : cells) {
-//                                    if (cell.getActor().getComponent().equals(component)) {
-//                                        Action a = Actions.parallel(Actions.scaleTo(1.5f, 1.5f, 0.2f), Actions.fadeOut(0.2f));
-//                                        a.setActor(cell.getActor());
-//                                        collectAnimation.add(a);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                    System.out.println("END OF CALCULATE COLLECT " + collectAnimation);
-                }
-            });
-            b.setActor(this);
-            calculateCollectAnimation.add(b);
-
-            final List<Action> calculateCascadeAnimation = new ArrayList<>();
-
-            final List<Action> cascadeAnimation = new ArrayList<>();
-            Action c = Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    Map<Integer, List<CascadeData>> newComponentFallingOrder = new HashMap<>();
-//                    for (CascadeData cascade : moveResult.getCascade()) {
-//                        boolean found = false;
-//                        for (Cell<ComponentActor>[] cells : board) {
-//                            for (Cell<ComponentActor> cell : cells) {
-//                                if (cell.getActor().getComponent().equals(cascade.getOriginalComponent())) {
-//                                    Action moveAction = Actions.moveTo(
-//                                            board[cascade.getFallenComponent().getX()][cascade.getFallenComponent().getY()].getActorX(),
-//                                            board[cascade.getFallenComponent().getX()][cascade.getFallenComponent().getY()].getActorY(),
-//                                            (cascade.getFallenComponent().getY() - cascade.getOriginalComponent().getY()) / 2f, Interpolation.bounceOut);
-//                                    moveAction.setActor(cell.getActor());
-//                                    cascadeAnimation.add(moveAction);
-//                                    found = true;
-//                                }
-//                            }
-//                        }
-//                        if (!found) {
-//                            List<CascadeData> columnFall = newComponentFallingOrder.getOrDefault(cascade.getOriginalComponent().getX(), new ArrayList<>());
-//                            columnFall.add(cascade);
-//                            newComponentFallingOrder.put(cascade.getOriginalComponent().getX(), columnFall);
-//                        }
-//                    }
-                    Group newSpawn = newComponentSpawn.getActor();
-                    for (int x = 0; x < board.length; x++) {
-                        List<CascadeData> columnFall = newComponentFallingOrder.get(x);
-                        if (columnFall == null) {
-                            continue;
-                        }
-                        columnFall.sort(new Comparator<CascadeData>() {
-                            @Override
-                            public int compare(CascadeData o1, CascadeData o2) {
-                                return o2.getFallenComponent().getY() - o1.getFallenComponent().getY();
-                            }
-                        });
-                        for (int i = 0; i < columnFall.size(); i++) {
-                            ComponentActor component = new ComponentActor(componentAtlas, columnFall.get(i).getFallenComponent());
-                            newSpawn.addActor(component);
-                            component.setPosition(26 * x, i * 26);
-                            Action move = Actions.moveTo(
-                                    26 * x,
-                                    -(columnFall.get(i).getFallenComponent().getY() + 1) * 26,
-                                    (columnFall.get(i).getFallenComponent().getY() - (-1 - i)) / 2f,
-                                    Interpolation.bounceOut
-                            );
-                            move.setActor(component);
-                            cascadeAnimation.add(move);
-                        }
-                    }
-                    System.out.println("END OF CALCULATE CASCADE " + cascadeAnimation);
-                }
-            });
-            c.setActor(this);
-            calculateCascadeAnimation.add(c);
             animation.add(updateData);
-            animation.add(calculateCollectAnimation);
-            animation.add(collectAnimation);
-            animation.add(calculateCascadeAnimation);
-            animation.add(cascadeAnimation);
-
         }
         List<Action> updateData = new ArrayList<>();
         Action a = Actions.run(new Runnable() {
@@ -429,6 +348,18 @@ public class Board extends BorderedGrid {
         a.setActor(this);
         updateData.add(a);
         animation.add(updateData);
+    }
+
+    public List<ComponentActor> getComponents() {
+        return components;
+    }
+
+    public Cell<ComponentActor>[][] getBoard() {
+        return board;
+    }
+
+    public Cell<Group> getNewComponentSpawn() {
+        return newComponentSpawn;
     }
 
     private static boolean isNeighbor(int x1, int y1, int x2, int y2) {

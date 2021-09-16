@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.actors.Board;
 import com.janfic.games.computercombat.actors.ComponentActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
@@ -35,17 +36,23 @@ public class CollectAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(List<ComponentActor> componentActors, List<SoftwareActor> softwareActors) {
+    public List<List<Action>> animate(Board board, List<SoftwareActor> softwareActors) {
         List<List<Action>> actions = new ArrayList<>();
         List<Action> popAction = new ArrayList<>();
+
+        List<ComponentActor> componentActors = board.getComponents();
         for (Component component : getAllComponents()) {
             for (ComponentActor componentActor : componentActors) {
                 if (componentActor.getComponent().equals(component)) {
                     Action a = Actions.parallel(Actions.scaleTo(1.25f, 1.25f, .35f), Actions.fadeOut(0.35f));
                     a.setActor(componentActor);
                     popAction.add(a);
+                    System.out.println("found collected component actor: " + component);
                 }
             }
+        }
+        for (Action action : popAction) {
+            System.out.println(action);
         }
         actions.add(popAction);
         return actions;
