@@ -15,10 +15,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
-import com.janfic.games.computercombat.model.GameRules.MoveResult;
-import com.janfic.games.computercombat.model.GameRules.MoveResult.CascadeData;
-import com.janfic.games.computercombat.model.Move;
-import com.janfic.games.computercombat.model.Move.MatchComponentsMove;
+import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.moves.MoveResult;
+import com.janfic.games.computercombat.model.animations.CascadeAnimation.CascadeData;
+import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
 import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
 /**
  *
@@ -331,22 +330,22 @@ public class Board extends BorderedGrid {
             Action b = Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    Set set = moveResult.getCollectedComponents().keySet();
-                    for (Object i : new ArrayList<>(set)) {
-                        Integer mark = Integer.parseInt(i.toString());
-                        for (Component component : moveResult.getCollectedComponents().get("" + mark)) {
-                            for (Cell<ComponentActor>[] cells : board) {
-                                for (Cell<ComponentActor> cell : cells) {
-                                    if (cell.getActor().getComponent().equals(component)) {
-                                        Action a = Actions.parallel(Actions.scaleTo(1.5f, 1.5f, 0.2f), Actions.fadeOut(0.2f));
-                                        a.setActor(cell.getActor());
-                                        collectAnimation.add(a);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    System.out.println("END OF CALCULATE COLLECT " + collectAnimation);
+//                    Set set = moveResult.getCollectedComponents().keySet();
+//                    for (Object i : new ArrayList<>(set)) {
+//                        Integer mark = Integer.parseInt(i.toString());
+//                        for (Component component : moveResult.getCollectedComponents().get("" + mark)) {
+//                            for (Cell<ComponentActor>[] cells : board) {
+//                                for (Cell<ComponentActor> cell : cells) {
+//                                    if (cell.getActor().getComponent().equals(component)) {
+//                                        Action a = Actions.parallel(Actions.scaleTo(1.5f, 1.5f, 0.2f), Actions.fadeOut(0.2f));
+//                                        a.setActor(cell.getActor());
+//                                        collectAnimation.add(a);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                    System.out.println("END OF CALCULATE COLLECT " + collectAnimation);
                 }
             });
             b.setActor(this);
@@ -359,27 +358,27 @@ public class Board extends BorderedGrid {
                 @Override
                 public void run() {
                     Map<Integer, List<CascadeData>> newComponentFallingOrder = new HashMap<>();
-                    for (CascadeData cascade : moveResult.getCascade()) {
-                        boolean found = false;
-                        for (Cell<ComponentActor>[] cells : board) {
-                            for (Cell<ComponentActor> cell : cells) {
-                                if (cell.getActor().getComponent().equals(cascade.getOriginalComponent())) {
-                                    Action moveAction = Actions.moveTo(
-                                            board[cascade.getFallenComponent().getX()][cascade.getFallenComponent().getY()].getActorX(),
-                                            board[cascade.getFallenComponent().getX()][cascade.getFallenComponent().getY()].getActorY(),
-                                            (cascade.getFallenComponent().getY() - cascade.getOriginalComponent().getY()) / 2f, Interpolation.bounceOut);
-                                    moveAction.setActor(cell.getActor());
-                                    cascadeAnimation.add(moveAction);
-                                    found = true;
-                                }
-                            }
-                        }
-                        if (!found) {
-                            List<CascadeData> columnFall = newComponentFallingOrder.getOrDefault(cascade.getOriginalComponent().getX(), new ArrayList<>());
-                            columnFall.add(cascade);
-                            newComponentFallingOrder.put(cascade.getOriginalComponent().getX(), columnFall);
-                        }
-                    }
+//                    for (CascadeData cascade : moveResult.getCascade()) {
+//                        boolean found = false;
+//                        for (Cell<ComponentActor>[] cells : board) {
+//                            for (Cell<ComponentActor> cell : cells) {
+//                                if (cell.getActor().getComponent().equals(cascade.getOriginalComponent())) {
+//                                    Action moveAction = Actions.moveTo(
+//                                            board[cascade.getFallenComponent().getX()][cascade.getFallenComponent().getY()].getActorX(),
+//                                            board[cascade.getFallenComponent().getX()][cascade.getFallenComponent().getY()].getActorY(),
+//                                            (cascade.getFallenComponent().getY() - cascade.getOriginalComponent().getY()) / 2f, Interpolation.bounceOut);
+//                                    moveAction.setActor(cell.getActor());
+//                                    cascadeAnimation.add(moveAction);
+//                                    found = true;
+//                                }
+//                            }
+//                        }
+//                        if (!found) {
+//                            List<CascadeData> columnFall = newComponentFallingOrder.getOrDefault(cascade.getOriginalComponent().getX(), new ArrayList<>());
+//                            columnFall.add(cascade);
+//                            newComponentFallingOrder.put(cascade.getOriginalComponent().getX(), columnFall);
+//                        }
+//                    }
                     Group newSpawn = newComponentSpawn.getActor();
                     for (int x = 0; x < board.length; x++) {
                         List<CascadeData> columnFall = newComponentFallingOrder.get(x);

@@ -1,7 +1,7 @@
 package com.janfic.games.computercombat.model;
 
-import com.badlogic.gdx.utils.Json;
-import com.janfic.games.computercombat.model.GameRules.MoveResult;
+import com.janfic.games.computercombat.model.moves.MoveResult;
+import com.janfic.games.computercombat.model.moves.Move;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

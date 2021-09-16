@@ -1,5 +1,7 @@
 package com.janfic.games.computercombat.model;
 
+import com.janfic.games.computercombat.model.moves.Move;
+
 /**
  *
  * @author Jan Fic
