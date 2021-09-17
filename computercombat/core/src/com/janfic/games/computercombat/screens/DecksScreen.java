@@ -5,10 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -18,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.*;
@@ -289,7 +284,7 @@ public class DecksScreen implements Screen {
                     return;
                 }
                 Software card = (Software) payload.getObject();
-                selectedDeck.getDeck().removeCard(card.getPack() + "/" + card.getName(), 1);
+                selectedDeck.getDeck().removeCard(card, 1);
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
@@ -311,7 +306,7 @@ public class DecksScreen implements Screen {
                     return;
                 }
                 Software card = (Software) payload.getObject();
-                selectedDeck.getDeck().addCard(card.getPack() + "/" + card.getName(), 1);
+                selectedDeck.getDeck().addCard(card, 1);
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {

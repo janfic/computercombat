@@ -28,3 +28,4 @@ hs_err_pid*
 /computercombat/desktop/build/
 computercombat/.gradle/
 /computercombat/android/build/
+computercombat/upload_server_code.bat

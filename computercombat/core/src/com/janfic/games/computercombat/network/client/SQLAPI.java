@@ -1,9 +1,9 @@
 package com.janfic.games.computercombat.network.client;
 
 import com.badlogic.gdx.Gdx;
-import com.janfic.games.computercombat.data.Deck;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
+import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Software;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -121,8 +121,10 @@ public class SQLAPI {
                 Statement stat = connection.createStatement();
                 ResultSet rs = statement.executeQuery(sql);
 
+                Deck deck = new Deck(name);
+
                 while (rs.next()) {
-                    System.out.println(rs.getInt("card.id"));
+                    
                 }
             }
         } catch (Exception e) {

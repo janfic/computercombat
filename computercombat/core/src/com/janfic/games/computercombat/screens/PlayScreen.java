@@ -45,7 +45,7 @@ public class PlayScreen implements Screen {
     @Override
     public void show() {
 
-        SQLAPI.getSingleton().getPlayerOwnedCards(game.getCurrentProfile().getUID());
+        SQLAPI.getSingleton().getPlayerDecks(game.getCurrentProfile().getUID());
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
         Gdx.input.setInputProcessor(stage);
