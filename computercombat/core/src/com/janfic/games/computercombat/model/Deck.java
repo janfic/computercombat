@@ -1,4 +1,4 @@
-package com.janfic.games.computercombat.data;
+package com.janfic.games.computercombat.model;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;

@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -41,7 +42,6 @@ public abstract class Card implements Json.Serializable {
         this.runRequirements = runRequirements;
         this.level = level;
         this.runProgress = 0;
-        this.runRequirements = 0;
         this.traitsUnlocked = 0;
     }
 
@@ -285,4 +285,16 @@ public abstract class Card implements Json.Serializable {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj.hashCode() == this.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this.name);
+        hash = 79 * hash + Objects.hashCode(this.pack);
+        return hash;
+    }
 }

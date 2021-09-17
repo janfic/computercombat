@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 import com.janfic.games.computercombat.ComputerCombatGame;
-import com.janfic.games.computercombat.data.Deck;
+import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.components.BugComponent;

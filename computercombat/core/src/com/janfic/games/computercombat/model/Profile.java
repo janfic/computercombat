@@ -3,7 +3,6 @@ package com.janfic.games.computercombat.model;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
-import com.janfic.games.computercombat.data.Deck;
 import com.janfic.games.computercombat.model.players.HumanPlayer;
 import java.util.ArrayList;
 import java.util.List;

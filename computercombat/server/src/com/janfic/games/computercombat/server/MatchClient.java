@@ -1,6 +1,6 @@
 package com.janfic.games.computercombat.server;
 
-import com.janfic.games.computercombat.data.Deck;
+import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Profile;
 
 /**

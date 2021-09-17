@@ -15,6 +15,7 @@ import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedArea;
 import com.janfic.games.computercombat.actors.BorderedGrid;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 
 public class PlayScreen implements Screen {
 
@@ -44,6 +45,7 @@ public class PlayScreen implements Screen {
     @Override
     public void show() {
 
+        SQLAPI.getSingleton().getPlayerOwnedCards(game.getCurrentProfile().getUID());
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
         Gdx.input.setInputProcessor(stage);

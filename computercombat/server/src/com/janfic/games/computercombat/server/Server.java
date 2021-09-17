@@ -8,7 +8,7 @@ import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Json;
-import com.janfic.games.computercombat.data.Deck;
+import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
