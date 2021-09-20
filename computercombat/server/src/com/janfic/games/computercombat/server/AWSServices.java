@@ -85,6 +85,7 @@ public class AWSServices {
         return userSub;
     }
 
+    @Deprecated
     public void saveProfile(Profile profile) {
         Json json = new Json();
         try {
@@ -127,9 +128,7 @@ public class AWSServices {
             for (AttributeType userAttribute : userAttributes) {
                 if (userAttribute.name().equals("sub")) {
                     String sub = userAttribute.value();
-                    GetObjectRequest getProfileDataRequest = new GetObjectRequest("computer-combat-player-data", "player_data/" + sub + ".json");
-                    S3Object object = s3.getObject(getProfileDataRequest);
-                    data = new String(object.getObjectContent().readAllBytes());
+                    data = sub;
                 }
             }
             Message m = new Message(Type.PROFILE_INFO, data);
@@ -140,8 +139,6 @@ public class AWSServices {
         } catch (UserNotConfirmedException e) {
             return new Message(Type.VERIFY_WITH_CODE, "Please use verification code");
         } catch (AwsServiceException | SdkClientException e) {
-            return new Message(Type.ERROR, "UNKOWN ERROR : \n" + e.getMessage());
-        } catch (IOException e) {
             return new Message(Type.ERROR, "UNKOWN ERROR : \n" + e.getMessage());
         }
     }

@@ -8,8 +8,8 @@ import com.badlogic.gdx.utils.Json;
  */
 public class Software extends Card {
 
-    public Software(String name, String pack, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
-        super(name, pack, textureName, level, startingHealth, startingArmor, startingAttack, startingMagic, runComponents, runRequirements, ability);
+    public Software(int id, String name, String pack, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
+        super(id, name, pack, textureName, level, startingHealth, startingArmor, startingAttack, startingMagic, runComponents, runRequirements, ability);
     }
 
     public Software() {

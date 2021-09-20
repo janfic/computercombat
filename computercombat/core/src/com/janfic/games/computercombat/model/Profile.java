@@ -16,6 +16,7 @@ public class Profile implements Serializable {
     private String uid;
     private String name;
     private String activePlayer;
+    private String email;
     private List<Deck> decks;
     private Deck collection;
 
@@ -36,6 +37,14 @@ public class Profile implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setActivePlayer(String activePlayer) {

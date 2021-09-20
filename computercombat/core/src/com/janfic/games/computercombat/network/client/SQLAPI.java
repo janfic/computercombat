@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -79,6 +80,7 @@ public class SQLAPI {
                 }
 
                 Software s = new Software(
+                        set.getInt("card.id"),
                         set.getString("card.name"),
                         "pack",
                         set.getString("textureName"),
@@ -97,6 +99,49 @@ public class SQLAPI {
             e.printStackTrace();
         }
         return cards;
+    }
+
+    public Software getCardById(int id) {
+        try {
+            String sql = "SELECT card.* \n"
+                    + "FROM card \n"
+                    + "WHERE card.id = " + id + ";";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            //Get Components of Card
+            sql = "SELECT components.* \n"
+                    + "FROM card \n"
+                    + "JOIN run_requirements ON card.id = run_requirements.card_id \n"
+                    + "JOIN components ON components.id = run_requirements.component_id \n"
+                    + "WHERE card.id = " + set.getInt("card.id");
+
+            Statement getComponentStatement = connection.createStatement();
+            ResultSet gcResults = getComponentStatement.executeQuery(sql);
+
+            List<Class<? extends Component>> components = new ArrayList<>();
+            while (gcResults.next()) {
+                components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + gcResults.getString("components.name")));
+            }
+
+            return new Software(
+                    set.getInt("card.id"),
+                    set.getString("card.name"),
+                    "pack",
+                    set.getString("textureName"),
+                    set.getInt("level"),
+                    set.getInt("maxHealth"),
+                    set.getInt("maxDefense"),
+                    set.getInt("maxAttack"),
+                    1,
+                    components.toArray(new Class[0]),
+                    set.getInt("card.runRequirements"),
+                    null
+            );
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public List<Deck> getPlayerDecks(String uid) {
@@ -124,12 +169,68 @@ public class SQLAPI {
                 Deck deck = new Deck(name);
 
                 while (rs.next()) {
-                    
+                    Software c = getCardById(rs.getInt("id"));
+                    deck.addCard(c, id);
                 }
             }
         } catch (Exception e) {
         }
 
         return decks;
+    }
+
+    public Profile loadProfile(String uid) {
+        try {
+            String sql = "SELECT *\n"
+                    + "FROM profile\n"
+                    + "WHERE profile.id = '" + uid + "';";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+
+            Profile profile = new Profile(uid);
+
+            while (rs.next()) {
+                profile.setName(rs.getString("username"));
+                profile.setEmail(rs.getString("email"));
+            }
+
+            return profile;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void saveProfile(Profile p) {
+        try {
+
+            String sql = "SELECT 1\n"
+                    + "FROM profile\n"
+                    + "WHERE profile.id = '" + p.getUID() + "';";
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+
+            boolean exists = rs.next();
+
+            if (exists) {
+
+            } else {
+                sql = "INSERT INTO profiles uid, username, email \n"
+                        + "VALUES '" + p.getUID() + "', '" + p.getName() + "', '" + p.getEmail() + "';";
+            }
+            //profile table
+
+            rs = statement.executeQuery(sql);
+
+            //decks
+            for (Deck deck : p.getDecks()) {
+
+            }
+
+            //cards
+        } catch (Exception e) {
+
+        }
     }
 }

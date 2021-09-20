@@ -61,7 +61,7 @@ public class DecksScreen implements Screen {
         this.stage = ComputerCombatGame.makeNewStage(stageCamera);
 
         Gdx.input.setInputProcessor(stage);
-
+        
         table = new Table();
         table.setFillParent(true);
         table.defaults().space(3);

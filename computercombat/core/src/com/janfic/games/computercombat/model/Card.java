@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public abstract class Card implements Json.Serializable {
 
+    protected int id;
     protected int health, armor, attack, magic;
     protected int level;
     protected int maxHealth, maxArmor, maxAttack;
@@ -23,10 +24,10 @@ public abstract class Card implements Json.Serializable {
     protected String name, pack, textureName;
 
     public Card() {
-        this("CARD", "Computer", "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
+        this(0, "CARD", "Computer", "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
     }
 
-    public Card(String name, String pack, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
+    public Card(int id, String name, String pack, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
         this.name = name;
         this.pack = pack;
         this.textureName = textureName;

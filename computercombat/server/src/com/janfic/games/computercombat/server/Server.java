@@ -14,11 +14,11 @@ import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,12 +97,8 @@ public class Server {
                                         String sub = services.createUser(userName, email, password);
                                         Profile p = new Profile(sub);
                                         p.setName(userName);
-                                        String string = services.getFileAsString("cards/default_collection.json");
-                                        List<String> cards = json.fromJson(List.class, string);
-                                        for (String card : cards) {
-                                            p.getCollection().addCard(card, 1);
-                                        }
-                                        services.saveProfile(p);
+                                        p.setEmail(email);
+                                        SQLAPI.getSingleton().saveProfile(p);
                                         r = new Message(Type.PROFILE_INFO, content);
                                     }
                                 }
@@ -112,8 +108,7 @@ public class Server {
                                     String userName = content.split(",")[0];
                                     String password = content.split(",")[1];
                                     r = services.userLogin(userName, password);
-                                    Profile p = json.fromJson(Profile.class, r.getMessage());
-                                    p.setName(userName);
+                                    Profile p = SQLAPI.getSingleton().loadProfile(r.getMessage());
                                     profiles.put(p.getUID(), p);
                                 }
                                 break;
