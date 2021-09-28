@@ -5,6 +5,14 @@ sourceSets.main.resources.srcDirs = ["../server/assets"]
 project.ext.mainClassName = "com.janfic.games.computercombat.server.Server"
 project.ext.assetsDir = new File("../server/assets")
 
+remotes {
+    server {
+        host = 'ec2-44-196-13-213.compute-1.amazonaws.com'
+        user = 'ec2-user'
+        identity = file('../computer-combat.pem')
+    }
+}
+
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
@@ -33,5 +41,19 @@ task dist(type: Jar) {
     with jar
 }
 
+task upload(dependsOn: dist) {
+    doLast{
+        ssh.run {
+            settings {
+                pty = true
+            }
+            session(remotes.server) {
+                put from: file("./build/libs/server-1.0.jar"), into: "/home/ec2-user/computer-combat/server.jar"
+                put from: file("assets/sql.properties"), into: "/home/ec2-user/computer-combat/sql.properties"
+            }
+        }
+        print "Completed!"
+    }
+}
 
 dist.dependsOn classes
