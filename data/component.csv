@@ -1,0 +1,7 @@
+id,name,textureName
+1,CPUComponent,cpu
+2,RAMComponent,ram
+3,StorageComponent,storage
+4,NetworkComponent,network
+5,BugComponent,bug
+6,PowerComponent,power
