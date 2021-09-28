@@ -15,13 +15,15 @@ import java.util.List;
  *
  * @author Jan Fic
  */
-public class ServerMatchRoom extends Thread {
+public class ServerMatchRoom {
 
     private final MatchClient player1, player2;
     private Match match;
+    private boolean isGameOver;
+    private Thread thread;
 
     public ServerMatchRoom(MatchClient player1, MatchClient player2) {
-        super(new Runnable() {
+        this.thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -57,13 +59,31 @@ public class ServerMatchRoom extends Thread {
                     player1.sendMessage(matchData1);
                     player2.sendMessage(matchData2);
 
-                    while (true) {
+                    while (isGameOver == false) {
                         String currentPlayersMove = match.whosMove();
                         MatchClient currentPlayer = player1.getProfile().getUID().equals(currentPlayersMove) ? player1 : player2;
                         MatchClient otherPlayer = player1.getProfile().getUID().equals(currentPlayersMove) ? player2 : player1;
 
-                        while (currentPlayer.hasMessage() == false) {
+                        float timeStart = System.nanoTime();
+                        float delta = 0;
+                        boolean disconnected = false;
+                        while (currentPlayer.hasMessage() == false && currentPlayer.getSocket().isConnected()) {
+                            delta = System.nanoTime() - timeStart;
+                            if (delta / 1000000000f >= 30) {
+                                try {
+                                    currentPlayer.sendMessage(new Message(Type.PING, "PING"));
+                                } catch (Exception e) {
+                                    disconnected = true;
+                                    break;
+                                }
+                            }
                         }
+
+                        if (disconnected) {
+                            isGameOver = true;
+                            break;
+                        }
+
                         Message moveMessage = currentPlayer.readMessage();
                         System.out.println("currentPlayer made move: " + moveMessage);
 
@@ -89,14 +109,29 @@ public class ServerMatchRoom extends Thread {
                             }
                         }
                     }
-
                 } catch (IOException e) {
 
                 }
+                isGameOver = true;
             }
         });
         this.player1 = player1;
         this.player2 = player2;
+    }
 
+    public MatchClient getPlayer1() {
+        return player1;
+    }
+
+    public MatchClient getPlayer2() {
+        return player2;
+    }
+
+    public boolean isIsGameOver() {
+        return isGameOver;
+    }
+
+    public void start() {
+        thread.start();
     }
 }

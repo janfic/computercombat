@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.server;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
+import com.badlogic.gdx.backends.headless.HeadlessFiles;
 import com.badlogic.gdx.backends.headless.HeadlessNet;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
@@ -39,6 +40,9 @@ public class Server {
     private Thread acceptConnections, maintainConnections, maintainQueue;
 
     public Server(int max_matches) {
+        HeadlessFiles headlessFiles = new HeadlessFiles();
+        Gdx.files = headlessFiles;
+        SQLAPI.getSingleton();
         clients = new HashMap<>();
         queue = new ArrayList<>();
         matches = new ArrayList<>();
@@ -108,7 +112,9 @@ public class Server {
                                     String userName = content.split(",")[0];
                                     String password = content.split(",")[1];
                                     r = services.userLogin(userName, password);
+                                    System.out.println(r);
                                     Profile p = SQLAPI.getSingleton().loadProfile(r.getMessage());
+                                    System.out.println(profiles + " " + p);
                                     profiles.put(p.getUID(), p);
                                 }
                                 break;
@@ -249,6 +255,27 @@ public class Server {
                         Thread.sleep(2000);
                     } catch (Exception e) {
 
+                    }
+                }
+            }
+        });
+        Thread maintainMatches = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    List<ServerMatchRoom> r = new ArrayList<>();
+                    for (ServerMatchRoom match : matches) {
+                        if (match.isIsGameOver()) {
+                            r.add(match);
+                        }
+                    }
+
+                    for (ServerMatchRoom serverMatchRoom : r) {
+                        MatchClient c1 = serverMatchRoom.getPlayer1();
+                        MatchClient c2 = serverMatchRoom.getPlayer2();
+
+                        clients.put(c1.getClientUID(), c1);
+                        clients.put(c2.getClientUID(), c2);
                     }
                 }
             }
