@@ -41,7 +41,7 @@ task dist(type: Jar) {
     with jar
 }
 
-task upload(dependsOn: dist) {
+task upload() {
     doLast{
         ssh.run {
             settings {
@@ -49,7 +49,7 @@ task upload(dependsOn: dist) {
             }
             session(remotes.server) {
                 put from: file("./build/libs/server-1.0.jar"), into: "/home/ec2-user/computer-combat/server.jar"
-                put from: file("assets/sql.properties"), into: "/home/ec2-user/computer-combat/sql.properties"
+                put from: file("assets"), into: "/home/ec2-user/computer-combat"
             }
         }
         print "Completed!"

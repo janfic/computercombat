@@ -99,11 +99,7 @@ public class Server {
                                         r = new Message(Type.ERROR, "This email is already being used");
                                     } else {
                                         String sub = services.createUser(userName, email, password);
-                                        Profile p = new Profile(sub);
-                                        p.setName(userName);
-                                        p.setEmail(email);
-                                        SQLAPI.getSingleton().saveProfile(p);
-                                        r = new Message(Type.PROFILE_INFO, content);
+                                        r = new Message(Type.PROFILE_INFO, sub);
                                     }
                                 }
                                 break;
@@ -112,8 +108,10 @@ public class Server {
                                     String userName = content.split(",")[0];
                                     String password = content.split(",")[1];
                                     r = services.userLogin(userName, password);
-                                    System.out.println(r);
-                                    Profile p = SQLAPI.getSingleton().loadProfile(r.getMessage());
+                                    Profile p = SQLAPI.getSingleton()
+                                            .loadProfile(r
+                                                    .getMessage()
+                                            );
                                     System.out.println(profiles + " " + p);
                                     profiles.put(p.getUID(), p);
                                 }

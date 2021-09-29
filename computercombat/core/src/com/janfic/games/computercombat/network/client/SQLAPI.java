@@ -1,7 +1,6 @@
 package com.janfic.games.computercombat.network.client;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Deck;
@@ -12,7 +11,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,7 +207,7 @@ public class SQLAPI {
     public void saveProfile(Profile p) {
         try {
 
-            String sql = "SELECT 1\n"
+            String sql = "SELECT uid\n"
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + p.getUID() + "';";
 
@@ -219,14 +217,15 @@ public class SQLAPI {
             boolean exists = rs.next();
 
             if (exists) {
+                System.out.println("SAVE PROFILE");
 
             } else {
-                sql = "INSERT INTO profiles uid, username, email \n"
-                        + "VALUES '" + p.getUID() + "', '" + p.getName() + "', '" + p.getEmail() + "';";
+                sql = "INSERT INTO profile (uid, username, email) \n"
+                        + "VALUES ('" + p.getUID() + "', '" + p.getName() + "', '" + p.getEmail() + "');";
             }
             //profile table
-
-            rs = statement.executeQuery(sql);
+            statement = connection.createStatement();
+            int rowsUpdated = statement.executeUpdate(sql);
 
             //decks
             for (Deck deck : p.getDecks()) {
@@ -235,7 +234,35 @@ public class SQLAPI {
 
             //cards
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    public boolean addCardToProfile(int cardID, Profile profile) {
+        try {
+            String sql = "SELECT uid\n"
+                    + "FROM profile\n"
+                    + "WHERE profile.uid = '" + profile.getUID() + "';";
+
+            System.out.println(sql);
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+
+            boolean exists = rs.next();
+
+            if (exists) {
+                sql = "INSERT INTO profile_owns_card (profile_id, card_id)\n"
+                        + "VALUES ('" + profile.getUID() + "'," + cardID + ");";
+                System.out.println(sql);
+                int rowsUpdated = statement.executeUpdate(sql);
+                return rowsUpdated >= 1;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

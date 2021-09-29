@@ -7,31 +7,22 @@ import java.util.Map;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminGetUserRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AuthFlowType;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ConfirmSignUpRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ConfirmSignUpResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.SignUpRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.SignUpResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.InitiateAuthRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.InitiateAuthResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUsersRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUsersResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.NotAuthorizedException;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotConfirmedException;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotFoundException;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 import com.amazonaws.services.s3.*;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.StringInputStream;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequest;
 
 /**
@@ -70,6 +61,7 @@ public class AWSServices {
     }
 
     public String createUser(String username, String email, String password) {
+        System.out.println("HERE");
 
         AttributeType emailAttribute = AttributeType.builder().name("email").value(email).build();
 
@@ -81,6 +73,21 @@ public class AWSServices {
                 .build();
         SignUpResponse response = cognito.signUp(request);
         String userSub = response.userSub();
+
+        Profile p = new Profile(userSub);
+        p.setEmail(email);
+        p.setName(username);
+        SQLAPI.getSingleton().saveProfile(p);
+
+        FileHandle f = Gdx.files.internal("starterCollection.csv");
+        Scanner scanner = new Scanner(f.readString());
+
+        while (scanner.hasNextLine()) {
+            int cardID = Integer.parseInt(scanner.nextLine());
+            System.out.println(cardID);
+            System.out.println(p.getUID());
+            SQLAPI.getSingleton().addCardToProfile(cardID, p);
+        }
 
         return userSub;
     }
@@ -154,7 +161,6 @@ public class AWSServices {
             ConfirmSignUpResponse response = cognito.confirmSignUp(request);
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return false;
         }
     }
