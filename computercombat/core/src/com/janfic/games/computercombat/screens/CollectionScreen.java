@@ -4,37 +4,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.actors.CollectionCard;
-import com.janfic.games.computercombat.actors.OverlayTextLabelArea;
 import com.janfic.games.computercombat.actors.Panel;
-import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.network.Message;
-import com.janfic.games.computercombat.network.Type;
-import java.util.List;
+import com.janfic.games.computercombat.network.client.SQLAPI;
+import java.util.Map;
 
 /**
  *
@@ -150,27 +136,15 @@ public class CollectionScreen implements Screen {
     final Runnable requestProfileInfoRunnable = new Runnable() {
         @Override
         public void run() {
-            Json json = new Json();
             Profile profile = game.getCurrentProfile();
-            Deck playerCollection = profile.getCollection();
 
-            Message request = new Message(Type.CARD_INFO_REQUEST, json.toJson(playerCollection.getCards()));
+            Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
 
-            game.getServerAPI().sendMessage(request);
-
-            while (game.getServerAPI().hasMessage() == false) {
-            }
-
-            Message response = game.getServerAPI().readMessage();
-            List<Software> cardInfo = json.fromJson(List.class, response.getMessage());
-            cardInfo.sort((o1, o2) -> {
-                return o1.getName().compareTo(o2.getName()); //To change body of generated lambdas, choose Tools | Templates.
-            });
             collection.clearChildren();
             boolean isEven = false;
 
-            for (Software card : cardInfo) {
-                CollectionCard cc = new CollectionCard(game, skin, card, profile.getCollection().getCardCount(card.getPack() + "/" + card.getName()));
+            for (Card card : software.keySet()) {
+                CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
                 collection.add(cc);
                 if (isEven) {
                     collection.row();

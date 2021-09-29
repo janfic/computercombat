@@ -215,7 +215,6 @@ public class LoginScreen implements Screen {
                         });
                         break;
                     case PROFILE_INFO:
-                        Json json = new Json();
                         Profile profile = new Profile(message.getMessage());
                         game.setCurrentProfile(profile);
                         game.pushScreen(new PlayScreen(game));

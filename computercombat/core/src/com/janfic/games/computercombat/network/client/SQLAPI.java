@@ -58,7 +58,8 @@ public class SQLAPI {
                     + "FROM card \n"
                     + "JOIN profile_owns_card ON card.id = profile_owns_card.card_id \n"
                     + "JOIN profile ON profile.uid = profile_owns_card.profile_id \n"
-                    + "WHERE profile.uid = '" + uid + "';";
+                    + "WHERE profile.uid = '" + uid + "' \n"
+                    + "ORDER BY card.name;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
@@ -82,7 +83,7 @@ public class SQLAPI {
                 Software s = new Software(
                         set.getInt("card.id"),
                         set.getString("card.name"),
-                        "pack",
+                        "computer_pack",
                         set.getString("textureName"),
                         set.getInt("level"),
                         set.getInt("maxHealth"),
@@ -93,7 +94,7 @@ public class SQLAPI {
                         set.getInt("card.runRequirements"),
                         null
                 );
-                cards.put(s, cards.getOrDefault(s, 1));
+                cards.put(s, cards.getOrDefault(s, 0) + 1);
             }
         } catch (Exception e) {
             e.printStackTrace();

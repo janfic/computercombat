@@ -17,12 +17,15 @@ import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.*;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -61,7 +64,7 @@ public class DecksScreen implements Screen {
         this.stage = ComputerCombatGame.makeNewStage(stageCamera);
 
         Gdx.input.setInputProcessor(stage);
-        
+
         table = new Table();
         table.setFillParent(true);
         table.defaults().space(3);
@@ -406,27 +409,16 @@ public class DecksScreen implements Screen {
     final Runnable requestProfileInfoRunnable = new Runnable() {
         @Override
         public void run() {
-            Json json = new Json();
+
             Profile profile = game.getCurrentProfile();
-            Deck playerCollection = profile.getCollection();
 
-            Message request = new Message(Type.CARD_INFO_REQUEST, json.toJson(playerCollection.getCards()));
+            Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
 
-            game.getServerAPI().sendMessage(request);
-
-            while (game.getServerAPI().hasMessage() == false) {
-            }
-
-            Message response = game.getServerAPI().readMessage();
-            List<Software> cardInfo = json.fromJson(List.class, response.getMessage());
-            cardInfo.sort((o1, o2) -> {
-                return o1.getName().compareTo(o2.getName()); //To change body of generated lambdas, choose Tools | Templates.
-            });
             collection.clearChildren();
             boolean isEven = false;
 
-            for (Software card : cardInfo) {
-                CollectionCard cc = new CollectionCard(game, skin, card, profile.getCollection().getCardCount(card.getPack() + "/" + card.getName()));
+            for (Card card : software.keySet()) {
+                CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
 
                 collectionToDeckDragAndDrop.addSource(new Source(cc) {
                     @Override
