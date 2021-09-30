@@ -27,8 +27,8 @@ public class ServerMatchRoom {
             @Override
             public void run() {
                 try {
-                    Message message1 = new Message(Type.FOUND_MATCH, player2.getProfile().getName());
-                    Message message2 = new Message(Type.FOUND_MATCH, player1.getProfile().getName());
+                    Message message1 = new Message(Type.FOUND_MATCH, ServerMatchRoom.this.player2.getProfile().getName());
+                    Message message2 = new Message(Type.FOUND_MATCH, ServerMatchRoom.this.player1.getProfile().getName());
 
                     player1.sendMessage(message1);
                     player2.sendMessage(message2);

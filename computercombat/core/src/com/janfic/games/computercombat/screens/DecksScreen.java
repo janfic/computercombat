@@ -217,8 +217,10 @@ public class DecksScreen implements Screen {
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                SQLAPI.getSingleton().savePlayerDeck(selectedDeck.getDeck(), game.getCurrentProfile().getUID());
-                saveButton.addAction(Actions.sequence(Actions.color(Color.GREEN), Actions.color(Color.WHITE, 2)));
+                if (selectedDeck != null) {
+                    SQLAPI.getSingleton().savePlayerDeck(selectedDeck.getDeck(), game.getCurrentProfile().getUID());
+                    saveButton.addAction(Actions.sequence(Actions.color(Color.GREEN), Actions.color(Color.WHITE, 2)));
+                }
             }
         });
 

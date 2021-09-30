@@ -287,7 +287,6 @@ public class Board extends BorderedGrid {
         this.matchData = data;
         this.clear();
         components.clear();
-        newComponentSpawn.getActor().clear();
         this.newComponentSpawn = this.add(new Group()).height(0).pad(0).space(0).growX().colspan(8);
         this.row();
         for (int y = 0; y < 8; y++) {

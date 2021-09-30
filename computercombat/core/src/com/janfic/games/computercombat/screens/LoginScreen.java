@@ -17,14 +17,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.model.Profile;
-import com.janfic.games.computercombat.model.players.HumanPlayer;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.regex.Pattern;
 
 /**
@@ -206,7 +205,6 @@ public class LoginScreen implements Screen {
                         popup.getTitleLabel().setText("ERROR");
                         messageLabel.setText("Something went wrong. Try again.");
                         popup.add(messageLabel).expand().grow().row();
-                        System.out.println(message.getMessage());
                         okayButton.addListener(new ClickListener() {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
@@ -215,7 +213,7 @@ public class LoginScreen implements Screen {
                         });
                         break;
                     case PROFILE_INFO:
-                        Profile profile = new Profile(message.getMessage());
+                        Profile profile = SQLAPI.getSingleton().loadProfile(message.getMessage());
                         game.setCurrentProfile(profile);
                         game.pushScreen(new PlayScreen(game));
                         break;
