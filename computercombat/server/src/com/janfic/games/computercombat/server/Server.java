@@ -278,6 +278,7 @@ public class Server {
                 }
             }
         });
+        maintainMatches.start();
     }
 
     public void start() {

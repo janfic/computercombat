@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -42,7 +43,6 @@ public class LoginScreen implements Screen {
 
     TooltipManager toolTipManager;
     TextField passwordField, userNameField;
-    TextTooltip toolTip;
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX
             = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -70,14 +70,28 @@ public class LoginScreen implements Screen {
         Table leftGroup = new Table();
 
         BorderedGrid grid = new BorderedGrid(skin);
-        Label userNameFieldLabel = new Label(" Username: ", skin, "paneled");
-        Label passwordFieldLabel = new Label("Password: ", skin, "paneled");
+        Table usernameTable = new Table(skin);
+        usernameTable.background("border_filled");
+        Label userNameFieldLabel = new Label(" Username: ", skin);
+        Image usernameInfo = new Image(skin, "info_icon");
+        usernameTable.add(usernameInfo);
+        usernameTable.add(userNameFieldLabel);
+
+        Table passwordTable = new Table(skin);
+        passwordTable.background("border_filled");
+        Label passwordFieldLabel = new Label(" Password: ", skin);
+        Image passwordInfo = new Image(skin, "info_icon");
+        passwordTable.add(passwordInfo);
+        passwordTable.add(passwordFieldLabel);
+
         userNameField = new TextField("", skin);
         passwordField = new TextField("", skin);
         TextButton loginButton = new TextButton("Login", skin);
 
-        toolTip = new TextTooltip("Only alphanumeric characters (A-Z,0-9)", toolTipManager, skin);
-        userNameFieldLabel.addListener(toolTip);
+        TextTooltip usernameTip = new TextTooltip("Only alphanumeric characters (A-Z,0-9)", toolTipManager, skin);
+        usernameInfo.addListener(usernameTip);
+        TextTooltip passwordTip = new TextTooltip("Minimum 8 alphanumeric characters (A-Z,0-9)", toolTipManager, skin);
+        passwordInfo.addListener(passwordTip);
 
         TextField.TextFieldFilter alphaNumeric = new TextField.TextFieldFilter() {
             @Override
@@ -98,9 +112,9 @@ public class LoginScreen implements Screen {
         leftGroup.defaults().space(10);
 //        leftGroup.debugAll();
 
-        leftGroup.add(userNameFieldLabel).growX().minHeight(25);
+        leftGroup.add(usernameTable).growX().minHeight(25);
         leftGroup.add(userNameField).minHeight(25).row();
-        leftGroup.add(passwordFieldLabel).growX().minHeight(25);
+        leftGroup.add(passwordTable).growX().minHeight(25);
         leftGroup.add(passwordField).minHeight(25).row();
         leftGroup.add(loginButton).colspan(2).row();
 

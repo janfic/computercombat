@@ -1,6 +1,7 @@
 package com.janfic.games.computercombat.model.animations;
 
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Interpolation.BounceOut;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -40,6 +41,7 @@ public class CascadeAnimation implements MoveAnimation {
         List<Action> cascadeAnimation = new ArrayList<>();
 
         Map<Integer, List<CascadeData>> newComponentFallingOrder = new HashMap<>();
+        BounceOut bounce = new BounceOut(5);
         for (CascadeData cas : cascade) {
             boolean found = false;
             for (Cell<ComponentActor>[] cells : board.getBoard()) {
@@ -50,7 +52,7 @@ public class CascadeAnimation implements MoveAnimation {
                         Action moveAction = Actions.moveTo(
                                 26 * x + 7,
                                 (8 - (cas.getFallenComponent().getY() + 1)) * 26 + 7,
-                                (cas.getFallenComponent().getY() - cas.getOriginalComponent().getY()) / 2f, Interpolation.bounceOut);
+                                (cas.getFallenComponent().getY() - cas.getOriginalComponent().getY()) / 4f, bounce);
                         moveAction.setActor(cell.getActor());
                         cascadeAnimation.add(moveAction);
                         found = true;
@@ -83,8 +85,8 @@ public class CascadeAnimation implements MoveAnimation {
                 Action move = Actions.moveTo(
                         26 * x,
                         -(columnFall.get(i).getFallenComponent().getY() + 1) * 26,
-                        (columnFall.get(i).getFallenComponent().getY() - (-1 - i)) / 2f,
-                        Interpolation.bounceOut
+                        (columnFall.get(i).getFallenComponent().getY() - (-1 - i)) / 4f,
+                        bounce
                 );
                 move.setActor(component);
                 cascadeAnimation.add(move);

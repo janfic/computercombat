@@ -6,15 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
-import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
-import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.janfic.games.computercombat.Assets;
@@ -71,18 +64,30 @@ public class SignUpScreen implements Screen {
         Table rightGroup = new Table();
 
         BorderedGrid grid = new BorderedGrid(skin);
-        Label userNameFieldLabel = new Label(" Username: ", skin, "paneled");
-        Label emailFieldLabel = new Label("Email: ", skin, "paneled");
-        Label passwordFieldLabel = new Label(" Create Password: ", skin, "paneled");
-        Label confirmFieldLabel = new Label(" Confirm Password: ", skin, "paneled");
+        Table usernameTable = new Table(skin);
+        usernameTable.background("border_filled");
+        Label userNameFieldLabel = new Label(" Username: ", skin);
+        Image usernameInfo = new Image(skin, "info_icon");
+        usernameTable.add(usernameInfo).left();
+        usernameTable.add(userNameFieldLabel).expand().right();
+        Label emailFieldLabel = new Label("Email: ", skin, "filled");
+        Table passwordTable = new Table(skin);
+        passwordTable.background("border_filled");
+        Label passwordFieldLabel = new Label(" Create Password: ", skin);
+        Image passwordInfo = new Image(skin, "info_icon");
+        passwordTable.add(passwordInfo).left();
+        passwordTable.add(passwordFieldLabel).expand().right();
+        Label confirmFieldLabel = new Label(" Confirm Password: ", skin, "filled");
         userNameField = new TextField("", skin);
         emailField = new TextField("", skin);
         passwordField = new TextField("", skin);
         confirmField = new TextField("", skin);
         TextButton createAccountButton = new TextButton("Create Account", skin);
 
-        toolTip = new TextTooltip("Only alphanumeric characters (A-Z,0-9)", toolTipManager, skin);
-        userNameFieldLabel.addListener(toolTip);
+        TextTooltip usernameToolTip = new TextTooltip("Only alphanumeric characters (A-Z,0-9)", toolTipManager, skin);
+        usernameInfo.addListener(usernameToolTip);
+        TextTooltip passwordToolTip = new TextTooltip("Minimum 8 alphanumeric characters (A-Z,0-9)", toolTipManager, skin);
+        passwordInfo.addListener(passwordToolTip);
 
         TextFieldFilter alphaNumeric = new TextFieldFilter() {
             @Override
@@ -107,11 +112,11 @@ public class SignUpScreen implements Screen {
         leftGroup.defaults().space(5);
 //        leftGroup.debugAll();
 
-        leftGroup.add(userNameFieldLabel).growX().minHeight(25);
+        leftGroup.add(usernameTable).growX().minHeight(25);
         leftGroup.add(userNameField).minHeight(25).row();
         leftGroup.add(emailFieldLabel).growX().minHeight(25);
         leftGroup.add(emailField).minHeight(25).row();
-        leftGroup.add(passwordFieldLabel).growX().minHeight(25);
+        leftGroup.add(passwordTable).growX().minHeight(25);
         leftGroup.add(passwordField).minHeight(25).row();
         leftGroup.add(confirmFieldLabel).growX().minHeight(25);
         leftGroup.add(confirmField).minHeight(25).row();

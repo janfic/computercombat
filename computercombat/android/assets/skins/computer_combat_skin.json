@@ -149,6 +149,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		fontColor: RGBA_255_255_255_255
 		background: panel
 	}
+	filled: {
+		font: lucidaConsole12px
+		background: border_filled
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
