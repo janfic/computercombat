@@ -44,6 +44,7 @@ public abstract class Card implements Json.Serializable {
         this.level = level;
         this.runProgress = 0;
         this.traitsUnlocked = 0;
+        this.id = id;
     }
 
     public boolean isDead() {
@@ -227,6 +228,10 @@ public abstract class Card implements Json.Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public int getID() {
+        return id;
     }
 
     @Override

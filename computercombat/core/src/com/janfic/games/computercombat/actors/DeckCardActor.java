@@ -64,7 +64,7 @@ public class DeckCardActor extends Panel {
         imageArea = new BorderedArea(skin);
         imageArea.add(new Image(game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName())));
 
-        amountLabel = new Label("" + deck.getCardCount(software.getPack() + "/" + software.getName()), skin, "paneled");
+        amountLabel = new Label("" + deck.getCardCount(software), skin, "paneled");
         amountLabel.setAlignment(Align.center);
 
         this.defaults().space(5);

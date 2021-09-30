@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.*;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.*;
@@ -21,8 +20,6 @@ import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.network.Message;
-import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +114,7 @@ public class DecksScreen implements Screen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         Deck deck = new Deck(deckNameField.getText());
+                        SQLAPI.getSingleton().savePlayerDeck(deck, game.getCurrentProfile().getUID());
                         game.getCurrentProfile().getDecks().add(deck);
                         populateDecks();
                         window.remove();
@@ -167,6 +165,7 @@ public class DecksScreen implements Screen {
                             return;
                         }
                         game.getCurrentProfile().getDecks().remove(selectedDeck.getDeck());
+                        SQLAPI.getSingleton().deletePlayerDeck(selectedDeck.getDeck(), game.getCurrentProfile().getUID());
                         selectedDeck = null;
                         deckCards.clearChildren();
                         populateDecks();
@@ -218,24 +217,8 @@ public class DecksScreen implements Screen {
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        Json json = new Json();
-                        String data = json.toJson(game.getCurrentProfile());
-                        game.getServerAPI().sendMessage(new Message(Type.UPDATE_PROFILE, data));
-
-                        while (game.getServerAPI().hasMessage() == false) {
-                        }
-
-                        Message response = game.getServerAPI().readMessage();
-
-                        if (response.type == Type.SUCCESS) {
-                            saveButton.addAction(Actions.sequence(Actions.color(Color.GREEN), Actions.color(Color.WHITE, 2)));
-                        }
-                    }
-                });
-
+                SQLAPI.getSingleton().savePlayerDeck(selectedDeck.getDeck(), game.getCurrentProfile().getUID());
+                saveButton.addAction(Actions.sequence(Actions.color(Color.GREEN), Actions.color(Color.WHITE, 2)));
             }
         });
 
@@ -288,12 +271,8 @@ public class DecksScreen implements Screen {
                 }
                 Software card = (Software) payload.getObject();
                 selectedDeck.getDeck().removeCard(card, 1);
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateDeckCards();
-                    }
-                });
+
+                updateDeckCards();
             }
         });
 
@@ -310,12 +289,7 @@ public class DecksScreen implements Screen {
                 }
                 Software card = (Software) payload.getObject();
                 selectedDeck.getDeck().addCard(card, 1);
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateDeckCards();
-                    }
-                });
+                updateDeckCards();
             }
         });
     }
@@ -346,9 +320,12 @@ public class DecksScreen implements Screen {
     public void dispose() {
     }
 
-    public void populateDecks() {
+    private void populateDecks() {
         decks.clearChildren();
-        for (Deck deck : game.getCurrentProfile().getDecks()) {
+
+        List<Deck> playerDecks = SQLAPI.getSingleton().getPlayerDecks(game.getCurrentProfile().getUID());
+
+        for (Deck deck : playerDecks) {
             DeckActor d = new DeckActor(deck, skin);
             d.setColor(Color.LIGHT_GRAY);
             d.addListener(new ClickListener() {
@@ -361,31 +338,18 @@ public class DecksScreen implements Screen {
                     deleteButton.setDisabled(false);
                     selectedDeck = d;
                     selectedDeck.setColor(Color.WHITE);
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateDeckCards();
-                        }
-                    });
+                    updateDeckCards();
                 }
             });
             decks.add(d).row();
         }
     }
 
-    public void updateDeckCards() {
-        Json json = new Json();
+    private void updateDeckCards() {
         deckCards.clearChildren();
-        game.getServerAPI().sendMessage(new Message(Type.CARD_INFO_REQUEST, json.toJson(selectedDeck.getDeck().getCards())));
 
-        while (game.getServerAPI().hasMessage() == false) {
-        }
-
-        Message response = game.getServerAPI().readMessage();
-
-        List<Software> cards = json.fromJson(List.class, response.getMessage());
-        for (Software card : cards) {
-            DeckCardActor dca = new DeckCardActor(game, skin, selectedDeck.getDeck(), card);
+        for (Card card : selectedDeck.getDeck().getCards()) {
+            DeckCardActor dca = new DeckCardActor(game, skin, selectedDeck.getDeck(), (Software) card);
 
             Source source = new Source(dca.getImageArea()) {
 
@@ -441,5 +405,4 @@ public class DecksScreen implements Screen {
             }
         }
     };
-
 }

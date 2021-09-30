@@ -9,6 +9,7 @@ import com.janfic.games.computercombat.model.Software;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,6 +112,7 @@ public class SQLAPI {
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
 
+            set.next();
             //Get Components of Card
             sql = "SELECT components.* \n"
                     + "FROM card \n"
@@ -129,7 +131,7 @@ public class SQLAPI {
             return new Software(
                     set.getInt("card.id"),
                     set.getString("card.name"),
-                    "pack",
+                    "computer_pack",
                     set.getString("textureName"),
                     set.getInt("level"),
                     set.getInt("maxHealth"),
@@ -141,6 +143,7 @@ public class SQLAPI {
                     null
             );
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -157,27 +160,108 @@ public class SQLAPI {
             ResultSet set = statement.executeQuery(sql);
 
             while (set.next()) {
+
                 int id = set.getInt("id");
                 String name = set.getString("name");
 
-                sql = "SELECT card.id\n"
-                        + "FROM card \n"
-                        + "JOIN deck_has_card ON deck_has_card.deck_id = " + id + " \n";
+                sql = "SELECT * \n"
+                        + "FROM deck_has_card \n"
+                        + "WHERE deck_has_card.deck_id = " + id + ";";
 
                 Statement stat = connection.createStatement();
-                ResultSet rs = statement.executeQuery(sql);
+                ResultSet rs = stat.executeQuery(sql);
 
-                Deck deck = new Deck(name);
+                Deck deck = new Deck(name, id);
 
                 while (rs.next()) {
-                    Software c = getCardById(rs.getInt("id"));
-                    deck.addCard(c, id);
+                    Software c = getCardById(rs.getInt("card_id"));
+                    deck.addCard(c, 1);
                 }
+                decks.add(deck);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return decks;
+    }
+
+    public void savePlayerDeck(Deck deck, String uid) {
+        try {
+            String sql = "SELECT * FROM deck\n"
+                    + "WHERE deck.id = " + deck.getID() + ";";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            int rows = 0;
+
+            boolean exists = set.next();
+            if (exists) {
+
+                sql = "UPDATE deck "
+                        + "SET name = '" + deck.getName() + "', profile_id = '" + uid + "' \n"
+                        + "WHERE id = " + deck.getID() + ";";
+
+                rows = statement.executeUpdate(sql);
+            } else {
+                sql = "INSERT INTO deck (id, name, profile_id) \n"
+                        + "VALUES (" + deck.getID() + " , '" + deck.getName() + "', '" + uid + "');";
+
+                rows = statement.executeUpdate(sql);
+
+            }
+
+            sql = "DELETE FROM deck_has_card \n"
+                    + "WHERE deck_has_card.deck_id = " + deck.getID() + ";";
+
+            rows = statement.executeUpdate(sql);
+
+            for (Software card : deck.getCards()) {
+
+                for (int i = 0; i < deck.getCardCount(card); i++) {
+                    sql = "INSERT INTO deck_has_card (deck_id, card_id) \n"
+                            + "VALUES (" + deck.getID() + "," + card.getID() + ");";
+
+                    rows = statement.executeUpdate(sql);
+                }
+            }
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletePlayerDeck(Deck deck, String uid) {
+        try {
+            String sql = "SELECT * FROM deck\n"
+                    + "WHERE deck.id = " + deck.getID() + ";";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            int rows;
+
+            boolean exists = set.next();
+            if (exists) {
+
+                sql = "DELETE FROM deck_has_card \n"
+                        + "WHERE deck_has_card.deck_id = " + deck.getID() + ";";
+
+                rows = statement.executeUpdate(sql);
+
+                sql = "DELETE FROM deck "
+                        + "WHERE id = " + deck.getID() + ";";
+
+                rows = statement.executeUpdate(sql);
+            }
+        } catch (SQLIntegrityConstraintViolationException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Profile loadProfile(String uid) {

@@ -15,23 +15,36 @@ import java.util.Map;
 public class Deck implements Serializable {
 
     private String name;
-    private Map<Card, Integer> cards;
+    private int id;
+    private Map<Software, Integer> cards;
 
     public Deck() {
         this.name = "New Deck";
         this.cards = new HashMap<>();
+        this.id = (int) (Math.random() * Integer.MAX_VALUE);
     }
 
     public Deck(String name) {
         this.name = name;
         this.cards = new HashMap<>();
+        this.id = (int) (Math.random() * Integer.MAX_VALUE);
+    }
+
+    public Deck(String name, int id) {
+        this.name = name;
+        this.id = id;
+        this.cards = new HashMap<>();
+    }
+
+    public int getID() {
+        return id;
     }
 
     public void addCard(Software card, int amount) {
         cards.put(card, cards.getOrDefault(card, 0) + amount);
     }
 
-    public void removeCard(Card card, int amount) {
+    public void removeCard(Software card, int amount) {
         int a = cards.getOrDefault(card, 0) - amount;
         if (a > 0) {
             cards.put(card, a);
@@ -40,7 +53,7 @@ public class Deck implements Serializable {
         }
     }
 
-    public int getCardCount(String card) {
+    public int getCardCount(Software card) {
         return cards.getOrDefault(card, 0);
     }
 
@@ -48,7 +61,7 @@ public class Deck implements Serializable {
         return name;
     }
 
-    public List<Card> getCards() {
+    public List<Software> getCards() {
         return new ArrayList<>(cards.keySet());
     }
 
