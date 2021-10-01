@@ -62,10 +62,23 @@ public class LoginScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(true);
-        table.defaults().pad(10);
+        table.defaults().pad(5);
 
-        Label title = new Label("Login", skin, "title");
+        Table titleTable = new Table(skin);
+        titleTable.setBackground("border");
+
+        Label title = new Label("Login", skin);
         title.setAlignment(Align.center);
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.popScreen();
+            }
+        });
+
+        titleTable.add(backButton);
+        titleTable.add(title).growX().row();
 
         Table leftGroup = new Table();
 
@@ -116,7 +129,7 @@ public class LoginScreen implements Screen {
         leftGroup.add(userNameField).minHeight(25).row();
         leftGroup.add(passwordTable).growX().minHeight(25);
         leftGroup.add(passwordField).minHeight(25).row();
-        leftGroup.add(loginButton).colspan(2).row();
+        leftGroup.add(loginButton).colspan(2).growX().row();
 
         loginButton.addListener(new ClickListener() {
             @Override
@@ -150,20 +163,8 @@ public class LoginScreen implements Screen {
 
         grid.add(leftGroup).grow();
 
-        Table navGrid = new Table();
-        TextButton backButton = new TextButton("Back", skin);
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.popScreen();
-            }
-        });
-
-        navGrid.add(backButton).expand().width(150).left();
-
-        table.add(title).growX().row();
+        table.add(titleTable).growX().row();
         table.add(grid).growY().row();
-        table.add(navGrid).growX();
 
         stage.addActor(table);
     }

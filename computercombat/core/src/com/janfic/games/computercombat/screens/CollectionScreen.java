@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedGrid;
@@ -56,52 +55,75 @@ public class CollectionScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         table.defaults().space(5);
-        table.pad(5);
+        table.pad(4);
 
-        Label title = new Label("Collection", skin, "title");
+        Table titleTable = new Table(skin);
+        titleTable.setBackground("border");
+
+        Label title = new Label("Collection", skin);
         title.setAlignment(Align.center);
-
-        collection = new Table();
-        collection.defaults().space(5).growY();
-
-        collectionScrollPane = new ScrollPane(collection, skin);
-        collectionScrollPane.setFadeScrollBars(false);
-
-        filterBar = new BorderedGrid(skin);
-        filterBar.pad(10);
-        filterBar.defaults().space(5);
-        filterBar.top();
-
-        Panel filterTitle = new Panel(skin);
-        filterTitle.add(new Label("Filter Collection", skin)).pad(2);
-        Panel searchPanel = new Panel(skin);
-        searchPanel.add(new Image(skin.get("magnifying_class_icon", Drawable.class))).pad(5);
-        TextField searchField = new TextField("", skin);
-        searchPanel.add(searchField).growX().row();
-
-        TextButton applyButton = new TextButton("Apply", skin);
-
-        filterBar.add(filterTitle).row();
-        filterBar.add(searchPanel).row();
-        filterBar.add(applyButton).expand().bottom().row();
-
         TextButton backButton = new TextButton("Back", skin);
-
-        table.add(title).colspan(2).growX().row();
-        table.add(filterBar).growY();
-        table.add(collectionScrollPane).grow().row();
-
-        table.add(backButton).expandX().width(150).left().row();
-
-        stage.addActor(table);
-
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.popScreen();
             }
         });
+        TextButton filterButton = new TextButton("Filter", skin);
 
+        titleTable.add(backButton);
+        titleTable.add(title).growX();
+        titleTable.add(filterButton).row();
+
+        filterButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Window w = new Window("Filter", skin);
+                w.defaults().space(5);
+
+                Panel searchPanel = new Panel(skin);
+                searchPanel.add(new Image(skin.get("magnifying_class_icon", Drawable.class))).pad(5);
+                TextField searchField = new TextField("", skin);
+                searchPanel.add(searchField).growX().row();
+
+                TextButton applyButton = new TextButton("Apply", skin);
+
+                applyButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        w.remove();
+                    }
+                });
+
+                w.add(searchPanel).expand().top().row();
+                w.add(applyButton).growX().bottom().row();
+
+                TextButton cancel = new TextButton("Cancel", skin);
+                cancel.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        w.remove();
+                    }
+                });
+
+                w.add(cancel).growX().row();
+
+                w.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
+                w.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
+                filterButton.getStage().addActor(w);
+            }
+        });
+
+        collection = new Table();
+        collection.defaults().space(1).growY();
+
+        collectionScrollPane = new ScrollPane(collection, skin);
+        collectionScrollPane.setFadeScrollBars(false);
+
+        table.add(titleTable).growX().row();
+        table.add(collectionScrollPane).grow().row();
+
+        stage.addActor(table);
         Gdx.app.postRunnable(requestProfileInfoRunnable);
     }
 
@@ -141,15 +163,16 @@ public class CollectionScreen implements Screen {
             Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
 
             collection.clearChildren();
-            boolean isEven = false;
+            int row = 0;
 
             for (Card card : software.keySet()) {
                 CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
                 collection.add(cc);
-                if (isEven) {
+                row++;
+                if (row % 4 == 0) {
                     collection.row();
+                    row = 0;
                 }
-                isEven = !isEven;
             }
         }
     };
