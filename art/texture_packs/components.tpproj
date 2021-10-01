@@ -1,6 +1,6 @@
 name=components
 filename=
-output=../../computercombat/android/assets
+output=../../computercombat/android/assets/texture_packs
 
 alias=true
 alphaThreshold=0
@@ -32,7 +32,7 @@ limitMemory=true
 useIndexes=true
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:../components_export/bug.png,type:Input,regionName:null},{path:../components_export/storage.png,type:Input,regionName:null},{path:../components_export/cpu.png,type:Input,regionName:null},{path:../components_export/network.png,type:Input,regionName:null},{path:../components_export/power.png,type:Input,regionName:null},{path:../components_export/ram.png,type:Input,regionName:null}]
+inputFiles=[{path:../components_export/bug.png,type:Input,regionName:null},{path:../components_export/storage.png,type:Input,regionName:null},{path:../components_export/cpu.png,type:Input,regionName:null},{path:../components_export/network.png,type:Input,regionName:null},{path:../components_export/power.png,type:Input,regionName:null},{path:../components_export/ram.png,type:Input,regionName:null},{path:../components_export/bug_collect.png,type:Input,regionName:null},{path:../components_export/cpu_collect.png,type:Input,regionName:null},{path:../components_export/network_collect.png,type:Input,regionName:null},{path:../components_export/power_collect.png,type:Input,regionName:null},{path:../components_export/ram_collect.png,type:Input,regionName:null},{path:../components_export/storage_collect.png,type:Input,regionName:null}]
 
 
 ---
