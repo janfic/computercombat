@@ -82,6 +82,7 @@ public class Board extends BorderedGrid {
     public void act(float delta) {
         super.act(delta); //To change body of generated methods, choose Tools | Templates.
         this.setCullingArea(new Rectangle(0, 0, getWidth(), getHeight()));
+        this.newComponentSpawn.getActor().setCullingArea(new Rectangle(0, -getHeight(), getWidth(), getHeight() - 24));
         if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             this.setTouchable(Touchable.enabled);
         } else {

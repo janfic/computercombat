@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.janfic.games.computercombat.model.Component;
 
@@ -15,6 +17,7 @@ public class ComponentActor extends Actor {
 
     public static ComponentActor touched;
     TextureRegion region;
+    ComponentCollectActor collectedActor;
     Component component;
 
     public static TextureAtlas componentAtlas;
@@ -30,6 +33,8 @@ public class ComponentActor extends Actor {
         this(componentAtlas);
         this.component = component;
         this.region = componentAtlas.findRegion(component.getTextureName());
+        this.collectedActor = new ComponentCollectActor(componentAtlas, component);
+        this.collectedActor.setVisible(false);
     }
 
     public ComponentActor(Component component) {
@@ -37,9 +42,19 @@ public class ComponentActor extends Actor {
     }
 
     @Override
+    public void act(float delta) {
+        super.act(delta); //To change body of generated methods, choose Tools | Templates.
+        collectedActor.act(delta);
+    }
+
+    @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(getColor());
         batch.draw(region, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+        if (collectedActor.isVisible()) {
+            batch.setColor(collectedActor.getColor());
+            batch.draw(collectedActor.collectedRegion, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+        }
         super.draw(batch, parentAlpha); //To change body of generated methods, choose Tools | Templates.
         batch.setColor(Color.WHITE);
     }
@@ -47,4 +62,9 @@ public class ComponentActor extends Actor {
     public Component getComponent() {
         return component;
     }
+
+    public ComponentCollectActor getCollectedRegion() {
+        return collectedActor;
+    }
+
 }

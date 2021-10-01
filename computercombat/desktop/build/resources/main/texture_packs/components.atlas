@@ -1,17 +1,31 @@
 
 components.png
-size: 256,32
+size: 512,32
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 bug
   rotate: false
-  xy: 106, 2
+  xy: 262, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+bug_collect
+  rotate: false
+  xy: 132, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 cpu
+  rotate: false
+  xy: 184, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+cpu_collect
   rotate: false
   xy: 54, 2
   size: 24, 24
@@ -19,6 +33,13 @@ cpu
   offset: 0, 0
   index: -1
 network
+  rotate: false
+  xy: 210, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+network_collect
   rotate: false
   xy: 80, 2
   size: 24, 24
@@ -32,7 +53,21 @@ power
   orig: 24, 24
   offset: 0, 0
   index: -1
+power_collect
+  rotate: false
+  xy: 236, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
 ram
+  rotate: false
+  xy: 106, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+ram_collect
   rotate: false
   xy: 28, 2
   size: 24, 24
@@ -41,7 +76,14 @@ ram
   index: -1
 storage
   rotate: false
-  xy: 132, 2
+  xy: 288, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+storage_collect
+  rotate: false
+  xy: 158, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0

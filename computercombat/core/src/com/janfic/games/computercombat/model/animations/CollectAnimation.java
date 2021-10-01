@@ -44,9 +44,13 @@ public class CollectAnimation implements MoveAnimation {
         for (Component component : getAllComponents()) {
             for (ComponentActor componentActor : componentActors) {
                 if (componentActor.getComponent().equals(component)) {
-                    Action a = Actions.parallel(Actions.scaleTo(1.25f, 1.25f, .35f), Actions.fadeOut(0.35f));
+                    Action a = Actions.parallel(Actions.fadeOut(0.35f));
                     a.setActor(componentActor);
+                    componentActor.getCollectedRegion().setVisible(true);
+                    Action b = Actions.sequence(Actions.fadeOut(0), Actions.fadeIn(0.35f));
+                    b.setActor(componentActor.getCollectedRegion());
                     popAction.add(a);
+                    popAction.add(b);
                     System.out.println("found collected component actor: " + component);
                 }
             }
