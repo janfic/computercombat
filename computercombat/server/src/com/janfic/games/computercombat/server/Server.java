@@ -37,7 +37,7 @@ public class Server {
     private final List<MatchClient> queue;
     private final List<ServerMatchRoom> matches;
     private int MAX_MATCHES = 2;
-    private Thread acceptConnections, maintainConnections, maintainQueue;
+    private Thread acceptConnections, maintainConnections, maintainQueue, maintainMatches;
 
     public Server(int max_matches) {
         HeadlessFiles headlessFiles = new HeadlessFiles();
@@ -217,6 +217,7 @@ public class Server {
             @Override
             public void run() {
                 while (true) {
+                    
                     if (matches.size() < MAX_MATCHES && queue.size() > 1) {
                         MatchClient a = queue.get(0);
                         MatchClient b = queue.get(1);
@@ -257,14 +258,15 @@ public class Server {
                 }
             }
         });
-        Thread maintainMatches = new Thread(new Runnable() {
+        maintainMatches = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
                     List<ServerMatchRoom> r = new ArrayList<>();
                     for (ServerMatchRoom match : matches) {
-                        if (match.isIsGameOver()) {
+                        if (match.isGameOver()) {
                             r.add(match);
+                            System.out.println("here");
                         }
                     }
 
@@ -275,16 +277,25 @@ public class Server {
                         clients.put(c1.getClientUID(), c1);
                         clients.put(c2.getClientUID(), c2);
                     }
+                    matches.removeAll(r);
+                    
+                    System.out.println("Matches: " + matches.size());
+                    
+                    try {
+                        Thread.sleep(2000);
+                    } catch (Exception e) {
+
+                    }
                 }
             }
         });
-        maintainMatches.start();
     }
 
     public void start() {
         acceptConnections.start();
         maintainConnections.start();
         maintainQueue.start();
+        maintainMatches.start();
     }
 
     public static void main(String[] args) {

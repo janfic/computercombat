@@ -69,21 +69,21 @@ public class ServerMatchRoom {
                         boolean disconnected = false;
                         while (currentPlayer.hasMessage() == false && currentPlayer.getSocket().isConnected()) {
                             delta = System.nanoTime() - timeStart;
-                            if (delta / 1000000000f >= 30) {
+                            if (delta / 1000000000f >= 10) {
                                 try {
                                     currentPlayer.sendMessage(new Message(Type.PING, "PING"));
+                                    otherPlayer.sendMessage(new Message(Type.PING, "PING"));
                                     timeStart = System.nanoTime();
                                 } catch (Exception e) {
+                                    System.out.println("DISCONNECTED");
                                     disconnected = true;
+                                    isGameOver = true;
                                     break;
                                 }
                             }
                         }
-
-                        if (disconnected) {
-                            isGameOver = true;
-                            break;
-                        }
+                        
+                        if(isGameOver) break;
 
                         Message moveMessage = currentPlayer.readMessage();
                         System.out.println("currentPlayer made move: " + moveMessage);
@@ -111,8 +111,8 @@ public class ServerMatchRoom {
                         }
                     }
                 } catch (IOException e) {
-
                 }
+                System.out.println("END OF THREAD");
                 isGameOver = true;
             }
         });
@@ -128,7 +128,7 @@ public class ServerMatchRoom {
         return player2;
     }
 
-    public boolean isIsGameOver() {
+    public boolean isGameOver() {
         return isGameOver;
     }
 
