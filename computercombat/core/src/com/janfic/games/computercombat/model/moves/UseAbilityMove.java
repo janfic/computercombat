@@ -18,7 +18,7 @@ public class UseAbilityMove extends Move {
         super("");
     }
 
-    public UseAbilityMove(String playerUID, Card entity, Card target, int targetIndex, int playerTarget) {
+    public UseAbilityMove(String playerUID, Card entity, Card target) {
         super(playerUID);
         this.entity = entity;
         this.target = target;
@@ -30,6 +30,14 @@ public class UseAbilityMove extends Move {
 
     public void setSelectedSoftwares(List<Card> selectedSoftwares) {
         this.selectedSoftwares = selectedSoftwares;
+    }
+
+    public List<Component> getSelectedComponents() {
+        return selectedComponents;
+    }
+
+    public List<Card> getSelectedSoftwares() {
+        return selectedSoftwares;
     }
 
     @Override
