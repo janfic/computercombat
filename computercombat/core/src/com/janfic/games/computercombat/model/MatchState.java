@@ -85,4 +85,14 @@ public class MatchState {
         }
         return null;
     }
+
+    public List<Component> getComponentsAsList() {
+        List<Component> components = new ArrayList<>();
+        for (Component[] cr : componentBoard) {
+            for (Component c : cr) {
+                components.add(c);
+            }
+        }
+        return components;
+    }
 }

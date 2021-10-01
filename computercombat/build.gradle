@@ -99,7 +99,7 @@ project(":html") {
 project(":core") {
     apply plugin: "java-library"
     apply plugin: "java"
-    
+    apply plugin: "groovy"
     
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
@@ -111,6 +111,8 @@ project(":core") {
         testCompile "junit:junit:4.11"
         testCompileClasspath "junit:junit:4.11"
         compile files('../lib/mysql-connector-java-8.0.26.jar')
+        
+        implementation 'org.codehaus.groovy:groovy-all:2.4.15'
     }
 }
 

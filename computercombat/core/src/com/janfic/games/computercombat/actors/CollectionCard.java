@@ -148,7 +148,7 @@ public class CollectionCard extends BorderedGrid {
         newWindowOnClick = new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Window w = new CardInfoWindow(game, software, skin);
+                Window w = new CardInfoWindow(game, software, skin, false);
                 w.setSize(2 * getStage().getWidth() / 3f, getStage().getHeight());
                 w.setPosition(getStage().getWidth() / 6f, getStage().getHeight());
                 CollectionCard.this.getStage().addActor(w);

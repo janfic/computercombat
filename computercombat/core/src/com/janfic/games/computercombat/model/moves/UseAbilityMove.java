@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.model.moves;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.MatchState;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,8 @@ import java.util.List;
 public class UseAbilityMove extends Move {
 
     private Card entity, target;
-    private int playerTargetUID, targetIndex;
+    private List<Component> selectedComponents;
+    private List<Card> selectedSoftwares;
 
     public UseAbilityMove() {
         super("");
@@ -20,8 +22,14 @@ public class UseAbilityMove extends Move {
         super(playerUID);
         this.entity = entity;
         this.target = target;
-        this.playerTargetUID = playerTarget;
-        this.targetIndex = targetIndex;
+    }
+
+    public void setSelectedComponents(List<Component> selectedComponents) {
+        this.selectedComponents = selectedComponents;
+    }
+
+    public void setSelectedSoftwares(List<Card> selectedSoftwares) {
+        this.selectedSoftwares = selectedSoftwares;
     }
 
     @Override
@@ -36,8 +44,8 @@ public class UseAbilityMove extends Move {
         json.writeValue("player", playerUID);
         json.writeValue("entity", entity, Card.class);
         json.writeValue("target", target, Card.class);
-        json.writeValue("playerTargetUID", playerTargetUID, Integer.class);
-        json.writeValue("targetIndex", targetIndex, Integer.class);
+        json.writeValue("selectedComponents", selectedComponents, List.class);
+        json.writeValue("selectedSoftwares", selectedSoftwares, List.class);
     }
 
     @Override
@@ -45,7 +53,7 @@ public class UseAbilityMove extends Move {
         this.playerUID = json.readValue("player", String.class, jv);
         this.entity = json.readValue("entity", Card.class, jv);
         this.target = json.readValue("target", Card.class, jv);
-        this.playerTargetUID = json.readValue("playerTargetUID", Integer.class, jv);
-        this.targetIndex = json.readValue("targetIndex", Integer.class, jv);
+        this.selectedComponents = json.readValue("selectedComponents", List.class, jv);
+        this.selectedSoftwares = json.readValue("selectedSoftwares", List.class, jv);
     }
 }

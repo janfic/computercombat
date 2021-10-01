@@ -72,6 +72,7 @@ public class ServerMatchRoom {
                             if (delta / 1000000000f >= 30) {
                                 try {
                                     currentPlayer.sendMessage(new Message(Type.PING, "PING"));
+                                    timeStart = System.nanoTime();
                                 } catch (Exception e) {
                                     disconnected = true;
                                     break;
