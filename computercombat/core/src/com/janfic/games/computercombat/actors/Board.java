@@ -63,7 +63,6 @@ public class Board extends BorderedGrid {
         this.matchData = matchData;
         this.game = game;
         this.componentAtlas = game.getAssetManager().get("texture_packs/components.atlas");
-        this.defaults().space(2);
         this.selected1 = null;
         this.board = new Cell[8][8];
         this.animation = new LinkedList<>();
@@ -81,8 +80,8 @@ public class Board extends BorderedGrid {
     @Override
     public void act(float delta) {
         super.act(delta); //To change body of generated methods, choose Tools | Templates.
-        this.setCullingArea(new Rectangle(0, 0, getWidth(), getHeight()));
-        this.newComponentSpawn.getActor().setCullingArea(new Rectangle(0, -getHeight(), getWidth(), getHeight() - 24));
+        this.setCullingArea(new Rectangle(24, 24, getWidth() - 24, getHeight() - 24));
+        this.newComponentSpawn.getActor().setCullingArea(new Rectangle(0, -getHeight(), getWidth(), getHeight() - 1));
         if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             this.setTouchable(Touchable.enabled);
         } else {

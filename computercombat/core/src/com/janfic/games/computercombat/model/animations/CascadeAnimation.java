@@ -49,9 +49,9 @@ public class CascadeAnimation implements MoveAnimation {
                         int x = cas.getFallenComponent().getX();
                         int y = cas.getFallenComponent().getY();
                         Action moveAction = Actions.moveTo(
-                                26 * x + 7,
-                                (8 - (cas.getFallenComponent().getY() + 1)) * 26 + 7,
-                                (cas.getFallenComponent().getY() - cas.getOriginalComponent().getY()) / 4f, Interpolation.pow3In);
+                                24 * x + 7,
+                                (8 - (cas.getFallenComponent().getY() + 1)) * 24 + 7,
+                                (cas.getFallenComponent().getY() - cas.getOriginalComponent().getY()) / 4f, Interpolation.pow2In);
                         moveAction.setActor(cell.getActor());
                         cascadeAnimation.add(moveAction);
                         found = true;
@@ -80,12 +80,14 @@ public class CascadeAnimation implements MoveAnimation {
             for (int i = 0; i < columnFall.size(); i++) {
                 ComponentActor component = new ComponentActor(columnFall.get(i).getFallenComponent());
                 newSpawn.addActor(component);
-                component.setPosition(26 * x, i * 26);
-                Action move = Actions.moveTo(
-                        26 * x,
-                        -(columnFall.get(i).getFallenComponent().getY() + 1) * 26,
-                        (columnFall.get(i).getFallenComponent().getY() - (-1 - i)) / 4f,
-                        Interpolation.pow3In
+                component.setPosition(24 * x, 3000);
+                Action move = Actions.sequence(
+                        Actions.moveTo(24 * x, i * 24),
+                        Actions.moveTo(
+                                24 * x,
+                                -(columnFall.get(i).getFallenComponent().getY() + 1) * 24,
+                                (columnFall.get(i).getFallenComponent().getY() - (-1 - i)) / 4f,
+                                Interpolation.pow2In)
                 );
                 move.setActor(component);
                 cascadeAnimation.add(move);

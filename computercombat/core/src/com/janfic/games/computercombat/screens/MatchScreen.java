@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -19,6 +20,8 @@ import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.components.CPUComponent;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.network.Message;
@@ -90,6 +93,10 @@ public class MatchScreen implements Screen {
             }
         }
 
+        softwareActors.add(new SoftwareActor(skin, true, new Software(1, "", "computer_pack", "virus", 1, 3, 3, 3, 3, new Class[]{CPUComponent.class}, 10, null), game));
+        softwareActors.add(new SoftwareActor(skin, true, new Software(1, "", "computer_pack", "firewall", 1, 3, 3, 3, 3, new Class[]{CPUComponent.class}, 10, null), game));
+        softwareActors.add(new SoftwareActor(skin, false, new Software(1, "", "computer_pack", "directory", 1, 3, 3, 3, 3, new Class[]{CPUComponent.class}, 10, null), game));
+        softwareActors.add(new SoftwareActor(skin, false, new Software(1, "", "computer_pack", "worm", 1, 3, 3, 3, 3, new Class[]{CPUComponent.class}, 10, null), game));
         computerActors.add(new ComputerActor(skin));
         computerActors.add(new ComputerActor(skin));
 
@@ -97,12 +104,16 @@ public class MatchScreen implements Screen {
         leftPanel.pad(7);
         leftPanel.top();
         leftPanel.defaults().space(2);
+        leftPanel.add(softwareActors.get(2)).row();
+        leftPanel.add(softwareActors.get(3)).row();
         leftPanel.add(computerActors.get(0)).expandY().growX().bottom();
 
         BorderedGrid rightPanel = new BorderedGrid(skin);
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
+        rightPanel.add(softwareActors.get(0)).row();
+        rightPanel.add(softwareActors.get(1)).row();
         rightPanel.add(computerActors.get(1)).expandY().growX().bottom();
 
         Panel buttons = new Panel(skin);
@@ -116,15 +127,15 @@ public class MatchScreen implements Screen {
         table.setFillParent(true);
 
         Table middleSection = new Table();
-        middleSection.pad(0, 5, 0, 5);
-        middleSection.add(buttons).grow().row();
-        middleSection.add(board).row();
-        middleSection.add(infoPanel).grow().row();
-        middleSection.defaults().pad(5).top().expand();
+        middleSection.add(buttons).colspan(3).grow().row();
+        middleSection.add(new Image(skin, "board_collector_left")).growX();
+        middleSection.add(board);
+        middleSection.add(new Image(skin, "board_collector_right")).growX().row();
+        middleSection.add(infoPanel).colspan(3).grow().row();
 
-        table.add(leftPanel).pad(1).growY().left();
+        table.add(leftPanel).pad(1, 0, 1, 0).growY().left();
         table.add(middleSection).grow();
-        table.add(rightPanel).pad(1).growY().right();
+        table.add(rightPanel).pad(1, 0, 1, 0).growY().right();
 
         mainStage.addActor(table);
     }

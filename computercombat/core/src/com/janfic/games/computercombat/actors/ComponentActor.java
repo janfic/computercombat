@@ -26,6 +26,7 @@ public class ComponentActor extends Actor {
         this.region = componentAtlas.getRegions().get((int) (Math.random() * 6));
         this.setSize(24, 24);
         this.setOrigin(12, 12);
+        this.setZIndex(1);
         ComponentActor.componentAtlas = componentAtlas;
     }
 

@@ -1,5 +1,7 @@
 package com.janfic.games.computercombat.model.animations;
 
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Json;
@@ -44,14 +46,15 @@ public class CollectAnimation implements MoveAnimation {
         for (Component component : getAllComponents()) {
             for (ComponentActor componentActor : componentActors) {
                 if (componentActor.getComponent().equals(component)) {
-                    Action a = Actions.parallel(Actions.fadeOut(0.35f));
+                    Action a = Actions.sequence(Actions.fadeOut(0.35f), Actions.delay(0.35f),
+                            Actions.moveTo(0, (8 - (componentActor.getComponent().getY() + 1)) * 24 + 7, componentActor.getComponent().getX() / 4f));
                     a.setActor(componentActor);
+                    componentActor.setZIndex(0);
                     componentActor.getCollectedRegion().setVisible(true);
-                    Action b = Actions.sequence(Actions.fadeOut(0), Actions.fadeIn(0.35f));
+                    Action b = Actions.sequence(Actions.fadeOut(0), Actions.fadeIn(0.7f), Actions.fadeOut(componentActor.getComponent().getX() / 4f, Interpolation.fade));
                     b.setActor(componentActor.getCollectedRegion());
                     popAction.add(a);
                     popAction.add(b);
-                    System.out.println("found collected component actor: " + component);
                 }
             }
         }

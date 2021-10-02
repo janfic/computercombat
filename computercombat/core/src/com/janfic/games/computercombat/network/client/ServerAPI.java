@@ -24,7 +24,7 @@ public class ServerAPI {
     public void sendMessage(Message message) {
         try {
             Json json = new Json();
-            System.out.println("[CLIENT]: Sending Message to Server (" + this.clientUID + ") : { " + message.getType() + " : " + message.getMessage() + " }");
+//            System.out.println("[CLIENT]: Sending Message to Server (" + this.clientUID + ") : { " + message.getType() + " : " + message.getMessage() + " }");
             String m = json.toJson(message) + "\nEND";
             socket.getOutputStream().write(m.getBytes());
         } catch (Exception e) {
