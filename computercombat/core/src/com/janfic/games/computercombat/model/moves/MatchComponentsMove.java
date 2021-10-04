@@ -2,13 +2,16 @@ package com.janfic.games.computercombat.model.moves;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation;
 import com.janfic.games.computercombat.model.animations.CollectAnimation;
 import com.janfic.games.computercombat.model.animations.SwitchAnimation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,8 +65,32 @@ public class MatchComponentsMove extends Move {
 
             List<MoveAnimation> animation = new ArrayList<>();
 
+            Map<Component, Card> progress = new HashMap<>();
+            CollectAnimation collectAnimation = new CollectAnimation(collected, progress);
+            //Progress
+            for (Component c : collectAnimation.getAllComponents()) {
+                boolean collectedByCard = false;
+                System.out.println(originalState.currentPlayerMove);
+                System.out.println(newState.activeEntities);
+                System.out.println(newState.activeEntities.get(originalState.currentPlayerMove.getUID()));
+                for (Card card : newState.activeEntities.get(originalState.currentPlayerMove.getUID())) {
+                    if (card.getRunProgress() < card.getRunRequirements()) {
+                        for (Class<? extends Component> requirement : card.getRunComponents()) {
+                            if (c.getClass().equals(requirement)) {
+                                card.recieveComponents(requirement, 1);
+                                collectedByCard = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (collectedByCard == false) {
+                    newState.computers.get(originalState.currentPlayerMove.getUID()).addProgress(1);
+                    System.out.println(c.toString());
+                }
+            }
+
             //Collect
-            CollectAnimation collectAnimation = new CollectAnimation(collected);
             for (Component component : collectAnimation.getAllComponents()) {
                 newState.getComponentBoard()[component.getX()][component.getY()] = null;
             }

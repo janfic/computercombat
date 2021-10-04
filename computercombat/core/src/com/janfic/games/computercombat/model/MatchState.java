@@ -13,9 +13,9 @@ import java.util.Map;
 public class MatchState {
 
     public final Component[][] componentBoard;
-    public final Map<Profile, List<Card>> activeEntities;
-    public final Map<Profile, Computer> computers;
-    public final Map<Profile, SoftwareDeck> decks;
+    public final Map<String, List<Card>> activeEntities;
+    public final Map<String, Computer> computers;
+    public final Map<String, SoftwareDeck> decks;
     public final List<Profile> players;
     public Profile currentPlayerMove;
 
@@ -28,7 +28,7 @@ public class MatchState {
         this.currentPlayerMove = null;
     }
 
-    public MatchState(Profile player1, Profile player2, Component[][] componentBoard, Map<Profile, List<Card>> activeEntities, Map<Profile, Computer> computers, Map<Profile, SoftwareDeck> decks) {
+    public MatchState(Profile player1, Profile player2, Component[][] componentBoard, Map<String, List<Card>> activeEntities, Map<String, Computer> computers, Map<String, SoftwareDeck> decks) {
         this.componentBoard = componentBoard;
         this.activeEntities = activeEntities;
         this.computers = computers;
@@ -58,7 +58,7 @@ public class MatchState {
     public MatchState(MatchState state, String playerUID) {
         this(state);
         for (Profile player : players) {
-            this.decks.remove(player);
+            this.decks.remove(player.getUID());
         }
     }
 

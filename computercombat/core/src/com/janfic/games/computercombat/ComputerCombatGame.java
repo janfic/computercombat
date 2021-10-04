@@ -76,6 +76,11 @@ public class ComputerCombatGame extends Game {
         serverAPI.getSocket().dispose();
     }
 
+    @Override
+    public void resize(int width, int height) {
+        screenStack.get(0).resize(width, height);
+    }
+
     public static Stage makeNewStage(Camera cam) {
         return new Stage(new FitViewport(1920 / 4, 1080 / 4, cam));
     }

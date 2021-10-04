@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.Board;
@@ -20,15 +22,15 @@ import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.MatchState;
-import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.model.components.CPUComponent;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -47,16 +49,17 @@ public class MatchScreen implements Screen {
 
     Board board;
 
-    List<SoftwareActor> softwareActors;
-    List<ComputerActor> computerActors;
+    Map<String, List<SoftwareActor>> softwareActors;
+    Map<String, ComputerActor> computerActors;
 
     ClientMatch match;
 
     public MatchScreen(ComputerCombatGame game, ClientMatch match) {
         this.game = game;
         this.assetManager = game.getAssetManager();
-        this.softwareActors = new ArrayList<>();
-        this.computerActors = new ArrayList<>();
+        this.softwareActors = new HashMap<>();
+        this.computerActors = new HashMap<>();
+
         this.match = match;
     }
 
@@ -93,28 +96,22 @@ public class MatchScreen implements Screen {
             }
         }
 
-        softwareActors.add(new SoftwareActor(skin, true, new Software(1, "", "computer_pack", "virus", 1, 3, 3, 3, 3, new Class[]{CPUComponent.class}, 10, null), game));
-        softwareActors.add(new SoftwareActor(skin, true, new Software(1, "", "computer_pack", "firewall", 1, 3, 3, 3, 3, new Class[]{CPUComponent.class}, 10, null), game));
-        softwareActors.add(new SoftwareActor(skin, false, new Software(1, "", "computer_pack", "directory", 1, 3, 3, 3, 3, new Class[]{CPUComponent.class}, 10, null), game));
-        softwareActors.add(new SoftwareActor(skin, false, new Software(1, "", "computer_pack", "worm", 1, 3, 3, 3, 3, new Class[]{CPUComponent.class}, 10, null), game));
-        computerActors.add(new ComputerActor(skin));
-        computerActors.add(new ComputerActor(skin));
+        this.softwareActors.put(game.getCurrentProfile().getUID(), new ArrayList<>());
+        this.softwareActors.put(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ArrayList<>());
+        this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin));
+        this.computerActors.put(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ComputerActor(skin));
 
         BorderedGrid leftPanel = new BorderedGrid(skin);
         leftPanel.pad(7);
         leftPanel.top();
         leftPanel.defaults().space(2);
-        leftPanel.add(softwareActors.get(2)).row();
-        leftPanel.add(softwareActors.get(3)).row();
-        leftPanel.add(computerActors.get(0)).expandY().growX().bottom();
+        leftPanel.add(computerActors.get(game.getCurrentProfile().getUID())).expandY().growX().bottom();
 
         BorderedGrid rightPanel = new BorderedGrid(skin);
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
-        rightPanel.add(softwareActors.get(0)).row();
-        rightPanel.add(softwareActors.get(1)).row();
-        rightPanel.add(computerActors.get(1)).expandY().growX().bottom();
+        rightPanel.add(computerActors.get(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())).expandY().growX().bottom();
 
         Panel buttons = new Panel(skin);
 
@@ -127,15 +124,17 @@ public class MatchScreen implements Screen {
         table.setFillParent(true);
 
         Table middleSection = new Table();
-        middleSection.add(buttons).colspan(3).grow().row();
-        middleSection.add(new Image(skin, "board_collector_left")).growX();
-        middleSection.add(board);
-        middleSection.add(new Image(skin, "board_collector_right")).growX().row();
-        middleSection.add(infoPanel).colspan(3).grow().row();
+        middleSection.add(buttons).growX().height(20).colspan(3).row();
+        middleSection.add(new Image(skin, "board_collector_left")).growX().top().padTop(7);
+        Table middle = new Table();
+        middle.add(board).row();
+        middle.add(infoPanel).grow().row();
+        middleSection.add(middle).growY();
+        middleSection.add(new Image(skin, "board_collector_right")).growX().top().padTop(7).row();
 
-        table.add(leftPanel).pad(1, 0, 1, 0).growY().left();
-        table.add(middleSection).grow();
-        table.add(rightPanel).pad(1, 0, 1, 0).growY().right();
+        table.add(leftPanel).pad(1, 0, 1, 0).grow().left();
+        table.add(middleSection).top().growY();
+        table.add(rightPanel).pad(1, 0, 1, 0).grow().right();
 
         mainStage.addActor(table);
     }
@@ -155,7 +154,13 @@ public class MatchScreen implements Screen {
             if (response.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
                 List<MoveResult> results = json.fromJson(List.class, response.getMessage());
-                board.animate(results);
+                board.animate(results, softwareActors, computerActors);
+            }
+        }
+        if (board.isAnimating() == false) {
+            for (String uid : computerActors.keySet()) {
+                ComputerActor computerActor = computerActors.get(uid);
+                computerActor.setComputer(match.getCurrentState().computers.get(uid));
             }
         }
     }

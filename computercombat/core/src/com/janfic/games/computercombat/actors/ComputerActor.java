@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.janfic.games.computercombat.model.Computer;
 
 /**
  *
@@ -12,7 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
  */
 public class ComputerActor extends Panel {
 
-    ProgressBar healthBar, magicBar;
+    Computer computer;
+    ProgressBar healthBar, progressBar;
 
     public ComputerActor(Skin skin) {
         super(skin);
@@ -27,20 +29,24 @@ public class ComputerActor extends Panel {
 
         Table table = new Table();
 
-        healthBar = new ProgressBar(0, 10, 1, false, green);
-        magicBar = new ProgressBar(0, 10, 1, false, blue);
-
-        healthBar.setValue(5);
-        magicBar.setValue(7);
+        healthBar = new ProgressBar(0, 20, 1, false, green);
+        progressBar = new ProgressBar(0, 20, 1, false, blue);
 
         Panel panel = new Panel(skin);
         panel.add(new Label("7", skin));
 
         table.add(healthBar).width(40).row();
-        table.add(magicBar).width(40);
+        table.add(progressBar).width(40);
 
         this.add(panel).pad(2).width(20);
         this.add(table);
+        setComputer(new Computer());
+    }
+
+    public void setComputer(Computer computer) {
+        this.computer = computer;
+        this.healthBar.setValue(computer.getHealth());
+        this.progressBar.setValue(computer.getProgress());
     }
 
 }

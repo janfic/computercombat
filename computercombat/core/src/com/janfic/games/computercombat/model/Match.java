@@ -21,14 +21,14 @@ public class Match {
 
         this.player1 = player1;
         this.player2 = player2;
-        Map<Profile, List<Card>> activeEntities = new HashMap<>();
-        Map<Profile, Computer> computers = new HashMap<>();
-        Map<Profile, SoftwareDeck> decks = new HashMap<>();
+        Map<String, List<Card>> activeEntities = new HashMap<>();
+        Map<String, Computer> computers = new HashMap<>();
+        Map<String, SoftwareDeck> decks = new HashMap<>();
 
-        //activeEntities.put(player1.getActivePlayer(), new ArrayList<>());
-        //activeEntities.put(player2.getActivePlayer(), new ArrayList<>());
-//        computers.put(player1.getActivePlayer(), new ArrayList<>());
-//        computers.put(player2.getActivePlayer(), new ArrayList<>());
+        activeEntities.put(player1.getUID(), new ArrayList<>());
+        activeEntities.put(player2.getUID(), new ArrayList<>());
+        computers.put(player1.getUID(), new Computer());
+        computers.put(player2.getUID(), new Computer());
 //        decks.put(player1.getActivePlayer(), new ArrayList<>());
 //        decks.put(player2.getActivePlayer(), new ArrayList<>());
         try {

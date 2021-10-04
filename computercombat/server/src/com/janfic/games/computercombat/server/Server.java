@@ -279,8 +279,6 @@ public class Server {
                     }
                     matches.removeAll(r);
                     
-                    System.out.println("Matches: " + matches.size());
-                    
                     try {
                         Thread.sleep(2000);
                     } catch (Exception e) {

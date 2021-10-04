@@ -20,9 +20,10 @@ import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -60,6 +61,7 @@ public class Board extends BorderedGrid {
     public Board(Skin skin, ClientMatch matchData, ComputerCombatGame game) {
         super(skin);
         this.pad(7);
+        setSkin(skin);
         this.matchData = matchData;
         this.game = game;
         this.componentAtlas = game.getAssetManager().get("texture_packs/components.atlas");
@@ -307,14 +309,13 @@ public class Board extends BorderedGrid {
         return animation.isEmpty() == false;
     }
 
-    public void animate(List<MoveResult> moveResults) {
+    public void animate(List<MoveResult> moveResults, Map<String, List<SoftwareActor>> softwareActors, Map<String, ComputerActor> computerActors) {
 
         //animate move 
         //change state
         //animate
         for (MoveResult moveResult : moveResults) {
             List<Action> updateData = new ArrayList<>();
-            List<List<Action>> anim = new ArrayList<>();
             Action a = Actions.run(new Runnable() {
                 @Override
                 public void run() {
@@ -322,11 +323,10 @@ public class Board extends BorderedGrid {
                     updateBoard(matchData);
                     int offset = 0;
                     for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
-                        List<List<Action>> animations = moveAnimation.animate(Board.this, null);
+                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), Board.this, softwareActors, computerActors);
                         int indexOfUpdate = animation.indexOf(updateData);
                         animation.addAll(indexOfUpdate + 1 + offset, animations);
                         offset += animations.size();
-                        System.out.println(animation);
                     }
                     System.out.println("END OF UPDATE DATA");
                 }

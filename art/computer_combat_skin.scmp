@@ -591,6 +591,25 @@ atlasData: {
 			type: TEXTURE
 			hidden: false
 		}
+		{
+			file: E:/PROJECTS/computercombat/art/skin_assets/collected_component.png
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: collected_component
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: TEXTURE
+			hidden: false
+		}
 	]
 	fontDrawables: [
 		{

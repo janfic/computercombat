@@ -1,7 +1,6 @@
 package com.janfic.games.computercombat.model.animations;
 
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Interpolation.BounceOut;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -10,6 +9,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.actors.Board;
 import com.janfic.games.computercombat.actors.ComponentActor;
+import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
@@ -36,7 +36,7 @@ public class CascadeAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(Board board, List<SoftwareActor> softwareActors) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, Board board, Map<String, List<SoftwareActor>> softwareActors, Map<String, ComputerActor> computerActors) {
         List<List<Action>> actions = new ArrayList<>();
         List<Action> cascadeAnimation = new ArrayList<>();
 
