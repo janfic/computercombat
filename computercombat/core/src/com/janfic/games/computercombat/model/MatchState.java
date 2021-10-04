@@ -1,6 +1,8 @@
 package com.janfic.games.computercombat.model;
 
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Json.Serializable;
+import com.badlogic.gdx.utils.JsonValue;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,13 +12,13 @@ import java.util.Map;
  *
  * @author Jan Fic
  */
-public class MatchState {
+public class MatchState implements Serializable {
 
-    public final Component[][] componentBoard;
-    public final Map<String, List<Card>> activeEntities;
-    public final Map<String, Computer> computers;
-    public final Map<String, SoftwareDeck> decks;
-    public final List<Profile> players;
+    public Component[][] componentBoard;
+    public Map<String, List<Card>> activeEntities;
+    public Map<String, Computer> computers;
+    public Map<String, SoftwareDeck> decks;
+    public List<Profile> players;
     public Profile currentPlayerMove;
 
     public MatchState() {
@@ -94,5 +96,43 @@ public class MatchState {
             }
         }
         return components;
+    }
+
+    @Override
+    public void write(Json json) {
+        json.writeValue("players", players, List.class);
+        json.writeValue("currentPlayerMove", currentPlayerMove, Profile.class);
+        json.writeValue("activeEntities", activeEntities, Map.class);
+        json.writeValue("computers", computers, Map.class);
+        json.writeValue("decks", decks, Map.class);
+        json.writeArrayStart("componentBoard");
+        for (Component[] components : componentBoard) {
+            json.writeArrayStart();
+            for (Component component : components) {
+                json.writeValue(component.getClass().getName());
+            }
+            json.writeArrayEnd();
+        }
+        json.writeArrayEnd();
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        this.players = json.readValue("players", List.class, jsonData);
+        this.currentPlayerMove = json.readValue("currentPlayerMove", Profile.class, jsonData);
+        this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
+        this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
+        this.decks = json.readValue("decks", HashMap.class, SoftwareDeck.class, jsonData);
+        String[][] comps = json.readValue("componentBoard", String[][].class, jsonData);
+        componentBoard = new Component[8][8];
+        for (int x = 0; x < comps.length; x++) {
+            for (int y = 0; y < comps[x].length; y++) {
+                try {
+                    componentBoard[x][y] = (Component) Class.forName(comps[x][y]).getConstructor(int.class, int.class).newInstance(x, y);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

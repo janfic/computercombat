@@ -13,10 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.model.Profile;
-import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.network.client.ServerAPI;
 import com.janfic.games.computercombat.screens.LoadingScreen;
-import java.util.Properties;
 import java.util.Stack;
 
 public class ComputerCombatGame extends Game {
