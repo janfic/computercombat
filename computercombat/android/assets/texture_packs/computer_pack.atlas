@@ -6,21 +6,35 @@ filter: Nearest,Nearest
 repeat: none
 bubble_sort
   rotate: false
-  xy: 386, 2
+  xy: 482, 2
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+computer
+  rotate: false
+  xy: 242, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 directory
   rotate: false
-  xy: 338, 2
+  xy: 434, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 disk_defragmenter
   rotate: false
-  xy: 194, 2
+  xy: 290, 2
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+draw_card
+  rotate: false
+  xy: 98, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
@@ -41,42 +55,42 @@ open_folder
   index: -1
 remove_bugs
   rotate: false
-  xy: 146, 2
+  xy: 194, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 rng
   rotate: false
-  xy: 290, 2
+  xy: 386, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 tunnel
   rotate: false
-  xy: 242, 2
+  xy: 338, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 virus
   rotate: false
-  xy: 482, 2
+  xy: 578, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 web_search
   rotate: false
-  xy: 434, 2
+  xy: 530, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 worm
   rotate: false
-  xy: 98, 2
+  xy: 146, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0

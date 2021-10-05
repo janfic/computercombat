@@ -53,6 +53,6 @@ public class Computer implements Serializable {
     }
 
     public boolean isProgressFull() {
-        return progress == 20;
+        return progress >= 20;
     }
 }

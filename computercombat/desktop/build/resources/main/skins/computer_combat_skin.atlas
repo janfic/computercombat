@@ -6,7 +6,7 @@ filter: Nearest,Nearest
 repeat: none
 white-pixel
   rotate: false
-  xy: 21, 212
+  xy: 32, 230
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -69,7 +69,7 @@ button_up
   index: -1
 collected_component
   rotate: false
-  xy: 786, 991
+  xy: 21, 211
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
@@ -82,9 +82,17 @@ decked_panel
   orig: 7, 13
   offset: 0, 0
   index: -1
+glow_panel
+  rotate: false
+  xy: 293, 500
+  size: 7, 7
+  split: 3, 3, 3, 3
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
 grid
   rotate: false
-  xy: 293, 501
+  xy: 546, 759
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
@@ -112,7 +120,7 @@ led_glow
   index: -1
 led_light
   rotate: false
-  xy: 546, 760
+  xy: 786, 988
   size: 5, 5
   orig: 5, 5
   offset: 0, 0

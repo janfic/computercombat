@@ -98,8 +98,8 @@ public class MatchScreen implements Screen {
 
         this.softwareActors.put(game.getCurrentProfile().getUID(), new ArrayList<>());
         this.softwareActors.put(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ArrayList<>());
-        this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin));
-        this.computerActors.put(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ComputerActor(skin));
+        this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin, game));
+        this.computerActors.put(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ComputerActor(skin, game));
 
         BorderedGrid leftPanel = new BorderedGrid(skin);
         leftPanel.pad(7);

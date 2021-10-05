@@ -70,7 +70,7 @@ public class CardInfoWindow extends Window {
         });
         this.add(okayButton).growX().colspan(3).row();
     }
-
+    
     private void createSoftwareInfo(Skin skin, ComputerCombatGame game, Software software) {
         softwareInfo = new Table();
         softwareInfo.defaults().space(5);

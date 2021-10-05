@@ -11,10 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
  */
 public class Panel extends Table {
 
-    NinePatch panel;
+    protected NinePatch panel;
 
     public Panel(Skin skin) {
         this.panel = skin.getPatch("panel");
+        this.setSkin(skin);
         this.pad(4);
     }
 
