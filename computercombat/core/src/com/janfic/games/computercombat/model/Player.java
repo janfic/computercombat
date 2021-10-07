@@ -10,7 +10,7 @@ public abstract class Player {
 
     private final String uid;
 
-    public Player(String uid, SoftwareDeck activeDeck, Computer computer) {
+    public Player(String uid, Deck activeDeck, Computer computer) {
         this.uid = uid;
     }
 

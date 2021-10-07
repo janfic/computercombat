@@ -59,7 +59,12 @@ public class CardInfoWindow extends Window {
             }
         });
         this.add(leftButton).expandY();
-        this.midSection = this.add(softwareInfo).pad(2).grow();
+        if (useAbilityEnabled) {
+            this.midSection = this.add(abilityInfo).pad(2).grow();
+        } else {
+            this.midSection = this.add(softwareInfo).pad(2).grow();
+
+        }
         this.add(rightButton).expandY().row();
         TextButton okayButton = new TextButton("Close", skin);
         okayButton.addListener(new ClickListener() {
@@ -70,7 +75,7 @@ public class CardInfoWindow extends Window {
         });
         this.add(okayButton).growX().colspan(3).row();
     }
-    
+
     private void createSoftwareInfo(Skin skin, ComputerCombatGame game, Software software) {
         softwareInfo = new Table();
         softwareInfo.defaults().space(5);

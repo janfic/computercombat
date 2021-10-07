@@ -135,6 +135,8 @@ public class Server {
                                     List<String> data = json.fromJson(List.class, content);
                                     Profile profile = json.fromJson(Profile.class, data.get(0));
                                     Deck deck = json.fromJson(Deck.class, data.get(1));
+                                    System.out.println(data.get(1));
+                                    System.out.println(json.prettyPrint(deck));
                                     boolean[] matchRequest = json.fromJson(boolean[].class, data.get(2));
                                     MatchClient matchClient = new MatchClient(profile, deck, client);
                                     if (queue.contains(matchClient)) {

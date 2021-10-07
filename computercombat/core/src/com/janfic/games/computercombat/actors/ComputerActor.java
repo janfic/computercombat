@@ -7,13 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.model.abilities.CollectAbility;
+import com.janfic.games.computercombat.model.abilities.DrawAbility;
 import com.janfic.games.computercombat.model.components.CPUComponent;
 import com.janfic.games.computercombat.model.components.NetworkComponent;
 import com.janfic.games.computercombat.model.components.PowerComponent;
@@ -29,6 +28,7 @@ public class ComputerActor extends Panel {
 
     Computer computer;
     ProgressBar healthBar, progressBar;
+    boolean activatedAbility;
 
     public ComputerActor(Skin skin, ComputerCombatGame game) {
         super(skin);
@@ -62,18 +62,24 @@ public class ComputerActor extends Panel {
         this.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Ability a = new CollectAbility(0, 0, new ArrayList<>());
+                Ability a = new DrawAbility();
                 a.setInformation("Draw a card from your deck", "draw_card", "Draw", "", 1);
-                Window w = new CardInfoWindow(game, new Software(0, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
+                CardInfoWindow w = new CardInfoWindow(game, new Software(0, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
                     CPUComponent.class,
                     NetworkComponent.class,
                     StorageComponent.class,
                     RAMComponent.class,
                     PowerComponent.class
-                }, 20, a), skin, false);
+                }, 20, a), skin, true);
                 w.setSize(2 * getStage().getWidth() / 3f, getStage().getHeight());
                 w.setPosition(getStage().getWidth() / 6f, getStage().getHeight());
                 ComputerActor.this.getStage().addActor(w);
+                w.getUseAbilityButton().addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        ComputerActor.this.activatedAbility = true;
+                    }
+                });
             }
         });
     }
@@ -92,6 +98,18 @@ public class ComputerActor extends Panel {
         this.computer = computer;
         this.healthBar.setValue(computer.getHealth());
         this.progressBar.setValue(computer.getProgress());
+    }
+
+    public boolean activatedAbility() {
+        return activatedAbility;
+    }
+
+    public Computer getComputer() {
+        return computer;
+    }
+
+    public void setActivatedAbility(boolean activatedAbility) {
+        this.activatedAbility = activatedAbility;
     }
 
 }

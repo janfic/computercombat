@@ -57,7 +57,7 @@ public class Profile implements Serializable {
 
     public Player getActivePlayer() {
         try {
-            Player p = (Player) Class.forName(activePlayer).getConstructor(String.class, SoftwareDeck.class, Computer.class).newInstance(uid, buildDeck(), buildComputer());
+            Player p = (Player) Class.forName(activePlayer).getConstructor(String.class, Deck.class, Computer.class).newInstance(uid, buildDeck(), buildComputer());
             return p;
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,7 +73,7 @@ public class Profile implements Serializable {
         return decks;
     }
 
-    private SoftwareDeck buildDeck() {
+    private Deck buildDeck() {
         return null;
     }
 

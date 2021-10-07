@@ -2,6 +2,8 @@ package com.janfic.games.computercombat.actors;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
@@ -9,7 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.janfic.games.computercombat.ComputerCombatGame;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.components.*;
@@ -24,8 +28,9 @@ import java.util.Map;
  */
 public class SoftwareActor extends Panel {
 
-    ProgressBar magicBar, healthBar, defenseBar, attackBar;
+    ProgressBar progressBar, healthBar, defenseBar, attackBar;
     BorderedArea imageArea;
+    boolean activatedAbility;
 
     public static final Map<Class<? extends Component>, String> components;
 
@@ -47,9 +52,6 @@ public class SoftwareActor extends Panel {
 
         this.software = software;
         this.areas = new ArrayList<>();
-//        Json json = new Json();
-//        FileHandle file = Gdx.files.local(software.getName() + ".json");
-//        file.writeString(json.toJson(this.software), false);
 
         this.defaults().height(48).space(1);
 
@@ -62,30 +64,48 @@ public class SoftwareActor extends Panel {
         ProgressBarStyle blue = new ProgressBarStyle(skin.get("default-vertical", ProgressBarStyle.class));
         blue.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("249fde"));
 
-        magicBar = new ProgressBar(0, 10, 1, true, blue);
-        healthBar = new ProgressBar(0, 10, 1, true, green);
-        defenseBar = new ProgressBar(0, 10, 1, true, grey);
-        attackBar = new ProgressBar(0, 10, 1, true, red);
+        progressBar = new ProgressBar(0, software.getRunRequirements(), 1, true, blue);
+        healthBar = new ProgressBar(0, software.getMaxHealth(), 1, true, green);
+        defenseBar = new ProgressBar(0, software.getMaxArmor(), 1, true, grey);
+        attackBar = new ProgressBar(0, software.getMaxAttack(), 1, true, red);
         imageArea = new BorderedArea(skin);
         imageArea.add(new Image(game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName())));
 
-        magicBar.setValue(5);
-        healthBar.setValue(5);
-        defenseBar.setValue(5);
-        attackBar.setValue(5);
+        this.setTouchable(Touchable.enabled);
+        this.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                CardInfoWindow w = new CardInfoWindow(game, software, skin, true);
+                w.setSize(2 * getStage().getWidth() / 3f, getStage().getHeight());
+                w.setPosition(getStage().getWidth() / 6f, getStage().getHeight());
+                SoftwareActor.this.getStage().addActor(w);
+                w.getUseAbilityButton().addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        SoftwareActor.this.activatedAbility = true;
+                    }
+                });
+            }
+        });
 
-        Stack magicStack = new Stack();
-        magicStack.add(magicBar);
-        Table magicOverlay = new Table();
-        OverlayTextLabelArea<Software> magicLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        progressBar.setValue(software.getRunProgress());
+        healthBar.setValue(software.getHealth());
+        defenseBar.setValue(software.getArmor());
+        attackBar.setValue(software.getAttack());
+
+        Stack progressStack = new Stack();
+        progressStack.add(progressBar);
+        Table progressOverlay = new Table();
+        OverlayTextLabelArea<Software> progressLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
             @Override
             public String updateLabel(Software dataObject) {
-                return "" + dataObject.getMagic();
+                progressBar.setValue(dataObject.getRunProgress());
+                return "" + dataObject.getRunProgress();
             }
         };
-        this.areas.add(magicLabelArea);
-        magicOverlay.add(magicLabelArea).expand().fillX().height(9);
-        magicStack.add(magicOverlay);
+        this.areas.add(progressLabelArea);
+        progressOverlay.add(progressLabelArea).expand().fillX().height(9);
+        progressStack.add(progressOverlay);
 
         Stack healthStack = new Stack();
         healthStack.add(healthBar);
@@ -93,6 +113,7 @@ public class SoftwareActor extends Panel {
         OverlayTextLabelArea<Software> healthLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
             @Override
             public String updateLabel(Software dataObject) {
+                healthBar.setValue(dataObject.getHealth());
                 return "" + dataObject.getHealth();
             }
         };
@@ -106,6 +127,7 @@ public class SoftwareActor extends Panel {
         OverlayTextLabelArea<Software> defenseLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
             @Override
             public String updateLabel(Software dataObject) {
+                defenseBar.setValue(dataObject.getArmor());
                 return "" + dataObject.getArmor();
             }
         };
@@ -119,6 +141,7 @@ public class SoftwareActor extends Panel {
         OverlayTextLabelArea<Software> attackLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
             @Override
             public String updateLabel(Software dataObject) {
+                attackBar.setValue(dataObject.getAttack());
                 return "" + dataObject.getAttack();
             }
         };
@@ -135,7 +158,7 @@ public class SoftwareActor extends Panel {
 
         if (flipped) {
             this.add(leds).padRight(2);
-            this.add(magicStack).width(9).prefSize(8, 8);
+            this.add(progressStack).width(9).prefSize(8, 8);
             this.add(attackStack).width(9);
             this.add(imageArea).width(48);
             this.add(defenseStack).width(9);
@@ -145,12 +168,36 @@ public class SoftwareActor extends Panel {
             this.add(defenseStack).width(9);
             this.add(imageArea).width(48);
             this.add(attackStack).width(9);
-            this.add(magicStack).width(9).prefSize(8, 8);
+            this.add(progressStack).width(9).prefSize(8, 8);
             this.add(leds).padLeft(2);
         }
     }
 
     public List<OverlayTextLabelArea<Software>> getOverlayTextLabelAreas() {
         return areas;
+    }
+
+    public Software getSoftware() {
+        return software;
+    }
+
+    public void setSoftware(Software software) {
+        this.software = software;
+    }
+
+    public boolean activatedAbility() {
+        return activatedAbility;
+    }
+
+    public void setActivatedAbility(boolean activatedAbility) {
+        this.activatedAbility = activatedAbility;
+    }
+
+    public List<Component> getSelectedComponents() {
+        return new ArrayList<>();
+    }
+
+    public List<Card> getSelectedSoftwares() {
+        return new ArrayList<>();
     }
 }

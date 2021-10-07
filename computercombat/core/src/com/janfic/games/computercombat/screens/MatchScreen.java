@@ -3,7 +3,6 @@ package com.janfic.games.computercombat.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.Board;
@@ -20,10 +18,14 @@ import com.janfic.games.computercombat.actors.ComponentActor;
 import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.actors.SoftwareActor;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
+import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveResult;
+import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
@@ -49,6 +51,7 @@ public class MatchScreen implements Screen {
 
     Board board;
 
+    BorderedGrid leftPanel, rightPanel;
     Map<String, List<SoftwareActor>> softwareActors;
     Map<String, ComputerActor> computerActors;
 
@@ -101,13 +104,13 @@ public class MatchScreen implements Screen {
         this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin, game));
         this.computerActors.put(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ComputerActor(skin, game));
 
-        BorderedGrid leftPanel = new BorderedGrid(skin);
+        leftPanel = new BorderedGrid(skin);
         leftPanel.pad(7);
         leftPanel.top();
         leftPanel.defaults().space(2);
         leftPanel.add(computerActors.get(game.getCurrentProfile().getUID())).expandY().growX().bottom();
 
-        BorderedGrid rightPanel = new BorderedGrid(skin);
+        rightPanel = new BorderedGrid(skin);
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
@@ -155,12 +158,60 @@ public class MatchScreen implements Screen {
                 Json json = new Json();
                 List<MoveResult> results = json.fromJson(List.class, response.getMessage());
                 board.animate(results, softwareActors, computerActors);
+                match.setCurrentState(results.get(results.size() - 1).getNewState());
+                for (String uid : softwareActors.keySet()) {
+                    List<Card> software = match.getCurrentState().activeEntities.get(uid);
+                    softwareActors.get(uid).clear();
+                    leftPanel.clear();
+                    rightPanel.clear();
+                    for (Card card : software) {
+                        SoftwareActor softwareActor = new SoftwareActor(skin, !uid.equals(game.getCurrentProfile().getUID()), (Software) card, game);
+                        softwareActors.get(uid).add(softwareActor);
+                        if (uid.equals(game.getCurrentProfile().getUID())) {
+                            leftPanel.add(softwareActor).row();
+                        } else {
+                            rightPanel.add(softwareActor).row();
+                        }
+                    }
+                }
+                for (String uid : computerActors.keySet()) {
+                    ComputerActor computerActor = computerActors.get(uid);
+                    computerActor.setComputer(match.getCurrentState().computers.get(uid));
+                    if (uid.equals(game.getCurrentProfile().getUID())) {
+                        leftPanel.add(computerActors.get(uid)).expandY().growX().bottom();
+                    } else {
+                        rightPanel.add(computerActors.get(uid)).expandY().growX().bottom();
+                    }
+                }
             }
         }
-        if (board.isAnimating() == false) {
-            for (String uid : computerActors.keySet()) {
-                ComputerActor computerActor = computerActors.get(uid);
-                computerActor.setComputer(match.getCurrentState().computers.get(uid));
+        for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
+            if (softwareActor.activatedAbility()) {
+                UseAbilityMove move = new UseAbilityMove(
+                        game.getCurrentProfile().getUID(),
+                        softwareActor.getSoftware(),
+                        softwareActor.getSelectedComponents(),
+                        softwareActor.getSelectedSoftwares()
+                );
+                Json json = new Json();
+                softwareActor.setActivatedAbility(false);
+                if (GameRules.getAvailableMoves(match.getCurrentState()).contains(move)) {
+                    game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
+                }
+            }
+        }
+        ComputerActor computerActor = computerActors.get(game.getCurrentProfile().getUID());
+        if (computerActor.activatedAbility()) {
+            UseAbilityMove move = new UseAbilityMove(
+                    game.getCurrentProfile().getUID(),
+                    computerActor.getComputer(),
+                    new ArrayList<>(),
+                    new ArrayList<>()
+            );
+            Json json = new Json();
+            computerActor.setActivatedAbility(false);
+            if (GameRules.getAvailableMoves(match.getCurrentState()).contains(move)) {
+                game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             }
         }
     }

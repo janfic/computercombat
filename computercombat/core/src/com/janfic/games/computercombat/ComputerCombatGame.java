@@ -11,8 +11,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.janfic.games.computercombat.model.Computer;
+import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
+import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.client.ServerAPI;
 import com.janfic.games.computercombat.screens.LoadingScreen;
 import java.util.Stack;
@@ -37,6 +42,10 @@ public class ComputerCombatGame extends Game {
         assetManager.load(Assets.TITLE, Texture.class);
         assetManager.load(Assets.MAIN_MENU_BACKGROUND, Texture.class);
         pushScreen(new LoadingScreen(this));
+        UseAbilityMove m = new UseAbilityMove("test", new Computer(), null, null);
+        Json json = new Json();
+        Move move = json.fromJson(MatchComponentsMove.class, json.toJson(m));
+        System.out.println(json.toJson(move));
     }
 
     public Screen popScreen() {

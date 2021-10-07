@@ -1,10 +1,10 @@
 package com.janfic.games.computercombat.model.players;
 
+import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Player;
-import com.janfic.games.computercombat.model.SoftwareDeck;
 
 /**
  *
@@ -14,7 +14,7 @@ public class HumanPlayer extends Player {
 
     public String uid;
 
-    public HumanPlayer(String uid, SoftwareDeck activeDeck, Computer computer) {
+    public HumanPlayer(String uid, Deck activeDeck, Computer computer) {
         super(uid, activeDeck, computer);
         this.uid = uid;
     }

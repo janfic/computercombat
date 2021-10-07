@@ -17,7 +17,7 @@ public class MatchState implements Serializable {
     public Component[][] componentBoard;
     public Map<String, List<Card>> activeEntities;
     public Map<String, Computer> computers;
-    public Map<String, SoftwareDeck> decks;
+    public Map<String, Deck> decks;
     public List<Profile> players;
     public Profile currentPlayerMove;
 
@@ -30,7 +30,7 @@ public class MatchState implements Serializable {
         this.currentPlayerMove = null;
     }
 
-    public MatchState(Profile player1, Profile player2, Component[][] componentBoard, Map<String, List<Card>> activeEntities, Map<String, Computer> computers, Map<String, SoftwareDeck> decks) {
+    public MatchState(Profile player1, Profile player2, Component[][] componentBoard, Map<String, List<Card>> activeEntities, Map<String, Computer> computers, Map<String, Deck> decks) {
         this.componentBoard = componentBoard;
         this.activeEntities = activeEntities;
         this.computers = computers;
@@ -122,7 +122,7 @@ public class MatchState implements Serializable {
         this.currentPlayerMove = json.readValue("currentPlayerMove", Profile.class, jsonData);
         this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
         this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
-        this.decks = json.readValue("decks", HashMap.class, SoftwareDeck.class, jsonData);
+        this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);
         String[][] comps = json.readValue("componentBoard", String[][].class, jsonData);
         componentBoard = new Component[8][8];
         for (int x = 0; x < comps.length; x++) {

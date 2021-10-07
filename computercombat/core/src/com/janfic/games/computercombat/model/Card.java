@@ -237,6 +237,7 @@ public abstract class Card implements Json.Serializable {
     @Override
     public void write(Json json) {
         json.writeValue("name", this.name);
+        json.writeValue("id", this.id);
         json.writeValue("pack", this.pack);
         json.writeValue("textureName", this.textureName);
         json.writeValue("health", this.health);
@@ -260,6 +261,7 @@ public abstract class Card implements Json.Serializable {
     @Override
     public void read(Json json, JsonValue jv) {
         this.name = json.readValue("name", String.class, jv);
+        this.id = json.readValue("id", Integer.class, jv);
         this.pack = json.readValue("pack", String.class, jv);
         this.textureName = json.readValue("textureName", String.class, jv);
         this.health = json.readValue("health", Integer.class, jv);
@@ -293,6 +295,12 @@ public abstract class Card implements Json.Serializable {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Card) {
+            return ((Card) obj).hashCode() == this.hashCode();
+        }
         return obj.hashCode() == this.hashCode();
     }
 

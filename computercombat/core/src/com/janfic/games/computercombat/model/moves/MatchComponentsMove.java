@@ -2,11 +2,11 @@ package com.janfic.games.computercombat.model.moves;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.SerializationException;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.MatchState;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation;
 import com.janfic.games.computercombat.model.animations.CollectAnimation;
 import com.janfic.games.computercombat.model.animations.SwitchAnimation;
@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @author Jan Fic
  */
-public class MatchComponentsMove extends Move {
+public class MatchComponentsMove extends Move implements Json.Serializable {
 
     private Component a, b;
 

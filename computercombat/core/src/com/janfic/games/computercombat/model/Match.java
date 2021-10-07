@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model;
 
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.Move;
 import java.util.ArrayList;
@@ -17,20 +18,22 @@ public class Match {
     private MatchState currentState;
     private Profile player1, player2;
 
-    public Match(Profile player1, Profile player2) {
+    public Match(Profile player1, Profile player2, Deck player1Deck, Deck player2Deck) {
 
         this.player1 = player1;
         this.player2 = player2;
         Map<String, List<Card>> activeEntities = new HashMap<>();
         Map<String, Computer> computers = new HashMap<>();
-        Map<String, SoftwareDeck> decks = new HashMap<>();
+        Map<String, Deck> decks = new HashMap<>();
+
+        decks.put(player1.getUID(), player1Deck);
+        decks.put(player2.getUID(), player2Deck);
 
         activeEntities.put(player1.getUID(), new ArrayList<>());
         activeEntities.put(player2.getUID(), new ArrayList<>());
         computers.put(player1.getUID(), new Computer());
         computers.put(player2.getUID(), new Computer());
-//        decks.put(player1.getActivePlayer(), new ArrayList<>());
-//        decks.put(player2.getActivePlayer(), new ArrayList<>());
+
         try {
             this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
         } catch (Exception e) {
@@ -89,6 +92,12 @@ public class Match {
     }
 
     public boolean isValidMove(Move move) {
-        return GameRules.getAvailableMoves(currentState).contains(move);
+        List<Move> moves = GameRules.getAvailableMoves(currentState);
+        boolean found = moves.contains(move);
+        Json j = new Json();
+        System.out.println(j.prettyPrint(moves));
+        System.out.println(j.prettyPrint(move));
+
+        return found;
     }
 }

@@ -8,9 +8,9 @@ import com.janfic.games.computercombat.model.MatchState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UseAbilityMove extends Move {
+public class UseAbilityMove extends Move implements Json.Serializable {
 
-    private Card entity, target;
+    private Card entity;
     private List<Component> selectedComponents;
     private List<Card> selectedSoftwares;
 
@@ -18,10 +18,11 @@ public class UseAbilityMove extends Move {
         super("");
     }
 
-    public UseAbilityMove(String playerUID, Card entity, Card target) {
+    public UseAbilityMove(String playerUID, Card entity, List<Component> selectedComponents, List<Card> selectedSoftwares) {
         super(playerUID);
         this.entity = entity;
-        this.target = target;
+        this.selectedComponents = selectedComponents;
+        this.selectedSoftwares = selectedSoftwares;
     }
 
     public void setSelectedComponents(List<Component> selectedComponents) {
@@ -42,16 +43,15 @@ public class UseAbilityMove extends Move {
 
     @Override
     public List<MoveResult> doMove(MatchState state) {
-        List<MoveResult> results = new ArrayList<>();
-        //stubbed
+        List<MoveResult> results = entity.getAbility().doAbility(state, this);
         return results;
     }
 
     @Override
     public void write(Json json) {
+        json.writeType(this.getClass());
         json.writeValue("player", playerUID);
         json.writeValue("entity", entity, Card.class);
-        json.writeValue("target", target, Card.class);
         json.writeValue("selectedComponents", selectedComponents, List.class);
         json.writeValue("selectedSoftwares", selectedSoftwares, List.class);
     }
@@ -60,8 +60,16 @@ public class UseAbilityMove extends Move {
     public void read(Json json, JsonValue jv) {
         this.playerUID = json.readValue("player", String.class, jv);
         this.entity = json.readValue("entity", Card.class, jv);
-        this.target = json.readValue("target", Card.class, jv);
         this.selectedComponents = json.readValue("selectedComponents", List.class, jv);
         this.selectedSoftwares = json.readValue("selectedSoftwares", List.class, jv);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof UseAbilityMove) {
+            UseAbilityMove o = (UseAbilityMove) obj;
+            return (o.entity.equals(this.entity) && o.playerUID.equals(this.playerUID));
+        }
+        return super.equals(obj);
     }
 }

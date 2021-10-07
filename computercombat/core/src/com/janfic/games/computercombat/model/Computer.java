@@ -3,16 +3,29 @@ package com.janfic.games.computercombat.model;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.model.abilities.DrawAbility;
+import com.janfic.games.computercombat.model.components.CPUComponent;
+import com.janfic.games.computercombat.model.components.NetworkComponent;
+import com.janfic.games.computercombat.model.components.PowerComponent;
+import com.janfic.games.computercombat.model.components.RAMComponent;
+import com.janfic.games.computercombat.model.components.StorageComponent;
 
 /**
  *
  * @author Jan Fic
  */
-public class Computer implements Serializable {
+public class Computer extends Card implements Serializable {
 
     int health, progress;
 
     public Computer() {
+        super(0, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
+            CPUComponent.class,
+            NetworkComponent.class,
+            StorageComponent.class,
+            RAMComponent.class,
+            PowerComponent.class
+        }, 20, new DrawAbility());
         this.health = 20;
         this.progress = 0;
     }
@@ -38,10 +51,6 @@ public class Computer implements Serializable {
 
     public void drawCard() {
         progress = 0;
-    }
-
-    public int getHealth() {
-        return health;
     }
 
     public void setHealth(int health) {

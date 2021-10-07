@@ -3,10 +3,8 @@ package com.janfic.games.computercombat.model.abilities;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.MatchState;
-import com.janfic.games.computercombat.model.components.CPUComponent;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveResult;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 

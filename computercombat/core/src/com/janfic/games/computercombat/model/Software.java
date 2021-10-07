@@ -14,9 +14,4 @@ public class Software extends Card {
 
     public Software() {
     }
-
-    public static Software createFromJson(String data) {
-        Json json = new Json();
-        return json.fromJson(Software.class, data);
-    }
 }
