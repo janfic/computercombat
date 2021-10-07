@@ -163,11 +163,9 @@ public class MatchScreen implements Screen {
                 rightPanel.clear();
                 for (String uid : softwareActors.keySet()) {
                     List<Card> software = match.getCurrentState().activeEntities.get(uid);
-                    System.out.println(uid + ":" + software);
                     softwareActors.get(uid).clear();
                     for (Card card : software) {
                         SoftwareActor softwareActor = new SoftwareActor(skin, !uid.equals(game.getCurrentProfile().getUID()), (Software) card, game);
-                        System.out.println(json.prettyPrint(card));
                         softwareActors.get(uid).add(softwareActor);
                         if (uid.equals(game.getCurrentProfile().getUID())) {
                             leftPanel.add(softwareActor).row();
