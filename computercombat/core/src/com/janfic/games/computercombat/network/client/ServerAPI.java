@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 /**
  *
@@ -41,13 +42,14 @@ public class ServerAPI {
     }
 
     public Message readMessage() {
+        String content = "";
+        String line = null;
         try {
             Json json = new Json();
             InputStream is = socket.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            String content = "";
-            String line;
-            while (is.available() > 0 && (line = reader.readLine()) != null) {
+            //BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            Scanner scanner = new Scanner(is);
+            while (scanner.hasNextLine() && (line = scanner.nextLine()) != null) {
                 if (line.equals("END")) {
                     break;
                 }
@@ -56,6 +58,8 @@ public class ServerAPI {
             Message m = json.fromJson(Message.class, content);
             return m;
         } catch (Exception e) {
+            System.out.println("CONTENT: " + content);
+            System.out.println("LINE: " + line);
             e.printStackTrace();
             return null;
         }

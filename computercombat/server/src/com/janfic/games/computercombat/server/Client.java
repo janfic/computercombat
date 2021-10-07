@@ -51,7 +51,7 @@ public class Client {
         Json json = new Json();
         String out = message.getMessage().length() > 50 ? message.getMessage().substring(0, 25) + " .... " + message.getMessage().substring(message.getMessage().length() - 25, message.getMessage().length() - 1) : message.getMessage();
         System.out.println("[SERVER]: Sending Message to Client (" + this.clientUID + ") : { " + message.getType() + " : " + out + " }");
-        String m = json.toJson(message) + "\nEND\n";
+        String m = json.prettyPrint(message) + "\nEND\n";
         socket.getOutputStream().write(m.getBytes());
 
     }

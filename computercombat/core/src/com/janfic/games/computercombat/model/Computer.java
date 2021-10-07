@@ -36,7 +36,7 @@ public class Computer extends Card implements Serializable {
     public void write(Json json) {
         json.writeValue("health", health);
         json.writeValue("progress", progress);
-        json.writeValue("cardsLeft", deckSize);
+        json.writeValue("deckSize", deckSize);
     }
 
     @Override

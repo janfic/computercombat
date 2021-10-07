@@ -254,7 +254,7 @@ public abstract class Card implements Json.Serializable {
             json.writeValue((Object) runComponent.getName(), String.class);
         }
         json.writeArrayEnd();
-        json.writeValue("ability", ability != null ? this.ability.getClass().toString() : null);
+        json.writeValue("ability", ability);
 
     }
 
@@ -283,14 +283,7 @@ public abstract class Card implements Json.Serializable {
             }
         }
         this.runComponents = foundComponents.toArray(this.runComponents);
-        try {
-            String ability = json.readValue("ability", String.class, jv);
-            if (ability != null) {
-                this.ability = (Ability) Class.forName(ability).getConstructor().newInstance();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.ability = json.readValue("ability", Ability.class, jv);
     }
 
     @Override

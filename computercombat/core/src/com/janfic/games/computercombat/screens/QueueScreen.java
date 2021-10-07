@@ -344,8 +344,6 @@ public class QueueScreen implements Screen {
             data.add(json.toJson(new boolean[]{isRanked, isLive}));
             Message requestQueue = new Message(Type.JOIN_QUEUE_REQUEST, json.toJson(data));
 
-            System.out.println(data);
-
             game.getServerAPI().sendMessage(requestQueue);
 
             while (game.getServerAPI().hasMessage() == false) {

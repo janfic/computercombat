@@ -5,7 +5,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -24,6 +27,7 @@ import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.Message;
@@ -31,6 +35,7 @@ import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,15 +60,17 @@ public class MatchScreen implements Screen {
     Map<String, List<SoftwareActor>> softwareActors;
     Map<String, ComputerActor> computerActors;
 
-    ClientMatch match;
+    List<List<Action>> animation;
+
+    ClientMatch matchData;
 
     public MatchScreen(ComputerCombatGame game, ClientMatch match) {
         this.game = game;
         this.assetManager = game.getAssetManager();
         this.softwareActors = new HashMap<>();
         this.computerActors = new HashMap<>();
-
-        this.match = match;
+        this.animation = new LinkedList<>();
+        this.matchData = match;
     }
 
     @Override
@@ -88,11 +95,11 @@ public class MatchScreen implements Screen {
 
         if (matchStateData.type == Type.MATCH_STATE_DATA) {
             MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
-            this.match.setCurrentState(state);
+            this.matchData.setCurrentState(state);
         }
 
-        Component[][] componentBoard = this.match.getCurrentState().componentBoard;
-        board = new Board(skin, match, game);
+        Component[][] componentBoard = this.matchData.getCurrentState().componentBoard;
+        board = new Board(skin, matchData, game, animation);
         for (int x = 0; x < componentBoard.length; x++) {
             for (int y = 0; y < componentBoard[x].length; y++) {
                 board.addComponent(new ComponentActor(this.componentAtlas, componentBoard[x][y]), x, y);
@@ -100,9 +107,9 @@ public class MatchScreen implements Screen {
         }
 
         this.softwareActors.put(game.getCurrentProfile().getUID(), new ArrayList<>());
-        this.softwareActors.put(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ArrayList<>());
+        this.softwareActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ArrayList<>());
         this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin, game));
-        this.computerActors.put(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ComputerActor(skin, game));
+        this.computerActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ComputerActor(skin, game));
 
         leftPanel = new BorderedGrid(skin);
         leftPanel.pad(7);
@@ -114,14 +121,14 @@ public class MatchScreen implements Screen {
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
-        rightPanel.add(computerActors.get(match.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())).expandY().growX().bottom();
+        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())).expandY().growX().bottom();
 
         Panel buttons = new Panel(skin);
 
         BorderedGrid infoPanel = new BorderedGrid(skin);
         infoPanel.setSize(220, 43);
         Panel info = new Panel(skin);
-        info.add(new Label(game.getCurrentProfile().getName() + " vs. " + match.getOpponentName(), skin));
+        info.add(new Label(game.getCurrentProfile().getName() + " vs. " + matchData.getOpponentName(), skin));
         infoPanel.add(info).grow();
 
         table.setFillParent(true);
@@ -143,26 +150,56 @@ public class MatchScreen implements Screen {
     }
 
     @Override
-    public void render(float f) {
-        mainStage.act(f);
+    public void render(float delta) {
+        mainStage.act(delta);
         mainStage.draw();
-        if (board.attemptedMove() && match.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+        if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+            board.setTouchable(Touchable.enabled);
+        } else {
+            board.setTouchable(Touchable.disabled);
+        }
+
+        if (animation.isEmpty() == false) {
+            List<Action> a = animation.get(0);
+            boolean allDone = true;
+            List<Action> r = new ArrayList<>();
+            for (Action action : a) {
+                if (action.getActor() == null) {
+                    r.add(action);
+                    continue;
+                }
+                if (!action.act(delta)) {
+                    allDone = false;
+                } else {
+                    r.add(action);
+                }
+            }
+            a.removeAll(r);
+            if (allDone) {
+                animation.remove(0);
+            }
+        } else {
+            board.setTouchable(Touchable.enabled);
+        }
+        
+
+        if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             Move move = board.getMove();
             Json json = new Json();
             game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             board.consumeMove();
         }
-        if (game.getServerAPI().hasMessage() && board.isAnimating() == false) {
+        if (game.getServerAPI().hasMessage() && isAnimating() == false) {
             Message response = game.getServerAPI().readMessage();
             if (response.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
                 List<MoveResult> results = json.fromJson(List.class, response.getMessage());
-                board.animate(results, softwareActors, computerActors);
-                match.setCurrentState(results.get(results.size() - 1).getNewState());
+                animate(results, softwareActors, computerActors);
+                matchData.setCurrentState(results.get(results.size() - 1).getNewState());
                 leftPanel.clear();
                 rightPanel.clear();
                 for (String uid : softwareActors.keySet()) {
-                    List<Card> software = match.getCurrentState().activeEntities.get(uid);
+                    List<Card> software = matchData.getCurrentState().activeEntities.get(uid);
                     softwareActors.get(uid).clear();
                     for (Card card : software) {
                         SoftwareActor softwareActor = new SoftwareActor(skin, !uid.equals(game.getCurrentProfile().getUID()), (Software) card, game);
@@ -176,7 +213,7 @@ public class MatchScreen implements Screen {
                 }
                 for (String uid : computerActors.keySet()) {
                     ComputerActor computerActor = computerActors.get(uid);
-                    computerActor.setComputer(match.getCurrentState().computers.get(uid));
+                    computerActor.setComputer(matchData.getCurrentState().computers.get(uid));
                     if (uid.equals(game.getCurrentProfile().getUID())) {
                         leftPanel.add(computerActors.get(uid)).expandY().growX().bottom();
                     } else {
@@ -195,7 +232,7 @@ public class MatchScreen implements Screen {
                 );
                 Json json = new Json();
                 softwareActor.setActivatedAbility(false);
-                if (GameRules.getAvailableMoves(match.getCurrentState()).contains(move)) {
+                if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
                     game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
                 }
             }
@@ -210,7 +247,7 @@ public class MatchScreen implements Screen {
             );
             Json json = new Json();
             computerActor.setActivatedAbility(false);
-            if (GameRules.getAvailableMoves(match.getCurrentState()).contains(move)) {
+            if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
                 game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             }
         }
@@ -236,6 +273,48 @@ public class MatchScreen implements Screen {
 
     @Override
     public void dispose() {
+    }
+
+    public boolean isAnimating() {
+        return animation.isEmpty() == false;
+    }
+
+    public void animate(List<MoveResult> moveResults, Map<String, List<SoftwareActor>> softwareActors, Map<String, ComputerActor> computerActors) {
+
+        //animate move 
+        //change state
+        //animate
+        for (MoveResult moveResult : moveResults) {
+            List<Action> updateData = new ArrayList<>();
+            Action a = Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    matchData.setCurrentState(moveResult.getOldState());
+                    board.updateBoard(matchData);
+                    int offset = 0;
+                    for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
+                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), board, softwareActors, computerActors);
+                        int indexOfUpdate = animation.indexOf(updateData);
+                        animation.addAll(indexOfUpdate + 1 + offset, animations);
+                        offset += animations.size();
+                    }
+                }
+            });
+            a.setActor(board);
+            updateData.add(a);
+            animation.add(updateData);
+        }
+        List<Action> updateData = new ArrayList<>();
+        Action a = Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                matchData.setCurrentState(moveResults.get(moveResults.size() - 1).getNewState());
+                board.updateBoard(matchData);
+            }
+        });
+        a.setActor(board);
+        updateData.add(a);
+        animation.add(updateData);
     }
 
 }

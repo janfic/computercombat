@@ -42,10 +42,6 @@ public class ComputerCombatGame extends Game {
         assetManager.load(Assets.TITLE, Texture.class);
         assetManager.load(Assets.MAIN_MENU_BACKGROUND, Texture.class);
         pushScreen(new LoadingScreen(this));
-        UseAbilityMove m = new UseAbilityMove("test", new Computer(), null, null);
-        Json json = new Json();
-        Move move = json.fromJson(MatchComponentsMove.class, json.toJson(m));
-        System.out.println(json.toJson(move));
     }
 
     public Screen popScreen() {
