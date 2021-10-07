@@ -26,6 +26,9 @@ public class Match {
         Map<String, Computer> computers = new HashMap<>();
         Map<String, Deck> decks = new HashMap<>();
 
+        player1Deck.shuffle();
+        player2Deck.shuffle();
+
         decks.put(player1.getUID(), player1Deck);
         decks.put(player2.getUID(), player2Deck);
 
@@ -95,8 +98,6 @@ public class Match {
         List<Move> moves = GameRules.getAvailableMoves(currentState);
         boolean found = moves.contains(move);
         Json j = new Json();
-        System.out.println(j.prettyPrint(moves));
-        System.out.println(j.prettyPrint(move));
 
         return found;
     }

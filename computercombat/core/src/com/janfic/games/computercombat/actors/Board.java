@@ -328,7 +328,6 @@ public class Board extends BorderedGrid {
                         animation.addAll(indexOfUpdate + 1 + offset, animations);
                         offset += animations.size();
                     }
-                    System.out.println("END OF UPDATE DATA");
                 }
             });
             a.setActor(this);
@@ -341,7 +340,6 @@ public class Board extends BorderedGrid {
             public void run() {
                 Board.this.matchData.setCurrentState(moveResults.get(moveResults.size() - 1).getNewState());
                 updateBoard(matchData);
-                System.out.println("END OF FINAL UPDATE DATA");
             }
         });
         a.setActor(this);

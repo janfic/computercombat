@@ -70,9 +70,6 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
             //Progress
             for (Component c : collectAnimation.getAllComponents()) {
                 boolean collectedByCard = false;
-                System.out.println(originalState.currentPlayerMove);
-                System.out.println(newState.activeEntities);
-                System.out.println(newState.activeEntities.get(originalState.currentPlayerMove.getUID()));
                 for (Card card : newState.activeEntities.get(originalState.currentPlayerMove.getUID())) {
                     if (card.getRunProgress() < card.getRunRequirements()) {
                         for (Class<? extends Component> requirement : card.getRunComponents()) {
@@ -86,7 +83,6 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
                 }
                 if (collectedByCard == false) {
                     newState.computers.get(originalState.currentPlayerMove.getUID()).addProgress(1);
-                    System.out.println(c.toString());
                 }
             }
 

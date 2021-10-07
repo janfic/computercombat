@@ -17,6 +17,7 @@ import com.janfic.games.computercombat.model.components.StorageComponent;
 public class Computer extends Card implements Serializable {
 
     int health, progress;
+    int deckSize;
 
     public Computer() {
         super(0, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
@@ -28,18 +29,21 @@ public class Computer extends Card implements Serializable {
         }, 20, new DrawAbility());
         this.health = 20;
         this.progress = 0;
+        this.deckSize = 8;
     }
 
     @Override
     public void write(Json json) {
         json.writeValue("health", health);
         json.writeValue("progress", progress);
+        json.writeValue("cardsLeft", deckSize);
     }
 
     @Override
     public void read(Json json, JsonValue jsonData) {
         this.health = json.readValue("health", Integer.class, jsonData);
         this.progress = json.readValue("progress", Integer.class, jsonData);
+        this.deckSize = json.readValue("deckSize", Integer.class, jsonData);
     }
 
     public void addProgress(int progress) {

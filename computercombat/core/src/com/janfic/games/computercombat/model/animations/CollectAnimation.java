@@ -85,9 +85,6 @@ public class CollectAnimation implements MoveAnimation {
                 }
             }
         }
-        for (Action action : popAction) {
-            System.out.println(action);
-        }
         actions.add(popAction);
 
         return actions;

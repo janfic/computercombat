@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model.abilities;
 
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
