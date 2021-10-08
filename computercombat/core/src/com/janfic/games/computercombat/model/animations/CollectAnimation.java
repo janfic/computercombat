@@ -27,7 +27,7 @@ public class CollectAnimation implements MoveAnimation {
     private Map<Integer, List<Component>> collected;
     private Map<Component, Card> progress;
     private List<Component> allComponents;
-    private final static int[] gutterYs = new int[]{-22, 15, 73, 129, 187};
+    private final static int[] gutterYs = new int[]{187, 129, 73, 15, -22};
 
     public CollectAnimation(Map<Integer, List<Component>> collected, Map<Component, Card> progress) {
         this.collected = collected;
@@ -57,17 +57,35 @@ public class CollectAnimation implements MoveAnimation {
                             Actions.moveTo(isPlayerMove ? 0 : board.getWidth() - 7 - 24, (8 - (componentActor.getComponent().getY() + 1)) * 24 + 7, (isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f));
                     a.setActor(componentActor);
                     componentActor.setZIndex(0);
-                    componentActor.getCollectedRegion().setVisible(true);
-                    Action b = Actions.sequence(Actions.fadeOut(0), Actions.fadeIn(0.7f), Actions.fadeOut((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f, Interpolation.fade));
+                    Action b = Actions.sequence(Actions.fadeOut(0), Actions.visible(true), Actions.fadeIn(0.7f), Actions.fadeOut((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f, Interpolation.fade));
                     b.setActor(componentActor.getCollectedRegion());
                     Image collectedComponent = new Image(board.getSkin(), "collected_component");
 
                     board.getStage().addActor(collectedComponent);
                     collectedComponent.setColor(board.getSkin().getColor(component.getTextureName().toUpperCase()).cpy().mul(1, 1, 1, 0));
                     collectedComponent.setZIndex(10);
+
+                    int i = 4;
+
+                    final ComputerActor computerActor = computerActors.get(currentPlayerUID);
+                    SoftwareActor tempActor = null;
+
+                    if (progress.containsKey("" + component.hashCode())) {
+                        Card c = progress.get("" + component.hashCode());
+                        for (int j = 0; j < softwareActors.get(currentPlayerUID).size(); j++) {
+                            SoftwareActor softwareActor = softwareActors.get(currentPlayerUID).get(j);
+                            if (c.equals(softwareActor.getSoftware())) {
+                                tempActor = softwareActor;
+                                i = j;
+                            }
+                        }
+                    }
+
+                    final SoftwareActor progressActor = tempActor;
+
                     Vector2 start = new Vector2(isPlayerMove ? -5 : board.getWidth() + 3, (8 - (componentActor.getComponent().getY() + 1)) * 24 + 7 + 12 - 4);
                     start = board.localToStageCoordinates(start);
-                    Vector2 end = board.localToStageCoordinates(new Vector2(isPlayerMove ? -5 : board.getWidth() + 3, gutterYs[0]));
+                    Vector2 end = board.localToStageCoordinates(new Vector2(isPlayerMove ? -5 : board.getWidth() + 3, gutterYs[i]));
                     collectedComponent.setPosition(start.x, start.y);
                     Action c = Actions.sequence(
                             Actions.delay((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f + 0.7f - 0.2f),
@@ -76,6 +94,16 @@ public class CollectAnimation implements MoveAnimation {
                             Actions.parallel(Actions.moveTo(end.x, end.y, Math.abs(end.y - start.y) / 70f, Interpolation.exp5), Actions.scaleTo(1, 1, Math.abs(end.y - start.y) / 70f)),
                             Actions.parallel(Actions.moveBy(isPlayerMove ? -13 : 13, 0, 0.2f, Interpolation.exp5), Actions.scaleTo(2, 1, 0.2f)),
                             Actions.fadeOut(0.1f),
+                            Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (progressActor == null) {
+                                        computerActor.addProgress(1);
+                                    } else {
+                                        progressActor.addProgress(1);
+                                    }
+                                }
+                            }),
                             Actions.removeActor()
                     );
                     c.setActor(collectedComponent);
@@ -103,11 +131,13 @@ public class CollectAnimation implements MoveAnimation {
         json.writeType(this.getClass());
         json.writeValue("collected", this.collected, Map.class);
         json.writeValue("allComponents", this.allComponents, List.class);
+        json.writeValue("progress", this.progress, Map.class);
     }
 
     @Override
     public void read(Json json, JsonValue jv) {
         this.allComponents = json.readValue("allComponents", List.class, jv);
         this.collected = json.readValue("collected", Map.class, jv);
+        this.progress = json.readValue("progress", Map.class, jv);
     }
 }

@@ -112,7 +112,6 @@ public class Server {
                                             .loadProfile(r
                                                     .getMessage()
                                             );
-                                    System.out.println(profiles + " " + p);
                                     profiles.put(p.getUID(), p);
                                 }
                                 break;

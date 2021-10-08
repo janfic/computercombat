@@ -28,7 +28,7 @@ public class Computer extends Card implements Serializable {
             PowerComponent.class
         }, 20, new DrawAbility());
         this.health = 20;
-        this.progress = 0;
+        this.progress = 20;
         this.deckSize = 8;
     }
 

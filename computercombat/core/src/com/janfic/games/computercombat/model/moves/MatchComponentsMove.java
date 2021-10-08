@@ -76,6 +76,7 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
                             if (c.getClass().equals(requirement)) {
                                 card.recieveComponents(requirement, 1);
                                 collectedByCard = true;
+                                progress.put(c, card);
                                 break;
                             }
                         }

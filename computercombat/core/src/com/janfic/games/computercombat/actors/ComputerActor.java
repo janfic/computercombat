@@ -25,38 +25,38 @@ import java.util.ArrayList;
  * @author Jan Fic
  */
 public class ComputerActor extends Panel {
-    
+
     Computer computer;
     ProgressBar healthBar, progressBar;
     boolean activatedAbility;
-    
+
     public ComputerActor(Skin skin, ComputerCombatGame game) {
         super(skin);
-        
+
         this.defaults().space(1);
-        
+
         ProgressBar.ProgressBarStyle green = new ProgressBar.ProgressBarStyle(skin.get("default-horizontal", ProgressBar.ProgressBarStyle.class));
         green.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("9cdb43"));
-        
+
         ProgressBar.ProgressBarStyle blue = new ProgressBar.ProgressBarStyle(skin.get("default-horizontal", ProgressBar.ProgressBarStyle.class));
         blue.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("249fde"));
-        
+
         Table table = new Table();
-        
+
         healthBar = new ProgressBar(0, 20, 1, false, green);
         progressBar = new ProgressBar(0, 20, 1, false, blue);
-        
+
         Table panel = new Table(skin);
         panel.setBackground("border_filled");
         panel.add(new Label("7", skin)).height(10);
-        
+
         table.add(healthBar).width(70).row();
         table.add(progressBar).width(70);
-        
+
         this.add(panel).width(20);
         this.add(table).grow();
         setComputer(new Computer());
-        
+
         this.setTouchable(Touchable.enabled);
         this.addListener(new ClickListener() {
             @Override
@@ -82,7 +82,7 @@ public class ComputerActor extends Panel {
             }
         });
     }
-    
+
     @Override
     public void act(float delta) {
         super.act(delta);
@@ -92,23 +92,26 @@ public class ComputerActor extends Panel {
             this.panel = getSkin().getPatch("panel");
         }
     }
-    
+
     public void setComputer(Computer computer) {
         this.computer = computer;
         this.healthBar.setValue(computer.getHealth());
         this.progressBar.setValue(computer.getProgress());
     }
-    
+
     public boolean activatedAbility() {
         return activatedAbility;
     }
-    
+
     public Computer getComputer() {
         return computer;
     }
-    
+
     public void setActivatedAbility(boolean activatedAbility) {
         this.activatedAbility = activatedAbility;
     }
-    
+
+    public void addProgress(int amount) {
+        this.progressBar.setValue(this.progressBar.getValue());
+    }
 }

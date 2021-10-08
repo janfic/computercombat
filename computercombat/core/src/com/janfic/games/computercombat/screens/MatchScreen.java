@@ -181,7 +181,6 @@ public class MatchScreen implements Screen {
         } else {
             board.setTouchable(Touchable.enabled);
         }
-        
 
         if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             Move move = board.getMove();
@@ -194,7 +193,6 @@ public class MatchScreen implements Screen {
             if (response.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
                 List<MoveResult> results = json.fromJson(List.class, response.getMessage());
-                animate(results, softwareActors, computerActors);
                 matchData.setCurrentState(results.get(results.size() - 1).getNewState());
                 leftPanel.clear();
                 rightPanel.clear();
@@ -220,6 +218,7 @@ public class MatchScreen implements Screen {
                         rightPanel.add(computerActors.get(uid)).expandY().growX().bottom();
                     }
                 }
+                animate(results, softwareActors, computerActors);
             }
         }
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
@@ -284,7 +283,27 @@ public class MatchScreen implements Screen {
         //animate move 
         //change state
         //animate
-        for (MoveResult moveResult : moveResults) {
+        MoveResult first = moveResults.get(0);
+        List<Action> uD = new ArrayList<>();
+        Action f = Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                matchData.setCurrentState(first.getNewState());
+                board.updateBoard(matchData);
+                int offset = 0;
+                for (MoveAnimation moveAnimation : first.getAnimations()) {
+                    List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), board, softwareActors, computerActors);
+                    int indexOfUpdate = animation.indexOf(uD);
+                    animation.addAll(indexOfUpdate + 1 + offset, animations);
+                    offset += animations.size();
+                }
+            }
+        });
+        f.setActor(board);
+        uD.add(f);
+        animation.add(uD);
+        for (int i = 1; i < moveResults.size(); i++) {
+            MoveResult moveResult = moveResults.get(i);
             List<Action> updateData = new ArrayList<>();
             Action a = Actions.run(new Runnable() {
                 @Override

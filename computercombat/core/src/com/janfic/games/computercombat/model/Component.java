@@ -65,7 +65,7 @@ public abstract class Component implements Serializable {
 
     @Override
     public String toString() {
-        return name + " (" + x + "," + y + ")";
+        return "" + hashCode();
     }
 
     @Override
@@ -75,6 +75,15 @@ public abstract class Component implements Serializable {
             return this.x == c.x && this.y == c.y && this.name.equals(c.name);
         }
         return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 13 * hash + Objects.hashCode(this.name);
+        hash = 13 * hash + this.x;
+        hash = 13 * hash + this.y;
+        return hash;
     }
 
     @Override

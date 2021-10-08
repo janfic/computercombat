@@ -200,4 +200,8 @@ public class SoftwareActor extends Panel {
     public List<Card> getSelectedSoftwares() {
         return new ArrayList<>();
     }
+
+    public void addProgress(int amount) {
+        this.progressBar.setValue(this.progressBar.getValue());
+    }
 }

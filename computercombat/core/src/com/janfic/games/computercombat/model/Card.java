@@ -291,7 +291,7 @@ public abstract class Card implements Json.Serializable {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof Card) {
+        if (obj instanceof Card || obj instanceof Software) {
             return ((Card) obj).hashCode() == this.hashCode();
         }
         return obj.hashCode() == this.hashCode();
@@ -302,6 +302,7 @@ public abstract class Card implements Json.Serializable {
         int hash = 3;
         hash = 79 * hash + Objects.hashCode(this.name);
         hash = 79 * hash + Objects.hashCode(this.pack);
+        hash = 79 * hash + Objects.hashCode(this.id);
         return hash;
     }
 }
