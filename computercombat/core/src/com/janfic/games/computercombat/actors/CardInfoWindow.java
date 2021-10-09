@@ -124,6 +124,12 @@ public class CardInfoWindow extends Window {
         abilityInfo.add(imageBorder).center().width(48).height(48).expandX().row();
         abilityInfo.add(description).center().grow().row();
         if (useAbilityButton.isVisible()) {
+            useAbilityButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    CardInfoWindow.this.remove();
+                }
+            });
             abilityInfo.add(useAbilityButton).center().growX().row();
         }
     }

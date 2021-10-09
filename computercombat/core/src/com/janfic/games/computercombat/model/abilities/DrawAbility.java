@@ -1,12 +1,14 @@
 package com.janfic.games.computercombat.model.abilities;
 
-import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.animations.DrawAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +31,14 @@ public class DrawAbility extends Ability {
         List<Card> cards = newState.activeEntities.get(move.getPlayerUID());
         Deck deck = newState.decks.get(move.getPlayerUID());
 
+        List<Software> drawnCards = new ArrayList<>();
         if (deck.size() > 0) {
-            cards.add(deck.draw());
+            Software s = deck.draw();
+            cards.add(s);
+            drawnCards.add(s);
         }
+
+        DrawAnimation drawAnimation = new DrawAnimation(move.getPlayerUID(), drawnCards);
 
         for (Profile player : newState.players) {
             if (player.getUID().equals(move.getPlayerUID())) {
@@ -39,7 +46,10 @@ public class DrawAbility extends Ability {
             }
         }
 
-        MoveResult result = new MoveResult(move, state, newState, new ArrayList<>());
+        List<MoveAnimation> animations = new ArrayList<>();
+        animations.add(drawAnimation);
+
+        MoveResult result = new MoveResult(move, state, newState, animations);
 
         r.add(result);
         return r;

@@ -24,6 +24,8 @@ import java.util.Stack;
 
 public class ComputerCombatGame extends Game {
 
+    static ComputerCombatGame game;
+    
     SpriteBatch batch;
     AssetManager assetManager;
     ServerAPI serverAPI;
@@ -42,6 +44,7 @@ public class ComputerCombatGame extends Game {
         assetManager.load(Assets.TITLE, Texture.class);
         assetManager.load(Assets.MAIN_MENU_BACKGROUND, Texture.class);
         pushScreen(new LoadingScreen(this));
+        
     }
 
     public Screen popScreen() {
