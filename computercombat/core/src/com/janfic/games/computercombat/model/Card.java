@@ -206,6 +206,13 @@ public abstract class Card implements Json.Serializable {
         return amount;
     }
 
+    public void recieveProgress(int amount) {
+        runProgress += amount;
+        if (runProgress > runRequirements) {
+            runProgress = runRequirements;
+        }
+    }
+
     public Class<? extends Component>[] getRunComponents() {
         return runComponents;
     }

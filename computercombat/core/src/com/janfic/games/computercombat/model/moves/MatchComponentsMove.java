@@ -71,7 +71,7 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
             for (Component c : collectAnimation.getAllComponents()) {
                 boolean collectedByCard = false;
                 for (Card card : newState.activeEntities.get(originalState.currentPlayerMove.getUID())) {
-                    if (card.getRunProgress() < card.getRunRequirements()) {
+                    if (card.getRunProgress() < card.getRunRequirements() && collectedByCard == false) {
                         for (Class<? extends Component> requirement : card.getRunComponents()) {
                             if (c.getClass().equals(requirement)) {
                                 card.recieveComponents(requirement, 1);

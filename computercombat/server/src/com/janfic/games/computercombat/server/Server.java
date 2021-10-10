@@ -150,7 +150,7 @@ public class Server {
                                         r = new Message(Type.PROFILE_NOT_FOUND, "NO PROFILE MATCHES GIVEN UID");
                                     } else {
                                         Profile profile = profiles.get(uid);
-                                        r = new Message(Type.PROFILE_INFO, json.prettyPrint(profile));
+                                        r = new Message(Type.PROFILE_INFO, json.toJson(profile));
                                     }
                                     break;
                                 case CARD_INFO_REQUEST: {

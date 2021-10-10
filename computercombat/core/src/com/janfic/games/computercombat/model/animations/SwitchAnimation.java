@@ -8,6 +8,7 @@ import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
+import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class SwitchAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, Board board, Map<String, List<SoftwareActor>> softwareActors, Map<String, ComputerActor> computerActors) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
         List<List<Action>> actions = new ArrayList<>();
         return actions;
     }

@@ -16,10 +16,13 @@ import java.util.Scanner;
 public class ServerAPI {
 
     Socket socket;
+    private boolean isReading;
     private int clientUID;
+    Scanner scanner;
 
     public ServerAPI(Socket socket) {
         this.socket = socket;
+        this.scanner = new Scanner(socket.getInputStream());
     }
 
     public void sendMessage(Message message) {
@@ -42,22 +45,28 @@ public class ServerAPI {
     }
 
     public Message readMessage() {
+        System.out.println("READING");
         String content = "";
         String line = null;
         try {
+            while (isReading) {
+            }
             Json json = new Json();
-            InputStream is = socket.getInputStream();
+            isReading = true;
             //BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            Scanner scanner = new Scanner(is);
-            while (scanner.hasNextLine() && (line = scanner.nextLine()) != null) {
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
                 if (line.equals("END")) {
                     break;
                 }
                 content += line + "\n";
             }
             Message m = json.fromJson(Message.class, content);
+            isReading = false;
+            System.out.println(m.type + "FINISHED READING");
             return m;
         } catch (Exception e) {
+            System.out.println("FINISHED READING");
             System.out.println("CONTENT: " + content);
             System.out.println("LINE: " + line);
             e.printStackTrace();

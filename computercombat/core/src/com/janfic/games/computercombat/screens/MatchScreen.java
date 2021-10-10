@@ -15,29 +15,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.ComputerCombatGame;
-import com.janfic.games.computercombat.actors.Board;
-import com.janfic.games.computercombat.actors.BorderedGrid;
-import com.janfic.games.computercombat.actors.ComponentActor;
-import com.janfic.games.computercombat.actors.ComputerActor;
-import com.janfic.games.computercombat.actors.Panel;
-import com.janfic.games.computercombat.actors.SoftwareActor;
-import com.janfic.games.computercombat.model.Card;
-import com.janfic.games.computercombat.model.Component;
-import com.janfic.games.computercombat.model.GameRules;
-import com.janfic.games.computercombat.model.MatchState;
-import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.actors.*;
+import com.janfic.games.computercombat.model.*;
+import com.janfic.games.computercombat.model.moves.*;
 import com.janfic.games.computercombat.model.moves.Move;
-import com.janfic.games.computercombat.model.moves.MoveAnimation;
-import com.janfic.games.computercombat.model.moves.MoveResult;
-import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -149,6 +134,38 @@ public class MatchScreen implements Screen {
         mainStage.addActor(table);
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
+    public Map<String, ComputerActor> getComputerActors() {
+        return computerActors;
+    }
+
+    public Map<String, List<SoftwareActor>> getSoftwareActors() {
+        return softwareActors;
+    }
+
+    public BorderedGrid getLeftPanel() {
+        return leftPanel;
+    }
+
+    public BorderedGrid getRightPanel() {
+        return rightPanel;
+    }
+
+    public Stage getMainStage() {
+        return mainStage;
+    }
+
+    public ClientMatch getMatchData() {
+        return matchData;
+    }
+
+    public Skin getSkin() {
+        return skin;
+    }
+
     @Override
     public void render(float delta) {
         mainStage.act(delta);
@@ -193,32 +210,34 @@ public class MatchScreen implements Screen {
             if (response.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
                 List<MoveResult> results = json.fromJson(List.class, response.getMessage());
-                matchData.setCurrentState(results.get(results.size() - 1).getNewState());
-                leftPanel.clear();
-                rightPanel.clear();
-                for (String uid : softwareActors.keySet()) {
-                    List<Card> software = matchData.getCurrentState().activeEntities.get(uid);
-                    softwareActors.get(uid).clear();
-                    for (Card card : software) {
-                        SoftwareActor softwareActor = new SoftwareActor(skin, !uid.equals(game.getCurrentProfile().getUID()), (Software) card, game);
-                        softwareActors.get(uid).add(softwareActor);
-                        if (uid.equals(game.getCurrentProfile().getUID())) {
-                            leftPanel.add(softwareActor).row();
-                        } else {
-                            rightPanel.add(softwareActor).row();
-                        }
-                    }
-                }
-                for (String uid : computerActors.keySet()) {
-                    ComputerActor computerActor = computerActors.get(uid);
-                    computerActor.setComputer(matchData.getCurrentState().computers.get(uid));
-                    if (uid.equals(game.getCurrentProfile().getUID())) {
-                        leftPanel.add(computerActors.get(uid)).expandY().growX().bottom();
-                    } else {
-                        rightPanel.add(computerActors.get(uid)).expandY().growX().bottom();
-                    }
-                }
-                animate(results, softwareActors, computerActors);
+//                matchData.setCurrentState(results.get(results.size() - 1).getNewState());
+//                leftPanel.clear();
+//                rightPanel.clear();
+//                for (String uid : softwareActors.keySet()) {
+//                    List<Card> software = matchData.getCurrentState().activeEntities.get(uid);
+//                    softwareActors.get(uid).clear();
+//                    for (Card card : software) {
+//                        SoftwareActor softwareActor = new SoftwareActor(skin, !uid.equals(game.getCurrentProfile().getUID()), (Software) card, game);
+//                        softwareActors.get(uid).add(softwareActor);
+//                        if (uid.equals(game.getCurrentProfile().getUID())) {
+//                            leftPanel.add(softwareActor).row();
+//                        } else {
+//                            rightPanel.add(softwareActor).row();
+//                        }
+//                    }
+//                }
+//                for (String uid : computerActors.keySet()) {
+//                    ComputerActor computerActor = computerActors.get(uid);
+//                    computerActor.setComputer(matchData.getCurrentState().computers.get(uid));
+//                    if (uid.equals(game.getCurrentProfile().getUID())) {
+//                        leftPanel.add(computerActors.get(uid)).expandY().growX().bottom();
+//                    } else {
+//                        rightPanel.add(computerActors.get(uid)).expandY().growX().bottom();
+//                    }
+//                }
+                animate(results, this);
+            } else if (response.type == Type.PING) {
+                System.out.println("PINGED");
             }
         }
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
@@ -278,7 +297,7 @@ public class MatchScreen implements Screen {
         return animation.isEmpty() == false;
     }
 
-    public void animate(List<MoveResult> moveResults, Map<String, List<SoftwareActor>> softwareActors, Map<String, ComputerActor> computerActors) {
+    public void animate(List<MoveResult> moveResults, MatchScreen screen) {
 
         //animate move 
         //change state
@@ -290,9 +309,10 @@ public class MatchScreen implements Screen {
             public void run() {
                 matchData.setCurrentState(first.getNewState());
                 board.updateBoard(matchData);
+                matchData.setCurrentState(first.getOldState());
                 int offset = 0;
                 for (MoveAnimation moveAnimation : first.getAnimations()) {
-                    List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), board, softwareActors, computerActors);
+                    List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen);
                     int indexOfUpdate = animation.indexOf(uD);
                     animation.addAll(indexOfUpdate + 1 + offset, animations);
                     offset += animations.size();
@@ -312,7 +332,7 @@ public class MatchScreen implements Screen {
                     board.updateBoard(matchData);
                     int offset = 0;
                     for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
-                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), board, softwareActors, computerActors);
+                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen);
                         int indexOfUpdate = animation.indexOf(updateData);
                         animation.addAll(indexOfUpdate + 1 + offset, animations);
                         offset += animations.size();

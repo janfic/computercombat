@@ -16,6 +16,7 @@ import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
+import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,26 +39,52 @@ public class DrawAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, Board board, Map<String, List<SoftwareActor>> softwareActors, Map<String, ComputerActor> computerActors) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+        Table leftPanel = screen.getLeftPanel();
+        Table rightPanel = screen.getRightPanel();
+        Table panel;
+        if (playerUID.equals(currentPlayerUID)) {
+            panel = leftPanel;
+        } else {
+            panel = rightPanel;
+        }
 
         List<List<Action>> animations = new ArrayList<>();
-        List<Action> actions = new ArrayList<>();
         ComputerCombatGame game = (ComputerCombatGame) Gdx.app.getApplicationListener();
         if (newSoftware.size() > 0) {
+
+            List<Action> cardAnimation = new ArrayList<>();
             Table t = new Table();
             t.setFillParent(true);
-            CollectionCard card = new CollectionCard(game, board.getSkin(), newSoftware.get(0), 1);
+            CollectionCard card = new CollectionCard(game, screen.getSkin(), newSoftware.get(0), 1);
             card.setTouchable(Touchable.disabled);
-            Stage stage = board.getStage();
+            Stage stage = screen.getMainStage();
             stage.addActor(t);
             card.setVisible(false);
             card.setPosition(stage.getWidth() / 2, -300);
             t.add(card).expand().center();
             Action cardAction = Actions.sequence(Actions.moveBy(0, -400), Actions.visible(true), Actions.moveBy(0, 400, 1, Interpolation.fastSlow), Actions.delay(1), Actions.moveBy(0, -400, 1, Interpolation.slowFast));
-            actions.add(cardAction);
             cardAction.setActor(card);
+            cardAnimation.add(cardAction);
+            animations.add(cardAnimation);
+
+            List<SoftwareActor> softwareActors = screen.getSoftwareActors().get(currentPlayerUID);
+            ComputerActor computerActor = screen.getComputerActors().get(currentPlayerUID);
+            List<Action> softwareAnimation = new ArrayList<>();
+            SoftwareActor softwareActor = new SoftwareActor(screen.getSkin(), !playerUID.equals(currentPlayerUID), newSoftware.get(0), game);
+            panel.clear();
+            for (SoftwareActor s : softwareActors) {
+                panel.add(s).row();
+            }
+            panel.add(softwareActor).row();
+            panel.add(computerActor).expandY().growX().bottom();
+            softwareActor.setVisible(false);
+            softwareActors.add(softwareActor);
+            Action softwareActorAction = Actions.sequence(Actions.moveBy(0, -400), Actions.visible(true), Actions.moveBy(0, 400, 1, Interpolation.fastSlow));
+            softwareActorAction.setActor(softwareActor);
+            softwareAnimation.add(softwareActorAction);
+            animations.add(softwareAnimation);
         }
-        animations.add(actions);
         return animations;
     }
 

@@ -14,6 +14,7 @@ import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
+import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,10 @@ public class CollectAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, Board board, Map<String, List<SoftwareActor>> softwareActors, Map<String, ComputerActor> computerActors) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+        Map<String, ComputerActor> computerActors = screen.getComputerActors();
+        Map<String, List<SoftwareActor>> softwareActors = screen.getSoftwareActors();
+        Board board = screen.getBoard();
         List<List<Action>> actions = new ArrayList<>();
         List<Action> popAction = new ArrayList<>();
 
@@ -98,9 +102,9 @@ public class CollectAnimation implements MoveAnimation {
                                 @Override
                                 public void run() {
                                     if (progressActor == null) {
-                                        computerActor.addProgress(1);
+                                        computerActor.getComputer().recieveProgress(1);
                                     } else {
-                                        progressActor.addProgress(1);
+                                        progressActor.getSoftware().recieveProgress(1);
                                     }
                                 }
                             }),

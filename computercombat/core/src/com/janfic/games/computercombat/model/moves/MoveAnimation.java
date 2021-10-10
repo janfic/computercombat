@@ -2,11 +2,8 @@ package com.janfic.games.computercombat.model.moves;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Json.Serializable;
-import com.janfic.games.computercombat.actors.Board;
-import com.janfic.games.computercombat.actors.ComputerActor;
-import com.janfic.games.computercombat.actors.SoftwareActor;
+import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -14,5 +11,5 @@ import java.util.Map;
  */
 public interface MoveAnimation extends Serializable {
 
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, Board board, Map<String, List<SoftwareActor>> softwareActors, Map<String, ComputerActor> computerActors);
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen);
 }

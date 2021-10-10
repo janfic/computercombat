@@ -53,8 +53,8 @@ public class ServerMatchRoom {
 
                     Json json = new Json();
                     Match match = new Match(player1.getProfile(), player2.getProfile(), player1.getDeck(), player2.getDeck());
-                    Message matchData1 = new Message(Type.MATCH_STATE_DATA, json.prettyPrint(match.getPlayerMatchState(player1.getProfile().getUID())));
-                    Message matchData2 = new Message(Type.MATCH_STATE_DATA, json.prettyPrint(match.getPlayerMatchState(player2.getProfile().getUID())));
+                    Message matchData1 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(player1.getProfile().getUID())));
+                    Message matchData2 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(player2.getProfile().getUID())));
 
                     player1.sendMessage(matchData1);
                     player2.sendMessage(matchData2);
@@ -97,7 +97,7 @@ public class ServerMatchRoom {
                             System.out.println("isValid: " + isValid);
                             if (isValid) {
                                 List<MoveResult> results = match.makeMove(move);
-                                Message response = new Message(Type.MOVE_ACCEPT, json.prettyPrint(results));
+                                Message response = new Message(Type.MOVE_ACCEPT, json.toJson(results));
                                 currentPlayer.sendMessage(response);
                                 otherPlayer.sendMessage(response);
                             } else {
