@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.model.animations;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Json;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.actors.Board;
 import com.janfic.games.computercombat.actors.ComponentActor;
 import com.janfic.games.computercombat.actors.ComputerActor;
+import com.janfic.games.computercombat.actors.LEDActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Card;
@@ -58,10 +60,10 @@ public class CollectAnimation implements MoveAnimation {
                 if (componentActor.getComponent().equals(component)) {
                     boolean isPlayerMove = currentPlayerUID.equals(playerUID);
                     Action a = Actions.sequence(Actions.fadeOut(0.35f), Actions.delay(0.35f),
-                            Actions.moveTo(isPlayerMove ? 0 : board.getWidth() - 7 - 24, (8 - (componentActor.getComponent().getY() + 1)) * 24 + 7, (isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f));
+                            Actions.moveTo(isPlayerMove ? 0 : board.getWidth() - 7 - 24, (8 - (componentActor.getComponent().getY() + 1)) * 24 + 7, (isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 6f));
                     a.setActor(componentActor);
                     componentActor.setZIndex(0);
-                    Action b = Actions.sequence(Actions.fadeOut(0), Actions.visible(true), Actions.fadeIn(0.7f), Actions.fadeOut((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f, Interpolation.fade));
+                    Action b = Actions.sequence(Actions.fadeOut(0), Actions.visible(true), Actions.fadeIn(0.7f), Actions.fadeOut((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 6f, Interpolation.fade));
                     b.setActor(componentActor.getCollectedRegion());
                     Image collectedComponent = new Image(board.getSkin(), "collected_component");
 
@@ -95,8 +97,8 @@ public class CollectAnimation implements MoveAnimation {
                             Actions.delay((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f + 0.7f - 0.2f),
                             Actions.scaleTo(1, 4),
                             Actions.fadeIn(0.2f),
-                            Actions.parallel(Actions.moveTo(end.x, end.y, Math.abs(end.y - start.y) / 70f, Interpolation.exp5), Actions.scaleTo(1, 1, Math.abs(end.y - start.y) / 70f)),
-                            Actions.parallel(Actions.moveBy(isPlayerMove ? -13 : 13, 0, 0.2f, Interpolation.exp5), Actions.scaleTo(2, 1, 0.2f)),
+                            Actions.parallel(Actions.moveTo(end.x, end.y, Math.abs(end.y - start.y) / 100f, Interpolation.exp5), Actions.scaleTo(1, 1, Math.abs(end.y - start.y) / 100f)),
+                            Actions.parallel(Actions.moveBy(isPlayerMove ? -13 : 13, 0, 0.1f, Interpolation.exp5), Actions.scaleTo(2, 1, 0.1f)),
                             Actions.fadeOut(0.1f),
                             Actions.run(new Runnable() {
                                 @Override
@@ -105,6 +107,26 @@ public class CollectAnimation implements MoveAnimation {
                                         computerActor.getComputer().recieveProgress(1);
                                     } else {
                                         progressActor.getSoftware().recieveProgress(1);
+                                        for (Actor actor : progressActor.getLEDs().getChildren()) {
+                                            LEDActor led = (LEDActor) actor;
+                                            if (led.getComponentColor().equals(SoftwareActor.components.get(component.getClass()))) {
+                                                led.setLightOn(true);
+                                            }
+                                        }
+                                    }
+                                }
+                            }),
+                            Actions.delay(0.5f),
+                            Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (progressActor != null) {
+                                        for (Actor actor : progressActor.getLEDs().getChildren()) {
+                                            LEDActor led = (LEDActor) actor;
+                                            if (led.getComponentColor().equals(SoftwareActor.components.get(component.getClass()))) {
+                                                led.setLightOn(false);
+                                            }
+                                        }
                                     }
                                 }
                             }),

@@ -45,7 +45,6 @@ public class ServerAPI {
     }
 
     public Message readMessage() {
-        System.out.println("READING");
         String content = "";
         String line = null;
         try {
@@ -63,10 +62,8 @@ public class ServerAPI {
             }
             Message m = json.fromJson(Message.class, content);
             isReading = false;
-            System.out.println(m.type + "FINISHED READING");
             return m;
         } catch (Exception e) {
-            System.out.println("FINISHED READING");
             System.out.println("CONTENT: " + content);
             System.out.println("LINE: " + line);
             e.printStackTrace();

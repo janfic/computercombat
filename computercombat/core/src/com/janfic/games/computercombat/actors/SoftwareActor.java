@@ -31,6 +31,7 @@ public class SoftwareActor extends Panel {
     ProgressBar progressBar, healthBar, defenseBar, attackBar;
     BorderedArea imageArea;
     boolean activatedAbility;
+    VerticalGroup leds;
 
     public static final Map<Class<? extends Component>, String> components;
 
@@ -149,7 +150,7 @@ public class SoftwareActor extends Panel {
         attackOverlay.add(attackLabelArea).expand().fillX().height(9);
         attackStack.add(attackOverlay);
 
-        VerticalGroup leds = new VerticalGroup();
+        leds = new VerticalGroup();
         for (Class<? extends Component> runComponent : software.getRunComponents()) {
             leds.addActor(new LEDActor(skin, components.get(runComponent)));
         }
@@ -175,6 +176,10 @@ public class SoftwareActor extends Panel {
 
     public List<OverlayTextLabelArea<Software>> getOverlayTextLabelAreas() {
         return areas;
+    }
+
+    public VerticalGroup getLEDs() {
+        return leds;
     }
 
     public Software getSoftware() {

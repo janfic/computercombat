@@ -237,7 +237,6 @@ public class MatchScreen implements Screen {
 //                }
                 animate(results, this);
             } else if (response.type == Type.PING) {
-                System.out.println("PINGED");
             }
         }
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
