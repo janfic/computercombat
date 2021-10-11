@@ -1,10 +1,12 @@
 package com.janfic.games.computercombat.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -119,6 +121,37 @@ public class LoginScreen implements Screen {
         passwordFieldLabel.setAlignment(Align.right);
         passwordField.setPasswordMode(true);
         passwordField.setPasswordCharacter('*');
+        passwordField.addListener(new InputListener() {
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER) {
+                    boolean validSignUp = true;
+
+                    if (userNameField.getText().trim().length() <= 0 || userNameField.getText().trim().length() > 12) {
+                        validSignUp = false;
+                        userNameField.setColor(Color.RED);
+                    } else {
+                        userNameField.setColor(Color.WHITE);
+                    }
+
+                    String password = passwordField.getText().trim();
+
+                    if (password.length() < 7) {
+                        validSignUp = false;
+                        passwordField.setColor(Color.RED);
+                    } else {
+                        passwordField.setColor(Color.WHITE);
+                    }
+
+                    if (validSignUp) {
+                        game.getServerAPI().sendMessage(new Message(Type.LOGIN_REQUEST, userNameField.getText().trim() + ","
+                                + passwordField.getText().trim()));
+                        Gdx.app.postRunnable(loginRunnable);
+                    }
+                }
+                return true;
+            }
+        });
 
         grid.pad(10);
         grid.defaults().space(6);
