@@ -241,6 +241,10 @@ public abstract class Card implements Json.Serializable {
         return id;
     }
 
+    public void setAbility(Ability ability) {
+        this.ability = ability;
+    }
+    
     @Override
     public void write(Json json) {
         json.writeValue("name", this.name);

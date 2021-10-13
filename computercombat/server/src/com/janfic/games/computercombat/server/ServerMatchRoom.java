@@ -1,9 +1,9 @@
 package com.janfic.games.computercombat.server;
 
 import com.badlogic.gdx.utils.Json;
+import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.Match;
-import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.Message;
@@ -93,8 +93,13 @@ public class ServerMatchRoom {
                             Move move;
                             move = json.fromJson(Move.class, content);
 
+                            if (move instanceof UseAbilityMove) {
+                                UseAbilityMove m = (UseAbilityMove) move;
+                                System.out.println(json.prettyPrint(m.getCard().getAbility()));
+                                m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
+                            }
+
                             boolean isValid = match.isValidMove(move);
-                            System.out.println("isValid: " + isValid);
                             if (isValid) {
                                 List<MoveResult> results = match.makeMove(move);
                                 Message response = new Message(Type.MOVE_ACCEPT, json.toJson(results));

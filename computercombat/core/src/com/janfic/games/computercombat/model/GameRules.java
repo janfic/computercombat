@@ -106,6 +106,19 @@ public class GameRules {
         {-1, -1, -1, 1, 0, 0, -1, 0}
     };
 
+    public static Map<Integer, List<Component>> collectComponents(Component[] collected, Component[][] board) {
+        int[][] marks = new int[8][8];
+        int currentMark = 1;
+        Map<Integer, List<Component>> r = new HashMap<>();
+        for (int i = 0; i < collected.length; i++) {
+            List<Component> list = new ArrayList<>();
+            list.add(collected[i]);
+            r.put(currentMark, list);
+            currentMark++;
+        }
+        return r;
+    }
+
     public static Map<Integer, List<Component>> getCurrentComponentMatches(Component[][] components) {
         int[][] marks = new int[8][8];
         int currentMark = 1;
@@ -158,7 +171,6 @@ public class GameRules {
             }
         }
         return r;
-
     }
 
     public static List<Integer[]> areAvailableComponentMatches(MatchState state) {

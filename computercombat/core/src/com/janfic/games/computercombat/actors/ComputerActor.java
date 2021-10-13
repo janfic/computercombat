@@ -48,12 +48,12 @@ public class ComputerActor extends Panel {
 
         Table panel = new Table(skin);
         panel.setBackground("border_filled");
-        panel.add(new Label("7", skin)).height(10);
+        panel.add(new Label("7", skin)).height(15);
 
         table.add(healthBar).width(70).row();
         table.add(progressBar).width(70);
 
-        this.add(panel).width(20);
+        this.add(panel).height(15).width(20);
         this.add(table).grow();
         setComputer(new Computer());
 
@@ -62,7 +62,7 @@ public class ComputerActor extends Panel {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Ability a = new DrawAbility();
-                a.setInformation("Draw a card from your deck", "draw_card", "Draw", "", 1);
+                a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
                 CardInfoWindow w = new CardInfoWindow(game, new Software(0, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
                     CPUComponent.class,
                     NetworkComponent.class,
@@ -112,6 +112,6 @@ public class ComputerActor extends Panel {
     }
 
     public void addProgress(int amount) {
-        this.progressBar.setValue(this.progressBar.getValue());
+        this.progressBar.setValue(this.progressBar.getValue() + amount);
     }
 }

@@ -105,6 +105,7 @@ public class CollectAnimation implements MoveAnimation {
                                 public void run() {
                                     if (progressActor == null) {
                                         computerActor.getComputer().recieveProgress(1);
+                                        computerActor.addProgress(1);
                                     } else {
                                         progressActor.getSoftware().recieveProgress(1);
                                         for (Actor actor : progressActor.getLEDs().getChildren()) {

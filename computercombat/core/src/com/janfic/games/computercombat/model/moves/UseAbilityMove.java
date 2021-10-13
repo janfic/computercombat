@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.MatchState;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UseAbilityMove extends Move implements Json.Serializable {
@@ -23,6 +22,10 @@ public class UseAbilityMove extends Move implements Json.Serializable {
         this.entity = entity;
         this.selectedComponents = selectedComponents;
         this.selectedSoftwares = selectedSoftwares;
+    }
+
+    public Card getCard() {
+        return entity;
     }
 
     public void setSelectedComponents(List<Component> selectedComponents) {

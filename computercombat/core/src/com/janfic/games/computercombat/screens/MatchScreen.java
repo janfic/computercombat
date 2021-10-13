@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.*;
 import com.janfic.games.computercombat.model.*;
+import com.janfic.games.computercombat.model.animations.CollectAnimation;
 import com.janfic.games.computercombat.model.moves.*;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.network.Message;
@@ -210,31 +211,6 @@ public class MatchScreen implements Screen {
             if (response.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
                 List<MoveResult> results = json.fromJson(List.class, response.getMessage());
-//                matchData.setCurrentState(results.get(results.size() - 1).getNewState());
-//                leftPanel.clear();
-//                rightPanel.clear();
-//                for (String uid : softwareActors.keySet()) {
-//                    List<Card> software = matchData.getCurrentState().activeEntities.get(uid);
-//                    softwareActors.get(uid).clear();
-//                    for (Card card : software) {
-//                        SoftwareActor softwareActor = new SoftwareActor(skin, !uid.equals(game.getCurrentProfile().getUID()), (Software) card, game);
-//                        softwareActors.get(uid).add(softwareActor);
-//                        if (uid.equals(game.getCurrentProfile().getUID())) {
-//                            leftPanel.add(softwareActor).row();
-//                        } else {
-//                            rightPanel.add(softwareActor).row();
-//                        }
-//                    }
-//                }
-//                for (String uid : computerActors.keySet()) {
-//                    ComputerActor computerActor = computerActors.get(uid);
-//                    computerActor.setComputer(matchData.getCurrentState().computers.get(uid));
-//                    if (uid.equals(game.getCurrentProfile().getUID())) {
-//                        leftPanel.add(computerActors.get(uid)).expandY().growX().bottom();
-//                    } else {
-//                        rightPanel.add(computerActors.get(uid)).expandY().growX().bottom();
-//                    }
-//                }
                 animate(results, this);
             } else if (response.type == Type.PING) {
             }
@@ -301,27 +277,31 @@ public class MatchScreen implements Screen {
         //animate move 
         //change state
         //animate
+        int i = 0;
         MoveResult first = moveResults.get(0);
-        List<Action> uD = new ArrayList<>();
-        Action f = Actions.run(new Runnable() {
-            @Override
-            public void run() {
-                matchData.setCurrentState(first.getNewState());
-                board.updateBoard(matchData);
-                matchData.setCurrentState(first.getOldState());
-                int offset = 0;
-                for (MoveAnimation moveAnimation : first.getAnimations()) {
-                    List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen);
-                    int indexOfUpdate = animation.indexOf(uD);
-                    animation.addAll(indexOfUpdate + 1 + offset, animations);
-                    offset += animations.size();
+        if(first.getMove() instanceof MatchComponentsMove) {
+            List<Action> uD = new ArrayList<>();
+            Action f = Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    matchData.setCurrentState(first.getNewState());
+                    board.updateBoard(matchData);
+                    matchData.setCurrentState(first.getOldState());
+                    int offset = 0;
+                    for (MoveAnimation moveAnimation : first.getAnimations()) {
+                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen);
+                        int indexOfUpdate = animation.indexOf(uD);
+                        animation.addAll(indexOfUpdate + 1 + offset, animations);
+                        offset += animations.size();
+                    }
                 }
-            }
-        });
-        f.setActor(board);
-        uD.add(f);
-        animation.add(uD);
-        for (int i = 1; i < moveResults.size(); i++) {
+            });
+            f.setActor(board);
+            uD.add(f);
+            animation.add(uD);
+            i = 1;
+        }
+        for (; i < moveResults.size(); i++) {
             MoveResult moveResult = moveResults.get(i);
             List<Action> updateData = new ArrayList<>();
             Action a = Actions.run(new Runnable() {
