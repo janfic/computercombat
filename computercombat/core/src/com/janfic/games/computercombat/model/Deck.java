@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.model;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ public class Deck implements Serializable {
     private String name;
     private int id;
     private Map<String, Integer> cards;
-    private List<Software> stack;
+    private List<Integer> stack;
 
     public Deck() {
         this.name = "New Deck";
@@ -48,7 +49,7 @@ public class Deck implements Serializable {
     public void addCard(Software card, int amount) {
         cards.put("" + card.getID(), cards.getOrDefault("" + card.getID(), 0) + amount);
         for (int i = 0; i < amount; i++) {
-            this.stack.add(card);
+            this.stack.add(card.getID());
         }
     }
 
@@ -60,19 +61,19 @@ public class Deck implements Serializable {
             cards.remove("" + card.getID());
         }
         for (int i = 0; i < amount; i++) {
-            stack.remove(card);
+            stack.remove(card.getID());
         }
     }
 
-    public int getCardCount(Software card) {
-        return cards.getOrDefault("" + card.getID(), 0);
+    public int getCardCount(Integer cardID) {
+        return cards.getOrDefault("" + cardID, 0);
     }
 
     public String getName() {
         return name;
     }
 
-    public List<Software> getCards() {
+    public List<Integer> getCards() {
         return stack;
     }
 
@@ -81,7 +82,7 @@ public class Deck implements Serializable {
     }
 
     public Software draw() {
-        Software r = stack.get(0);
+        Software r = SQLAPI.getSingleton().getCardById(stack.get(0));
         stack.remove(0);
         int amount = cards.get("" + r.getID());
         if (amount == 1) {

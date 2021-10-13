@@ -261,11 +261,11 @@ public class SQLAPI {
 
             rows = statement.executeUpdate(sql);
 
-            for (Software card : deck.getCards()) {
+            for (Integer card : deck.getCards()) {
 
                 for (int i = 0; i < deck.getCardCount(card); i++) {
                     sql = "INSERT INTO deck_has_card (deck_id, card_id) \n"
-                            + "VALUES (" + deck.getID() + "," + card.getID() + ");";
+                            + "VALUES (" + deck.getID() + "," + card + ");";
 
                     rows = statement.executeUpdate(sql);
                 }

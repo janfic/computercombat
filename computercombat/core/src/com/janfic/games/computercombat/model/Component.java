@@ -3,6 +3,9 @@ package com.janfic.games.computercombat.model;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.model.components.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -10,6 +13,26 @@ import java.util.Objects;
  * @author Jan Fic
  */
 public abstract class Component implements Serializable {
+
+    public static final Map<Integer, Class<? extends Component>> numberToComponent;
+    public static final Map<Class<? extends Component>, Integer> componentToNumber;
+
+    static {
+        numberToComponent = new HashMap<>();
+        numberToComponent.put(1, BugComponent.class);
+        numberToComponent.put(2, CPUComponent.class);
+        numberToComponent.put(3, NetworkComponent.class);
+        numberToComponent.put(4, PowerComponent.class);
+        numberToComponent.put(5, RAMComponent.class);
+        numberToComponent.put(6, StorageComponent.class);
+        componentToNumber = new HashMap<>();
+        componentToNumber.put(BugComponent.class, 1);
+        componentToNumber.put(CPUComponent.class, 2);
+        componentToNumber.put(NetworkComponent.class, 3);
+        componentToNumber.put(PowerComponent.class, 4);
+        componentToNumber.put(RAMComponent.class, 5);
+        componentToNumber.put(StorageComponent.class, 6);
+    }
 
     private String name;
     private String colorHex;
