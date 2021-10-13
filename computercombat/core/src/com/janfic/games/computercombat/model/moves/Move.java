@@ -90,7 +90,7 @@ public abstract class Move implements Json.Serializable {
         for (Component c : collectAnimation.getAllComponents()) {
             boolean collectedByCard = false;
             for (Card card : newState.activeEntities.get(originalState.currentPlayerMove.getUID())) {
-                if (card.getRunProgress() < card.getRunRequirements() && collectedByCard == false) {
+                if (card.getRunProgress() < card.getRunRequirements()) {
                     for (Class<? extends Component> requirement : card.getRunComponents()) {
                         if (c.getClass().equals(requirement)) {
                             card.recieveComponents(requirement, 1);
@@ -100,6 +100,7 @@ public abstract class Move implements Json.Serializable {
                         }
                     }
                 }
+                if(collectedByCard == true) break;
             }
             if (collectedByCard == false) {
                 newState.computers.get(originalState.currentPlayerMove.getUID()).addProgress(1);

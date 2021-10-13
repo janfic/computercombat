@@ -83,6 +83,7 @@ public class CollectAnimation implements MoveAnimation {
                             if (c.equals(softwareActor.getSoftware())) {
                                 tempActor = softwareActor;
                                 i = j;
+                                break;
                             }
                         }
                     }
