@@ -1,16 +1,17 @@
 package com.janfic.games.computercombat.model.abilities;
 
-import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation;
 import com.janfic.games.computercombat.model.animations.DrawAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
+import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class DrawAbility extends Ability {
         List<MoveResult> r = new ArrayList<>();
 
         MatchState newState = new MatchState(state);
+        newState.computers.get(move.getPlayerUID()).setProgress(0);
         List<Card> cards = newState.activeEntities.get(move.getPlayerUID());
         Deck deck = newState.decks.get(move.getPlayerUID());
 
@@ -39,6 +41,10 @@ public class DrawAbility extends Ability {
             drawnCards.add(s);
         }
 
+        List<Card> drained = new ArrayList<>();
+
+        drained.add(((UseAbilityMove) (move)).getCard());
+        ConsumeProgressAnimation drainAnimation = new ConsumeProgressAnimation(move.getPlayerUID(), drained);
         DrawAnimation drawAnimation = new DrawAnimation(move.getPlayerUID(), drawnCards);
 
         for (Profile player : newState.players) {
@@ -48,6 +54,7 @@ public class DrawAbility extends Ability {
         }
 
         List<MoveAnimation> animations = new ArrayList<>();
+        animations.add(drainAnimation);
         animations.add(drawAnimation);
 
         MoveResult result = new MoveResult(move, state, newState, animations);

@@ -206,7 +206,11 @@ public class SoftwareActor extends Panel {
         return new ArrayList<>();
     }
 
-    public void addProgress(int amount) {
-        this.progressBar.setValue(this.progressBar.getValue());
+    public void addProgress(float amount) {
+        this.progressBar.setValue(this.progressBar.getValue() + amount);
+    }
+
+    public void setProgress(float progress) {
+        this.progressBar.setValue(progress);
     }
 }

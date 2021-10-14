@@ -279,7 +279,7 @@ public class MatchScreen implements Screen {
         //animate
         int i = 0;
         MoveResult first = moveResults.get(0);
-        if(first.getMove() instanceof MatchComponentsMove) {
+        if (first.getMove() instanceof MatchComponentsMove) {
             List<Action> uD = new ArrayList<>();
             Action f = Actions.run(new Runnable() {
                 @Override

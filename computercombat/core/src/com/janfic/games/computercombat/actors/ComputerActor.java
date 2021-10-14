@@ -114,4 +114,8 @@ public class ComputerActor extends Panel {
     public void addProgress(int amount) {
         this.progressBar.setValue(this.progressBar.getValue() + amount);
     }
+
+    public void setProgress(float progress) {
+        this.progressBar.setValue(progress);
+    }
 }

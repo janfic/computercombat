@@ -69,4 +69,8 @@ public class Computer extends Card implements Serializable {
     public boolean isProgressFull() {
         return progress >= 20;
     }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
 }

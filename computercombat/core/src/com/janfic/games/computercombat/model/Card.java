@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public abstract class Card implements Json.Serializable {
 
-    protected int id;
+    protected int id, matchID;
     protected int health, armor, attack, magic;
     protected int level;
     protected int maxHealth, maxArmor, maxAttack;
@@ -131,6 +131,18 @@ public abstract class Card implements Json.Serializable {
         return health;
     }
 
+    public int getMatchID() {
+        return matchID;
+    }
+
+    public void setMatchID(int matchID) {
+        this.matchID = matchID;
+    }
+
+    public void generateMatchID() {
+        this.matchID = (int) (Math.random() * Integer.MAX_VALUE);
+    }
+
     /**
      * Called when this software receives damage.
      *
@@ -213,6 +225,10 @@ public abstract class Card implements Json.Serializable {
         }
     }
 
+    public void setProgress(int runProgress) {
+        this.runProgress = runProgress;
+    }
+
     public Class<? extends Component>[] getRunComponents() {
         return runComponents;
     }
@@ -244,11 +260,12 @@ public abstract class Card implements Json.Serializable {
     public void setAbility(Ability ability) {
         this.ability = ability;
     }
-    
+
     @Override
     public void write(Json json) {
         json.writeValue("name", this.name);
         json.writeValue("id", this.id);
+        json.writeValue("matchID", this.matchID);
         json.writeValue("pack", this.pack);
         json.writeValue("textureName", this.textureName);
         json.writeValue("health", this.health);
@@ -273,6 +290,7 @@ public abstract class Card implements Json.Serializable {
     public void read(Json json, JsonValue jv) {
         this.name = json.readValue("name", String.class, jv);
         this.id = json.readValue("id", Integer.class, jv);
+        this.matchID = json.readValue("matchID", Integer.class, jv);
         this.pack = json.readValue("pack", String.class, jv);
         this.textureName = json.readValue("textureName", String.class, jv);
         this.health = json.readValue("health", Integer.class, jv);
@@ -314,6 +332,7 @@ public abstract class Card implements Json.Serializable {
         hash = 79 * hash + Objects.hashCode(this.name);
         hash = 79 * hash + Objects.hashCode(this.pack);
         hash = 79 * hash + Objects.hashCode(this.id);
+        hash = 79 * hash + Objects.hashCode(this.matchID);
         return hash;
     }
 }
