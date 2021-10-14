@@ -79,6 +79,10 @@ public class Board extends BorderedGrid {
         this.setCullingArea(new Rectangle(24, 24, getWidth() - 24, getHeight() - 24));
         this.newComponentSpawn.getActor().setCullingArea(new Rectangle(0, -getHeight(), getWidth(), getHeight() - 1));
         canSelect = matchAnimations.isEmpty() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID());
+        if (!matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+            selected1 = null;
+            selected2 = null;
+        }
     }
 
     public void addComponent(ComponentActor actor, int x, int y) {
@@ -153,10 +157,30 @@ public class Board extends BorderedGrid {
                             canSelect = false;
                             dragStartX = -10;
                             dragStartY = -10;
-                            other.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
-                            actor.addAction(Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
-                        }
 
+                            Move move = new MatchComponentsMove(game.getCurrentProfile().getUID(), actor.getComponent(), other.getComponent());
+                            boolean isLegalMove = GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move);
+                            if (!isLegalMove) {
+                                List<Action> as = new ArrayList<>();
+                                Action a = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
+                                Action a2 = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions));
+                                a.setActor(other);
+                                a2.setActor(actor);
+                                as.add(a);
+                                as.add(a2);
+                                matchAnimations.add(as);
+                            } else {
+                                List<Action> as = new ArrayList<>();
+                                Action a = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
+                                Action a2 = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
+                                a.setActor(other);
+                                a2.setActor(actor);
+                                as.add(a);
+                                as.add(a2);
+                                matchAnimations.add(as);
+                                Board.this.move = move;
+                            }
+                        }
                     }
                 }
             }
