@@ -7,6 +7,7 @@ import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation;
+import com.janfic.games.computercombat.model.animations.SpawnAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
@@ -58,9 +59,17 @@ public class SpawnAbility extends Ability {
             newCoords.add(newLocation);
         }
 
+        List<Component> spawned = new ArrayList<>();
+        List<Component> destroyed = new ArrayList<>();
         for (int[] newCoord : newCoords) {
             try {
-                newState.getComponentBoard()[newCoord[0]][newCoord[1]] = componentType.getConstructor(int.class, int.class).newInstance(newCoord[0], newCoord[1]);
+                Component destroy = newState.getComponentBoard()[newCoord[0]][newCoord[1]];
+                Component spawn = componentType.getConstructor(int.class, int.class).newInstance(newCoord[0], newCoord[1]);
+                newState.getComponentBoard()[newCoord[0]][newCoord[1]] = spawn;
+
+                spawned.add(spawn);
+                destroyed.add(destroy);
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -70,6 +79,7 @@ public class SpawnAbility extends Ability {
         List<Card> used = new ArrayList<>();
         used.add(useAbilityMove.getCard());
         animations.add(new ConsumeProgressAnimation(useAbilityMove.getPlayerUID(), used));
+        animations.add(new SpawnAnimation(destroyed, spawned));
         MoveResult moveResult = new MoveResult(move, state, newState, animations);
         List<MoveResult> afterMove = Move.collectComponentsCheck(newState, move);
         results.add(moveResult);
