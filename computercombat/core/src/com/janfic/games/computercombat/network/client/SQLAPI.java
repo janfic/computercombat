@@ -219,7 +219,7 @@ public class SQLAPI {
 
                 while (rs.next()) {
                     Software c = getCardById(rs.getInt("card_id"));
-                    deck.addCard(c, 1);
+                    deck.addCard(c, rs.getInt("amount"));
                 }
                 decks.add(deck);
             }
@@ -262,17 +262,13 @@ public class SQLAPI {
             rows = statement.executeUpdate(sql);
 
             for (Integer card : deck.getCards()) {
+                sql = "INSERT INTO deck_has_card (deck_id, card_id, amount) \n"
+                        + "VALUES (" + deck.getID() + "," + card + "," + deck.getCardCount(card) + ");";
 
-                for (int i = 0; i < deck.getCardCount(card); i++) {
-                    sql = "INSERT INTO deck_has_card (deck_id, card_id) \n"
-                            + "VALUES (" + deck.getID() + "," + card + ");";
-
-                    rows = statement.executeUpdate(sql);
-                }
+                rows = statement.executeUpdate(sql);
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
