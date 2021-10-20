@@ -34,24 +34,22 @@ public class SpawnAnimation implements MoveAnimation {
     public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
         List<List<Action>> animation = new ArrayList<>();
 
-        List<Action> remove = new ArrayList<>();
+        List<Action> spawn = new ArrayList<>();
         for (Component oldComponent : oldComponents) {
-            Action fade = Actions.fadeOut(1);
+            Action fade = Actions.fadeOut(0.5f);
             fade.setActor(screen.getBoard().getBoard()[oldComponent.getX()][oldComponent.getY()].getActor());
-            remove.add(fade);
+            spawn.add(fade);
         }
 
-        List<Action> spawn = new ArrayList<>();
         for (Component component : spawned) {
             ComponentActor componentActor = new ComponentActor(component);
             componentActor.setVisible(false);
             screen.getBoard().getBoard()[component.getX()][component.getY()].setActor(componentActor);
-            Action spawnAction = Actions.sequence(Actions.scaleTo(1.5f, 1.5f), Actions.alpha(0), Actions.visible(true), Actions.parallel(Actions.scaleTo(1, 1, 1), Actions.fadeIn(1)));
+            Action spawnAction = Actions.sequence(Actions.scaleTo(1.5f, 1.5f), Actions.alpha(0), Actions.visible(true), Actions.parallel(Actions.scaleTo(1, 1, 0.5f), Actions.fadeIn(0.5f)));
             spawnAction.setActor(componentActor);
             spawn.add(spawnAction);
         }
 
-        animation.add(remove);
         animation.add(spawn);
         return animation;
     }
