@@ -211,6 +211,7 @@ public class MatchScreen implements Screen {
             if (response.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
                 List<MoveResult> results = json.fromJson(List.class, response.getMessage());
+                System.out.println(json.prettyPrint(results));
                 animate(results, this);
             } else if (response.type == Type.PING) {
             }

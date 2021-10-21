@@ -6,8 +6,10 @@ import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.abilities.AttackAbility;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation;
 import com.janfic.games.computercombat.model.animations.CollectAnimation;
+import com.janfic.games.computercombat.model.components.BugComponent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +60,7 @@ public abstract class Move implements Json.Serializable {
         boolean extraTurn = false;
         Map<Integer, List<Component>> collected = GameRules.getCurrentComponentMatches(newState.getComponentBoard());
         do {
-            results.add(collectComponents(collected, originalState, newState, move));
+            results.addAll(collectComponents(collected, originalState, newState, move));
 
             //Check for extraTurn
             List<Integer> marks = new ArrayList<>(collected.keySet());
@@ -82,13 +84,19 @@ public abstract class Move implements Json.Serializable {
         return results;
     }
 
-    public static MoveResult collectComponents(Map<Integer, List<Component>> collected, MatchState originalState, MatchState newState, Move move) {
+    public static List<MoveResult> collectComponents(Map<Integer, List<Component>> collected, MatchState originalState, MatchState newState, Move move) {
         Map<Component, Card> progress = new HashMap<>();
         CollectAnimation collectAnimation = new CollectAnimation(collected, progress);
         List<MoveAnimation> animation = new ArrayList<>();
+
+        List<BugComponent> bugsCollected = new ArrayList<>();
+
         //Progress
         for (Component c : collectAnimation.getAllComponents()) {
             boolean collectedByCard = false;
+            if (c instanceof BugComponent) {
+                bugsCollected.add((BugComponent) c);
+            }
             for (Card card : newState.activeEntities.get(originalState.currentPlayerMove.getUID())) {
                 if (card.getRunProgress() < card.getRunRequirements()) {
                     for (Class<? extends Component> requirement : card.getRunComponents()) {
@@ -100,7 +108,9 @@ public abstract class Move implements Json.Serializable {
                         }
                     }
                 }
-                if(collectedByCard == true) break;
+                if (collectedByCard == true) {
+                    break;
+                }
             }
             if (collectedByCard == false) {
                 newState.computers.get(originalState.currentPlayerMove.getUID()).addProgress(1);
@@ -149,6 +159,8 @@ public abstract class Move implements Json.Serializable {
             }
         }
 
+        List<MoveResult> results = new ArrayList<>();
+
         CascadeAnimation cascadeAnimation = new CascadeAnimation(cascade);
         //Move
         animation.add(collectAnimation);
@@ -156,6 +168,27 @@ public abstract class Move implements Json.Serializable {
 
         // Finalize Results
         MoveResult moveResult = new MoveResult(move, originalState, newState, animation);
-        return moveResult;
+        results.add(moveResult);
+
+        if (bugsCollected.isEmpty() == false) {
+            Map<Card, List<Card>> attacks = new HashMap<>();
+
+            if (newState.activeEntities.get(originalState.currentPlayerMove.getUID()).isEmpty() == false) {
+                Card attacker = newState.activeEntities.get(originalState.currentPlayerMove.getUID()).get(0);
+                List<Card> attacked = new ArrayList<>();
+                if (newState.activeEntities.get(originalState.getOtherProfile(originalState.currentPlayerMove).getUID()).isEmpty()) {
+                    attacked.add(newState.computers.get(originalState.getOtherProfile(originalState.currentPlayerMove).getUID()));
+                } else {
+                    attacked.add(newState.activeEntities.get(originalState.getOtherProfile(originalState.currentPlayerMove).getUID()).get(0));
+                }
+                attacks.put(attacker, attacked);
+            }
+
+            AttackAbility attackAbility = new AttackAbility(0, 0, attacks);
+            List<MoveResult> attackResults = attackAbility.doAbility(newState, move);
+            results.addAll(attackResults);
+        }
+
+        return results;
     }
 }

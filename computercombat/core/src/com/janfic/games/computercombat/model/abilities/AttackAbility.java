@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.model.abilities;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.animations.RecieveDamageAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
@@ -27,17 +28,27 @@ public class AttackAbility extends Ability {
     @Override
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
-
         MatchState newState = new MatchState(state);
+        String currentUID = move.getPlayerUID();
+        String opponentUID = newState.getOtherProfile(newState.currentPlayerMove).getUID();
 
+        List<MoveAnimation> animation = new ArrayList<>();
         for (Card card : attacks.keySet()) {
+            boolean isMovePlayers = newState.activeEntities.get(currentUID).contains(card);
             List<Card> attacked = attacks.get(card);
             for (Card c : attacked) {
-
+                if (isMovePlayers) {
+                    for (Card cardAttacked : newState.activeEntities.get(opponentUID)) {
+                        if (c.equals(cardAttacked)) {
+                            animation.add(new RecieveDamageAnimation(cardAttacked, card.getAttack(), opponentUID));
+                            cardAttacked.recieveDamage(card.getAttack());
+                            break;
+                        }
+                    }
+                }
             }
         }
 
-        List<MoveAnimation> animation = new ArrayList<>();
         MoveResult result = new MoveResult(move, state, newState, animation);
 
         results.add(result);

@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.actors;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -21,7 +22,9 @@ public class Panel extends Table {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        batch.setColor(getColor());
         panel.draw(batch, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
         super.draw(batch, parentAlpha); //To change body of generated methods, choose Tools | Templates.
+        batch.setColor(Color.WHITE);
     }
 }
