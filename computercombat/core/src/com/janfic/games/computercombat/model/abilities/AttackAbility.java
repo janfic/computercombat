@@ -3,7 +3,7 @@ package com.janfic.games.computercombat.model.abilities;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.MatchState;
-import com.janfic.games.computercombat.model.animations.RecieveDamageAnimation;
+import com.janfic.games.computercombat.model.animations.ReceiveDamageAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
@@ -40,7 +40,7 @@ public class AttackAbility extends Ability {
                 if (isMovePlayers) {
                     for (Card cardAttacked : newState.activeEntities.get(opponentUID)) {
                         if (c.equals(cardAttacked)) {
-                            animation.add(new RecieveDamageAnimation(cardAttacked, card.getAttack(), opponentUID));
+                            animation.add(new ReceiveDamageAnimation(cardAttacked, card.getAttack(), opponentUID));
                             cardAttacked.recieveDamage(card.getAttack());
                             break;
                         }

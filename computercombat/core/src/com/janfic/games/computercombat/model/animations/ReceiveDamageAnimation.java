@@ -16,19 +16,19 @@ import java.util.List;
  *
  * @author Jan Fic
  */
-public class RecieveDamageAnimation implements MoveAnimation {
+public class ReceiveDamageAnimation implements MoveAnimation {
 
     Card reciever;
     int damage;
     String playerUID;
 
-    public RecieveDamageAnimation() {
+    public ReceiveDamageAnimation() {
         this.reciever = null;
         this.damage = 0;
         this.playerUID = null;
     }
 
-    public RecieveDamageAnimation(Card recievingDamageCard, int damage, String playerUID) {
+    public ReceiveDamageAnimation(Card recievingDamageCard, int damage, String playerUID) {
         this.reciever = recievingDamageCard;
         this.playerUID = playerUID;
         this.damage = damage;
