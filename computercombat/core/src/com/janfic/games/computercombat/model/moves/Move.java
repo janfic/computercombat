@@ -2,6 +2,7 @@ package com.janfic.games.computercombat.model.moves;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
@@ -171,15 +172,15 @@ public abstract class Move implements Json.Serializable {
         results.add(moveResult);
 
         if (bugsCollected.isEmpty() == false) {
-            Map<Card, List<Card>> attacks = new HashMap<>();
+            ObjectMap<Card, List<Card>> attacks = new ObjectMap<>();
 
             if (newState.activeEntities.get(originalState.currentPlayerMove.getUID()).isEmpty() == false) {
                 Card attacker = newState.activeEntities.get(originalState.currentPlayerMove.getUID()).get(0);
                 List<Card> attacked = new ArrayList<>();
-                if (newState.activeEntities.get(originalState.getOtherProfile(originalState.currentPlayerMove).getUID()).isEmpty()) {
+                if (newState.activeEntities.get(newState.getOtherProfile(originalState.currentPlayerMove).getUID()).isEmpty()) {
                     attacked.add(newState.computers.get(originalState.getOtherProfile(originalState.currentPlayerMove).getUID()));
                 } else {
-                    attacked.add(newState.activeEntities.get(originalState.getOtherProfile(originalState.currentPlayerMove).getUID()).get(0));
+                    attacked.add(newState.activeEntities.get(newState.getOtherProfile(originalState.currentPlayerMove).getUID()).get(0));
                 }
                 attacks.put(attacker, attacked);
             }

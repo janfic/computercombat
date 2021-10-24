@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * @author Jan Fic
  */
-public abstract class Card implements Json.Serializable {
+public abstract class Card implements Json.Serializable, Comparable<Card> {
 
     protected int id, matchID;
     protected int health, armor, attack, magic;
@@ -263,6 +263,7 @@ public abstract class Card implements Json.Serializable {
 
     @Override
     public void write(Json json) {
+        json.writeType(getClass());
         json.writeValue("name", this.name);
         json.writeValue("id", this.id);
         json.writeValue("matchID", this.matchID);
@@ -334,5 +335,10 @@ public abstract class Card implements Json.Serializable {
         hash = 79 * hash + Objects.hashCode(this.id);
         hash = 79 * hash + Objects.hashCode(this.matchID);
         return hash;
+    }
+
+    @Override
+    public int compareTo(Card o) {
+        return this.hashCode() - o.hashCode();
     }
 }

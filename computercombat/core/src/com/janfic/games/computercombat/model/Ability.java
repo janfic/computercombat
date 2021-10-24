@@ -21,6 +21,9 @@ public abstract class Ability implements Serializable {
     protected String description;
     protected int selectComponents, selectSoftwares;
 
+    public Ability() {
+    }
+
     public Ability(int selectComponents, int selectSoftwares) {
         this.selectComponents = selectComponents;
         this.selectSoftwares = selectSoftwares;

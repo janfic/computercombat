@@ -12,20 +12,24 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.janfic.games.computercombat.model.Computer;
-import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Profile;
-import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
-import com.janfic.games.computercombat.model.moves.UseAbilityMove;
+import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.abilities.DrawAbility;
+import com.janfic.games.computercombat.model.components.RAMComponent;
 import com.janfic.games.computercombat.network.client.ServerAPI;
 import com.janfic.games.computercombat.screens.LoadingScreen;
+import com.janfic.games.computercombat.util.ObjectMapSerializer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class ComputerCombatGame extends Game {
 
     static ComputerCombatGame game;
-    
+
     SpriteBatch batch;
     AssetManager assetManager;
     ServerAPI serverAPI;
@@ -44,7 +48,6 @@ public class ComputerCombatGame extends Game {
         assetManager.load(Assets.TITLE, Texture.class);
         assetManager.load(Assets.MAIN_MENU_BACKGROUND, Texture.class);
         pushScreen(new LoadingScreen(this));
-        
     }
 
     public Screen popScreen() {

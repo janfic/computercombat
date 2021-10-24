@@ -14,15 +14,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.*;
 import com.janfic.games.computercombat.model.*;
-import com.janfic.games.computercombat.model.animations.CollectAnimation;
 import com.janfic.games.computercombat.model.moves.*;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
+import com.janfic.games.computercombat.util.ObjectMapSerializer;
 import java.util.*;
 
 /**
@@ -128,6 +129,9 @@ public class MatchScreen implements Screen {
         middleSection.add(middle).growY();
         middleSection.add(new Image(skin, "board_collector_right")).growX().top().padTop(7).row();
 
+        leftPanel.setZIndex(10);
+        middleSection.setZIndex(0);
+        rightPanel.setZIndex(10);
         table.add(leftPanel).pad(1, 0, 1, 0).grow().left();
         table.add(middleSection).top().growY();
         table.add(rightPanel).pad(1, 0, 1, 0).grow().right();
@@ -210,6 +214,7 @@ public class MatchScreen implements Screen {
             Message response = game.getServerAPI().readMessage();
             if (response.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
+                json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
                 List<MoveResult> results = json.fromJson(List.class, response.getMessage());
                 animate(results, this);
             } else if (response.type == Type.PING) {
@@ -333,6 +338,15 @@ public class MatchScreen implements Screen {
         a.setActor(board);
         updateData.add(a);
         animation.add(updateData);
+    }
+
+    public SoftwareActor getSoftwareActorByMatchID(String playerUID, int matchID) {
+        for (SoftwareActor softwareActor : softwareActors.get(playerUID)) {
+            if (softwareActor.getSoftware().getMatchID() == matchID) {
+                return softwareActor;
+            }
+        }
+        return null;
     }
 
 }
