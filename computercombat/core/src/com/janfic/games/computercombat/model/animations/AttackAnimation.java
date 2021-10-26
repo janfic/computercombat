@@ -58,12 +58,25 @@ public class AttackAnimation implements MoveAnimation {
                             Actions.moveTo(pos.x, pos.y, 0.5f, Interpolation.exp5In),
                             Actions.moveTo(posBack.x, posBack.y, 0.5f, Interpolation.exp5Out)
                     );
-                    Action attackedAction = Actions.sequence(
-                            Actions.delay(0.5f),
-                            Actions.color(Color.RED),
-                            Actions.color(Color.WHITE, 0.4f),
-                            new ChangeStatAction(1, "health", -entry.key.getAttack())
-                    );
+                    Action attackedAction;
+                    System.out.println("ATTACKED ARMOR: " + attacked.getArmor());
+                    if (entry.key.getAttack() > attacked.getArmor()) {
+                        attackedAction = Actions.sequence(
+                                Actions.delay(0.5f),
+                                Actions.color(Color.RED),
+                                Actions.color(Color.WHITE, 0.4f),
+                                new ChangeStatAction(0.5f, "armor", -attacked.getArmor()),
+                                new ChangeStatAction(0.5f, "health", -(entry.key.getAttack() - attacked.getArmor()))
+                        );
+                    } else {
+                        attackedAction = Actions.sequence(
+                                Actions.delay(0.5f),
+                                Actions.color(Color.RED),
+                                Actions.color(Color.WHITE, 0.4f),
+                                new ChangeStatAction(0.5f, "armor", -entry.key.getAttack())
+                        );
+                    }
+
                     attackedAction.setActor(attackedActor);
                     attack.setActor(attackerActor);
                     attackActions.add(attack);
