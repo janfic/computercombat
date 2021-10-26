@@ -33,11 +33,11 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         this.textureName = textureName;
         this.health = startingHealth + ((3 + level - 1) / 4);
         this.armor = startingArmor + ((2 + level - 1) / 4);
-        this.attack = startingAttack + ((1 + level - 1) / 4);
+        this.attack = startingAttack;
         this.magic = startingMagic + ((level - 1) / 4);
         this.maxHealth = health;
         this.maxArmor = armor;
-        this.maxAttack = attack;
+        this.maxAttack = startingAttack;
         this.ability = ability;
         this.runComponents = runComponents;
         this.runRequirements = runRequirements;
@@ -196,6 +196,18 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         return attack;
     }
 
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public void setAttack(int attack) {
+        this.attack = attack;
+    }
+
+    public void setArmor(int armor) {
+        this.armor = armor;
+    }
+
     /**
      *
      * @param type
@@ -272,6 +284,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         json.writeValue("health", this.health);
         json.writeValue("armor", this.armor);
         json.writeValue("attack", this.attack);
+        json.writeValue("maxAttack", this.maxAttack);
         json.writeValue("level", this.level);
         json.writeValue("magic", this.magic);
         json.writeValue("maxHealth", this.maxHealth);
@@ -297,6 +310,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         this.health = json.readValue("health", Integer.class, jv);
         this.armor = json.readValue("armor", Integer.class, jv);
         this.attack = json.readValue("attack", Integer.class, jv);
+        this.maxAttack = json.readValue("maxAttack", Integer.class, jv);
         this.level = json.readValue("level", Integer.class, jv);
         this.maxHealth = json.readValue("maxHealth", Integer.class, jv);
         this.maxArmor = json.readValue("maxArmor", Integer.class, jv);

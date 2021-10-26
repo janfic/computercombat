@@ -14,6 +14,7 @@ import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.animations.ChangeStatAnim.ChangeStatAction;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
@@ -60,7 +61,8 @@ public class AttackAnimation implements MoveAnimation {
                     Action attackedAction = Actions.sequence(
                             Actions.delay(0.5f),
                             Actions.color(Color.RED),
-                            Actions.color(Color.WHITE, 0.4f)
+                            Actions.color(Color.WHITE, 0.4f),
+                            new ChangeStatAction(1, "health", -entry.key.getAttack())
                     );
                     attackedAction.setActor(attackedActor);
                     attack.setActor(attackerActor);

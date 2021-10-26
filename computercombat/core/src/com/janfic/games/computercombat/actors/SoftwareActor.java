@@ -213,4 +213,16 @@ public class SoftwareActor extends Panel {
     public void setProgress(float progress) {
         this.progressBar.setValue(progress);
     }
+
+    public void setHealth(float health) {
+        this.healthBar.setValue(health);
+    }
+
+    public void setArmor(float armor) {
+        this.defenseBar.setValue(armor);
+    }
+
+    public void setAttack(float attack) {
+        this.attackBar.setValue(attack);
+    }
 }

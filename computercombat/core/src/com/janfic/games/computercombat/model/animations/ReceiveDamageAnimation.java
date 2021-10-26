@@ -37,7 +37,6 @@ public class ReceiveDamageAnimation implements MoveAnimation {
     @Override
     public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
         List<List<Action>> animations = new ArrayList<>();
-        System.out.println("In AN?IMATION");
         List<Action> changeColorActions = new ArrayList<>();
         Action changeColor = Actions.sequence(Actions.color(Color.RED, 0.25f), Actions.color(Color.WHITE));
         for (SoftwareActor softwareActor : screen.getSoftwareActors().get(this.playerUID)) {
