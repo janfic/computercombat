@@ -74,11 +74,27 @@ public class AttackAnimation implements MoveAnimation {
                     attackActions.add(attack);
                     attackActions.add(attackedAction);
                 } else if (attacked instanceof Computer) {
-                    ComputerActor computer = screen.getComputerActors().get(attackedUID);
-                    Vector2 pos = computer.localToStageCoordinates(new Vector2(0, 0));
-                    Action attack = Actions.sequence(Actions.moveTo(pos.x, pos.y, 1));
+                    ComputerActor attackedActor = screen.getComputerActors().get(attackedUID);
+                    Action attackedAction;
+                    Vector2 posBack = attackerActor.localToStageCoordinates(new Vector2(attackerActor.getX(), attackerActor.getY()));
+                    Vector2 pos = attackedActor.localToStageCoordinates(new Vector2(attackedActor.getX(), attackedActor.getY()));
+                    posBack = attackerActor.stageToLocalCoordinates(posBack);
+                    pos = attackerActor.stageToLocalCoordinates(pos);
+                    Action attack = Actions.sequence(
+                            Actions.moveTo(pos.x, pos.y, 0.5f, Interpolation.exp5In),
+                            Actions.moveTo(posBack.x, posBack.y, 0.5f, Interpolation.exp5Out)
+                    );
+                    int healthDecrease = entry.key.getAttack();
+                    attackedAction = Actions.sequence(
+                            Actions.delay(0.5f),
+                            Actions.color(Color.RED),
+                            Actions.color(Color.WHITE, 0.4f),
+                            new ChangeStatAction(0.5f, "health", -healthDecrease)
+                    );
+                    attackedAction.setActor(attackedActor);
                     attack.setActor(attackerActor);
                     attackActions.add(attack);
+                    attackActions.add(attackedAction);
                 }
             }
 

@@ -86,7 +86,7 @@ public class ComputerActor extends Panel {
     @Override
     public void act(float delta) {
         super.act(delta);
-        if (computer.isProgressFull()) {
+        if (computer.getRunProgress() >= computer.getRunRequirements()) {
             this.panel = getSkin().getPatch("glow_panel");
         } else {
             this.panel = getSkin().getPatch("panel");
@@ -96,7 +96,7 @@ public class ComputerActor extends Panel {
     public void setComputer(Computer computer) {
         this.computer = computer;
         this.healthBar.setValue(computer.getHealth());
-        this.progressBar.setValue(computer.getProgress());
+        this.progressBar.setValue(computer.getRunProgress());
     }
 
     public boolean activatedAbility() {
@@ -117,5 +117,9 @@ public class ComputerActor extends Panel {
 
     public void setProgress(float progress) {
         this.progressBar.setValue(progress);
+    }
+
+    public void setHealth(float health) {
+        this.healthBar.setValue(health);
     }
 }

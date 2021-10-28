@@ -90,6 +90,12 @@ public class ChangeStatAnim implements MoveAnimation {
                 this.oldHealth = softwareActor.getSoftware().getHealth();
                 this.oldProgress = softwareActor.getSoftware().getRunProgress();
                 this.oldDefense = softwareActor.getSoftware().getArmor();
+            } else if (actor instanceof ComputerActor) {
+                ComputerActor computerActor = (ComputerActor) getActor();
+                this.oldAttack = computerActor.getComputer().getAttack();
+                this.oldHealth = computerActor.getComputer().getHealth();
+                this.oldProgress = computerActor.getComputer().getRunProgress();
+                this.oldDefense = computerActor.getComputer().getArmor();
             }
         }
 
@@ -119,8 +125,17 @@ public class ChangeStatAnim implements MoveAnimation {
 
             } else if (getActor() instanceof ComputerActor) {
                 ComputerActor computerActor = (ComputerActor) getActor();
-                computerActor.setProgress(20 - (20f * percent));
-                computerActor.getComputer().setProgress((int) (20 - (20f * percent)));
+                float delta = (amount * percent);;
+                switch (stat) {
+                    case "health":
+                        computerActor.getComputer().setHealth((int) (oldHealth + delta));
+                        computerActor.setHealth((int) (oldHealth + delta));
+                        break;
+                    case "progress":
+                        computerActor.getComputer().setProgress((int) (oldProgress + delta));
+                        computerActor.setProgress((int) (oldProgress + delta));
+                        break;
+                }
             }
         }
     }

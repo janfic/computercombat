@@ -114,7 +114,7 @@ public abstract class Move implements Json.Serializable {
                 }
             }
             if (collectedByCard == false) {
-                newState.computers.get(originalState.currentPlayerMove.getUID()).addProgress(1);
+                newState.computers.get(originalState.currentPlayerMove.getUID()).recieveProgress(1);
             }
         }
 

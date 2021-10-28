@@ -49,7 +49,7 @@ public class GameRules {
             }
         }
         Computer c = state.computers.get(uid);
-        if (c.isProgressFull()) {
+        if (c.getRunProgress() >= c.getRunRequirements()) {
             UseAbilityMove m = new UseAbilityMove(uid, c, null, null);
             moves.add(m);
         }

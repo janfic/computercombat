@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.animations.AttackAnimation;
 import com.janfic.games.computercombat.model.animations.ReceiveDamageAnimation;
@@ -37,17 +39,12 @@ public class AttackAbility extends Ability {
         List<Card> destroyed = new ArrayList<>();
         List<MoveAnimation> animation = new ArrayList<>();
         for (Entry<Card, List<Card>> entry : attacks.entries()) {
-            boolean isMovePlayers = newState.activeEntities.get(currentUID).contains(entry.key);
             List<Card> attacked = entry.value;
             for (Card c : attacked) {
-                if (isMovePlayers) {
+                if (c instanceof Software) {
                     for (Card cardAttacked : newState.activeEntities.get(opponentUID)) {
                         if (c.equals(cardAttacked)) {
-                            System.out.println("Armor Before: " + cardAttacked.getArmor());
-                            System.out.println("Health Before: " + cardAttacked.getHealth());
                             cardAttacked.recieveDamage(entry.key.getAttack());
-                            System.out.println("Armor After: " + cardAttacked.getArmor());
-                            System.out.println("Health After: " + cardAttacked.getHealth());
                             animation.add(new AttackAnimation(currentUID, opponentUID, attacks));
                             if (cardAttacked.isDead()) {
                                 destroyed.add(cardAttacked);
@@ -55,6 +52,10 @@ public class AttackAbility extends Ability {
                             break;
                         }
                     }
+                } else if (c instanceof Computer) {
+                    Computer cardAttacked = newState.computers.get(opponentUID);
+                    cardAttacked.recieveDamage(entry.key.getAttack());
+                    animation.add(new AttackAnimation(currentUID, opponentUID, attacks));
                 }
             }
         }
