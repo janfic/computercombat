@@ -29,7 +29,7 @@ public class Computer extends Card implements Serializable {
         }, 20, new DrawAbility());
         this.getAbility().setInformation("Draw a card from you deck", "draw_card", "Draw Card", "new DrawAbility()", 0);
         this.health = 20;
-        this.progress = 0;
+        this.progress = 20;
         this.deckSize = 8;
     }
 

@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.*;
 import com.janfic.games.computercombat.model.*;
+import com.janfic.games.computercombat.model.animations.AttackAnimation;
 import com.janfic.games.computercombat.model.moves.*;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.network.Message;
@@ -349,4 +350,18 @@ public class MatchScreen implements Screen {
         return null;
     }
 
+    public void buildPanels() {
+        leftPanel.clear();
+        rightPanel.clear();
+
+        for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
+            leftPanel.add(softwareActor).row();
+        }
+        for (SoftwareActor softwareActor : softwareActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())) {
+            rightPanel.add(softwareActor).row();
+        }
+
+        leftPanel.add(computerActors.get(game.getCurrentProfile().getUID())).expandY().growX().bottom().row();
+        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())).expandY().growX().bottom().row();
+    }
 }

@@ -151,15 +151,14 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
      */
     public int recieveDamage(int damage) {
         if (armor > 0) {
-            if (damage >= armor) {
-                damage = damage - armor;
-                armor = 0;
-            } else {
-                armor -= damage;
-                damage = 0;
+            armor -= damage;
+            if (armor < 0) {
+                this.health += armor;
+                this.armor = 0;
             }
+        } else {
+            this.health -= damage;
         }
-        this.health -= damage;
         return damage;
     }
 

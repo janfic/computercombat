@@ -72,8 +72,8 @@ public abstract class Move implements Json.Serializable {
             }
 
             //Prepare for next result
-            originalState = newState;
-            newState = new MatchState(newState);
+            originalState = results.get(results.size() - 1).getNewState();
+            newState = new MatchState(originalState);
             collected = GameRules.getCurrentComponentMatches(newState.getComponentBoard());
         } while (!collected.isEmpty());
 

@@ -34,6 +34,7 @@ public class AttackAbility extends Ability {
         String currentUID = move.getPlayerUID();
         String opponentUID = newState.getOtherProfile(newState.currentPlayerMove).getUID();
 
+        List<Card> destroyed = new ArrayList<>();
         List<MoveAnimation> animation = new ArrayList<>();
         for (Entry<Card, List<Card>> entry : attacks.entries()) {
             boolean isMovePlayers = newState.activeEntities.get(currentUID).contains(entry.key);
@@ -42,9 +43,15 @@ public class AttackAbility extends Ability {
                 if (isMovePlayers) {
                     for (Card cardAttacked : newState.activeEntities.get(opponentUID)) {
                         if (c.equals(cardAttacked)) {
-                            animation.add(new AttackAnimation(currentUID, opponentUID, attacks));
-                            //animation.add(new ReceiveDamageAnimation(cardAttacked, entry.key.getAttack(), opponentUID));
+                            System.out.println("Armor Before: " + cardAttacked.getArmor());
+                            System.out.println("Health Before: " + cardAttacked.getHealth());
                             cardAttacked.recieveDamage(entry.key.getAttack());
+                            System.out.println("Armor After: " + cardAttacked.getArmor());
+                            System.out.println("Health After: " + cardAttacked.getHealth());
+                            animation.add(new AttackAnimation(currentUID, opponentUID, attacks));
+                            if (cardAttacked.isDead()) {
+                                destroyed.add(cardAttacked);
+                            }
                             break;
                         }
                     }
@@ -53,8 +60,12 @@ public class AttackAbility extends Ability {
         }
 
         MoveResult result = new MoveResult(move, state, newState, animation);
-
         results.add(result);
+        if (!destroyed.isEmpty()) {
+            DestroyCardAbility destroyAbility = new DestroyCardAbility(opponentUID, destroyed);
+            List<MoveResult> r = destroyAbility.doAbility(result.getNewState(), move);
+            results.addAll(r);
+        }
         return results;
     }
 }
