@@ -249,4 +249,20 @@ public class GameRules {
         }
         return components;
     }
+
+    public static boolean isGameOver(MatchState state) {
+        for (String string : state.computers.keySet()) {
+            if (state.computers.get(string).isDead()) {
+                state.isGameOver = true;
+                for (Profile player : state.players) {
+                    if (player.getUID().equals(string) == false) {
+                        state.winner = player;
+                        break;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 }

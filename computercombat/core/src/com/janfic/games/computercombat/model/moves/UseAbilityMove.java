@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
+import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.MatchState;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class UseAbilityMove extends Move implements Json.Serializable {
     @Override
     public List<MoveResult> doMove(MatchState state) {
         List<MoveResult> results = entity.getAbility().doAbility(state, this);
+        GameRules.isGameOver(results.get(results.size() - 1).getNewState());
         return results;
     }
 

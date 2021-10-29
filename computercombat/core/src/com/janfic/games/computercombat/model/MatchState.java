@@ -20,6 +20,8 @@ public class MatchState implements Serializable {
     public Map<String, Deck> decks;
     public List<Profile> players;
     public Profile currentPlayerMove;
+    public boolean isGameOver;
+    public Profile winner;
 
     public MatchState() {
         this.componentBoard = null;
@@ -28,6 +30,8 @@ public class MatchState implements Serializable {
         this.decks = null;
         this.players = null;
         this.currentPlayerMove = null;
+        this.isGameOver = false;
+        this.winner = null;
     }
 
     public MatchState(Profile player1, Profile player2, Component[][] componentBoard, Map<String, List<Card>> activeEntities, Map<String, Computer> computers, Map<String, Deck> decks) {
@@ -39,6 +43,8 @@ public class MatchState implements Serializable {
         this.players = new ArrayList<>();
         this.players.add(player1);
         this.players.add(player2);
+        this.isGameOver = false;
+        this.winner = null;
     }
 
     public Component[][] getComponentBoard() {
@@ -47,7 +53,6 @@ public class MatchState implements Serializable {
 
     public MatchState(MatchState state) {
         Json json = new Json();
-
         MatchState s = json.fromJson(MatchState.class, json.toJson(state));
         this.componentBoard = s.componentBoard;
         this.activeEntities = s.activeEntities;
@@ -55,6 +60,8 @@ public class MatchState implements Serializable {
         this.decks = s.decks;
         this.currentPlayerMove = s.currentPlayerMove;
         this.players = s.players;
+        this.winner = s.winner;
+        this.isGameOver = s.isGameOver;
     }
 
     public MatchState(MatchState state, String playerUID) {
@@ -105,6 +112,8 @@ public class MatchState implements Serializable {
         json.writeValue("activeEntities", activeEntities, Map.class);
         json.writeValue("computers", computers, Map.class);
         json.writeValue("decks", decks, Map.class);
+        json.writeValue("winner", winner, Profile.class);
+        json.writeValue("isGameOver", isGameOver, boolean.class);
         json.writeArrayStart("componentBoard");
         for (Component[] components : componentBoard) {
             json.writeArrayStart();
@@ -120,6 +129,8 @@ public class MatchState implements Serializable {
     public void read(Json json, JsonValue jsonData) {
         this.players = json.readValue("players", List.class, jsonData);
         this.currentPlayerMove = json.readValue("currentPlayerMove", Profile.class, jsonData);
+        this.isGameOver = json.readValue("isGameOver", boolean.class, jsonData);
+        this.winner = json.readValue("winner", Profile.class, jsonData);
         this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
         this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);

@@ -61,6 +61,7 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
         List<MoveResult> collectLoop = Move.collectComponentsCheck(newState, this);
         results.addAll(collectLoop);
 
+        GameRules.isGameOver(results.get(results.size() - 1).getNewState());
         return results;
     }
 
