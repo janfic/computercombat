@@ -319,9 +319,6 @@ public class SQLAPI {
                 profile.setName(rs.getString("username"));
                 profile.setEmail(rs.getString("email"));
             }
-
-            System.out.println(profile.getName() + " " + profile.getUID());
-
             return profile;
         } catch (Exception e) {
             e.printStackTrace();
@@ -369,7 +366,6 @@ public class SQLAPI {
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + profile.getUID() + "';";
 
-            System.out.println(sql);
 
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
@@ -379,7 +375,6 @@ public class SQLAPI {
             if (exists) {
                 sql = "INSERT INTO profile_owns_card (profile_id, card_id)\n"
                         + "VALUES ('" + profile.getUID() + "'," + cardID + ");";
-                System.out.println(sql);
                 int rowsUpdated = statement.executeUpdate(sql);
                 return rowsUpdated >= 1;
             } else {

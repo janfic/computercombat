@@ -13,12 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.*;
 import com.janfic.games.computercombat.model.*;
-import com.janfic.games.computercombat.model.animations.AttackAnimation;
 import com.janfic.games.computercombat.model.moves.*;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.network.Message;
@@ -44,6 +44,9 @@ public class MatchScreen implements Screen {
 
     Board board;
 
+    Panel info, buttons;
+    Label infoLabel;
+    BorderedGrid infoPanel;
     BorderedGrid leftPanel, rightPanel;
     Map<String, List<SoftwareActor>> softwareActors;
     Map<String, ComputerActor> computerActors;
@@ -111,12 +114,15 @@ public class MatchScreen implements Screen {
         rightPanel.defaults().space(2);
         rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())).expandY().growX().bottom();
 
-        Panel buttons = new Panel(skin);
+        buttons = new Panel(skin);
+        buttons.add(new Label(game.getCurrentProfile().getName() + " vs. " + matchData.getOpponentName(), skin));
 
-        BorderedGrid infoPanel = new BorderedGrid(skin);
+        infoPanel = new BorderedGrid(skin);
         infoPanel.setSize(220, 43);
-        Panel info = new Panel(skin);
-        info.add(new Label(game.getCurrentProfile().getName() + " vs. " + matchData.getOpponentName(), skin));
+        info = new Panel(skin);
+        infoLabel = new Label("", skin);
+        infoLabel.setAlignment(Align.center);
+        info.add(infoLabel).grow();
         infoPanel.add(info).grow();
 
         table.setFillParent(true);
@@ -178,10 +184,14 @@ public class MatchScreen implements Screen {
         mainStage.draw();
         if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             board.setTouchable(Touchable.enabled);
+            infoLabel.setText("Your Turn!");
         } else {
             board.setTouchable(Touchable.disabled);
+            infoLabel.setText(matchData.getOpponentName() + "'s Turn");
         }
-
+        if (matchData.getCurrentState().isGameOver) {
+            infoLabel.setText("GAME OVER! \n " + matchData.getCurrentState().winner.getName() + " wins!");
+        }
         if (animation.isEmpty() == false) {
             List<Action> a = animation.get(0);
             boolean allDone = true;

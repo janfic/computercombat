@@ -98,7 +98,6 @@ public class ServerMatchRoom {
                             
                             if (move instanceof UseAbilityMove) {
                                 UseAbilityMove m = (UseAbilityMove) move;
-                                System.out.println(json.prettyPrint(m.getCard().getAbility()));
                                 m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
                             }
                             
