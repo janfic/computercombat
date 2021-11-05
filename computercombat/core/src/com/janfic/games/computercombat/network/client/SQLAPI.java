@@ -37,6 +37,7 @@ public class SQLAPI {
     private SQLAPI() {
         this.properties = new Properties();
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             this.properties.load(Gdx.files.internal("sql.properties").read());
             connection = DriverManager.getConnection(url, properties);
             Statement statement = connection.createStatement();
@@ -306,9 +307,13 @@ public class SQLAPI {
 
     public Profile loadProfile(String uid) {
         try {
+            System.out.println(uid);
+            
             String sql = "SELECT *\n"
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + uid + "';";
+            
+            System.out.println(sql);
 
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);

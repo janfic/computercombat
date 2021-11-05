@@ -37,7 +37,7 @@ public class AWSServices {
 
     public AWSServices(String userPoolID) {
         this.userPoolID = userPoolID;
-        cognito = CognitoIdentityProviderClient.create();
+        cognito = CognitoIdentityProviderClient.builder().region(software.amazon.awssdk.regions.Region.US_EAST_1).build();
         s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_1).build();
     }
 

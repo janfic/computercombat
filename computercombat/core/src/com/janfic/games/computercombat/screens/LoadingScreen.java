@@ -62,7 +62,7 @@ public class LoadingScreen implements Screen {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "44.196.13.213", 7272, new SocketHints())));
+                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "localhost", 7272, new SocketHints())));
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {

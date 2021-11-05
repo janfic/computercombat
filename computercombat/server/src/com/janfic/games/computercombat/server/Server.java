@@ -74,6 +74,7 @@ public class Server {
             public void run() {
                 Json json = new Json();
                 AWSServices services = new AWSServices("us-east-1_pLAKB2Mxw");
+                
                 while (true) {
                     for (Integer key : clients.keySet()) {
                         Client client = clients.get(key);
