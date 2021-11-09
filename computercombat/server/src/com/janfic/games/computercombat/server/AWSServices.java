@@ -23,6 +23,7 @@ import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequest;
 
 /**
@@ -37,7 +38,7 @@ public class AWSServices {
 
     public AWSServices(String userPoolID) {
         this.userPoolID = userPoolID;
-        cognito = CognitoIdentityProviderClient.builder().region(software.amazon.awssdk.regions.Region.US_EAST_1).build();
+        cognito = CognitoIdentityProviderClient.builder().credentialsProvider(AnonymousCredentialsProvider.create()).region(software.amazon.awssdk.regions.Region.US_EAST_1).build();
         s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_1).build();
     }
 
@@ -128,6 +129,7 @@ public class AWSServices {
                 .build();
 
         try {
+
             InitiateAuthResponse response = cognito.initiateAuth(request);
             GetUserRequest userRequest = GetUserRequest.builder().accessToken(response.authenticationResult().accessToken()).build();
             List<AttributeType> userAttributes = cognito.getUser(userRequest).userAttributes();
@@ -146,8 +148,9 @@ public class AWSServices {
         } catch (UserNotConfirmedException e) {
             return new Message(Type.VERIFY_WITH_CODE, "Please use verification code");
         } catch (AwsServiceException | SdkClientException e) {
-            return new Message(Type.ERROR, "UNKOWN ERROR : \n" + e.getMessage());
+            e.printStackTrace();
         }
+        return null;
     }
 
     public boolean verifyUser(String username, String code) {

@@ -1,0 +1,14 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "janfic/computercombat",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": 7272,
+      "HostPort": 7272
+    }
+  ],
+  "Logging": "/var/log/nginx"
+}

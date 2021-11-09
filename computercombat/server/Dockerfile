@@ -1,4 +1,4 @@
-FROM openjdk
+FROM java
 
 WORKDIR /usr/src/app
 
