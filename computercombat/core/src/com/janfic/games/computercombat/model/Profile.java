@@ -27,7 +27,7 @@ public class Profile implements Serializable {
     public Profile(String uid) {
         this.uid = uid;
         this.decks = new ArrayList<>();
-        this.collection = new Deck("Collection");
+        this.collection = new Deck("Collection", 0);
         this.activePlayer = HumanPlayer.class.getName();
     }
 

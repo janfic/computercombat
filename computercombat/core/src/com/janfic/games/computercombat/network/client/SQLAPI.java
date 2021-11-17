@@ -400,13 +400,15 @@ public class SQLAPI {
         Json json = new Json(JsonWriter.OutputType.json);
         try {
             // Insert New Match Record
-            String sql = "INSERT INTO match (player1_uid, player2_uid, deck1_id, deck2_id, winner ) "
+            String sql = "INSERT INTO computer_combat.`match` (player1_uid, player2_uid, deck1_id, deck2_id, winner)\n"
                     + "VALUES ('"
-                    + data.getPlayer1().getUID() + "','"
-                    + data.getPlayer2().getUID() + "',"
-                    + data.getPlayer1Deck().getID() + ","
-                    + data.getPlayer2Deck().getID() + ","
-                    + (data.getWinner() ? 0 : 1) + ");";
+                    + data.getPlayer1().getUID() + "' , '"
+                    + data.getPlayer2().getUID() + "' , "
+                    + data.getPlayer1Deck().getID() + " , "
+                    + data.getPlayer2Deck().getID() + " , "
+                    + (data.getWinner() ? 0 : 1) + " );";
+
+            System.out.println(sql);
 
             Statement statement = connection.createStatement();
             int updates = statement.executeUpdate(sql);
@@ -414,6 +416,7 @@ public class SQLAPI {
             // Get Generated Match ID
             sql = "SELECT LAST_INSERT_ID();";
             ResultSet results = statement.executeQuery(sql);
+            results.next();
             int match_id = results.getInt(1);
 
             for (int i = 0; i < data.getMoves().size(); i++) {
@@ -425,11 +428,12 @@ public class SQLAPI {
                 // Get Move Result ID
                 sql = "SELECT LAST_INSERT_ID();";
                 results = statement.executeQuery(sql);
+                results.next();
                 int move_results_id = results.getInt(1);
 
                 // Insert Move
                 Move move = data.getMoves().get(i);
-                sql = "INSERT INTO moves (data, match_id, move_results_id, move_number) VALUES ('"
+                sql = "INSERT INTO move (data, match_id, move_results_id, move_number) VALUES ('"
                         + json.toJson(move) + "'," + match_id + "," + move_results_id + "," + (i + 1) + ");";
                 updates = statement.executeUpdate(sql);
             }

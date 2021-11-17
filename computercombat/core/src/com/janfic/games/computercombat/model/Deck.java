@@ -24,7 +24,6 @@ public class Deck implements Serializable {
     public Deck() {
         this.name = "New Deck";
         this.cards = new HashMap<>();
-        this.id = (int) (Math.random() * Integer.MAX_VALUE);
         this.stack = new ArrayList<>();
     }
 
@@ -107,6 +106,7 @@ public class Deck implements Serializable {
         json.writeValue("name", this.name);
         json.writeValue("cards", this.cards);
         json.writeValue("stack", this.stack);
+        json.writeValue("id", this.id);
     }
 
     @Override
@@ -114,6 +114,7 @@ public class Deck implements Serializable {
         this.name = json.readValue("name", String.class, jv);
         this.cards = json.readValue("cards", HashMap.class, jv);
         this.stack = json.readValue("stack", List.class, jv);
+        this.id = (json.readValue("id", int.class, jv) == null ? 0 : json.readValue("id", int.class, jv));
     }
 
 }

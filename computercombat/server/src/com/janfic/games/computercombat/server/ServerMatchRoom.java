@@ -6,10 +6,12 @@ import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.Match;
 import com.janfic.games.computercombat.model.MatchData;
+import com.janfic.games.computercombat.model.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.util.ObjectMapSerializer;
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +24,7 @@ public class ServerMatchRoom {
 
     private final MatchClient player1, player2;
     private Match match;
+    private MatchData matchData;
     private boolean isGameOver;
     private Thread thread;
 
@@ -63,7 +66,7 @@ public class ServerMatchRoom {
                     player1.sendMessage(matchData1);
                     player2.sendMessage(matchData2);
 
-                    MatchData matchData = new MatchData(player1.getProfile(), player2.getProfile(), player1.getDeck(), player2.getDeck());
+                    matchData = new MatchData(player1.getProfile(), player2.getProfile(), player1.getDeck(), player2.getDeck());
                     matchData.getMatchStates().add(match.getCurrentState());
 
                     while (isGameOver == false) {
@@ -117,7 +120,17 @@ public class ServerMatchRoom {
                                 currentPlayer.sendMessage(notValidMessage);
                             }
                         }
+                        
                     }
+                    MatchState lastState = matchData.getMatchStates().get(matchData.getMatchStates().size() - 1);
+                    if(lastState.winner != null) {
+                        matchData.setWinner(lastState.winner.getUID() == player2.getProfile().getUID());
+                    }
+                    else {
+                        matchData.setWinner(false);
+                    }
+                
+                    SQLAPI.getSingleton().recordMatchData(matchData);
                 } catch (IOException e) {
                 }
                 isGameOver = true;

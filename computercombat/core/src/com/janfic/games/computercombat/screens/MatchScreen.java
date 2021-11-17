@@ -85,6 +85,7 @@ public class MatchScreen implements Screen {
         Json json = new Json();
 
         if (matchStateData.type == Type.MATCH_STATE_DATA) {
+            System.out.println(matchStateData.getMessage());
             MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
             this.matchData.setCurrentState(state);
         }
