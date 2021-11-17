@@ -1,12 +1,18 @@
 package com.janfic.games.computercombat.network.client;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.MatchData;
+import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.moves.MoveResult;
 import groovy.lang.GroovyShell;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -308,11 +314,11 @@ public class SQLAPI {
     public Profile loadProfile(String uid) {
         try {
             System.out.println(uid);
-            
+
             String sql = "SELECT *\n"
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + uid + "';";
-            
+
             System.out.println(sql);
 
             Statement statement = connection.createStatement();
@@ -371,7 +377,6 @@ public class SQLAPI {
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + profile.getUID() + "';";
 
-
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
 
@@ -388,6 +393,60 @@ public class SQLAPI {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void recordMatchData(MatchData data) {
+        Json json = new Json(JsonWriter.OutputType.json);
+        try {
+            // Insert New Match Record
+            String sql = "INSERT INTO match (player1_uid, player2_uid, deck1_id, deck2_id, winner ) "
+                    + "VALUES ('"
+                    + data.getPlayer1().getUID() + "','"
+                    + data.getPlayer2().getUID() + "',"
+                    + data.getPlayer1Deck().getID() + ","
+                    + data.getPlayer2Deck().getID() + ","
+                    + (data.getWinner() ? 0 : 1) + ");";
+
+            Statement statement = connection.createStatement();
+            int updates = statement.executeUpdate(sql);
+
+            // Get Generated Match ID
+            sql = "SELECT LAST_INSERT_ID();";
+            ResultSet results = statement.executeQuery(sql);
+            int match_id = results.getInt(1);
+
+            for (int i = 0; i < data.getMoves().size(); i++) {
+                // Insert Move Results
+                List<MoveResult> moveResults = data.getMoveResults().get(i);
+                sql = "INSERT INTO move_results (data) VALUES ('" + json.toJson(moveResults) + "');";
+                updates = statement.executeUpdate(sql);
+
+                // Get Move Result ID
+                sql = "SELECT LAST_INSERT_ID();";
+                results = statement.executeQuery(sql);
+                int move_results_id = results.getInt(1);
+
+                // Insert Move
+                Move move = data.getMoves().get(i);
+                sql = "INSERT INTO moves (data, match_id, move_results_id, move_number) VALUES ('"
+                        + json.toJson(move) + "'," + match_id + "," + move_results_id + "," + (i + 1) + ");";
+                updates = statement.executeUpdate(sql);
+            }
+
+            // Insert Match States
+            for (int i = 0; i < data.getMatchStates().size(); i++) {
+                MatchState state = data.getMatchStates().get(i);
+                sql = "INSERT INTO match_state (match_id, match_state_number, data) VALUES ("
+                        + match_id + ","
+                        + i + ",'"
+                        + json.toJson(state)
+                        + "');";
+                updates = statement.executeUpdate(sql);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

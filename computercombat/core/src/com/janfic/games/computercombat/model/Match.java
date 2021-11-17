@@ -80,7 +80,7 @@ public class Match {
         return copy;
     }
 
-    private MatchState getCurrentState() {
+    public MatchState getCurrentState() {
         return currentState;
     }
 
