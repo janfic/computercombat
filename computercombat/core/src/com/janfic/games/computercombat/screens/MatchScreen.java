@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -13,6 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -54,6 +58,8 @@ public class MatchScreen implements Screen {
     List<List<Action>> animation;
 
     ClientMatch matchData;
+
+    boolean checkGameOver = true;
 
     public MatchScreen(ComputerCombatGame game, ClientMatch match) {
         this.game = game;
@@ -190,8 +196,29 @@ public class MatchScreen implements Screen {
             board.setTouchable(Touchable.disabled);
             infoLabel.setText(matchData.getOpponentName() + "'s Turn");
         }
-        if (matchData.getCurrentState().isGameOver) {
+        if (matchData.getCurrentState().isGameOver && checkGameOver) {
             infoLabel.setText("GAME OVER! \n " + matchData.getCurrentState().winner.getName() + " wins!");
+            board.setTouchable(Touchable.disabled);
+            Window window = new Window("Match Info", skin);
+            Table table = new Table(skin);
+            Label label = new Label("GAME OVER!\n " + matchData.getCurrentState().winner.getName() + " wins!", skin);
+            label.setAlignment(Align.center);
+            table.add(label).grow();
+            table.align(Align.center);
+            TextButton okayButton = new TextButton("Okay", skin);
+            okayButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    game.popScreen();
+                }
+            });
+            table.row();
+            table.add(okayButton).growX();
+            window.add(table).grow();
+            window.setSize(mainStage.getWidth() / 2, mainStage.getHeight() / 2);
+            window.setPosition(mainStage.getWidth() / 4, mainStage.getHeight() / 4);
+            this.mainStage.addActor(window);
+            checkGameOver = false;
         }
         if (animation.isEmpty() == false) {
             List<Action> a = animation.get(0);

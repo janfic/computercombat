@@ -34,11 +34,13 @@ public class Computer extends Card implements Serializable {
 
     @Override
     public void write(Json json) {
+        super.write(json);
         json.writeValue("deckSize", deckSize);
     }
 
     @Override
     public void read(Json json, JsonValue jsonData) {
+        super.read(json, jsonData);
         this.deckSize = json.readValue("deckSize", Integer.class, jsonData);
     }
 
