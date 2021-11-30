@@ -400,13 +400,15 @@ public class SQLAPI {
         Json json = new Json(JsonWriter.OutputType.json);
         try {
             // Insert New Match Record
-            String sql = "INSERT INTO computer_combat.`match` (player1_uid, player2_uid, deck1_id, deck2_id, winner)\n"
+            String sql = "INSERT INTO computer_combat.`match` (player1_uid, player2_uid, deck1_id, deck2_id, winner, starttime, endtime)\n"
                     + "VALUES ('"
                     + data.getPlayer1().getUID() + "' , '"
                     + data.getPlayer2().getUID() + "' , "
                     + data.getPlayer1Deck().getID() + " , "
                     + data.getPlayer2Deck().getID() + " , "
-                    + (data.getWinner() ? 0 : 1) + " );";
+                    + (data.getWinner() ? 1 : 0) + " , "
+                    + "str_to_date('" + data.getStartTime().toString() + "', '%Y-%m-%d %H:%i:%s.%f'), "
+                    + "str_to_date('" + data.getEndTime().toString() + "', '%Y-%m-%d %H:%i:%s.%f'));";
 
             System.out.println(sql);
 

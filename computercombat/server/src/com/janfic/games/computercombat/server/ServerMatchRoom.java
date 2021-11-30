@@ -15,6 +15,7 @@ import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.util.ObjectMapSerializer;
 import java.io.IOException;
 import java.util.List;
+import java.sql.Timestamp;
 
 /**
  *
@@ -62,7 +63,8 @@ public class ServerMatchRoom {
                     Match match = new Match(player1.getProfile(), player2.getProfile(), player1.getDeck(), player2.getDeck());
                     Message matchData1 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(player1.getProfile().getUID())));
                     Message matchData2 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(player2.getProfile().getUID())));
-
+                    Timestamp starttime = new Timestamp(System.currentTimeMillis());
+                    
                     player1.sendMessage(matchData1);
                     player2.sendMessage(matchData2);
 
@@ -115,10 +117,12 @@ public class ServerMatchRoom {
                                 Message response = new Message(Type.MOVE_ACCEPT, json.toJson(results));
                                 currentPlayer.sendMessage(response);
                                 otherPlayer.sendMessage(response);
+                                isGameOver = match.getCurrentState().isGameOver;
                             } else {
                                 Message notValidMessage = new Message(Type.MOVE_REJECT, "NOT VALID MOVE");
                                 currentPlayer.sendMessage(notValidMessage);
                             }
+                            
                         }
                         
                     }
@@ -129,7 +133,11 @@ public class ServerMatchRoom {
                     else {
                         matchData.setWinner(false);
                     }
-                
+                    
+                    Timestamp endtime = new Timestamp(System.currentTimeMillis());
+                    matchData.setStartTime(starttime);
+                    matchData.setEndTime(endtime);
+                    
                     SQLAPI.getSingleton().recordMatchData(matchData);
                 } catch (IOException e) {
                 }

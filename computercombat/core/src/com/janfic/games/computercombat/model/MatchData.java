@@ -4,6 +4,7 @@ import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.Move;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Timestamp;
 
 public class MatchData {
 
@@ -13,6 +14,7 @@ public class MatchData {
     List<MatchState> matchStates;
     List<List<MoveResult>> moveResults;
     boolean winner;
+    Timestamp starttime, endtime;
 
     public MatchData(Profile player1, Profile player2, Deck player1Deck, Deck player2Deck) {
         this.moves = new ArrayList<>();
@@ -64,5 +66,21 @@ public class MatchData {
 
     public Deck getPlayer2Deck() {
         return player2Deck;
+    }
+    
+    public void setStartTime(Timestamp time) {
+        this.starttime = time;
+    }
+    
+    public void setEndTime(Timestamp time) {
+        this.endtime = time;
+    }
+    
+    public Timestamp getStartTime() {
+        return starttime;
+    }
+    
+    public Timestamp getEndTime() {
+        return endtime;
     }
 }
