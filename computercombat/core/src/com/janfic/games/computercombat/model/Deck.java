@@ -60,7 +60,7 @@ public class Deck implements Serializable {
             cards.remove("" + card.getID());
         }
         for (int i = 0; i < amount; i++) {
-            stack.remove(card.getID());
+            stack.remove((Integer)card.getID());
         }
     }
 
@@ -72,8 +72,12 @@ public class Deck implements Serializable {
         return name;
     }
 
-    public List<Integer> getCards() {
+    public List<Integer> getStack() {
         return stack;
+    }
+
+    public Map<String, Integer> getCards() {
+        return cards;
     }
 
     public void setName(String name) {

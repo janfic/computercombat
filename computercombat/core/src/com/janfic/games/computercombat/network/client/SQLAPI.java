@@ -268,9 +268,11 @@ public class SQLAPI {
 
             rows = statement.executeUpdate(sql);
 
-            for (Integer card : deck.getCards()) {
+            System.out.println(deck.getStack());
+            
+            for (String card : deck.getCards().keySet()) {
                 sql = "INSERT INTO deck_has_card (deck_id, card_id, amount) \n"
-                        + "VALUES (" + deck.getID() + "," + card + "," + deck.getCardCount(card) + ");";
+                        + "VALUES (" + deck.getID() + "," + card + "," + deck.getCardCount(Integer.parseInt(card)) + ");";
 
                 rows = statement.executeUpdate(sql);
             }
