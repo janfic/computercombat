@@ -292,6 +292,9 @@ public class DecksScreen implements Screen {
                     return;
                 }
                 Software card = (Software) payload.getObject();
+                if (card.getID() == 0) { // prevent adding computer to deck
+                    return;
+                }
                 selectedDeck.getDeck().addCard(card, 1);
                 updateDeckCards();
             }

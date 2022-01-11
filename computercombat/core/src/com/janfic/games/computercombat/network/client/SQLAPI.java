@@ -412,8 +412,6 @@ public class SQLAPI {
                     + "str_to_date('" + data.getStartTime().toString() + "', '%Y-%m-%d %H:%i:%s.%f'), "
                     + "str_to_date('" + data.getEndTime().toString() + "', '%Y-%m-%d %H:%i:%s.%f'));";
 
-            System.out.println(sql);
-
             Statement statement = connection.createStatement();
             int updates = statement.executeUpdate(sql);
 
