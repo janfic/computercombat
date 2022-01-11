@@ -187,78 +187,31 @@ public class MatchScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // Basic Update and Render Stage
         mainStage.act(delta);
         mainStage.draw();
-        if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
-            board.setTouchable(Touchable.enabled);
-            infoLabel.setText("Your Turn!");
-        } else {
-            board.setTouchable(Touchable.disabled);
-            infoLabel.setText(matchData.getOpponentName() + "'s Turn");
-        }
-        if (matchData.getCurrentState().isGameOver && checkGameOver) {
-            infoLabel.setText("GAME OVER! \n " + matchData.getCurrentState().winner.getName() + " wins!");
-            board.setTouchable(Touchable.disabled);
-            Window window = new Window("Match Info", skin);
-            Table table = new Table(skin);
-            Label label = new Label("GAME OVER!\n " + matchData.getCurrentState().winner.getName() + " wins!", skin);
-            label.setAlignment(Align.center);
-            table.add(label).grow();
-            table.align(Align.center);
-            TextButton okayButton = new TextButton("Okay", skin);
-            okayButton.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    game.popScreen();
-                }
-            });
-            table.row();
-            table.add(okayButton).growX();
-            window.add(table).grow();
-            window.setSize(mainStage.getWidth() / 2, mainStage.getHeight() / 2);
-            window.setPosition(mainStage.getWidth() / 4, mainStage.getHeight() / 4);
-            this.mainStage.addActor(window);
-            checkGameOver = false;
-        }
-        if (animation.isEmpty() == false) {
-            List<Action> a = animation.get(0);
-            boolean allDone = true;
-            List<Action> r = new ArrayList<>();
-            for (Action action : a) {
-                if (action.getActor() == null) {
-                    r.add(action);
-                    continue;
-                }
-                if (!action.act(delta)) {
-                    allDone = false;
-                } else {
-                    r.add(action);
-                }
-            }
-            a.removeAll(r);
-            if (allDone) {
-                animation.remove(0);
-            }
-        } else {
-            board.setTouchable(Touchable.enabled);
-        }
 
-        if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
-            Move move = board.getMove();
-            Json json = new Json();
-            game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
-            board.consumeMove();
-        }
-        if (game.getServerAPI().hasMessage() && isAnimating() == false) {
-            Message response = game.getServerAPI().readMessage();
-            if (response.type == Type.MOVE_ACCEPT) {
-                Json json = new Json();
-                json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
-                List<MoveResult> results = json.fromJson(List.class, response.getMessage());
-                animate(results, this);
-            } else if (response.type == Type.PING) {
-            }
-        }
+        // Set Info text to be whos turn it is
+        updateInfoText();
+
+        // Game Over Check and Finish
+        gameOverCheck();
+
+        // Render Animations that are queued
+        animations(delta);
+
+        // Accept Opponent / Server sent move
+        listenForServerMessage();
+        
+        // Check if player attempted MatchComponentsMove
+        playerMatchComponentsMoveCheck();
+
+        // Check if player attempted UseAbilityMove
+        playerUseAbilityMoveCheck();
+
+    }
+
+    private void playerUseAbilityMoveCheck() {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             if (softwareActor.activatedAbility()) {
                 UseAbilityMove move = new UseAbilityMove(
@@ -287,6 +240,90 @@ public class MatchScreen implements Screen {
             if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
                 game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             }
+        }
+    }
+
+    private void playerMatchComponentsMoveCheck() {
+        if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+            Move move = board.getMove();
+            Json json = new Json();
+            game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
+            board.consumeMove();
+        }
+    }
+
+    private void listenForServerMessage() {
+        if (game.getServerAPI().hasMessage() && isAnimating() == false) {
+            Message response = game.getServerAPI().readMessage();
+            if (response.type == Type.MOVE_ACCEPT) {
+                Json json = new Json();
+                json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
+                List<MoveResult> results = json.fromJson(List.class, response.getMessage());
+                animate(results, this);
+            } else if (response.type == Type.PING) {
+            }
+        }
+    }
+
+    private void animations(float delta) {
+        if (animation.isEmpty() == false) {
+            List<Action> a = animation.get(0);
+            boolean allDone = true;
+            List<Action> r = new ArrayList<>();
+            for (Action action : a) {
+                if (action.getActor() == null) {
+                    r.add(action);
+                    continue;
+                }
+                if (!action.act(delta)) {
+                    allDone = false;
+                } else {
+                    r.add(action);
+                }
+            }
+            a.removeAll(r);
+            if (allDone) {
+                animation.remove(0);
+            }
+        } else {
+            board.setTouchable(Touchable.enabled);
+        }
+    }
+
+    private void gameOverCheck() {
+        if (matchData.getCurrentState().isGameOver && checkGameOver) {
+            infoLabel.setText("GAME OVER! \n " + matchData.getCurrentState().winner.getName() + " wins!");
+            board.setTouchable(Touchable.disabled);
+            Window window = new Window("Match Info", skin);
+            Table table = new Table(skin);
+            Label label = new Label("GAME OVER!\n " + matchData.getCurrentState().winner.getName() + " wins!", skin);
+            label.setAlignment(Align.center);
+            table.add(label).grow();
+            table.align(Align.center);
+            TextButton okayButton = new TextButton("Okay", skin);
+            okayButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    game.popScreen();
+                }
+            });
+            table.row();
+            table.add(okayButton).growX();
+            window.add(table).grow();
+            window.setSize(mainStage.getWidth() / 2, mainStage.getHeight() / 2);
+            window.setPosition(mainStage.getWidth() / 4, mainStage.getHeight() / 4);
+            this.mainStage.addActor(window);
+            checkGameOver = false;
+        }
+    }
+
+    private void updateInfoText() {
+        if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+            board.setTouchable(Touchable.enabled);
+            infoLabel.setText("Your Turn!");
+        } else {
+            board.setTouchable(Touchable.disabled);
+            infoLabel.setText(matchData.getOpponentName() + "'s Turn");
         }
     }
 
