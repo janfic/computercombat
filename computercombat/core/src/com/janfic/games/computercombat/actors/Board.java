@@ -25,7 +25,8 @@ import java.util.List;
  */
 public class Board extends BorderedGrid {
 
-    ComponentActor selected1, selected2;
+    int componentsToSelect;
+    List<ComponentActor> selected;
 
     TextureAtlas componentAtlas;
 
@@ -46,8 +47,6 @@ public class Board extends BorderedGrid {
     Runnable removeActions = new Runnable() {
         @Override
         public void run() {
-            selected1 = null;
-            selected2 = null;
             canSelect = true;
         }
     };
@@ -59,7 +58,7 @@ public class Board extends BorderedGrid {
         this.matchData = matchData;
         this.game = game;
         this.componentAtlas = game.getAssetManager().get("texture_packs/components.atlas");
-        this.selected1 = null;
+        this.selected = new ArrayList<>();
         this.board = new Cell[8][8];
         this.components = new ArrayList<>();
         this.newComponentSpawn = this.add(new Group()).height(0).pad(0).space(0).growX().colspan(8);
@@ -80,8 +79,7 @@ public class Board extends BorderedGrid {
         this.newComponentSpawn.getActor().setCullingArea(new Rectangle(0, -getHeight(), getWidth(), getHeight() - 1));
         canSelect = matchAnimations.isEmpty() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID());
         if (!matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
-            selected1 = null;
-            selected2 = null;
+            selected.clear();
         }
     }
 
@@ -95,7 +93,7 @@ public class Board extends BorderedGrid {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 super.enter(event, x, y, pointer, fromActor);
-                if (actor != selected1 && actor != selected2 && canSelect) {
+                if (!selected.contains(actor) && canSelect) {
                     actor.addAction(Actions.scaleTo(1.2f, 1.2f, 0.5f));
                 }
             }
@@ -103,7 +101,7 @@ public class Board extends BorderedGrid {
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 super.exit(event, x, y, pointer, toActor);
-                if (actor != selected1 && actor != selected2 && canSelect) {
+                if (!selected.contains(actor) && canSelect) {
                     actor.clearActions();
                     actor.addAction(Actions.scaleTo(1, 1, 0.25f));
                 }
@@ -118,12 +116,11 @@ public class Board extends BorderedGrid {
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                if (!canSelect) {
+                if (!canSelect || componentsToSelect > 0) {
                     return;
                 }
 
-                selected1 = null;
-                selected2 = null;
+                selected.clear();
 
                 int ax = actor.getComponent().getX();
                 int ay = actor.getComponent().getY();
@@ -195,48 +192,55 @@ public class Board extends BorderedGrid {
                     return;
                 }
 
-                //Select 1st Component
-                if (selected1 == null) {
-                    selected1 = actor;
-                    selected1.addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
+//                //Select 1st Component
+//                if (selected.isEmpty()) {
+//                    selected.add(actor);
+//                    selected.get(0).addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
+//                    return;
+//                }
+                //Selected already selected Component
+                if (selected.contains(actor)) {
+                    selected.get(0).clearActions();
+                    selected.get(0).addAction(Actions.scaleTo(1, 1, 0.25f));
+                    selected.get(0).addAction(Actions.sequence(Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
+                    selected.remove(actor);
                     return;
+                } else {
+                    selected.add(actor);
+                    selected.get(0).addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
                 }
 
-                //Selected already selected Component
-                if (actor == selected1) {
-                    selected1.clearActions();
-                    selected1.addAction(Actions.scaleTo(1, 1, 0.25f));
-                    selected1.addAction(Actions.sequence(Actions.rotateTo(0, 0.25f), Actions.run(removeActions)));
+                if (componentsToSelect != 0 || selected.size() <= 1) {
                     return;
                 }
 
                 //Selected New Actor
                 int ax = actor.getComponent().getX();
                 int ay = actor.getComponent().getY();
-                int sx = selected1.getComponent().getX();
-                int sy = selected1.getComponent().getY();
+                int sx = selected.get(0).getComponent().getX();
+                int sy = selected.get(0).getComponent().getY();
 
                 //Check if can switch
                 if (isNeighbor(ax, ay, sx, sy) && canSelect) {
                     //switch anim
                     canSelect = false;
-                    selected2 = actor;
-                    selected2.addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
-                    float s1x = selected1.getX();
-                    float s1y = selected1.getY();
-                    float s2x = selected2.getX();
-                    float s2y = selected2.getY();
-                    selected2.clearActions();
-                    selected1.clearActions();
+                    selected.add(actor);
+                    selected.get(1).addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
+                    float s1x = selected.get(0).getX();
+                    float s1y = selected.get(0).getY();
+                    float s2x = selected.get(1).getX();
+                    float s2y = selected.get(1).getY();
+                    selected.get(0).clearActions();
+                    selected.get(1).clearActions();
 
-                    Move move = new MatchComponentsMove(game.getCurrentProfile().getUID(), selected1.getComponent(), selected2.getComponent());
+                    Move move = new MatchComponentsMove(game.getCurrentProfile().getUID(), selected.get(0).getComponent(), selected.get(1).getComponent());
                     boolean isLegalMove = GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move);
                     if (!isLegalMove) {
                         List<Action> as = new ArrayList<>();
                         Action a = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
                         Action a2 = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f), Actions.run(removeActions));
-                        a.setActor(selected2);
-                        a2.setActor(selected1);
+                        a.setActor(selected.get(1));
+                        a2.setActor(selected.get(0));
                         as.add(a);
                         as.add(a2);
                         matchAnimations.add(as);
@@ -244,8 +248,8 @@ public class Board extends BorderedGrid {
                         List<Action> as = new ArrayList<>();
                         Action a = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s1x, s1y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
                         Action a2 = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(s2x, s2y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
-                        a.setActor(selected2);
-                        a2.setActor(selected1);
+                        a.setActor(selected.get(1));
+                        a2.setActor(selected.get(0));
                         as.add(a);
                         as.add(a2);
                         matchAnimations.add(as);
@@ -255,14 +259,27 @@ public class Board extends BorderedGrid {
                     if (!canSelect) {
                         return;
                     }
-                    selected1.clearActions();
-                    selected1.addAction(Actions.scaleTo(1, 1, 0.25f));
-                    selected1.addAction(Actions.rotateTo(0, 0.25f));
-                    selected1 = actor;
-                    selected1.addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
+                    for (ComponentActor componentActor : selected) {
+                        componentActor.clearActions();
+                        componentActor.addAction(Actions.scaleTo(1, 1, 0.25f));
+                        componentActor.addAction(Actions.rotateTo(0, 0.25f));
+                        componentActor.clearActions();
+                    }
+                    selected.clear();
+                    selected.add(actor);
+                    selected.get(0).addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
                 }
             }
         });
+    }
+
+    public void startAbilitySelection(int amount) {
+        this.selected.clear();
+        this.componentsToSelect = amount;
+    }
+
+    public boolean didCompleteSelection() {
+        return this.componentsToSelect == this.selected.size();
     }
 
     public boolean attemptedMove() {
@@ -316,5 +333,9 @@ public class Board extends BorderedGrid {
             }
         }
         return false;
+    }
+
+    public List<ComponentActor> getSelected() {
+        return selected;
     }
 }

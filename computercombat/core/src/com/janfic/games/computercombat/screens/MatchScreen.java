@@ -202,7 +202,7 @@ public class MatchScreen implements Screen {
 
         // Accept Opponent / Server sent move
         listenForServerMessage();
-        
+
         // Check if player attempted MatchComponentsMove
         playerMatchComponentsMoveCheck();
 
@@ -214,6 +214,9 @@ public class MatchScreen implements Screen {
     private void playerUseAbilityMoveCheck() {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             if (softwareActor.activatedAbility()) {
+                if (softwareActor.getSoftware().getAbility().getSelectComponents() > 0) {
+                    
+                }
                 UseAbilityMove move = new UseAbilityMove(
                         game.getCurrentProfile().getUID(),
                         softwareActor.getSoftware(),

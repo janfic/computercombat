@@ -19,6 +19,7 @@ public class ComponentActor extends Actor {
     TextureRegion region;
     ComponentCollectActor collectedActor;
     Component component;
+    boolean isSelected;
 
     public static TextureAtlas componentAtlas;
 
@@ -67,5 +68,4 @@ public class ComponentActor extends Actor {
     public ComponentCollectActor getCollectedRegion() {
         return collectedActor;
     }
-
 }

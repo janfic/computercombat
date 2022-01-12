@@ -63,7 +63,6 @@ public class CardInfoWindow extends Window {
             this.midSection = this.add(abilityInfo).pad(2).grow();
         } else {
             this.midSection = this.add(softwareInfo).pad(2).grow();
-
         }
         this.add(rightButton).expandY().row();
         TextButton okayButton = new TextButton("Close", skin);
