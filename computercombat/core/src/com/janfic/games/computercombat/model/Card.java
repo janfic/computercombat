@@ -158,6 +158,9 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
             }
         } else {
             this.health -= damage;
+            if (health < 0) {
+                health = 0;
+            }
         }
         return damage;
     }

@@ -60,7 +60,7 @@ public class AttackAnimation implements MoveAnimation {
                     );
                     Action attackedAction;
                     int armorDecrease = attacked.getArmor() > 0 ? Math.min(attacked.getArmor(), entry.key.getAttack()) : 0;
-                    int healthDecrease = entry.key.getAttack() - armorDecrease;
+                    int healthDecrease = attacked.getHealth() <= entry.key.getAttack() - armorDecrease ? attacked.getHealth() : entry.key.getAttack() - armorDecrease;
                     attackedAction = Actions.sequence(
                             Actions.delay(0.5f),
                             Actions.color(Color.RED),
