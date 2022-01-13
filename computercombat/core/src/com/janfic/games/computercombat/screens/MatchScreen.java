@@ -214,19 +214,22 @@ public class MatchScreen implements Screen {
     private void playerUseAbilityMoveCheck() {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             if (softwareActor.activatedAbility()) {
-                if (softwareActor.getSoftware().getAbility().getSelectComponents() > 0) {
-                    
+                if (softwareActor.getSoftware().getAbility().getSelectComponents() > 0 && board.isSelecting() == false) {
+                    board.startAbilitySelection(softwareActor.getSoftware().getAbility().getSelectComponents());
                 }
-                UseAbilityMove move = new UseAbilityMove(
-                        game.getCurrentProfile().getUID(),
-                        softwareActor.getSoftware(),
-                        softwareActor.getSelectedComponents(),
-                        softwareActor.getSelectedSoftwares()
-                );
-                Json json = new Json();
-                softwareActor.setActivatedAbility(false);
-                if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
-                    game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
+                if (board.didCompleteSelection()) {
+                    UseAbilityMove move = new UseAbilityMove(
+                            game.getCurrentProfile().getUID(),
+                            softwareActor.getSoftware(),
+                            board.getSelectedComponents(),
+                            softwareActor.getSelectedSoftwares()
+                    );
+                    Json json = new Json();
+                    softwareActor.setActivatedAbility(false);
+                    if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
+                        game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
+                    }
+                    board.endAbilitySelection();
                 }
             }
         }

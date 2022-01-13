@@ -192,13 +192,6 @@ public class Board extends BorderedGrid {
                     return;
                 }
 
-//                //Select 1st Component
-//                if (selected.isEmpty()) {
-//                    selected.add(actor);
-//                    selected.get(0).addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
-//                    return;
-//                }
-                //Selected already selected Component
                 if (selected.contains(actor)) {
                     selected.get(0).clearActions();
                     selected.get(0).addAction(Actions.scaleTo(1, 1, 0.25f));
@@ -278,8 +271,17 @@ public class Board extends BorderedGrid {
         this.componentsToSelect = amount;
     }
 
+    public boolean isSelecting() {
+        return this.componentsToSelect > 0;
+    }
+
     public boolean didCompleteSelection() {
         return this.componentsToSelect == this.selected.size();
+    }
+
+    public void endAbilitySelection() {
+        this.selected.clear();
+        this.componentsToSelect = 0;
     }
 
     public boolean attemptedMove() {
@@ -337,5 +339,13 @@ public class Board extends BorderedGrid {
 
     public List<ComponentActor> getSelected() {
         return selected;
+    }
+
+    public List<Component> getSelectedComponents() {
+        List<Component> componentsSelected = new ArrayList<>();
+        for (ComponentActor componentActor : selected) {
+            componentsSelected.add(componentActor.getComponent());
+        }
+        return componentsSelected;
     }
 }
