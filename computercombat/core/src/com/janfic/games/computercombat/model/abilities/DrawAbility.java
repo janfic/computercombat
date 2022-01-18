@@ -3,7 +3,7 @@ package com.janfic.games.computercombat.model.abilities;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
-import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation;

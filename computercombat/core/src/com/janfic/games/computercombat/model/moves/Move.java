@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
-import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.abilities.AttackAbility;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation;
 import com.janfic.games.computercombat.model.animations.CollectAnimation;

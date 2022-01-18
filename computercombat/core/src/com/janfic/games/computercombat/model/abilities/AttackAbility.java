@@ -6,7 +6,7 @@ import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.Computer;
-import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.animations.AttackAnimation;
 import com.janfic.games.computercombat.model.animations.ReceiveDamageAnimation;
 import com.janfic.games.computercombat.model.moves.Move;

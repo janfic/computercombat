@@ -1,8 +1,13 @@
-package com.janfic.games.computercombat.model;
+package com.janfic.games.computercombat.model.match;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.Component;
+import com.janfic.games.computercombat.model.Computer;
+import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.Profile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

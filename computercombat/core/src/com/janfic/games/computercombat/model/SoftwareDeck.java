@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model;
 
+import com.janfic.games.computercombat.model.match.MatchState;
 import java.util.List;
 
 /**

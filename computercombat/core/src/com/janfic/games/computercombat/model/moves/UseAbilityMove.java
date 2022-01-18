@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
-import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.match.MatchState;
 import java.util.List;
 
 public class UseAbilityMove extends Move implements Json.Serializable {

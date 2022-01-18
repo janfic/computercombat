@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model;
 
+import com.janfic.games.computercombat.model.match.MatchState;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Objects;
  * @author Jan Fic
  */
 public abstract class Card implements Json.Serializable, Comparable<Card> {
-
+    
     protected int id, matchID;
     protected int health, armor, attack, magic;
     protected int level;

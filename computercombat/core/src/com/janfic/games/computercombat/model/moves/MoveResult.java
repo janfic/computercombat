@@ -2,7 +2,7 @@ package com.janfic.games.computercombat.model.moves;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.match.MatchState;
 import java.util.List;
 
 public class MoveResult {

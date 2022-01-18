@@ -1,5 +1,7 @@
 package com.janfic.games.computercombat.model;
 
+import com.janfic.games.computercombat.model.match.MatchState;
+
 /**
  *
  * @author Jan Fic

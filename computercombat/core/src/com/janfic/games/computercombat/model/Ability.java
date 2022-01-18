@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model;
 
+import com.janfic.games.computercombat.model.match.MatchState;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;

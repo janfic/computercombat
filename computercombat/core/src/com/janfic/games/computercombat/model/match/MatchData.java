@@ -1,5 +1,7 @@
-package com.janfic.games.computercombat.model;
+package com.janfic.games.computercombat.model.match;
 
+import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.Move;
 import java.util.ArrayList;

@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model;
 
+import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 
 /**

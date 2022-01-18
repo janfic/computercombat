@@ -1,6 +1,6 @@
 package com.janfic.games.computercombat.network.client;
 
-import com.janfic.games.computercombat.model.MatchState;
+import com.janfic.games.computercombat.model.match.MatchState;
 
 /**
  *
