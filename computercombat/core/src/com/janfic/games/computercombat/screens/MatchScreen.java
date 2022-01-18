@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.screens;
 
+import com.janfic.games.computercombat.model.match.MatchState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
