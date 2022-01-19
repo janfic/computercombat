@@ -17,6 +17,7 @@ public class MatchData {
     List<List<MoveResult>> moveResults;
     boolean winner;
     Timestamp starttime, endtime;
+    
 
     public MatchData(Profile player1, Profile player2, Deck player1Deck, Deck player2Deck) {
         this.moves = new ArrayList<>();

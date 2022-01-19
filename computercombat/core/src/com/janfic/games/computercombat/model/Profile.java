@@ -19,6 +19,7 @@ public class Profile implements Serializable {
     private String email;
     private List<Deck> decks;
     private Deck collection;
+    private int packets;
 
     private Profile() {
         this("defaultUID");

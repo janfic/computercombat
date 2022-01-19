@@ -121,7 +121,13 @@ public class PlayScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 game.pushScreen(new DecksScreen(game));
             }
+        });
 
+        upgradeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.pushScreen(new MatchResultsScreen(game, null));
+            }
         });
     }
 
