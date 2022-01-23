@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.*;
 import com.janfic.games.computercombat.model.*;
+import com.janfic.games.computercombat.model.match.MatchResults;
 import com.janfic.games.computercombat.model.moves.*;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.network.Message;
@@ -196,8 +197,7 @@ public class MatchScreen implements Screen {
         updateInfoText();
 
         // Game Over Check and Finish
-        gameOverCheck();
-
+        //gameOverCheck();
         // Render Animations that are queued
         animations(delta);
 
@@ -261,13 +261,19 @@ public class MatchScreen implements Screen {
 
     private void listenForServerMessage() {
         if (game.getServerAPI().hasMessage() && isAnimating() == false) {
-            Message response = game.getServerAPI().readMessage();
-            if (response.type == Type.MOVE_ACCEPT) {
+            Message serverMessage = game.getServerAPI().readMessage();
+            System.out.println(serverMessage.getType());
+            if (serverMessage.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
                 json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
-                List<MoveResult> results = json.fromJson(List.class, response.getMessage());
+                List<MoveResult> results = json.fromJson(List.class, serverMessage.getMessage());
                 animate(results, this);
-            } else if (response.type == Type.PING) {
+            } else if (serverMessage.type == Type.PING) {
+            } else if (serverMessage.type == Type.MATCH_RESULTS) {
+                Json json = new Json();
+                json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
+                MatchResults results = json.fromJson(MatchResults.class, serverMessage.getMessage());
+                gameOver(results);
             }
         }
     }
@@ -297,7 +303,7 @@ public class MatchScreen implements Screen {
         }
     }
 
-    private void gameOverCheck() {
+    private void gameOver(MatchResults results) {
         if (matchData.getCurrentState().isGameOver && checkGameOver) {
             infoLabel.setText("GAME OVER! \n " + matchData.getCurrentState().winner.getName() + " wins!");
             board.setTouchable(Touchable.disabled);
@@ -312,6 +318,7 @@ public class MatchScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     game.popScreen();
+                    game.pushScreen(new MatchResultsScreen(game, results));
                 }
             });
             table.row();
@@ -321,6 +328,7 @@ public class MatchScreen implements Screen {
             window.setPosition(mainStage.getWidth() / 4, mainStage.getHeight() / 4);
             this.mainStage.addActor(window);
             checkGameOver = false;
+
         }
     }
 

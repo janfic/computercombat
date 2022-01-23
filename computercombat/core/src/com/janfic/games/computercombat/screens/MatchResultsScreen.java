@@ -3,11 +3,15 @@ package com.janfic.games.computercombat.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
@@ -15,6 +19,9 @@ import com.janfic.games.computercombat.actors.BorderedArea;
 import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.actors.Panel;
 import com.janfic.games.computercombat.model.match.MatchResults;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 /**
  *
@@ -66,7 +73,7 @@ public class MatchResultsScreen implements Screen {
         matchPanel.top();
         matchPanel.pad(5);
 
-        Label winOrLossLabel = new Label("Victory", skin);
+        Label winOrLossLabel = new Label(this.matchResults.winner ? "Victory" : "Defeat", skin);
         winOrLossLabel.setAlignment(Align.center);
         matchPanel.add(winOrLossLabel).colspan(3).growX().row();
 
@@ -77,19 +84,19 @@ public class MatchResultsScreen implements Screen {
         matchPanel.add(new Label("vs.", skin));
         matchPanel.add(opponentIcon).width(64).height(64).row();
 
-        Label player1Label = new Label("Player 1", skin);
+        Label player1Label = new Label(this.game.getCurrentProfile().getName(), skin);
         player1Label.setAlignment(Align.center);
-        Label player2Label = new Label("Player 2", skin);
+        Label player2Label = new Label(this.matchResults.opponent.getName(), skin);
         player2Label.setAlignment(Align.center);
         matchPanel.add(player1Label).width(64);
         matchPanel.add().pad(10);
         matchPanel.add(player2Label).width(64).row();
 
-        Label matchStartLabel = new Label("Match Start: 12:00PM", skin);
-        Label matchEndLabel = new Label("Match End: 12:30PM", skin);
-
+        Label matchStartLabel = new Label(getTime(this.matchResults.start) + " - " + getTime(this.matchResults.end), skin);
+        long seconds = this.matchResults.start.toLocalDateTime().until(this.matchResults.end.toLocalDateTime(), SECONDS);
+        Label length = new Label("(" + (seconds / 60) + ":" + (seconds % 60) + ")", skin);
         matchPanel.add(matchStartLabel).colspan(3).row();
-        matchPanel.add(matchEndLabel).colspan(3).row();
+        matchPanel.add(length).colspan(3).row();
 
         Panel rewardsPanel = new Panel(skin);
         rewardsPanel.defaults().space(3);
@@ -98,12 +105,30 @@ public class MatchResultsScreen implements Screen {
 
         Label rewardsLabel = new Label("Rewards", skin);
         rewardsLabel.setAlignment(Align.center);
-        rewardsPanel.add(rewardsLabel).growX().row();
+        rewardsPanel.add(rewardsLabel).growX().colspan(2).padBottom(15).row();
+
+        for (String string : matchResults.rewards.keySet()) {
+            Image packetsImage = new Image(game.getAssetManager().get("texture_packs/components.atlas", TextureAtlas.class).findRegion("network"));
+            Label networkAmount = new Label("" + matchResults.rewards.get(string), skin);
+            rewardsPanel.add(new Label(string, skin)).expandX().center().colspan(2).row();
+            rewardsPanel.add(packetsImage).width(24).height(24).right();
+            rewardsPanel.add(networkAmount).padLeft(5).left().row();
+        }
+        Image packetsImage = new Image(game.getAssetManager().get("texture_packs/components.atlas", TextureAtlas.class).findRegion("network"));
+        rewardsPanel.add(new Label("Total", skin)).expandX().center().colspan(2).row();
+        rewardsPanel.add(packetsImage).width(24).height(24).right();
+        rewardsPanel.add(new Label("" + matchResults.totalPacketsEarned, skin)).padLeft(5).left().row();
 
         mainTable.add(matchPanel).grow();
         mainTable.add(rewardsPanel).grow().row();
 
         TextButton okayButton = new TextButton("Okay", skin);
+        okayButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.popScreen();
+            }
+        });
         mainTable.add(okayButton).colspan(2).width(100).expandX().pad(5).spaceBottom(5);
     }
 
@@ -131,6 +156,12 @@ public class MatchResultsScreen implements Screen {
 
     @Override
     public void dispose() {
+    }
+
+    private String getTime(Timestamp time) {
+        String r = "";
+        LocalDateTime dt = time.toLocalDateTime();
+        return "" + (dt.getHour() % 12) + ":" + dt.getMinute() + (dt.getHour() > 12 ? "PM" : "AM");
     }
 
 }

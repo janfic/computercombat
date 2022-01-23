@@ -6,6 +6,7 @@ import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.match.Match;
 import com.janfic.games.computercombat.model.match.MatchData;
+import com.janfic.games.computercombat.model.match.MatchResults;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
@@ -16,6 +17,7 @@ import com.janfic.games.computercombat.util.ObjectMapSerializer;
 import java.io.IOException;
 import java.util.List;
 import java.sql.Timestamp;
+import java.util.HashMap;
 
 /**
  *
@@ -64,7 +66,7 @@ public class ServerMatchRoom {
                     Message matchData1 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(player1.getProfile().getUID())));
                     Message matchData2 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(player2.getProfile().getUID())));
                     Timestamp starttime = new Timestamp(System.currentTimeMillis());
-                    
+
                     player1.sendMessage(matchData1);
                     player2.sendMessage(matchData2);
 
@@ -78,7 +80,6 @@ public class ServerMatchRoom {
 
                         float timeStart = System.nanoTime();
                         float delta = 0;
-                        boolean disconnected = false;
                         while (currentPlayer.hasMessage() == false && currentPlayer.getSocket().isConnected()) {
                             delta = System.nanoTime() - timeStart;
                             if (delta / 1000000000f >= 10) {
@@ -87,7 +88,6 @@ public class ServerMatchRoom {
                                     otherPlayer.sendMessage(new Message(Type.PING, "PING"));
                                     timeStart = System.nanoTime();
                                 } catch (Exception e) {
-                                    disconnected = true;
                                     isGameOver = true;
                                     break;
                                 }
@@ -122,22 +122,47 @@ public class ServerMatchRoom {
                                 Message notValidMessage = new Message(Type.MOVE_REJECT, "NOT VALID MOVE");
                                 currentPlayer.sendMessage(notValidMessage);
                             }
-                            
+
                         }
-                        
+
                     }
                     MatchState lastState = matchData.getMatchStates().get(matchData.getMatchStates().size() - 1);
-                    if(lastState.winner != null) {
+                    if (lastState.winner != null) {
                         matchData.setWinner(lastState.winner.getUID() == player2.getProfile().getUID());
-                    }
-                    else {
+                    } else {
                         matchData.setWinner(false);
                     }
-                    
+
                     Timestamp endtime = new Timestamp(System.currentTimeMillis());
                     matchData.setStartTime(starttime);
                     matchData.setEndTime(endtime);
-                    
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    HashMap<String, String> rewards1 = new HashMap<>();
+                    HashMap<String, String> rewards2 = new HashMap<>();
+                    rewards1.put("Collected", "" + matchData.getRewards().get(player1.getProfile().getUID()));
+                    rewards2.put("Collected", "" + matchData.getRewards().get(player2.getProfile().getUID()));
+                    if (matchData.getWinner()) {
+                        matchData.getRewards().put(player2.getProfile().getUID(), matchData.getRewards().get(player2.getProfile().getUID()) + 25);
+                        rewards2.put("Victory Bonus", "" + 25);
+                    } else {
+                        matchData.getRewards().put(player1.getProfile().getUID(), matchData.getRewards().get(player1.getProfile().getUID()) + 25);
+                        rewards1.put("Victory Bonus", "" + 25);
+                    }
+
+                    MatchResults results1 = new MatchResults(matchData.getRewards().get(player1.getProfile().getUID()), starttime, endtime, player2.getProfile(), !matchData.getWinner(), rewards1);
+                    MatchResults results2 = new MatchResults(matchData.getRewards().get(player2.getProfile().getUID()), starttime, endtime, player1.getProfile(), matchData.getWinner(), rewards2);
+
+                    Message results1Message = new Message(Type.MATCH_RESULTS, json.toJson(results1));
+                    Message results2Message = new Message(Type.MATCH_RESULTS, json.toJson(results2));
+                    player1.sendMessage(results1Message);
+                    player2.sendMessage(results2Message);
+
                     SQLAPI.getSingleton().recordMatchData(matchData);
                 } catch (IOException e) {
                 }
