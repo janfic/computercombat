@@ -19,6 +19,7 @@ import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.abilities.DrawAbility;
 import com.janfic.games.computercombat.model.components.RAMComponent;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.network.client.ServerAPI;
 import com.janfic.games.computercombat.screens.LoadingScreen;
 import com.janfic.games.computercombat.util.ObjectMapSerializer;
@@ -83,6 +84,7 @@ public class ComputerCombatGame extends Game {
         System.out.println("here");
         batch.dispose();
         serverAPI.getSocket().dispose();
+        SQLAPI.getSingleton().dispose();
     }
 
     @Override

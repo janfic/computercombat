@@ -163,7 +163,12 @@ public class ServerMatchRoom {
                     player1.sendMessage(results1Message);
                     player2.sendMessage(results2Message);
 
-                    SQLAPI.getSingleton().recordMatchData(matchData);
+                    player1.getProfile().setPackets(player1.getProfile().getPackets() + matchData.getRewards().get(player1.getProfile().getUID()));
+                    player2.getProfile().setPackets(player2.getProfile().getPackets() + matchData.getRewards().get(player2.getProfile().getUID()));
+
+                    int updates = SQLAPI.getSingleton().recordMatchData(matchData);
+                    SQLAPI.getSingleton().saveProfile(player1.getProfile());
+                    SQLAPI.getSingleton().saveProfile(player2.getProfile());
                 } catch (IOException e) {
                 }
                 isGameOver = true;

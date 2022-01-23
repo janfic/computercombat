@@ -30,6 +30,7 @@ public class Profile implements Serializable {
         this.decks = new ArrayList<>();
         this.collection = new Deck("Collection", 0);
         this.activePlayer = HumanPlayer.class.getName();
+        this.packets = 0;
     }
 
     public String getName() {
@@ -66,6 +67,14 @@ public class Profile implements Serializable {
         return null;
     }
 
+    public int getPackets() {
+        return packets;
+    }
+
+    public void setPackets(int packets) {
+        this.packets = packets;
+    }
+
     public Deck getCollection() {
         return collection;
     }
@@ -89,6 +98,7 @@ public class Profile implements Serializable {
         json.writeValue("decks", this.decks);
         json.writeValue("collection", this.collection);
         json.writeValue("activePlayer", this.activePlayer);
+        json.writeValue("packets", this.packets);
     }
 
     @Override
@@ -98,5 +108,6 @@ public class Profile implements Serializable {
         this.decks = json.readValue("decks", List.class, jv);
         this.collection = json.readValue("collection", Deck.class, jv);
         this.activePlayer = json.readValue("activePlayer", String.class, jv);
+        this.packets = json.readValue("packets", Integer.class, jv) == null ? 0 : json.readValue("packets", Integer.class, jv);
     }
 }

@@ -70,7 +70,7 @@ public class SQLAPI {
     }
 
     public Map<Card, Integer> getPlayerOwnedCards(String uid) {
-
+        System.out.println("[SERVER][MYSQL]: Querying for Player collection");
         Map<Card, Integer> cards = new HashMap<>();
 
         try {
@@ -126,6 +126,7 @@ public class SQLAPI {
     }
 
     public Software getCardById(int id) {
+        System.out.println("[SERVER][MYSQL]: Querying for Card Data");
         try {
             String sql = "SELECT card.* \n"
                     + "FROM card \n"
@@ -173,6 +174,7 @@ public class SQLAPI {
     }
 
     public Ability getAbilityByID(int id) {
+        System.out.println("[SERVER][MYSQL]: Querying for Ability Data");
         try {
             String sql = "SELECT * \n"
                     + "FROM ability \n"
@@ -200,6 +202,7 @@ public class SQLAPI {
     }
 
     public List<Deck> getPlayerDecks(String uid) {
+        System.out.println("[SERVER][MYSQL]: Querying for Player Decks Data");
         List<Deck> decks = new ArrayList<>();
 
         try {
@@ -238,6 +241,7 @@ public class SQLAPI {
     }
 
     public void savePlayerDeck(Deck deck, String uid) {
+        System.out.println("[SERVER][MYSQL]: Updating Player Deck Data");
         try {
             String sql = "SELECT * FROM deck\n"
                     + "WHERE deck.id = " + deck.getID() + ";";
@@ -269,7 +273,7 @@ public class SQLAPI {
             rows = statement.executeUpdate(sql);
 
             System.out.println(deck.getStack());
-            
+
             for (String card : deck.getCards().keySet()) {
                 sql = "INSERT INTO deck_has_card (deck_id, card_id, amount) \n"
                         + "VALUES (" + deck.getID() + "," + card + "," + deck.getCardCount(Integer.parseInt(card)) + ");";
@@ -284,6 +288,7 @@ public class SQLAPI {
     }
 
     public void deletePlayerDeck(Deck deck, String uid) {
+        System.out.println("[SERVER][MYSQL]: Deleting Player Deck");
         try {
             String sql = "SELECT * FROM deck\n"
                     + "WHERE deck.id = " + deck.getID() + ";";
@@ -314,14 +319,13 @@ public class SQLAPI {
     }
 
     public Profile loadProfile(String uid) {
+        System.out.println("[SERVER][MYSQL]: Loading Player Profile");
         try {
             System.out.println(uid);
 
             String sql = "SELECT *\n"
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + uid + "';";
-
-            System.out.println(sql);
 
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
@@ -331,6 +335,7 @@ public class SQLAPI {
             while (rs.next()) {
                 profile.setName(rs.getString("username"));
                 profile.setEmail(rs.getString("email"));
+                profile.setPackets(rs.getInt("packets"));
             }
             return profile;
         } catch (Exception e) {
@@ -340,6 +345,7 @@ public class SQLAPI {
     }
 
     public void saveProfile(Profile p) {
+        System.out.println("[SERVER][MYSQL]: Saving Player Profile");
         try {
 
             String sql = "SELECT uid\n"
@@ -352,22 +358,14 @@ public class SQLAPI {
             boolean exists = rs.next();
 
             if (exists) {
-                System.out.println("SAVE PROFILE");
-
+                sql = "UPDATE profile SET packets = " +  p.getPackets() + " WHERE profile.uid = '" + p.getUID() + "';";
             } else {
-                sql = "INSERT INTO profile (uid, username, email) \n"
-                        + "VALUES ('" + p.getUID() + "', '" + p.getName() + "', '" + p.getEmail() + "');";
+                sql = "INSERT INTO profile (uid, username, email, packets) \n"
+                        + "VALUES ('" + p.getUID() + "', '" + p.getName() + "', '" + p.getEmail() + "', " + p.getPackets() + ");";
             }
             //profile table
             statement = connection.createStatement();
             int rowsUpdated = statement.executeUpdate(sql);
-
-            //decks
-            for (Deck deck : p.getDecks()) {
-
-            }
-
-            //cards
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -398,11 +396,14 @@ public class SQLAPI {
         }
     }
 
-    public void recordMatchData(MatchData data) {
+    public int recordMatchData(MatchData data) {
+        System.out.println("[SERVER][MYSQL]: Recording Match Data");
         Json json = new Json(JsonWriter.OutputType.json);
+        int r = 0;
         try {
+            r = 0;
             // Insert New Match Record
-            String sql = "INSERT INTO computer_combat.`match` (player1_uid, player2_uid, deck1_id, deck2_id, winner, starttime, endtime)\n"
+            String sql = "INSERT INTO computer_combat.`match` (player1_uid, player2_uid, deck1_id, deck2_id, winner, starttime, endtime, packets_player1, packets_player2)\n"
                     + "VALUES ('"
                     + data.getPlayer1().getUID() + "' , '"
                     + data.getPlayer2().getUID() + "' , "
@@ -410,7 +411,10 @@ public class SQLAPI {
                     + data.getPlayer2Deck().getID() + " , "
                     + (data.getWinner() ? 1 : 0) + " , "
                     + "str_to_date('" + data.getStartTime().toString() + "', '%Y-%m-%d %H:%i:%s.%f'), "
-                    + "str_to_date('" + data.getEndTime().toString() + "', '%Y-%m-%d %H:%i:%s.%f'));";
+                    + "str_to_date('" + data.getEndTime().toString() + "', '%Y-%m-%d %H:%i:%s.%f'),"
+                    + data.getRewards().get(data.getPlayer1().getUID()) + ","
+                    + data.getRewards().get(data.getPlayer2().getUID()) + ""
+                    + ");";
 
             Statement statement = connection.createStatement();
             int updates = statement.executeUpdate(sql);
@@ -426,6 +430,7 @@ public class SQLAPI {
                 List<MoveResult> moveResults = data.getMoveResults().get(i);
                 sql = "INSERT INTO move_results (data) VALUES ('" + json.toJson(moveResults) + "');";
                 updates = statement.executeUpdate(sql);
+                r += updates;
 
                 // Get Move Result ID
                 sql = "SELECT LAST_INSERT_ID();";
@@ -438,6 +443,7 @@ public class SQLAPI {
                 sql = "INSERT INTO move (data, match_id, move_results_id, move_number) VALUES ('"
                         + json.toJson(move) + "'," + match_id + "," + move_results_id + "," + (i + 1) + ");";
                 updates = statement.executeUpdate(sql);
+                r += updates;
             }
 
             // Insert Match States
@@ -449,8 +455,25 @@ public class SQLAPI {
                         + json.toJson(state)
                         + "');";
                 updates = statement.executeUpdate(sql);
+                r += updates;
             }
 
+            return updates;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return r;
+        }
+    }
+
+    public void dispose() {
+        closeConnection();
+        singleton = null;
+    }
+
+    public void closeConnection() {
+        try {
+            this.connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

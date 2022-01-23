@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +61,7 @@ public class Deck implements Serializable {
             cards.remove("" + card.getID());
         }
         for (int i = 0; i < amount; i++) {
-            stack.remove((Integer)card.getID());
+            stack.remove((Integer) card.getID());
         }
     }
 
@@ -108,17 +109,41 @@ public class Deck implements Serializable {
     @Override
     public void write(Json json) {
         json.writeValue("name", this.name);
-        json.writeValue("cards", this.cards);
-        json.writeValue("stack", this.stack);
+        json.writeArrayStart("cards");
+        for (String string : cards.keySet()) {
+            json.writeValue(string);
+            json.writeValue(cards.get(string));
+        }
+        json.writeArrayEnd();
+        //json.writeValue("cards", this.cards);
+//        json.writeValue("stack", this.stack);
+        json.writeArrayStart("stack");
+        for (Integer integer : stack) {
+            json.writeValue(integer);
+        }
+        json.writeArrayEnd();
         json.writeValue("id", this.id);
     }
 
     @Override
     public void read(Json json, JsonValue jv) {
         this.name = json.readValue("name", String.class, jv);
-        this.cards = json.readValue("cards", HashMap.class, jv);
-        this.stack = json.readValue("stack", List.class, jv);
         this.id = (json.readValue("id", int.class, jv) == null ? 0 : json.readValue("id", int.class, jv));
+        int[] cardData = json.readValue("cards", int[].class, jv);
+        this.cards = new HashMap<>();
+        if (cardData != null) {
+            for (int i = 0; i < cardData.length; i += 2) {
+                this.cards.put("" + cardData[i], cardData[i + 1]);
+            }
+        }
+        int[] stackData = json.readValue("stack", int[].class, jv);
+        this.stack = new ArrayList<>();
+        if (stackData != null) {
+            for (int i : stackData) {
+                this.stack.add(i);
+            }
+        }
+
     }
 
 }

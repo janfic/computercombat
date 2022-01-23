@@ -62,8 +62,6 @@ public class AWSServices {
     }
 
     public String createUser(String username, String email, String password) {
-        System.out.println("HERE");
-
         AttributeType emailAttribute = AttributeType.builder().name("email").value(email).build();
 
         SignUpRequest request = SignUpRequest.builder()
@@ -117,7 +115,7 @@ public class AWSServices {
     }
 
     public Message userLogin(String username, String password) {
-
+        System.out.println("[SERVER][AWS]: Attempting Login...");
         Map<String, String> params = new HashMap<>();
         params.put("USERNAME", username);
         params.put("PASSWORD", password);
@@ -140,14 +138,18 @@ public class AWSServices {
                     data = sub;
                 }
             }
+            System.out.println("[SERVER][AWS]: Login Successful");
+
             Message m = new Message(Type.PROFILE_INFO, data);
             return m;
-
         } catch (NotAuthorizedException e) {
+            System.out.println("[SERVER][AWS]: Login Failed");
             return new Message(Type.NO_AUTH, "NO AUTH");
         } catch (UserNotConfirmedException e) {
+            System.out.println("[SERVER][AWS]: Needs Verification");
             return new Message(Type.VERIFY_WITH_CODE, "Please use verification code");
         } catch (AwsServiceException | SdkClientException e) {
+            System.out.println("[SERVER][AWS]: Login Failed due to error.");
             e.printStackTrace();
         }
         return null;
