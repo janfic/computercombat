@@ -47,8 +47,7 @@ public class PlayScreen implements Screen {
     
     @Override
     public void show() {
-        game.getCurrentProfile().getDecks().clear();
-        game.getCurrentProfile().getDecks().addAll(SQLAPI.getSingleton().getPlayerDecks(game.getCurrentProfile().getUID()));
+        this.game.setCurrentProfile(SQLAPI.getSingleton().loadProfile(game.getCurrentProfile().getUID()));
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
         Gdx.input.setInputProcessor(stage);
@@ -129,13 +128,6 @@ public class PlayScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.pushScreen(new DecksScreen(game));
-            }
-        });
-        
-        upgradeButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.pushScreen(new MatchResultsScreen(game, null));
             }
         });
     }

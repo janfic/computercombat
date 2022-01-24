@@ -329,7 +329,6 @@ public class DecksScreen implements Screen {
 
     private void populateDecks() {
         decks.clearChildren();
-
         List<Deck> playerDecks = SQLAPI.getSingleton().getPlayerDecks(game.getCurrentProfile().getUID());
 
         for (Deck deck : playerDecks) {

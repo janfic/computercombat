@@ -125,6 +125,7 @@ public class MatchState implements Serializable {
                 board += "" + Component.componentToNumber.get(component.getClass());
             }
         }
+        assert (board.length() == 64);
         json.writeValue("componentBoard", board);
     }
 
@@ -149,12 +150,14 @@ public class MatchState implements Serializable {
 //                }
 //            }
 //        }
+        assert (boardString.length() == 64);
         for (int i = 0; i < boardString.length(); i++) {
-            int x = i % 8;
-            int y = i / 8;
+            int x = i / 8;
+            int y = i % 8;
+            System.out.println(x + " " + y);
             try {
                 componentBoard[x][y] = (Component) Component.numberToComponent.get(
-                        Integer.parseInt("" + boardString.charAt(i)))
+                        Integer.parseInt("" + boardString.substring(i, i + 1)))
                         .getConstructor(int.class, int.class).newInstance(x, y);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -19,13 +19,11 @@ import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.actors.DeckActor;
-import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Deck;
-import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.model.abilities.CollectAbility;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -320,6 +318,8 @@ public class QueueScreen implements Screen {
     }
 
     public void populateDecks() {
+        game.getCurrentProfile().getDecks().clear();
+        game.getCurrentProfile().getDecks().addAll(SQLAPI.getSingleton().getPlayerDecks(game.getCurrentProfile().getUID()));
         decks.clearChildren();
         for (Deck deck : game.getCurrentProfile().getDecks()) {
             DeckActor d = new DeckActor(deck, skin);
