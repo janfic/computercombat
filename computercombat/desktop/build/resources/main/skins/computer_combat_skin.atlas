@@ -6,28 +6,28 @@ filter: Nearest,Nearest
 repeat: none
 white-pixel
   rotate: false
-  xy: 32, 230
+  xy: 290, 329
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 board_collector_left
   rotate: false
-  xy: 1, 24
+  xy: 259, 123
   size: 18, 225
   orig: 18, 225
   offset: 0, 0
   index: -1
 board_collector_right
   rotate: false
-  xy: 259, 282
+  xy: 517, 381
   size: 18, 225
   orig: 18, 225
   offset: 0, 0
   index: -1
 border
   rotate: false
-  xy: 517, 749
+  xy: 775, 848
   size: 16, 16
   split: 6, 9, 6, 9
   pad: 7, 7, 7, 7
@@ -36,16 +36,23 @@ border
   index: -1
 border_filled
   rotate: false
-  xy: 21, 233
+  xy: 279, 332
   size: 16, 16
   split: 6, 9, 6, 9
   pad: 7, 7, 7, 7
   orig: 16, 16
   offset: 0, 0
   index: -1
+box_font_12px export
+  rotate: false
+  xy: 1, 60
+  size: 252, 30
+  orig: 252, 30
+  offset: 0, 0
+  index: -1
 button_down
   rotate: false
-  xy: 535, 756
+  xy: 793, 855
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -53,7 +60,7 @@ button_down
   index: -1
 button_over
   rotate: false
-  xy: 775, 984
+  xy: 1, 19
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -61,7 +68,7 @@ button_over
   index: -1
 button_up
   rotate: false
-  xy: 793, 1014
+  xy: 19, 49
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -69,14 +76,14 @@ button_up
   index: -1
 collected_component
   rotate: false
-  xy: 21, 211
+  xy: 255, 88
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 decked_panel
   rotate: false
-  xy: 804, 1010
+  xy: 30, 45
   size: 7, 13
   split: 3, 3, 3, 9
   orig: 7, 13
@@ -84,7 +91,7 @@ decked_panel
   index: -1
 glow_panel
   rotate: false
-  xy: 293, 500
+  xy: 517, 354
   size: 7, 7
   split: 3, 3, 3, 3
   orig: 7, 7
@@ -92,126 +99,126 @@ glow_panel
   index: -1
 grid
   rotate: false
-  xy: 546, 759
+  xy: 551, 600
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
   index: -1
 info_icon
   rotate: false
-  xy: 259, 264
+  xy: 517, 363
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 led_border
   rotate: false
-  xy: 535, 749
+  xy: 793, 848
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
 led_glow
   rotate: false
-  xy: 517, 738
+  xy: 775, 837
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
 led_light
   rotate: false
-  xy: 786, 988
+  xy: 804, 859
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
 left_arrow
   rotate: false
-  xy: 21, 215
+  xy: 279, 314
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
   index: -1
 left_arrow_over
   rotate: false
-  xy: 39, 233
+  xy: 297, 332
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
   index: -1
 left_arrow_pressed
   rotate: false
-  xy: 279, 477
+  xy: 537, 576
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
   index: -1
 lucidaConsole12px_0
   rotate: false
-  xy: 1, 767
+  xy: 1, 608
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaConsole16px_0
   rotate: false
-  xy: 1, 509
+  xy: 1, 350
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax16px_0
   rotate: false
-  xy: 1, 509
+  xy: 1, 350
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax12px_0
   rotate: false
-  xy: 259, 767
+  xy: 259, 608
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax3pt_0
   rotate: false
-  xy: 1, 251
+  xy: 1, 92
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax6px_0
   rotate: false
-  xy: 259, 509
+  xy: 259, 350
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 lucidaFax8px_0
   rotate: false
-  xy: 517, 767
+  xy: 517, 608
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 magnifying_class_icon
   rotate: false
-  xy: 279, 495
+  xy: 537, 594
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 mouse
   rotate: false
-  xy: 1, 6
+  xy: 259, 105
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 panel
   rotate: false
-  xy: 259, 255
+  xy: 259, 96
   size: 7, 7
   split: 3, 3, 3, 3
   orig: 7, 7
@@ -219,7 +226,7 @@ panel
   index: -1
 progress_bar
   rotate: false
-  xy: 528, 742
+  xy: 786, 841
   size: 5, 5
   split: 2, 2, 2, 2
   pad: 1, 1, 1, 1
@@ -228,7 +235,7 @@ progress_bar
   index: -1
 progress_bar_before_horizontall
   rotate: false
-  xy: 1, 1
+  xy: 12, 25
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -236,7 +243,7 @@ progress_bar_before_horizontall
   index: -1
 progress_bar_before_vertical
   rotate: false
-  xy: 1, 1
+  xy: 12, 25
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -244,28 +251,28 @@ progress_bar_before_vertical
   index: -1
 right_arrow
   rotate: false
-  xy: 517, 720
+  xy: 775, 819
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
   index: -1
 right_arrow_over
   rotate: false
-  xy: 775, 966
+  xy: 1, 1
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
   index: -1
 right_arrow_pressed
   rotate: false
-  xy: 793, 996
+  xy: 19, 31
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
   index: -1
 screen
   rotate: false
-  xy: 6, 1
+  xy: 279, 309
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -273,7 +280,7 @@ screen
   index: -1
 window
   rotate: false
-  xy: 775, 995
+  xy: 1, 30
   size: 16, 28
   split: 6, 9, 18, 9
   pad: 7, 7, 19, 7

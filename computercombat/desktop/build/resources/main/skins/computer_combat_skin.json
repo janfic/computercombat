@@ -1,5 +1,8 @@
 {
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	box_font_12px: {
+		file: box_font_12px export.fnt
+	}
 	lucidaConsole12px: {
 		file: lucidaConsole12px.fnt
 	}
