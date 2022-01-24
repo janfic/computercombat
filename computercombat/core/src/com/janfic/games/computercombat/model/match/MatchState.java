@@ -119,15 +119,13 @@ public class MatchState implements Serializable {
         json.writeValue("decks", decks, Map.class);
         json.writeValue("winner", winner, Profile.class);
         json.writeValue("isGameOver", isGameOver, boolean.class);
-        json.writeArrayStart("componentBoard");
+        String board = "";
         for (Component[] components : componentBoard) {
-            json.writeArrayStart();
             for (Component component : components) {
-                json.writeValue(Component.componentToNumber.get(component.getClass()));
+                board += "" + Component.componentToNumber.get(component.getClass());
             }
-            json.writeArrayEnd();
         }
-        json.writeArrayEnd();
+        json.writeValue("componentBoard", board);
     }
 
     @Override
@@ -139,15 +137,27 @@ public class MatchState implements Serializable {
         this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
         this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);
-        int[][] comps = json.readValue("componentBoard", int[][].class, jsonData);
+        String boardString = json.readValue("componentBoard", String.class, jsonData);
+        //int[][] comps = json.readValue("componentBoard", int[][].class, jsonData);
         componentBoard = new Component[8][8];
-        for (int x = 0; x < comps.length; x++) {
-            for (int y = 0; y < comps[x].length; y++) {
-                try {
-                    componentBoard[x][y] = (Component) Component.numberToComponent.get(comps[x][y]).getConstructor(int.class, int.class).newInstance(x, y);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//        for (int x = 0; x < comps.length; x++) {
+//            for (int y = 0; y < comps[x].length; y++) {
+//                try {
+//                    componentBoard[x][y] = (Component) Component.numberToComponent.get(comps[x][y]).getConstructor(int.class, int.class).newInstance(x, y);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+        for (int i = 0; i < boardString.length(); i++) {
+            int x = i % 8;
+            int y = i / 8;
+            try {
+                componentBoard[x][y] = (Component) Component.numberToComponent.get(
+                        Integer.parseInt("" + boardString.charAt(i)))
+                        .getConstructor(int.class, int.class).newInstance(x, y);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
