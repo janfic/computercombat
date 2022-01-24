@@ -154,7 +154,6 @@ public class MatchState implements Serializable {
         for (int i = 0; i < boardString.length(); i++) {
             int x = i / 8;
             int y = i % 8;
-            System.out.println(x + " " + y);
             try {
                 componentBoard[x][y] = (Component) Component.numberToComponent.get(
                         Integer.parseInt("" + boardString.substring(i, i + 1)))
