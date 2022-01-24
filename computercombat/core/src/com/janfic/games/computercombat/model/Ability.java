@@ -16,22 +16,22 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
  * @author Jan Fic
  */
 public abstract class Ability implements Serializable {
-
+    
     protected String textureName, name, code;
     protected int id;
     protected String description;
     protected int selectComponents, selectSoftwares;
-
+    
     public Ability() {
     }
-
+    
     public Ability(int selectComponents, int selectSoftwares) {
         this.selectComponents = selectComponents;
         this.selectSoftwares = selectSoftwares;
     }
-
+    
     public abstract List<MoveResult> doAbility(MatchState state, Move move);
-
+    
     public void setInformation(String description, String textureName, String name, String code, int id) {
         this.id = id;
         this.name = name;
@@ -39,58 +39,58 @@ public abstract class Ability implements Serializable {
         this.code = code;
         this.description = description;
     }
-
+    
     public int getSelectComponents() {
         return selectComponents;
     }
-
+    
     public int getSelectSoftwares() {
         return selectSoftwares;
     }
-
+    
     public String getDescription() {
         return description;
     }
-
+    
     public String getCode() {
         return code;
     }
-
+    
     public int getID() {
         return id;
     }
-
+    
     public String getName() {
         return name;
     }
-
+    
     public String getTextureName() {
         return textureName;
     }
-
+    
     @Override
     public void write(Json json) {
         json.writeType(this.getClass());
         json.writeValue("description", this.description);
         json.writeValue("textureName", this.textureName);
         json.writeValue("name", this.name);
-        json.writeValue("code", this.code);
+        json.writeValue("code", this.code.replaceAll("\n", "\\\\n").replaceAll("\t", "\\\\t"));
         json.writeValue("id", this.id);
         json.writeValue("selectComponents", this.selectComponents);
         json.writeValue("selectSoftwares", this.selectSoftwares);
     }
-
+    
     @Override
     public void read(Json json, JsonValue jsonData) {
         this.description = json.readValue("description", String.class, jsonData);
         this.textureName = json.readValue("textureName", String.class, jsonData);
         this.name = json.readValue("name", String.class, jsonData);
-        this.code = json.readValue("code", String.class, jsonData);
+        this.code = json.readValue("code", String.class, jsonData).replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t");
         this.id = json.readValue("id", int.class, jsonData);
         this.selectComponents = json.readValue("selectComponents", int.class, jsonData);
         this.selectSoftwares = json.readValue("selectSoftwares", int.class, jsonData);
     }
-
+    
     public static Ability getAbilityFromCode(Ability ability) {
         CompilerConfiguration config = new CompilerConfiguration();
         config.addCompilationCustomizers(new ImportCustomizer().addStarImports(
@@ -104,6 +104,7 @@ public abstract class Ability implements Serializable {
         a.setInformation(
                 ability.getDescription(), ability.getTextureName(), ability.getName(), ability.getCode(), ability.getID()
         );
+        System.out.println(ability.getCode().replaceAll("\n", "\\\\n").replaceAll("\t", "\\\\t"));
         return a;
     }
 }
