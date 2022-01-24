@@ -764,6 +764,25 @@ atlasData: {
 			type: FONT
 			hidden: false
 		}
+		{
+			file: E:/PROJECTS/computercombat/art/skin_assets/box_font_12px export.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: box_font_12px export
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: FONT
+			hidden: false
+		}
 	]
 }
 jsonData: {
@@ -880,6 +899,11 @@ jsonData: {
 		}
 	]
 	fonts: [
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: box_font_12px
+			file: E:/PROJECTS/computercombat/art/skin_assets/box_font_12px export.fnt
+		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: lucidaConsole12px
@@ -2671,7 +2695,7 @@ preferences: {
 		value: 30
 	}
 }
-saveFile: E:/PROJECTS/COMPUTERCOMBAT/art/computer_combat_skin.scmp
+saveFile: E:/PROJECTS/computercombat/art/computer_combat_skin.scmp
 version: 41
 sceneComposer: null
 }
