@@ -12,6 +12,7 @@ import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
+import com.janfic.games.computercombat.util.Filter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +26,11 @@ public class SpawnAbility extends Ability {
     int amount;
 
     public SpawnAbility() {
-        super(0, 0);
+        super(new ArrayList<>());
     }
 
-    public SpawnAbility(Class<? extends Component> componentType, int amount, int selectComponents, int selectSoftwares) {
-        super(selectComponents, selectSoftwares);
+    public SpawnAbility(Class<? extends Component> componentType, int amount, List<Filter> selectFilters) {
+        super(selectFilters);
         this.componentType = componentType;
         this.amount = amount;
     }

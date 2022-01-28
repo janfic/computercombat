@@ -185,7 +185,7 @@ public abstract class Move implements Json.Serializable {
                 attacks.put(attacker, attacked);
             }
 
-            AttackAbility attackAbility = new AttackAbility(0, 0, attacks);
+            AttackAbility attackAbility = new AttackAbility(new ArrayList<>(), attacks);
             List<MoveResult> attackResults = attackAbility.doAbility(newState, move);
             results.addAll(attackResults);
         }

@@ -22,7 +22,7 @@ import java.util.List;
 public class DrawAbility extends Ability {
 
     public DrawAbility() {
-        super(0, 0);
+        super(new ArrayList<>());
     }
 
     @Override

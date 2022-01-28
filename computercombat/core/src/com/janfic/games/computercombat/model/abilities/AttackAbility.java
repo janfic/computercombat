@@ -8,10 +8,10 @@ import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.animations.AttackAnimation;
-import com.janfic.games.computercombat.model.animations.ReceiveDamageAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
+import com.janfic.games.computercombat.util.Filter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +20,12 @@ public class AttackAbility extends Ability {
     ObjectMap<Card, List<Card>> attacks;
 
     public AttackAbility() {
-        super(0, 0);
+        super(new ArrayList<>());
         this.attacks = null;
     }
 
-    public AttackAbility(int selectedComponents, int selectedSoftware, ObjectMap<Card, List<Card>> attacks) {
-        super(selectedComponents, selectedSoftware);
+    public AttackAbility(List<Filter> selectFilters, ObjectMap<Card, List<Card>> attacks) {
+        super(selectFilters);
         this.attacks = attacks;
     }
 

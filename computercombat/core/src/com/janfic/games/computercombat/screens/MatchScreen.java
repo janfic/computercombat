@@ -30,6 +30,8 @@ import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
+import com.janfic.games.computercombat.util.CardFilter;
+import com.janfic.games.computercombat.util.ComponentFilter;
 import com.janfic.games.computercombat.util.ObjectMapSerializer;
 import java.util.*;
 
@@ -61,6 +63,11 @@ public class MatchScreen implements Screen {
 
     ClientMatch matchData;
 
+    int selectIndex;
+    boolean isSelecting;
+    List<ComponentActor> selectedComponents;
+    List<SoftwareActor> selectedCards;
+
     boolean checkGameOver = true;
 
     public MatchScreen(ComputerCombatGame game, ClientMatch match) {
@@ -70,6 +77,9 @@ public class MatchScreen implements Screen {
         this.computerActors = new HashMap<>();
         this.animation = new LinkedList<>();
         this.matchData = match;
+        this.selectIndex = -1;
+        this.selectedCards = new ArrayList<>();
+        this.selectedComponents = new ArrayList<>();
     }
 
     @Override
@@ -215,29 +225,55 @@ public class MatchScreen implements Screen {
     private void playerUseAbilityMoveCheck() {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             if (softwareActor.activatedAbility()) {
-                System.out.println("activatedAbility");
-                if (softwareActor.getSoftware().getAbility().getSelectComponents() > 0 && board.isSelecting() == false) {
-                    System.out.println("startSelection");
-                    board.startAbilitySelection(softwareActor.getSoftware().getAbility().getSelectComponents());
+                Ability ability = softwareActor.getSoftware().getAbility();
+
+                if (isSelecting == false) {
+                    this.selectIndex = 0;
+                    selectedCards.clear();
+                    selectedComponents.clear();
                 }
-                if (board.didCompleteSelection()) {
-                    System.out.println("endSelection");
+
+                System.out.println(ability.getCode());
+                System.out.println(ability.getDescription());
+                System.out.println(ability.getSelectFilters());
+                if (ability.getSelectFilters().get(selectIndex) instanceof ComponentFilter) {
+                    if (!board.isSelecting()) {
+                        board.startComponentSelection((ComponentFilter) ability.getSelectFilters().get(selectIndex));
+                    }
+                    if (board.didCompleteSelection()) {
+                        selectedComponents.addAll(board.getSelected());
+                        selectIndex++;
+                        board.endComponentSelection();
+                    }
+
+                } else if (ability.getSelectFilters().get(selectIndex) instanceof CardFilter) {
+
+                }
+
+                if (selectIndex == ability.getSelectFilters().size()) {
+                    List<Component> components = new ArrayList<>();
+                    List<Card> cards = new ArrayList<>();
+                    for (ComponentActor selectedComponent : selectedComponents) {
+                        components.add(selectedComponent.getComponent());
+                    }
+
                     UseAbilityMove move = new UseAbilityMove(
                             game.getCurrentProfile().getUID(),
                             softwareActor.getSoftware(),
-                            board.getSelectedComponents(),
-                            softwareActor.getSelectedSoftwares()
+                            components,
+                            cards
                     );
                     Json json = new Json();
                     softwareActor.setActivatedAbility(false);
                     if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
                         game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
                     }
-                    board.endAbilitySelection();
                 }
             }
         }
+
         ComputerActor computerActor = computerActors.get(game.getCurrentProfile().getUID());
+
         if (computerActor.activatedAbility()) {
             UseAbilityMove move = new UseAbilityMove(
                     game.getCurrentProfile().getUID(),
@@ -268,14 +304,19 @@ public class MatchScreen implements Screen {
             System.out.println(serverMessage.getType());
             if (serverMessage.type == Type.MOVE_ACCEPT) {
                 Json json = new Json();
-                json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
+                json.setSerializer(ObjectMap.class,
+                        new ObjectMapSerializer());
                 List<MoveResult> results = json.fromJson(List.class, serverMessage.getMessage());
-                animate(results, this);
+
+                animate(results,
+                        this);
             } else if (serverMessage.type == Type.PING) {
             } else if (serverMessage.type == Type.MATCH_RESULTS) {
                 Json json = new Json();
-                json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
+                json.setSerializer(ObjectMap.class,
+                        new ObjectMapSerializer());
                 MatchResults results = json.fromJson(MatchResults.class, serverMessage.getMessage());
+
                 gameOver(results);
             }
         }

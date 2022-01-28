@@ -1,11 +1,13 @@
 package com.janfic.games.computercombat.actors;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -16,6 +18,7 @@ import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
 import com.janfic.games.computercombat.network.client.ClientMatch;
+import com.janfic.games.computercombat.util.ComponentFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -267,6 +270,22 @@ public class Board extends BorderedGrid {
         });
     }
 
+    public void startComponentSelection(ComponentFilter filter) {
+        this.selected.clear();
+        this.componentsToSelect = 1;
+        for (Cell<ComponentActor>[] cells : board) {
+            for (Cell<ComponentActor> cell : cells) {
+                boolean selectable = filter.filter(cell.getActor().getComponent());
+                if (!selectable) {
+                    cell.getActor().setColor(Color.GRAY);
+                    cell.getActor().setTouchable(Touchable.disabled);
+                }
+            }
+        }
+        // Highlight selectable components
+        // Set others to untouchable / disabled / grey
+    }
+
     public void startAbilitySelection(int amount) {
         this.selected.clear();
         this.componentsToSelect = amount;
@@ -284,9 +303,15 @@ public class Board extends BorderedGrid {
         }
     }
 
-    public void endAbilitySelection() {
+    public void endComponentSelection() {
         this.selected.clear();
         this.componentsToSelect = -1;
+        for (Cell<ComponentActor>[] cells : board) {
+            for (Cell<ComponentActor> cell : cells) {
+                cell.getActor().setColor(Color.WHITE);
+                cell.getActor().setTouchable(Touchable.enabled);
+            }
+        }
     }
 
     public boolean attemptedMove() {

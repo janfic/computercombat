@@ -9,6 +9,7 @@ import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
+import com.janfic.games.computercombat.util.Filter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,11 @@ public class CollectAbility extends Ability {
     List<CollectFilter> filters;
 
     public CollectAbility() {
-        super(0, 0);
+        super(new ArrayList<>());
     }
 
-    public CollectAbility(int selectComponents, int selectSoftwares, List<CollectFilter> filters) {
-        super(selectComponents, selectSoftwares);
+    public CollectAbility(List<Filter> selectFilters, List<CollectFilter> filters) {
+        super(selectFilters);
         this.filters = filters;
     }
 

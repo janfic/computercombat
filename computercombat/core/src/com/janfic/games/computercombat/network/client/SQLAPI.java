@@ -32,14 +32,14 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
  * @author Jan Fic
  */
 public class SQLAPI {
-    
+
     String url = "jdbc:mysql://computer-combat-db.cloqezbutiub.us-east-1.rds.amazonaws.com:3306";
-    
+
     private static SQLAPI singleton;
     private Properties properties;
     private Connection connection;
     private GroovyShell shell;
-    
+
     private SQLAPI() {
         this.properties = new Properties();
         try {
@@ -50,29 +50,31 @@ public class SQLAPI {
             statement.execute("USE computer_combat;");
             CompilerConfiguration config = new CompilerConfiguration();
             config.addCompilationCustomizers(new ImportCustomizer().addStarImports(
+                    "java.util",
                     "com.janfic.games.computercombat.model",
                     "com.janfic.games.computercombat.model.abilities",
                     "com.janfic.games.computercombat.model.components",
-                    "com.janfic.games.computercombat.model.moves"
+                    "com.janfic.games.computercombat.model.moves",
+                    "com.janfic.games.computercombat.util"
             ));
             shell = new GroovyShell(config);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
     }
-    
+
     public static SQLAPI getSingleton() {
         if (singleton == null) {
             singleton = new SQLAPI();
         }
         return singleton;
     }
-    
+
     public Map<Card, Integer> getPlayerOwnedCards(String uid) {
         System.out.println("[SERVER][MYSQL]: Querying for Player collection");
         Map<Card, Integer> cards = new HashMap<>();
-        
+
         try {
             //Get all player owned cards
             String sql = "SELECT card.* \n"
@@ -81,7 +83,7 @@ public class SQLAPI {
                     + "JOIN profile ON profile.uid = profile_owns_card.profile_id \n"
                     + "WHERE profile.uid = '" + uid + "' \n"
                     + "ORDER BY card.name;";
-            
+
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
             while (set.next()) {
@@ -92,17 +94,17 @@ public class SQLAPI {
                         + "JOIN run_requirements ON card.id = run_requirements.card_id \n"
                         + "JOIN components ON components.id = run_requirements.component_id \n"
                         + "WHERE card.id = " + set.getInt("card.id");
-                
+
                 Statement getComponentStatement = connection.createStatement();
                 ResultSet gcResults = getComponentStatement.executeQuery(sql);
-                
+
                 List<Class<? extends Component>> components = new ArrayList<>();
                 while (gcResults.next()) {
                     components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + gcResults.getString("components.name")));
                 }
-                
+
                 Ability a = getAbilityByID(set.getInt("card.ability_id"));
-                
+
                 Software s = new Software(
                         set.getInt("card.id"),
                         set.getString("card.name"),
@@ -124,17 +126,17 @@ public class SQLAPI {
         }
         return cards;
     }
-    
+
     public Software getCardById(int id) {
         System.out.println("[SERVER][MYSQL]: Querying for Card Data");
         try {
             String sql = "SELECT card.* \n"
                     + "FROM card \n"
                     + "WHERE card.id = " + id + ";";
-            
+
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
-            
+
             set.next();
             //Get Components of Card
             sql = "SELECT components.* \n"
@@ -142,17 +144,17 @@ public class SQLAPI {
                     + "JOIN run_requirements ON card.id = run_requirements.card_id \n"
                     + "JOIN components ON components.id = run_requirements.component_id \n"
                     + "WHERE card.id = " + set.getInt("card.id");
-            
+
             Statement getComponentStatement = connection.createStatement();
             ResultSet gcResults = getComponentStatement.executeQuery(sql);
-            
+
             List<Class<? extends Component>> components = new ArrayList<>();
             while (gcResults.next()) {
                 components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + gcResults.getString("components.name")));
             }
-            
+
             Ability a = getAbilityByID(set.getInt("card.ability_id"));
-            
+
             return new Software(
                     set.getInt("card.id"),
                     set.getString("card.name"),
@@ -172,7 +174,7 @@ public class SQLAPI {
             return null;
         }
     }
-    
+
     public Ability getAbilityByID(int id) {
         System.out.println("[SERVER][MYSQL]: Querying for Ability Data");
         try {
@@ -180,12 +182,12 @@ public class SQLAPI {
                     + "FROM ability \n"
                     + "JOIN card ON card.ability_id = ability.id \n"
                     + "WHERE ability.id = " + id + ";";
-            
+
             Statement getAbilityStatement = connection.createStatement();
             ResultSet gAResults = getAbilityStatement.executeQuery(sql);
-            
+
             gAResults.next();
-            
+
             Ability a = (Ability) shell.evaluate(gAResults.getString("code"));
             a.setInformation(
                     gAResults.getString("description"),
@@ -200,33 +202,33 @@ public class SQLAPI {
             return null;
         }
     }
-    
+
     public List<Deck> getPlayerDecks(String uid) {
         System.out.println("[SERVER][MYSQL]: Querying for Player Decks Data");
         List<Deck> decks = new ArrayList<>();
-        
+
         try {
             //Query for decks owned by player
             String sql = "SELECT * FROM deck\n"
                     + "WHERE deck.profile_id = '" + uid + "';";
-            
+
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
-            
+
             while (set.next()) {
-                
+
                 int id = set.getInt("id");
                 String name = set.getString("name");
-                
+
                 sql = "SELECT * \n"
                         + "FROM deck_has_card \n"
                         + "WHERE deck_has_card.deck_id = " + id + ";";
-                
+
                 Statement stat = connection.createStatement();
                 ResultSet rs = stat.executeQuery(sql);
-                
+
                 Deck deck = new Deck(name, id);
-                
+
                 while (rs.next()) {
                     Software c = getCardById(rs.getInt("card_id"));
                     deck.addCard(c, rs.getInt("amount"));
@@ -236,79 +238,79 @@ public class SQLAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return decks;
     }
-    
+
     public void savePlayerDeck(Deck deck, String uid) {
         System.out.println("[SERVER][MYSQL]: Updating Player Deck Data");
         try {
             String sql = "SELECT * FROM deck\n"
                     + "WHERE deck.id = " + deck.getID() + ";";
-            
+
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
-            
+
             int rows = 0;
-            
+
             boolean exists = set.next();
             if (exists) {
-                
+
                 sql = "UPDATE deck "
                         + "SET name = '" + deck.getName() + "', profile_id = '" + uid + "' \n"
                         + "WHERE id = " + deck.getID() + ";";
-                
+
                 rows = statement.executeUpdate(sql);
             } else {
                 sql = "INSERT INTO deck (id, name, profile_id) \n"
                         + "VALUES (" + deck.getID() + " , '" + deck.getName() + "', '" + uid + "');";
-                
+
                 rows = statement.executeUpdate(sql);
-                
+
             }
-            
+
             sql = "DELETE FROM deck_has_card \n"
                     + "WHERE deck_has_card.deck_id = " + deck.getID() + ";";
-            
+
             rows = statement.executeUpdate(sql);
-            
+
             System.out.println(deck.getStack());
-            
+
             for (String card : deck.getCards().keySet()) {
                 sql = "INSERT INTO deck_has_card (deck_id, card_id, amount) \n"
                         + "VALUES (" + deck.getID() + "," + card + "," + deck.getCardCount(Integer.parseInt(card)) + ");";
-                
+
                 rows = statement.executeUpdate(sql);
             }
-            
+
         } catch (SQLIntegrityConstraintViolationException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public void deletePlayerDeck(Deck deck, String uid) {
         System.out.println("[SERVER][MYSQL]: Deleting Player Deck");
         try {
             String sql = "SELECT * FROM deck\n"
                     + "WHERE deck.id = " + deck.getID() + ";";
-            
+
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
-            
+
             int rows;
-            
+
             boolean exists = set.next();
             if (exists) {
-                
+
                 sql = "DELETE FROM deck_has_card \n"
                         + "WHERE deck_has_card.deck_id = " + deck.getID() + ";";
-                
+
                 rows = statement.executeUpdate(sql);
-                
+
                 sql = "DELETE FROM deck "
                         + "WHERE id = " + deck.getID() + ";";
-                
+
                 rows = statement.executeUpdate(sql);
             }
         } catch (SQLIntegrityConstraintViolationException e) {
@@ -317,21 +319,21 @@ public class SQLAPI {
             e.printStackTrace();
         }
     }
-    
+
     public Profile loadProfile(String uid) {
         System.out.println("[SERVER][MYSQL]: Loading Player Profile");
         try {
             System.out.println(uid);
-            
+
             String sql = "SELECT *\n"
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + uid + "';";
-            
+
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
-            
+
             Profile profile = new Profile(uid);
-            
+
             while (rs.next()) {
                 profile.setName(rs.getString("username"));
                 profile.setEmail(rs.getString("email"));
@@ -343,20 +345,20 @@ public class SQLAPI {
             return null;
         }
     }
-    
+
     public void saveProfile(Profile p) {
         System.out.println("[SERVER][MYSQL]: Saving Player Profile");
         try {
-            
+
             String sql = "SELECT uid\n"
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + p.getUID() + "';";
-            
+
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
-            
+
             boolean exists = rs.next();
-            
+
             if (exists) {
                 sql = "UPDATE profile SET packets = " + p.getPackets() + " WHERE profile.uid = '" + p.getUID() + "';";
             } else {
@@ -370,18 +372,18 @@ public class SQLAPI {
             e.printStackTrace();
         }
     }
-    
+
     public boolean addCardToProfile(int cardID, Profile profile) {
         try {
             String sql = "SELECT uid\n"
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + profile.getUID() + "';";
-            
+
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
-            
+
             boolean exists = rs.next();
-            
+
             if (exists) {
                 sql = "INSERT INTO profile_owns_card (profile_id, card_id)\n"
                         + "VALUES ('" + profile.getUID() + "'," + cardID + ");";
@@ -395,7 +397,7 @@ public class SQLAPI {
             return false;
         }
     }
-    
+
     public int recordMatchData(MatchData data) {
         System.out.println("[SERVER][MYSQL]: Recording Match Data");
         Json json = new Json(JsonWriter.OutputType.json);
@@ -415,7 +417,7 @@ public class SQLAPI {
                     + data.getRewards().get(data.getPlayer1().getUID()) + ","
                     + data.getRewards().get(data.getPlayer2().getUID()) + ""
                     + ");";
-            
+
             Statement statement = connection.createStatement();
             int updates = statement.executeUpdate(sql);
 
@@ -424,7 +426,7 @@ public class SQLAPI {
             ResultSet results = statement.executeQuery(sql);
             results.next();
             int match_id = results.getInt(1);
-            
+
             for (int i = 0; i < data.getMoves().size(); i++) {
                 // Insert Move Results
                 List<MoveResult> moveResults = data.getMoveResults().get(i);
@@ -457,20 +459,20 @@ public class SQLAPI {
                 updates = statement.executeUpdate(sql);
                 r += updates;
             }
-            
+
             return updates;
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return r;
         }
     }
-    
+
     public void dispose() {
         closeConnection();
         singleton = null;
     }
-    
+
     public void closeConnection() {
         try {
             this.connection.close();

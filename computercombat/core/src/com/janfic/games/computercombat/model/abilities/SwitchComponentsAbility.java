@@ -10,6 +10,7 @@ import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
+import com.janfic.games.computercombat.util.Filter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,8 @@ import java.util.List;
  */
 public class SwitchComponentsAbility extends Ability {
 
-    public SwitchComponentsAbility() {
-        super(2, 0);
+    public SwitchComponentsAbility(List<Filter> selectFilter) {
+        super(selectFilter);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class SwitchComponentsAbility extends Ability {
         Component[][] newBoard = newState.componentBoard;
         Component a = useAbility.getSelectedComponents().get(0);
         Component b = useAbility.getSelectedComponents().get(1);
-        
+
         Component bb = newBoard[b.getX()][b.getY()];
         Component ba = newBoard[a.getX()][a.getY()];
         int oldBX = b.getX(), oldBY = b.getY();
