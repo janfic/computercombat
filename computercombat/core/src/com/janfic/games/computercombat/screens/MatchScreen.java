@@ -378,26 +378,7 @@ public class MatchScreen implements Screen {
         //animate
         int i = 0;
         MoveResult first = moveResults.get(0);
-        if (first.getMove() instanceof MatchComponentsMove) {
-            List<Action> uD = new ArrayList<>();
-            Action f = Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    matchData.setCurrentState(first.getNewState());
-                    board.updateBoard(matchData);
-                    matchData.setCurrentState(first.getOldState());
-                    int offset = 0;
-                    for (MoveAnimation moveAnimation : first.getAnimations()) {
-                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen);
-                        int indexOfUpdate = animation.indexOf(uD);
-                        animation.addAll(indexOfUpdate + 1 + offset, animations);
-                        offset += animations.size();
-                    }
-                }
-            });
-            f.setActor(board);
-            uD.add(f);
-            animation.add(uD);
+        if (first.getMove() instanceof MatchComponentsMove && first.getMove().getPlayerUID().equals(this.game.getCurrentProfile().getUID())) {
             i = 1;
         }
         for (; i < moveResults.size(); i++) {

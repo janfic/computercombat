@@ -2,18 +2,12 @@ package com.janfic.games.computercombat.model.moves;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.SerializationException;
-import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.match.MatchState;
-import com.janfic.games.computercombat.model.animations.CascadeAnimation;
-import com.janfic.games.computercombat.model.animations.CollectAnimation;
 import com.janfic.games.computercombat.model.animations.SwitchAnimation;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *

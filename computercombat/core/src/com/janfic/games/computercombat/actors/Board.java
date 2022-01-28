@@ -319,6 +319,7 @@ public class Board extends BorderedGrid {
                 this.addComponent(new ComponentActor(componentAtlas, componentBoard[x][y]), x, y);
             }
         }
+        this.layout();
     }
 
     public List<ComponentActor> getComponents() {
