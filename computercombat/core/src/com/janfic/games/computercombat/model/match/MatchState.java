@@ -139,17 +139,7 @@ public class MatchState implements Serializable {
         this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);
         String boardString = json.readValue("componentBoard", String.class, jsonData);
-        //int[][] comps = json.readValue("componentBoard", int[][].class, jsonData);
         componentBoard = new Component[8][8];
-//        for (int x = 0; x < comps.length; x++) {
-//            for (int y = 0; y < comps[x].length; y++) {
-//                try {
-//                    componentBoard[x][y] = (Component) Component.numberToComponent.get(comps[x][y]).getConstructor(int.class, int.class).newInstance(x, y);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
         assert (boardString.length() == 64);
         for (int i = 0; i < boardString.length(); i++) {
             int x = i / 8;

@@ -1,89 +1,89 @@
 
 components.png
-size: 512,32
+size: 128,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 bug
-  rotate: false
-  xy: 262, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-bug_collect
-  rotate: false
-  xy: 132, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-cpu
-  rotate: false
-  xy: 184, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-cpu_collect
-  rotate: false
-  xy: 54, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-network
-  rotate: false
-  xy: 210, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-network_collect
-  rotate: false
-  xy: 80, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-power
-  rotate: false
-  xy: 2, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-power_collect
-  rotate: false
-  xy: 236, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-ram
-  rotate: false
-  xy: 106, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-ram_collect
   rotate: false
   xy: 28, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
+bug_collect
+  rotate: false
+  xy: 54, 80
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+cpu
+  rotate: false
+  xy: 28, 28
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+cpu_collect
+  rotate: false
+  xy: 28, 80
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+network
+  rotate: false
+  xy: 54, 54
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+network_collect
+  rotate: false
+  xy: 2, 28
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+power
+  rotate: false
+  xy: 2, 80
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+power_collect
+  rotate: false
+  xy: 80, 80
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+ram
+  rotate: false
+  xy: 28, 54
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+ram_collect
+  rotate: false
+  xy: 2, 54
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
 storage
   rotate: false
-  xy: 288, 2
+  xy: 54, 28
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 storage_collect
   rotate: false
-  xy: 158, 2
+  xy: 2, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
