@@ -57,6 +57,7 @@ public class Board extends BorderedGrid {
         setSkin(skin);
         this.matchData = matchData;
         this.game = game;
+        this.componentsToSelect = -1;
         this.componentAtlas = game.getAssetManager().get("texture_packs/components.atlas");
         this.selected = new ArrayList<>();
         this.board = new Cell[8][8];
@@ -116,7 +117,7 @@ public class Board extends BorderedGrid {
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                if (!canSelect || componentsToSelect > 0) {
+                if (!canSelect || componentsToSelect > -1) {
                     return;
                 }
 
@@ -203,7 +204,7 @@ public class Board extends BorderedGrid {
                     selected.get(0).addAction(Actions.forever(Actions.sequence(Actions.rotateTo(10, 0.1f), Actions.rotateTo(-10, 0.1f))));
                 }
 
-                if (componentsToSelect != 0 || selected.size() <= 1) {
+                if (componentsToSelect != -1 || selected.size() <= 1) {
                     return;
                 }
 
@@ -272,16 +273,20 @@ public class Board extends BorderedGrid {
     }
 
     public boolean isSelecting() {
-        return this.componentsToSelect > 0;
+        return this.componentsToSelect >= 0;
     }
 
     public boolean didCompleteSelection() {
-        return this.componentsToSelect == this.selected.size();
+        if (this.componentsToSelect < 0) {
+            return true;
+        } else {
+            return this.componentsToSelect == this.selected.size();
+        }
     }
 
     public void endAbilitySelection() {
         this.selected.clear();
-        this.componentsToSelect = 0;
+        this.componentsToSelect = -1;
     }
 
     public boolean attemptedMove() {

@@ -215,10 +215,13 @@ public class MatchScreen implements Screen {
     private void playerUseAbilityMoveCheck() {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             if (softwareActor.activatedAbility()) {
+                System.out.println("activatedAbility");
                 if (softwareActor.getSoftware().getAbility().getSelectComponents() > 0 && board.isSelecting() == false) {
+                    System.out.println("startSelection");
                     board.startAbilitySelection(softwareActor.getSoftware().getAbility().getSelectComponents());
                 }
                 if (board.didCompleteSelection()) {
+                    System.out.println("endSelection");
                     UseAbilityMove move = new UseAbilityMove(
                             game.getCurrentProfile().getUID(),
                             softwareActor.getSoftware(),
