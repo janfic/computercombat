@@ -2,6 +2,7 @@ package com.janfic.games.computercombat.actors;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
@@ -32,6 +34,8 @@ public class SoftwareActor extends Panel {
     BorderedArea imageArea;
     boolean activatedAbility;
     VerticalGroup leds;
+    Image displayImage;
+    TextureRegion cardRegion, abilityRegion;
 
     public static final Map<Class<? extends Component>, String> components;
 
@@ -70,7 +74,10 @@ public class SoftwareActor extends Panel {
         defenseBar = new ProgressBar(0, software.getMaxArmor(), 1, true, grey);
         attackBar = new ProgressBar(0, software.getMaxAttack(), 1, true, red);
         imageArea = new BorderedArea(skin);
-        imageArea.add(new Image(game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName())));
+        cardRegion = game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName());
+        abilityRegion = game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getAbility().getTextureName());
+        displayImage = new Image(cardRegion);
+        imageArea.add(displayImage);
 
         this.setTouchable(Touchable.enabled);
         this.addListener(new ClickListener() {
@@ -224,5 +231,17 @@ public class SoftwareActor extends Panel {
 
     public void setAttack(float attack) {
         this.attackBar.setValue(attack);
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        if (progressBar.getVisualPercent() >= 1) {
+            this.panel = getSkin().getPatch("glow_panel");
+            this.displayImage.setDrawable(new TextureRegionDrawable(abilityRegion));
+        } else {
+            this.panel = getSkin().getPatch("panel");
+            this.displayImage.setDrawable(new TextureRegionDrawable(cardRegion));
+        }
     }
 }
