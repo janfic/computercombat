@@ -39,9 +39,8 @@ public class ReceiveDamageAnimation implements MoveAnimation {
     public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
         List<List<Action>> animations = new ArrayList<>();
         List<Action> changeColorActions = new ArrayList<>();
-        
+
         SoftwareActor softwareActor = screen.getSoftwareActorByMatchID(reciever.getOwnerUID(), reciever.getMatchID());
-        System.out.println("damage: " + damage);
         int armorDecrease = reciever.getArmor() > 0 ? Math.min(reciever.getArmor(), damage) : 0;
         int healthDecrease = reciever.getHealth() <= damage - armorDecrease ? reciever.getHealth() : damage - armorDecrease;
         Action attackedAction = Actions.sequence(
@@ -52,8 +51,8 @@ public class ReceiveDamageAnimation implements MoveAnimation {
                 new ChangeStatAction(0.5f, "health", -healthDecrease)
         );
         attackedAction.setActor(softwareActor);
-
         changeColorActions.add(attackedAction);
+
         animations.add(changeColorActions);
         return animations;
     }

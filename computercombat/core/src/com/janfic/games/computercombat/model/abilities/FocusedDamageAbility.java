@@ -42,15 +42,13 @@ public class FocusedDamageAbility extends Ability {
         int index = newState.activeEntities.get(abilityMove.getCard().getOwnerUID()).indexOf(abilityMove.getCard());
         newState.activeEntities.get(abilityMove.getPlayerUID()).get(index).setProgress(0);
 
-        System.out.println(abilityMove.getSelectedSoftwares());
-
         for (Card selectedSoftware : abilityMove.getSelectedSoftwares()) {
             for (String playerUID : newState.activeEntities.keySet()) {
                 for (Card card : newState.activeEntities.get(playerUID)) {
                     if (card.equals(selectedSoftware)) {
                         System.out.println(card.getName());
                         card.recieveDamage(amount);
-                        animation.add(new ReceiveDamageAnimation(card, amount, card.getOwnerUID()));
+                        animation.add(new ReceiveDamageAnimation(selectedSoftware, amount, card.getOwnerUID()));
                         if (card.isDead()) {
                             destroyed.add(card);
                         }
