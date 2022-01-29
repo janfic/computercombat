@@ -7,4 +7,6 @@ package com.janfic.games.computercombat.util;
 public interface Filter<T> {
 
     public boolean filter(T a);
+
+    public String getDescription();
 }

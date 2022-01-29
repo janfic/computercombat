@@ -12,4 +12,9 @@ public abstract class CardFilter implements Serializable, Filter<Card> {
     String description;
 
     public abstract boolean filter(Card card);
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
 }

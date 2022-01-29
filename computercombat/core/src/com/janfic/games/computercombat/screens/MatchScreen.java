@@ -32,6 +32,7 @@ import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ClientMatch;
 import com.janfic.games.computercombat.util.CardFilter;
 import com.janfic.games.computercombat.util.ComponentFilter;
+import com.janfic.games.computercombat.util.Filter;
 import com.janfic.games.computercombat.util.ObjectMapSerializer;
 import java.util.*;
 
@@ -63,6 +64,7 @@ public class MatchScreen implements Screen {
 
     ClientMatch matchData;
 
+    Filter currentSelectFilter;
     int selectIndex;
     boolean isSelecting;
     List<ComponentActor> selectedComponents;
@@ -231,23 +233,23 @@ public class MatchScreen implements Screen {
                     this.selectIndex = 0;
                     selectedCards.clear();
                     selectedComponents.clear();
+                    this.isSelecting = true;
                 }
 
-                System.out.println(ability.getCode());
-                System.out.println(ability.getDescription());
-                System.out.println(ability.getSelectFilters());
-                if (ability.getSelectFilters().get(selectIndex) instanceof ComponentFilter) {
-                    if (!board.isSelecting()) {
-                        board.startComponentSelection((ComponentFilter) ability.getSelectFilters().get(selectIndex));
-                    }
-                    if (board.didCompleteSelection()) {
-                        selectedComponents.addAll(board.getSelected());
-                        selectIndex++;
-                        board.endComponentSelection();
-                    }
+                if (ability.getSelectFilters().size() > 0) {
+                    this.currentSelectFilter = ability.getSelectFilters().get(selectIndex);
+                    if (this.currentSelectFilter instanceof ComponentFilter) {
+                        if (!board.isSelecting()) {
+                            board.startComponentSelection((ComponentFilter) this.currentSelectFilter);
+                        }
+                        if (board.didCompleteSelection()) {
+                            selectedComponents.addAll(board.getSelected());
+                            selectIndex++;
+                            board.endComponentSelection();
+                        }
+                    } else if (this.currentSelectFilter instanceof CardFilter) {
 
-                } else if (ability.getSelectFilters().get(selectIndex) instanceof CardFilter) {
-
+                    }
                 }
 
                 if (selectIndex == ability.getSelectFilters().size()) {
@@ -268,6 +270,7 @@ public class MatchScreen implements Screen {
                     if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
                         game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
                     }
+                    this.isSelecting = false;
                 }
             }
         }
@@ -380,6 +383,12 @@ public class MatchScreen implements Screen {
         if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             board.setTouchable(Touchable.enabled);
             infoLabel.setText("Your Turn!");
+            if (currentSelectFilter != null) {
+                System.out.println(this.currentSelectFilter.getDescription());
+            }
+            if (this.isSelecting && currentSelectFilter != null) {
+                infoLabel.setText(this.currentSelectFilter.getDescription());
+            }
         } else {
             board.setTouchable(Touchable.disabled);
             infoLabel.setText(matchData.getOpponentName() + "'s Turn");
