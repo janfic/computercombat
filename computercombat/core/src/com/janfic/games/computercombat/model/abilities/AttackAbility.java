@@ -63,7 +63,7 @@ public class AttackAbility extends Ability {
         MoveResult result = new MoveResult(move, state, newState, animation);
         results.add(result);
         if (!destroyed.isEmpty()) {
-            DestroyCardAbility destroyAbility = new DestroyCardAbility(opponentUID, destroyed);
+            DestroyCardAbility destroyAbility = new DestroyCardAbility(destroyed);
             List<MoveResult> r = destroyAbility.doAbility(result.getNewState(), move);
             results.addAll(r);
         }

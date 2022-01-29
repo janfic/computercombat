@@ -63,7 +63,7 @@ public class ComputerActor extends Panel {
             public void clicked(InputEvent event, float x, float y) {
                 Ability a = new DrawAbility();
                 a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
-                CardInfoWindow w = new CardInfoWindow(game, new Software(0, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
+                CardInfoWindow w = new CardInfoWindow(game, new Software(0, computer.getOwnerUID(), "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
                     CPUComponent.class,
                     NetworkComponent.class,
                     StorageComponent.class,

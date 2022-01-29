@@ -86,7 +86,7 @@ public class Deck implements Serializable {
     }
 
     public Software draw() {
-        Software r = SQLAPI.getSingleton().getCardById(stack.get(0));
+        Software r = SQLAPI.getSingleton().getCardById(stack.get(0), null);
         r.generateMatchID();
         stack.remove(0);
         int amount = cards.get("" + r.getID());

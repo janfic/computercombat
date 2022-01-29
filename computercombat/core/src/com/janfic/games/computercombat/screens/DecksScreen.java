@@ -357,7 +357,7 @@ public class DecksScreen implements Screen {
         Set<Integer> inDeck = new HashSet<>();
         inDeck.addAll(selectedDeck.getDeck().getStack());
         for (Integer id : inDeck.toArray(new Integer[0])) {
-            Software card = SQLAPI.getSingleton().getCardById(id);
+            Software card = SQLAPI.getSingleton().getCardById(id, game.getCurrentProfile().getUID());
             DeckCardActor dca = new DeckCardActor(game, skin, selectedDeck.getDeck(), card);
 
             Source source = new Source(dca.getImageArea()) {

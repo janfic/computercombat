@@ -248,7 +248,7 @@ public class MatchScreen implements Screen {
                             board.endComponentSelection();
                         }
                     } else if (this.currentSelectFilter instanceof CardFilter) {
-
+                        
                     }
                 }
 

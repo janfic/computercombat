@@ -107,6 +107,7 @@ public class ServerMatchRoom {
 
                             if (move instanceof UseAbilityMove) {
                                 UseAbilityMove m = (UseAbilityMove) move;
+                                System.out.println(m.getCard().getOwnerUID());
                                 m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
                             }
 

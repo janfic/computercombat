@@ -16,14 +16,12 @@ import java.util.List;
  */
 public class DestroyCardAbility extends Ability {
 
-    String playerUID;
     List<Card> destroyed;
 
     public DestroyCardAbility() {
     }
 
-    public DestroyCardAbility(String playerUID, List<Card> destroyed) {
-        this.playerUID = playerUID;
+    public DestroyCardAbility(List<Card> destroyed) {
         this.destroyed = destroyed;
     }
 
@@ -35,16 +33,18 @@ public class DestroyCardAbility extends Ability {
         MatchState newState = new MatchState(state);
         List<Card> removed = new ArrayList<>();
         for (Card card : destroyed) {
-            for (Card c : newState.activeEntities.get(playerUID)) {
+            for (Card c : newState.activeEntities.get(card.getOwnerUID())) {
                 if (c.equals(card)) {
                     removed.add(c);
                     List<Card> destroy = new ArrayList<>();
                     destroy.add(c);
-                    animations.add(new DestroyCardAnimation(playerUID, destroy));
+                    animations.add(new DestroyCardAnimation(c.getOwnerUID(), destroy));
                 }
             }
         }
-        newState.activeEntities.get(playerUID).removeAll(removed);
+        for (Card card : removed) {
+            newState.activeEntities.get(card.getOwnerUID()).remove(card);
+        }
         MoveResult result = new MoveResult(move, state, newState, animations);
 
         results.add(result);

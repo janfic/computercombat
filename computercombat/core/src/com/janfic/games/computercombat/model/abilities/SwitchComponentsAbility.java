@@ -22,6 +22,10 @@ import java.util.List;
  */
 public class SwitchComponentsAbility extends Ability {
 
+    public SwitchComponentsAbility() {
+        super(new ArrayList<>());
+    }
+    
     public SwitchComponentsAbility(List<Filter> selectFilter) {
         super(selectFilter);
     }

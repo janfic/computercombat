@@ -19,7 +19,11 @@ public class Computer extends Card implements Serializable {
     int deckSize;
 
     public Computer() {
-        super(0, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
+        this("owner");
+    }
+
+    public Computer(String playerUID) {
+        super(0, playerUID, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
             CPUComponent.class,
             NetworkComponent.class,
             StorageComponent.class,

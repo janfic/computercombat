@@ -107,6 +107,7 @@ public class SQLAPI {
 
                 Software s = new Software(
                         set.getInt("card.id"),
+                        uid,
                         set.getString("card.name"),
                         "computer_pack",
                         set.getString("textureName"),
@@ -127,7 +128,7 @@ public class SQLAPI {
         return cards;
     }
 
-    public Software getCardById(int id) {
+    public Software getCardById(int id, String optionalUID) {
         System.out.println("[SERVER][MYSQL]: Querying for Card Data");
         try {
             String sql = "SELECT card.* \n"
@@ -157,6 +158,7 @@ public class SQLAPI {
 
             return new Software(
                     set.getInt("card.id"),
+                    optionalUID == null ? "ownerUID" : optionalUID,
                     set.getString("card.name"),
                     "computer_pack",
                     set.getString("textureName"),
@@ -230,7 +232,8 @@ public class SQLAPI {
                 Deck deck = new Deck(name, id);
 
                 while (rs.next()) {
-                    Software c = getCardById(rs.getInt("card_id"));
+                    Software c = getCardById(rs.getInt("card_id"), uid);
+                    c.setOwnerUID(uid);
                     deck.addCard(c, rs.getInt("amount"));
                 }
                 decks.add(deck);

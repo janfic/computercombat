@@ -12,7 +12,7 @@ import java.util.Objects;
  * @author Jan Fic
  */
 public abstract class Card implements Json.Serializable, Comparable<Card> {
-    
+
     protected int id, matchID;
     protected int health, armor, attack, magic;
     protected int level;
@@ -23,15 +23,17 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     protected Trait[] traits;
     protected int traitsUnlocked;
     protected String name, pack, textureName;
+    protected String ownerUID;
 
     public Card() {
-        this(0, "CARD", "Computer", "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
+        this(0, "none", "CARD", "Computer", "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
     }
 
-    public Card(int id, String name, String pack, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
+    public Card(int id, String ownerUID, String name, String pack, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
         this.name = name;
         this.pack = pack;
         this.textureName = textureName;
+        this.ownerUID = ownerUID;
         this.health = startingHealth + ((3 + level - 1) / 4);
         this.armor = startingArmor + ((2 + level - 1) / 4);
         this.attack = startingAttack;
@@ -272,6 +274,14 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         return id;
     }
 
+    public String getOwnerUID() {
+        return ownerUID;
+    }
+
+    public void setOwnerUID(String ownerUID) {
+        this.ownerUID = ownerUID;
+    }
+
     public void setAbility(Ability ability) {
         this.ability = ability;
     }
@@ -294,6 +304,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         json.writeValue("maxArmor", this.maxArmor);
         json.writeValue("runProgress", this.runProgress);
         json.writeValue("runRequirements", this.runRequirements);
+        json.writeValue("ownerUID", this.ownerUID);
         json.writeArrayStart("runComponents");
         for (Class<? extends Component> runComponent : runComponents) {
             json.writeValue((Object) runComponent.getName(), String.class);
@@ -319,6 +330,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         this.maxArmor = json.readValue("maxArmor", Integer.class, jv);
         this.runProgress = json.readValue("runProgress", Integer.class, jv);
         this.runRequirements = json.readValue("runRequirements", Integer.class, jv);
+        this.ownerUID = json.readValue("ownerUID", String.class, jv);
         String[] components = jv.get("runComponents").asStringArray();
         List<Class<? extends Component>> foundComponents = new ArrayList<>();
         for (String component : components) {
@@ -351,6 +363,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         hash = 79 * hash + Objects.hashCode(this.pack);
         hash = 79 * hash + Objects.hashCode(this.id);
         hash = 79 * hash + Objects.hashCode(this.matchID);
+        hash = 79 * hash + Objects.hashCode(this.ownerUID);
         return hash;
     }
 
