@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.animations.ChangeStatAnim.ChangeStatAction;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
@@ -38,18 +39,21 @@ public class ReceiveDamageAnimation implements MoveAnimation {
     public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
         List<List<Action>> animations = new ArrayList<>();
         List<Action> changeColorActions = new ArrayList<>();
-        Action changeColor = Actions.sequence(Actions.color(Color.RED, 0.25f), Actions.color(Color.WHITE));
-        for (SoftwareActor softwareActor : screen.getSoftwareActors().get(this.playerUID)) {
-            if (softwareActor.getSoftware().equals(reciever)) {
-                changeColor.setActor(softwareActor);
-            }
-        }
+        
+        SoftwareActor softwareActor = screen.getSoftwareActorByMatchID(reciever.getOwnerUID(), reciever.getMatchID());
+        System.out.println("damage: " + damage);
+        int armorDecrease = reciever.getArmor() > 0 ? Math.min(reciever.getArmor(), damage) : 0;
+        int healthDecrease = reciever.getHealth() <= damage - armorDecrease ? reciever.getHealth() : damage - armorDecrease;
+        Action attackedAction = Actions.sequence(
+                Actions.delay(0.5f),
+                Actions.color(Color.RED),
+                Actions.color(Color.WHITE, 0.4f),
+                new ChangeStatAction(0.5f, "armor", -armorDecrease),
+                new ChangeStatAction(0.5f, "health", -healthDecrease)
+        );
+        attackedAction.setActor(softwareActor);
 
-        if (screen.getComputerActors().get(this.playerUID).getComputer().equals(reciever)) {
-            changeColor.setActor(screen.getComputerActors().get(this.playerUID));
-        }
-
-        changeColorActions.add(changeColor);
+        changeColorActions.add(attackedAction);
         animations.add(changeColorActions);
         return animations;
     }

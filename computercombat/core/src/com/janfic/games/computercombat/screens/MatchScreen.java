@@ -4,6 +4,7 @@ import com.janfic.games.computercombat.model.match.MatchState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -142,6 +143,7 @@ public class MatchScreen implements Screen {
         infoPanel.setSize(220, 43);
         info = new Panel(skin);
         infoLabel = new Label("", skin);
+        infoLabel.setFontScale(0.5f);
         infoLabel.setAlignment(Align.center);
         info.add(infoLabel).grow();
         infoPanel.add(info).grow();
@@ -248,29 +250,53 @@ public class MatchScreen implements Screen {
                             board.endComponentSelection();
                         }
                     } else if (this.currentSelectFilter instanceof CardFilter) {
-                        
+                        CardFilter filter = (CardFilter) this.currentSelectFilter;
+                        for (String uid : this.softwareActors.keySet()) {
+                            for (SoftwareActor sa : this.softwareActors.get(uid)) {
+                                if (!sa.isSelecting()) {
+                                    if (!filter.filter(softwareActor.getSoftware())) {
+                                        sa.setColor(Color.GRAY);
+                                        sa.setTouchable(Touchable.disabled);
+                                    } else {
+                                        sa.startSelection();
+                                    }
+                                }
+                                if (sa.isSelected()) {
+                                    this.selectedCards.add(sa);
+                                    selectIndex++;
+                                    for (String u : this.softwareActors.keySet()) {
+                                        for (SoftwareActor s : this.softwareActors.get(u)) {
+                                            s.endSelection();
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
 
-                if (selectIndex == ability.getSelectFilters().size()) {
-                    List<Component> components = new ArrayList<>();
-                    List<Card> cards = new ArrayList<>();
-                    for (ComponentActor selectedComponent : selectedComponents) {
-                        components.add(selectedComponent.getComponent());
-                    }
+                    if (selectIndex == ability.getSelectFilters().size()) {
+                        List<Component> components = new ArrayList<>();
+                        List<Card> cards = new ArrayList<>();
+                        for (ComponentActor selectedComponent : selectedComponents) {
+                            components.add(selectedComponent.getComponent());
+                        }
+                        for (SoftwareActor selectedCard : selectedCards) {
+                            cards.add(selectedCard.getSoftware());
+                        }
 
-                    UseAbilityMove move = new UseAbilityMove(
-                            game.getCurrentProfile().getUID(),
-                            softwareActor.getSoftware(),
-                            components,
-                            cards
-                    );
-                    Json json = new Json();
-                    softwareActor.setActivatedAbility(false);
-                    if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
-                        game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
+                        UseAbilityMove move = new UseAbilityMove(
+                                game.getCurrentProfile().getUID(),
+                                softwareActor.getSoftware(),
+                                components,
+                                cards
+                        );
+                        Json json = new Json();
+                        softwareActor.setActivatedAbility(false);
+                        if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
+                            game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
+                        }
+                        this.isSelecting = false;
                     }
-                    this.isSelecting = false;
                 }
             }
         }
@@ -383,9 +409,7 @@ public class MatchScreen implements Screen {
         if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             board.setTouchable(Touchable.enabled);
             infoLabel.setText("Your Turn!");
-            if (currentSelectFilter != null) {
-                System.out.println(this.currentSelectFilter.getDescription());
-            }
+            infoLabel.setFontScale(0.5f);
             if (this.isSelecting && currentSelectFilter != null) {
                 infoLabel.setText(this.currentSelectFilter.getDescription());
             }

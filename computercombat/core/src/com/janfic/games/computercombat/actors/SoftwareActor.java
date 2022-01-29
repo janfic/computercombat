@@ -36,6 +36,7 @@ public class SoftwareActor extends Panel {
     VerticalGroup leds;
     Image displayImage;
     TextureRegion cardRegion, abilityRegion;
+    boolean isSelecting, selected;
 
     public static final Map<Class<? extends Component>, String> components;
 
@@ -57,6 +58,8 @@ public class SoftwareActor extends Panel {
 
         this.software = software;
         this.areas = new ArrayList<>();
+        this.isSelecting = false;
+        this.selected = false;
 
         this.defaults().height(48).space(1);
 
@@ -83,6 +86,10 @@ public class SoftwareActor extends Panel {
         this.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (isSelecting == true) {
+                    selected = true;
+                    return;
+                };
                 CardInfoWindow w = new CardInfoWindow(game, software, skin, true);
                 w.setSize(2 * getStage().getWidth() / 3f, getStage().getHeight());
                 w.setPosition(getStage().getWidth() / 6f, getStage().getHeight());
@@ -231,6 +238,24 @@ public class SoftwareActor extends Panel {
 
     public void setAttack(float attack) {
         this.attackBar.setValue(attack);
+    }
+
+    public void startSelection() {
+        this.isSelecting = true;
+        this.selected = false;
+    }
+
+    public boolean isSelecting() {
+        return isSelecting;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void endSelection() {
+        this.selected = false;
+        this.isSelecting = false;
     }
 
     @Override

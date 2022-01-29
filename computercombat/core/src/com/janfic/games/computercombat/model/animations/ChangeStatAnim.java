@@ -85,6 +85,7 @@ public class ChangeStatAnim implements MoveAnimation {
         public void setActor(Actor actor) {
             super.setActor(actor);
             if (actor instanceof SoftwareActor) {
+
                 SoftwareActor softwareActor = (SoftwareActor) getActor();
                 this.oldAttack = softwareActor.getSoftware().getAttack();
                 this.oldHealth = softwareActor.getSoftware().getHealth();
@@ -103,6 +104,7 @@ public class ChangeStatAnim implements MoveAnimation {
         protected void update(float percent) {
             if (getActor() instanceof SoftwareActor) {
                 SoftwareActor softwareActor = (SoftwareActor) getActor();
+                System.out.println(((SoftwareActor) getActor()).getSoftware().getName() + " change stat");
                 float delta = (amount * percent);;
                 switch (stat) {
                     case "health":
