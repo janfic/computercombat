@@ -22,12 +22,9 @@ import java.util.Map;
 public class Match {
 
     private MatchState currentState;
-    private Profile player1, player2;
 
     public Match(Profile player1, Profile player2, Deck player1Deck, Deck player2Deck) {
 
-        this.player1 = player1;
-        this.player2 = player2;
         Map<String, List<Card>> activeEntities = new HashMap<>();
         Map<String, Computer> computers = new HashMap<>();
         Map<String, Deck> decks = new HashMap<>();

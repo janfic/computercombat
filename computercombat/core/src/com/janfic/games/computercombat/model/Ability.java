@@ -35,6 +35,14 @@ public abstract class Ability implements Serializable {
 
     public abstract List<MoveResult> doAbility(MatchState state, Move move);
 
+    /**
+     * Used when creating Ability from code in getAbilityFromCode(Ability).
+     * @param description
+     * @param textureName
+     * @param name
+     * @param code
+     * @param id 
+     */
     public void setInformation(String description, String textureName, String name, String code, int id) {
         this.id = id;
         this.name = name;
@@ -87,6 +95,13 @@ public abstract class Ability implements Serializable {
         this.selectFilters = getAbilityFromCode(this).getSelectFilters();
     }
 
+    /**
+     * Compiles code of an ability to set information for that ability that
+     * wasn't loaded from DB.
+     *
+     * @param ability
+     * @return
+     */
     public static Ability getAbilityFromCode(Ability ability) {
         CompilerConfiguration config = new CompilerConfiguration();
         config.addCompilationCustomizers(new ImportCustomizer().addStarImports(
