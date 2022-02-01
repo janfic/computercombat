@@ -47,6 +47,7 @@ public class PlayScreen implements Screen {
     
     @Override
     public void show() {
+
         this.game.setCurrentProfile(SQLAPI.getSingleton().loadProfile(game.getCurrentProfile().getUID()));
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);

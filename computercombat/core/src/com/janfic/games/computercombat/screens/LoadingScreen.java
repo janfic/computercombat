@@ -44,11 +44,11 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void show() {
-        this.skin = new Skin(Gdx.files.local(Assets.SKIN));
+        this.skin = new Skin(Gdx.files.internal(Assets.SKIN));
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
 
-        Pixmap cursor = new Pixmap(Gdx.files.local(Assets.CURSOR));
+        Pixmap cursor = new Pixmap(Gdx.files.internal(Assets.CURSOR));
         Gdx.graphics.setCursor(Gdx.graphics.newCursor(cursor, 0, 0));
 
         this.progressBar = new ProgressBar(0, 1, 0.01f, false, skin.get("default-horizontal", ProgressBarStyle.class));
@@ -62,8 +62,8 @@ public class LoadingScreen implements Screen {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                //game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "ec2-44-196-13-213.compute-1.amazonaws.com", 7272, new SocketHints())));
-                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "localhost", 7272, new SocketHints())));
+                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "ec2-44-196-13-213.compute-1.amazonaws.com", 7272, new SocketHints())));
+//                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "localhost", 7272, new SocketHints())));
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {

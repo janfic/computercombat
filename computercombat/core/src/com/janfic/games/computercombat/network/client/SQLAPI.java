@@ -332,6 +332,8 @@ public class SQLAPI {
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + uid + "';";
 
+            System.out.println(connection);
+
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
 

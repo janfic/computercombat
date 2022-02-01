@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -33,8 +34,9 @@ public class ComputerCombatGame extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        assetManager = new AssetManager(new InternalFileHandleResolver());
+        assetManager = new AssetManager();
         screenStack = new Stack<>();
+        Skin skin = new Skin(Gdx.files.internal(Assets.SKIN));
         assetManager.load(Assets.SKIN, Skin.class);
         assetManager.load(Assets.COMPONENT_ATLAS, TextureAtlas.class);
         assetManager.load(Assets.SOFTWARES_ATLAS, TextureAtlas.class);

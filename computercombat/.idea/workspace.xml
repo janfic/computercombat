@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="29a1763f-237b-4e4d-9f40-611e28d8e5fc" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/computercombat.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__computercombat_core_core_1_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__computercombat_mysql_connector_java_8_0_26_mysql_connector_java_8_0_26.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/android/computercombat.android.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/computercombat.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/core/computercombat.core.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/desktop/computercombat.desktop.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/html/computercombat.html.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/mysql-connector-java-8.0.26/computercombat.mysql-connector-java-8.0.26.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/server/computercombat.server.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/android.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/Assets.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/Assets.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/ComputerCombatGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/ComputerCombatGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/network/client/SQLAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/network/client/SQLAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/screens/LoadingScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/screens/LoadingScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/screens/PlayScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/janfic/games/computercombat/screens/PlayScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/build/resources/main/computer-combat.pem" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/build/tmp/dist/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/build/tmp/jar/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../data/ability.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../data/ability.csv" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[Pixel_XL_API_28]" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="24W1gKwXFGjeLyqqS4KmrKnCzhV" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_XL_API_28" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2022-02-01T17:10:46.453Z" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="android.sdk.path" value="$PROJECT_DIR$/../../../../../Android" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/android/libs/mysql-connector-java-8.0.26.jar" />
+    <property name="project.structure.last.edited" value="Dependencies" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.19796954" />
+    <property name="recommended.upgrade.do.not.ask.for.version" value="4.0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Jan Fic\Desktop\computercombat\computercombat\android\libs" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Android App.android">
+    <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="android" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="computercombat.android" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Sample Java Methods" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Desktop" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="com.janfic.games.computercombat.desktop.DesktopLauncher" />
+      <module name="computercombat.desktop" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Server" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="com.janfic.games.computercombat.server.Server" />
+      <module name="computercombat.server" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Android App.android" />
+      <item itemvalue="Application.Server" />
+      <item itemvalue="Application.Desktop" />
+    </list>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="29a1763f-237b-4e4d-9f40-611e28d8e5fc" name="Default Changelist" comment="" />
+      <created>1643731638204</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1643731638204</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="477" y="246" key="#PSD" timestamp="1643736434852">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="477" y="246" key="#PSD/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643736434852" />
+    <state x="657" y="139" key="#Server" timestamp="1643733896223">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="657" y="139" key="#Server/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643733896223" />
+    <state x="669" y="86" key="#android" timestamp="1643732141164">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="669" y="86" key="#android/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643732141164" />
+    <state x="414" y="155" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1643733886764">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="414" y="155" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643733886764" />
+    <state x="689" y="290" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1643733884954">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="689" y="290" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643733884954" />
+    <state x="740" y="260" key="FileChooserDialogImpl" timestamp="1643736399499">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="260" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643736399499" />
+    <state width="1312" height="361" key="GridCell.Tab.0.bottom" timestamp="1643737565789">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1312" height="361" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643737565789" />
+    <state width="1312" height="361" key="GridCell.Tab.0.center" timestamp="1643737565789">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1312" height="361" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643737565789" />
+    <state width="1312" height="361" key="GridCell.Tab.0.left" timestamp="1643737565789">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1312" height="361" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643737565789" />
+    <state width="1312" height="361" key="GridCell.Tab.0.right" timestamp="1643737565789">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1312" height="361" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643737565789" />
+    <state x="461" y="164" key="SettingsEditor" timestamp="1643731796815">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643731796815" />
+    <state x="662" y="328" key="com.android.tools.idea.run.deployment.ModifyDeviceSetDialog" timestamp="1643731924652">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="662" y="328" key="com.android.tools.idea.run.deployment.ModifyDeviceSetDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643731924652" />
+    <state x="765" y="354" key="psd.choose.module.panel.dimension" timestamp="1643736434167">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="765" y="354" key="psd.choose.module.panel.dimension/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1643736434167" />
+  </component>
+</project>

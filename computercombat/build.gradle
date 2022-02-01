@@ -12,7 +12,7 @@ buildscript {
     dependencies {
         classpath 'org.wisepersist:gwt-gradle-plugin:1.0.13'
         classpath 'org.gretty:gretty:3.0.2'
-        classpath 'com.android.tools.build:gradle:3.5.4'
+        classpath 'com.android.tools.build:gradle:4.0.2'
         classpath "org.hidetake:gradle-ssh-plugin:2.10.1"
     }
 }
@@ -73,7 +73,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        
+
+
     }
 }
 
@@ -107,7 +108,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
 
-        implementation files('../lib/mysql-connector-java-8.0.26.jar')
+        implementation 'mysql:mysql-connector-java:5.1.49'
         
         implementation 'org.codehaus.groovy:groovy-all:2.4.15'
     }
