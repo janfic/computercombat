@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UsernameExistsException;
 
 /**
  *
@@ -74,7 +75,7 @@ public class Server {
             public void run() {
                 Json json = new Json();
                 AWSServices services = new AWSServices("us-east-1_pLAKB2Mxw");
-                
+
                 while (true) {
                     for (Integer key : clients.keySet()) {
                         Client client = clients.get(key);
@@ -94,13 +95,14 @@ public class Server {
                                     String email = content.split(",")[1].trim();
                                     String password = content.split(",")[2];
 
-                                    if (!services.isUsernameAvailable(userName)) {
-                                        r = new Message(Type.ERROR, userName + " is not an available username");
-                                    } else if (services.isEmailUsed(email)) {
-                                        r = new Message(Type.ERROR, "This email is already being used");
-                                    } else {
+                                    try {
+
                                         String sub = services.createUser(userName, email, password);
                                         r = new Message(Type.PROFILE_INFO, sub);
+                                    } catch (UsernameExistsException e) {
+                                        r = new Message(Type.ERROR, "The username" + userName + " is unavailable.");
+                                    } catch (Exception e) {
+                                        r = new Message(Type.ERROR, "An unknown error occured.");
                                     }
                                 }
                                 break;
@@ -217,7 +219,7 @@ public class Server {
             @Override
             public void run() {
                 while (true) {
-                    
+
                     if (matches.size() < MAX_MATCHES && queue.size() > 1) {
                         MatchClient a = queue.get(0);
                         MatchClient b = queue.get(1);
@@ -278,7 +280,7 @@ public class Server {
                         clients.put(c2.getClientUID(), c2);
                     }
                     matches.removeAll(r);
-                    
+
                     try {
                         Thread.sleep(2000);
                     } catch (Exception e) {

@@ -108,8 +108,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
 
-        implementation 'mysql:mysql-connector-java:5.1.49'
-        
+        implementation files('../lib/mysql-connector-java-8.0.26.jar')
         implementation 'org.codehaus.groovy:groovy-all:2.4.15'
     }
 }

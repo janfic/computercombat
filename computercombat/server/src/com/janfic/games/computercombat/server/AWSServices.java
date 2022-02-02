@@ -61,7 +61,7 @@ public class AWSServices {
         return response.users().size() > 0;
     }
 
-    public String createUser(String username, String email, String password) {
+    public String createUser(String username, String email, String password) throws UsernameExistsException {
         AttributeType emailAttribute = AttributeType.builder().name("email").value(email).build();
 
         SignUpRequest request = SignUpRequest.builder()
