@@ -19,19 +19,19 @@ public abstract class Component implements Serializable {
 
     static {
         numberToComponent = new HashMap<>();
-        numberToComponent.put(1, BugComponent.class);
-        numberToComponent.put(2, CPUComponent.class);
-        numberToComponent.put(3, NetworkComponent.class);
-        numberToComponent.put(4, PowerComponent.class);
-        numberToComponent.put(5, RAMComponent.class);
-        numberToComponent.put(6, StorageComponent.class);
+        numberToComponent.put(1, CPUComponent.class);
+        numberToComponent.put(2, RAMComponent.class);
+        numberToComponent.put(3, StorageComponent.class);
+        numberToComponent.put(4, NetworkComponent.class);
+        numberToComponent.put(5, BugComponent.class);
+        numberToComponent.put(6, PowerComponent.class);
         componentToNumber = new HashMap<>();
-        componentToNumber.put(BugComponent.class, 1);
-        componentToNumber.put(CPUComponent.class, 2);
-        componentToNumber.put(NetworkComponent.class, 3);
-        componentToNumber.put(PowerComponent.class, 4);
-        componentToNumber.put(RAMComponent.class, 5);
-        componentToNumber.put(StorageComponent.class, 6);
+        componentToNumber.put(CPUComponent.class, 1);
+        componentToNumber.put(RAMComponent.class, 2);
+        componentToNumber.put(StorageComponent.class, 3);
+        componentToNumber.put(NetworkComponent.class, 4);
+        componentToNumber.put(BugComponent.class, 5);
+        componentToNumber.put(PowerComponent.class, 6);
     }
 
     private String name;

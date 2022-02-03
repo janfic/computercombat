@@ -230,6 +230,8 @@ public class MatchScreen implements Screen {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             if (softwareActor.activatedAbility()) {
                 Ability ability = softwareActor.getSoftware().getAbility();
+                System.out.println("ACTIVATED ABILITY: " + ability);
+                System.out.println("" + ability.getSelectFilters());
 
                 if (isSelecting == false) {
                     this.selectIndex = 0;
@@ -273,30 +275,34 @@ public class MatchScreen implements Screen {
                             }
                         }
                     }
-
-                    if (selectIndex == ability.getSelectFilters().size()) {
-                        List<Component> components = new ArrayList<>();
-                        List<Card> cards = new ArrayList<>();
-                        for (ComponentActor selectedComponent : selectedComponents) {
-                            components.add(selectedComponent.getComponent());
-                        }
-                        for (SoftwareActor selectedCard : selectedCards) {
-                            cards.add(selectedCard.getSoftware());
-                        }
-
-                        UseAbilityMove move = new UseAbilityMove(
-                                game.getCurrentProfile().getUID(),
-                                softwareActor.getSoftware(),
-                                components,
-                                cards
-                        );
-                        Json json = new Json();
-                        softwareActor.setActivatedAbility(false);
-                        if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
-                            game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
-                        }
-                        this.isSelecting = false;
+                }
+                
+                if (selectIndex == ability.getSelectFilters().size()) {
+                    List<Component> components = new ArrayList<>();
+                    List<Card> cards = new ArrayList<>();
+                    for (ComponentActor selectedComponent : selectedComponents) {
+                        components.add(selectedComponent.getComponent());
                     }
+                    for (SoftwareActor selectedCard : selectedCards) {
+                        cards.add(selectedCard.getSoftware());
+                    }
+
+                    UseAbilityMove move = new UseAbilityMove(
+                            game.getCurrentProfile().getUID(),
+                            softwareActor.getSoftware(),
+                            components,
+                            cards
+                    );
+                    Json json = new Json();
+                    softwareActor.setActivatedAbility(false);
+                    System.out.println("USED ABILITY MOVE");
+                    if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
+                        game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
+                    } else {
+                        System.out.println("NOT VALID MOVE???");
+                    }
+                    this.isSelecting = false;
+                    this.selectIndex = -1;
                 }
             }
         }
@@ -336,9 +342,14 @@ public class MatchScreen implements Screen {
                 json.setSerializer(ObjectMap.class,
                         new ObjectMapSerializer());
                 List<MoveResult> results = json.fromJson(List.class, serverMessage.getMessage());
-
-                animate(results,
-                        this);
+                animate(results, this);
+                this.isSelecting = false;
+                this.selectIndex = -1;
+                for (String string : softwareActors.keySet()) {
+                    for (SoftwareActor actor : softwareActors.get(string)) {
+                        actor.setActivatedAbility(false);
+                    }
+                }
             } else if (serverMessage.type == Type.PING) {
             } else if (serverMessage.type == Type.MATCH_RESULTS) {
                 Json json = new Json();

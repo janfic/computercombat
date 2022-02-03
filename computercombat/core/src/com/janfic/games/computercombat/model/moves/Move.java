@@ -49,6 +49,12 @@ public abstract class Move implements Json.Serializable {
         json.writeValue("playerUID", playerUID);
     }
 
+    /**
+     * Checks and calculates if there are any matched but uncollected components on the board.
+     * @param state - state to check
+     * @param move move that caused this new state
+     * @return a list of MoveResults
+     */
     public static List<MoveResult> collectComponentsCheck(MatchState state, Move move) {
 
         List<MoveResult> results = new ArrayList<>();

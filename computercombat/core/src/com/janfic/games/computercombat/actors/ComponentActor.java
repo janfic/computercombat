@@ -68,4 +68,12 @@ public class ComponentActor extends Actor {
     public ComponentCollectActor getCollectedRegion() {
         return collectedActor;
     }
+
+    public void setRegion(TextureRegion region) {
+        this.region = region;
+    }
+
+    public void setRegion(Component component) {
+        setRegion(componentAtlas.findRegion(component.getTextureName()));
+    }
 }

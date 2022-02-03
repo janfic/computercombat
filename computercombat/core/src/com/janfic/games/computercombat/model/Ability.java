@@ -4,8 +4,11 @@ import com.janfic.games.computercombat.model.match.MatchState;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
+import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.util.Filter;
 import groovy.lang.GroovyShell;
 import java.util.ArrayList;
@@ -37,11 +40,12 @@ public abstract class Ability implements Serializable {
 
     /**
      * Used when creating Ability from code in getAbilityFromCode(Ability).
+     *
      * @param description
      * @param textureName
      * @param name
      * @param code
-     * @param id 
+     * @param id
      */
     public void setInformation(String description, String textureName, String name, String code, int id) {
         this.id = id;
@@ -117,5 +121,17 @@ public abstract class Ability implements Serializable {
                 ability.getDescription(), ability.getTextureName(), ability.getName(), ability.getCode(), ability.getID()
         );
         return a;
+    }
+
+    public static MoveAnimation consumeCardProgress(MatchState newState, Move move) {
+        UseAbilityMove useAbilityMove = (UseAbilityMove) move;
+
+        int index = newState.activeEntities.get(useAbilityMove.getPlayerUID()).indexOf(useAbilityMove.getCard());
+        newState.activeEntities.get(useAbilityMove.getPlayerUID()).get(index).setProgress(0);
+
+        List<Card> used = new ArrayList<>();
+        used.add(useAbilityMove.getCard());
+
+        return new ConsumeProgressAnimation(useAbilityMove.getPlayerUID(), used);
     }
 }

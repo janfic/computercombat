@@ -38,11 +38,9 @@ public class SpawnAbility extends Ability {
     @Override
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
-        UseAbilityMove useAbilityMove = (UseAbilityMove) move;
         MatchState newState = new MatchState(state);
 
-        int index = newState.activeEntities.get(useAbilityMove.getPlayerUID()).indexOf(useAbilityMove.getCard());
-        newState.activeEntities.get(useAbilityMove.getPlayerUID()).get(index).setProgress(0);
+        MoveAnimation consumeProgressAnimation = Ability.consumeCardProgress(newState, move);
 
         List<int[]> newCoords = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
@@ -77,9 +75,7 @@ public class SpawnAbility extends Ability {
         }
 
         List<MoveAnimation> animations = new ArrayList<>();
-        List<Card> used = new ArrayList<>();
-        used.add(useAbilityMove.getCard());
-        animations.add(new ConsumeProgressAnimation(useAbilityMove.getPlayerUID(), used));
+        animations.add(consumeProgressAnimation);
         animations.add(new SpawnAnimation(destroyed, spawned));
         MoveResult moveResult = new MoveResult(move, state, newState, animations);
         List<MoveResult> afterMove = Move.collectComponentsCheck(newState, move);
