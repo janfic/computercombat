@@ -1,7 +1,10 @@
 package com.janfic.games.computercombat.actors;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -73,11 +76,12 @@ public class CardInfoWindow extends Window {
             }
         });
         this.add(okayButton).growX().colspan(3).row();
+
     }
 
     private void createSoftwareInfo(Skin skin, ComputerCombatGame game, Software software) {
         softwareInfo = new Table();
-        softwareInfo.defaults().space(5);
+        softwareInfo.defaults().space(3);
         Label title = new Label("Software", skin, "title");
         title.setAlignment(Align.center);
         softwareInfo.add(title).colspan(2).growX().row();
@@ -86,20 +90,20 @@ public class CardInfoWindow extends Window {
         softwareInfo.add(c);
         Table stats = new Table(skin);
         stats.defaults().space(1);
-        //Label pack = new Label("Pack: " + software.getPack(), skin, "filled");
         Label level = new Label("Level: " + 1, skin, "filled");
         Label attack = new Label("Attack: " + software.getMaxAttack(), skin, "filled");
         Label defense = new Label("Defense: " + software.getMaxArmor(), skin, "filled");
         Label health = new Label("Health: " + software.getMaxHealth(), skin, "filled");
         Label charge = new Label("Charge: " + software.getRunRequirements(), skin, "filled");
         Label ability = new Label("Ability: " + software.getAbility().getName(), skin, "filled");
-        //stats.add(pack).growX().left().row();
+        Label pack = new Label("Collection: " + software.getCollection().getName(), skin, "filled");
         stats.add(level).growX().left().row();
         stats.add(attack).growX().left().row();
         stats.add(defense).growX().left().row();
         stats.add(health).growX().left().row();
         stats.add(charge).growX().left().row();
         stats.add(ability).growX().left().row();
+        stats.add(pack).growX().left().row();
         softwareInfo.add(stats).grow().row();
     }
 
@@ -111,7 +115,7 @@ public class CardInfoWindow extends Window {
         abilityInfo.add(title).colspan(2).growX().row();
         BorderedArea imageBorder = new BorderedArea(skin);
         Image i = new Image(game.getAssetManager()
-                .get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class)
+                .get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class)
                 .findRegion(software.getAbility().getTextureName())
         );
         imageBorder.add(i).width(46).height(46);
@@ -142,4 +146,21 @@ public class CardInfoWindow extends Window {
         return useAbilityButton;
     }
 
+    @Override
+    protected void setStage(Stage stage) {
+        if (stage != null) {
+            this.setSize(3 * stage.getWidth() / 4f, stage.getHeight());
+            this.setPosition(1 * stage.getWidth() / 8f, stage.getHeight());
+            for (Actor actor : stage.getActors()) {
+                if (actor != this) {
+                    actor.setTouchable(Touchable.disabled);
+                }
+            }
+        } else {
+            for (Actor actor : getStage().getActors()) {
+                actor.setTouchable(Touchable.enabled);
+            }
+        }
+        super.setStage(stage); //To change body of generated methods, choose Tools | Templates.
+    }
 }

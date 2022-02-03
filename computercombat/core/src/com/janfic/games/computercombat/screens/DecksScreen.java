@@ -369,7 +369,7 @@ public class DecksScreen implements Screen {
                     BorderedArea dragActor = new BorderedArea(skin);
                     dragActor.setWidth(48);
                     dragActor.setHeight(48);
-                    dragActor.add(new Image(game.getAssetManager().get("texture_packs/" + card.getPack() + ".atlas", TextureAtlas.class).findRegion(card.getTextureName()))).width(46).height(46);
+                    dragActor.add(new Image(game.getAssetManager().get("texture_packs/" + card.getCollection().getTextureName() + ".atlas", TextureAtlas.class).findRegion(card.getTextureName()))).width(46).height(46);
                     payload.setDragActor(dragActor);
                     return payload;
                 }
@@ -401,7 +401,7 @@ public class DecksScreen implements Screen {
                         BorderedArea dragActor = new BorderedArea(skin);
                         dragActor.setWidth(48);
                         dragActor.setHeight(48);
-                        dragActor.add(new Image(game.getAssetManager().get("texture_packs/" + card.getPack() + ".atlas", TextureAtlas.class).findRegion(card.getTextureName()))).width(46).height(46);
+                        dragActor.add(new Image(game.getAssetManager().get("texture_packs/" + card.getCollection().getTextureName() + ".atlas", TextureAtlas.class).findRegion(card.getTextureName()))).width(46).height(46);
                         payload.setDragActor(dragActor);
                         return payload;
                     }

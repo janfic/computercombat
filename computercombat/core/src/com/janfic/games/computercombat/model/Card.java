@@ -22,16 +22,17 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     protected int runProgress, runRequirements;
     protected Trait[] traits;
     protected int traitsUnlocked;
-    protected String name, pack, textureName;
+    protected String name, textureName;
+    protected Collection collection;
     protected String ownerUID;
 
     public Card() {
-        this(0, "none", "CARD", "Computer", "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
+        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack"), "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
     }
 
-    public Card(int id, String ownerUID, String name, String pack, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
+    public Card(int id, String ownerUID, String name, Collection collection, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
         this.name = name;
-        this.pack = pack;
+        this.collection = collection;
         this.textureName = textureName;
         this.ownerUID = ownerUID;
         this.health = startingHealth + ((3 + level - 1) / 4);
@@ -258,8 +259,8 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         return runProgress;
     }
 
-    public String getPack() {
-        return pack;
+    public Collection getCollection() {
+        return collection;
     }
 
     public String getTextureName() {
@@ -292,7 +293,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         json.writeValue("name", this.name);
         json.writeValue("id", this.id);
         json.writeValue("matchID", this.matchID);
-        json.writeValue("pack", this.pack);
+        json.writeValue("collection", this.collection);
         json.writeValue("textureName", this.textureName);
         json.writeValue("health", this.health);
         json.writeValue("armor", this.armor);
@@ -319,7 +320,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         this.name = json.readValue("name", String.class, jv);
         this.id = json.readValue("id", Integer.class, jv);
         this.matchID = json.readValue("matchID", Integer.class, jv);
-        this.pack = json.readValue("pack", String.class, jv);
+        this.collection = json.readValue("collection", Collection.class, jv);
         this.textureName = json.readValue("textureName", String.class, jv);
         this.health = json.readValue("health", Integer.class, jv);
         this.armor = json.readValue("armor", Integer.class, jv);
@@ -360,7 +361,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     public int hashCode() {
         int hash = 3;
         hash = 79 * hash + Objects.hashCode(this.name);
-        hash = 79 * hash + Objects.hashCode(this.pack);
+        hash = 79 * hash + Objects.hashCode(this.collection.getID());
         hash = 79 * hash + Objects.hashCode(this.id);
         hash = 79 * hash + Objects.hashCode(this.matchID);
         hash = 79 * hash + Objects.hashCode(this.ownerUID);

@@ -23,7 +23,7 @@ public class Computer extends Card implements Serializable {
     }
 
     public Computer(String playerUID) {
-        super(0, playerUID, "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
+        super(0, playerUID, "Computer", new Collection(), "computer", 1, 20, 0, 0, 0, new Class[]{
             CPUComponent.class,
             NetworkComponent.class,
             StorageComponent.class,

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Ability;
+import com.janfic.games.computercombat.model.Collection;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.abilities.DrawAbility;
@@ -18,7 +19,6 @@ import com.janfic.games.computercombat.model.components.NetworkComponent;
 import com.janfic.games.computercombat.model.components.PowerComponent;
 import com.janfic.games.computercombat.model.components.RAMComponent;
 import com.janfic.games.computercombat.model.components.StorageComponent;
-import java.util.ArrayList;
 
 /**
  *
@@ -63,15 +63,13 @@ public class ComputerActor extends Panel {
             public void clicked(InputEvent event, float x, float y) {
                 Ability a = new DrawAbility();
                 a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
-                CardInfoWindow w = new CardInfoWindow(game, new Software(0, computer.getOwnerUID(), "Computer", "computer_pack", "computer", 1, 20, 0, 0, 0, new Class[]{
+                CardInfoWindow w = new CardInfoWindow(game, new Software(0, computer.getOwnerUID(), "Computer", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack"), "computer", 1, 20, 0, 0, 0, new Class[]{
                     CPUComponent.class,
                     NetworkComponent.class,
                     StorageComponent.class,
                     RAMComponent.class,
                     PowerComponent.class
                 }, 20, a), skin, true);
-                w.setSize(2 * getStage().getWidth() / 3f, getStage().getHeight());
-                w.setPosition(getStage().getWidth() / 6f, getStage().getHeight());
                 ComputerActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
                     @Override

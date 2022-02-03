@@ -1,1 +1,20 @@
-﻿1,Infect,Double the amount of Bugs on the board,,infect,1
+id,name,description,code,textureName
+0,Draw,Draw a card from your deck,new DrawAbility();,draw_card
+1,Infect,Spawn 5 Bugs on the board,"new SpawnAbility(BugComponent.class, 5, []);",infect
+2,Open Folder,Collect All Storage Components,"new CollectAbility([], [
+	{match, move, c -> F: {return c instanceof StorageComponent;}} as CollectFilter
+]);",open_folder
+3,Tunnel,Collect a row of components,"Filter f = new ComponentFilter(""Select a row"") {
+ 	public boolean filter(Component c) {return c.getX() == 0;}
+};
+
+new CollectAbility([f], [
+	{match, UseAbilityMove move, c -> F:{
+		Component selected = move.getSelectedComponents().get(0);
+		return c.getY() == selected.getY();
+	}} as CollectFilter
+]);",tunnel
+4,Click,Attack an Opponent for 5 damage,"Filter filter = new CardFilter(""Choose an opponents card to damage"") {
+     public boolean filter(Card card) {return true;}
+};
+new FocusedDamageAbility([filter], 5);",click

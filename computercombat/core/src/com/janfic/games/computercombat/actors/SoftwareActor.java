@@ -77,8 +77,8 @@ public class SoftwareActor extends Panel {
         defenseBar = new ProgressBar(0, software.getMaxArmor(), 1, true, grey);
         attackBar = new ProgressBar(0, software.getMaxAttack(), 1, true, red);
         imageArea = new BorderedArea(skin);
-        cardRegion = game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName());
-        abilityRegion = game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getAbility().getTextureName());
+        cardRegion = game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName());
+        abilityRegion = game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class).findRegion(software.getAbility().getTextureName());
         displayImage = new Image(cardRegion);
         imageArea.add(displayImage);
 
@@ -91,8 +91,6 @@ public class SoftwareActor extends Panel {
                     return;
                 };
                 CardInfoWindow w = new CardInfoWindow(game, software, skin, true);
-                w.setSize(2 * getStage().getWidth() / 3f, getStage().getHeight());
-                w.setPosition(getStage().getWidth() / 6f, getStage().getHeight());
                 SoftwareActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
                     @Override

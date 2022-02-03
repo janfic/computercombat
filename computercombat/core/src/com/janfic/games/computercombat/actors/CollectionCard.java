@@ -59,7 +59,7 @@ public class CollectionCard extends BorderedGrid {
         this.top();
         this.align(Align.top);
         BorderedArea area = new BorderedArea(skin);
-        area.add(new Image(game.getAssetManager().get("texture_packs/" + software.getPack() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName())));
+        area.add(new Image(game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName())));
         Label l = new Label(software.getName(), skin, "paneled");
         l.setWrap(true);
         l.setAlignment(Align.center);
@@ -149,8 +149,7 @@ public class CollectionCard extends BorderedGrid {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Window w = new CardInfoWindow(game, software, skin, false);
-                w.setSize(2 * getStage().getWidth() / 3f, getStage().getHeight());
-                w.setPosition(getStage().getWidth() / 6f, getStage().getHeight());
+
                 CollectionCard.this.getStage().addActor(w);
             }
         };

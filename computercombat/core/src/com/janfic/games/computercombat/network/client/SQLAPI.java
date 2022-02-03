@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.Collection;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.match.MatchData;
@@ -105,11 +106,20 @@ public class SQLAPI {
 
                 Ability a = getAbilityByID(set.getInt("card.ability_id"));
 
+                Statement collectionStatement = connection.createStatement();
+                ResultSet collectionResults = collectionStatement.executeQuery("SELECT * FROM collection WHERE id = " + set.getInt("card.collection_id"));
+                collectionResults.next();
+
                 Software s = new Software(
                         set.getInt("card.id"),
                         uid,
                         set.getString("card.name"),
-                        "computer_pack",
+                        new Collection(
+                                collectionResults.getInt("id"),
+                                collectionResults.getString("name"),
+                                collectionResults.getString("description"),
+                                collectionResults.getString("textureName"),
+                                collectionResults.getString("path")),
                         set.getString("textureName"),
                         set.getInt("level"),
                         set.getInt("maxHealth"),
@@ -156,11 +166,20 @@ public class SQLAPI {
 
             Ability a = getAbilityByID(set.getInt("card.ability_id"));
 
+            Statement collectionStatement = connection.createStatement();
+            ResultSet collectionResults = collectionStatement.executeQuery("SELECT * FROM collection WHERE id = " + set.getInt("card.collection_id"));
+            collectionResults.next();
+
             return new Software(
                     set.getInt("card.id"),
                     optionalUID == null ? "ownerUID" : optionalUID,
                     set.getString("card.name"),
-                    "computer_pack",
+                    new Collection(
+                            collectionResults.getInt("id"),
+                            collectionResults.getString("name"),
+                            collectionResults.getString("description"),
+                            collectionResults.getString("textureName"),
+                            collectionResults.getString("path")),
                     set.getString("textureName"),
                     set.getInt("level"),
                     set.getInt("maxHealth"),
