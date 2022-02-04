@@ -113,6 +113,7 @@ public abstract class Ability implements Serializable {
                 "com.janfic.games.computercombat.model.abilities",
                 "com.janfic.games.computercombat.model.components",
                 "com.janfic.games.computercombat.model.moves",
+                "com.janfic.games.computercombat.model.match",
                 "com.janfic.games.computercombat.util"
         ));
         GroovyShell shell = new GroovyShell(config);

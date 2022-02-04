@@ -151,15 +151,6 @@ public class CardInfoWindow extends Window {
         if (stage != null) {
             this.setSize(3 * stage.getWidth() / 4f, stage.getHeight());
             this.setPosition(1 * stage.getWidth() / 8f, stage.getHeight());
-            for (Actor actor : stage.getActors()) {
-                if (actor != this) {
-                    actor.setTouchable(Touchable.disabled);
-                }
-            }
-        } else {
-            for (Actor actor : getStage().getActors()) {
-                actor.setTouchable(Touchable.enabled);
-            }
         }
         super.setStage(stage); //To change body of generated methods, choose Tools | Templates.
     }

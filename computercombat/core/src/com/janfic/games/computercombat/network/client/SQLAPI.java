@@ -56,6 +56,7 @@ public class SQLAPI {
                     "com.janfic.games.computercombat.model.abilities",
                     "com.janfic.games.computercombat.model.components",
                     "com.janfic.games.computercombat.model.moves",
+                    "com.janfic.games.computercombat.model.match",
                     "com.janfic.games.computercombat.util"
             ));
             shell = new GroovyShell(config);
@@ -208,7 +209,9 @@ public class SQLAPI {
             ResultSet gAResults = getAbilityStatement.executeQuery(sql);
 
             gAResults.next();
-
+            
+            System.out.println(gAResults.getString("code"));
+            
             Ability a = (Ability) shell.evaluate(gAResults.getString("code"));
             a.setInformation(
                     gAResults.getString("description"),

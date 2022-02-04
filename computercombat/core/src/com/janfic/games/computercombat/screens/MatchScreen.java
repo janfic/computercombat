@@ -208,9 +208,7 @@ public class MatchScreen implements Screen {
 
         // Set Info text to be whos turn it is
         updateInfoText();
-
-        // Game Over Check and Finish
-        //gameOverCheck();
+        
         // Render Animations that are queued
         animations(delta);
 
@@ -342,13 +340,6 @@ public class MatchScreen implements Screen {
                         new ObjectMapSerializer());
                 List<MoveResult> results = json.fromJson(List.class, serverMessage.getMessage());
                 animate(results, this);
-                this.isSelecting = false;
-                this.selectIndex = -1;
-                for (String string : softwareActors.keySet()) {
-                    for (SoftwareActor actor : softwareActors.get(string)) {
-                        actor.setActivatedAbility(false);
-                    }
-                }
             } else if (serverMessage.type == Type.PING) {
             } else if (serverMessage.type == Type.MATCH_RESULTS) {
                 Json json = new Json();

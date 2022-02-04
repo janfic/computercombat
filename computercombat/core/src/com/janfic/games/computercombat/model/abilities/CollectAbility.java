@@ -11,6 +11,7 @@ import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.util.Filter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,14 +24,16 @@ import java.util.stream.Stream;
 public class CollectAbility extends Ability {
 
     List<CollectFilter> filters;
+    StateAnalyzer<Integer> amount;
 
     public CollectAbility() {
         super(new ArrayList<>());
     }
 
-    public CollectAbility(List<Filter> selectFilters, List<CollectFilter> filters) {
+    public CollectAbility(List<Filter> selectFilters, List<CollectFilter> filters, StateAnalyzer<Integer> amount) {
         super(selectFilters);
         this.filters = filters;
+        this.amount = amount;
     }
 
     @Override
@@ -48,6 +51,9 @@ public class CollectAbility extends Ability {
             });
         }
         List<Component> list = components.collect(Collectors.toList());
+        Collections.shuffle(list);
+        int count = amount.analyze(state, move);
+        list = list.subList(0, Math.min(count, list.size()));
         Component[] c = list.toArray(new Component[0]);
         Map<Integer, List<Component>> collected = GameRules.collectComponents(c, newState.getComponentBoard());
         List<MoveResult> result = Move.collectComponents(collected, state, newState, move);
