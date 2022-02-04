@@ -7,6 +7,7 @@ import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.util.ComponentFilter;
 import java.util.ArrayList;
@@ -101,6 +102,15 @@ public class MatchState implements Serializable {
         return null;
     }
 
+    public Profile getOtherProfile(String uid) {
+        for (Profile player : players) {
+            if (!player.getUID().equals(uid)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     public List<Component> getComponentsAsList() {
         List<Component> components = new ArrayList<>();
         for (Component[] cr : componentBoard) {
@@ -155,15 +165,16 @@ public class MatchState implements Serializable {
         }
     }
 
-    public int countComponents(ComponentFilter filter) {
+    public int countComponents(ComponentFilter filter, Move move) {
         int count = 0;
         for (Component[] components : componentBoard) {
             for (Component component : components) {
-                if (filter.filter(component)) {
+                if (filter.filter(component, this, move)) {
                     count++;
                 }
             }
         }
         return count;
     }
+
 }

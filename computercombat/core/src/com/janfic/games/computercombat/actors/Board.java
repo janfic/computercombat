@@ -275,7 +275,7 @@ public class Board extends BorderedGrid {
         this.componentsToSelect = 1;
         for (Cell<ComponentActor>[] cells : board) {
             for (Cell<ComponentActor> cell : cells) {
-                boolean selectable = filter.filter(cell.getActor().getComponent());
+                boolean selectable = filter.filter(cell.getActor().getComponent(), matchData.getCurrentState(), null);
                 if (!selectable) {
                     cell.getActor().setColor(Color.GRAY);
                     cell.getActor().setTouchable(Touchable.disabled);

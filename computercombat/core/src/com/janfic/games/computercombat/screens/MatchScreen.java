@@ -253,7 +253,7 @@ public class MatchScreen implements Screen {
                         for (String uid : this.softwareActors.keySet()) {
                             for (SoftwareActor sa : this.softwareActors.get(uid)) {
                                 if (!sa.isSelecting()) {
-                                    if (!filter.filter(softwareActor.getSoftware())) {
+                                    if (!filter.filter(softwareActor.getSoftware(), matchData.getCurrentState(), null)) {
                                         sa.setColor(Color.GRAY);
                                         sa.setTouchable(Touchable.disabled);
                                     } else {

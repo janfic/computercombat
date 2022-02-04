@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.match.MatchState;
+import com.janfic.games.computercombat.model.moves.Move;
 
 /**
  *
@@ -20,7 +22,7 @@ public abstract class CardFilter implements Serializable, Filter<Card> {
         this.description = description;
     }
     
-    public abstract boolean filter(Card card);
+    public abstract boolean filter(Card card, MatchState state, Move move);
 
     @Override
     public String getDescription() {

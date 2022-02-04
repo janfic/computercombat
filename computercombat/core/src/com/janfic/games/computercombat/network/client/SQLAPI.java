@@ -210,8 +210,6 @@ public class SQLAPI {
 
             gAResults.next();
             
-            System.out.println(gAResults.getString("code"));
-            
             Ability a = (Ability) shell.evaluate(gAResults.getString("code"));
             a.setInformation(
                     gAResults.getString("description"),

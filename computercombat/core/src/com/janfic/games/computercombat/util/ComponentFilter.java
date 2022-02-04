@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.Component;
+import com.janfic.games.computercombat.model.match.MatchState;
+import com.janfic.games.computercombat.model.moves.Move;
 
 /**
  *
@@ -31,7 +33,7 @@ public abstract class ComponentFilter implements Serializable, Filter<Component>
         return description;
     }
 
-    public abstract boolean filter(Component component);
+    public abstract boolean filter(Component component, MatchState state, Move move);
 
     @Override
     public void write(Json json) {

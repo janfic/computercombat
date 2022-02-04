@@ -55,7 +55,7 @@ public class TransformComponentsAbility extends Ability {
         List<Component> originalComponents = new ArrayList<>(), newComponents = new ArrayList<>();
         for (Component[] components : board) {
             for (Component component : components) {
-                if (filter.filter(component)) {
+                if (filter.filter(component, state, move)) {
                     int randomIndex = (int) (Math.random() * transformTypes.size());
                     try {
                         Component c = Component.numberToComponent
