@@ -19,13 +19,13 @@ import java.util.List;
  */
 public class FocusedDamageAbility extends Ability {
 
-    int amount;
+    StateAnalyzer<Integer> amount;
 
     public FocusedDamageAbility() {
         super(new ArrayList<>());
     }
 
-    public FocusedDamageAbility(List<Filter> filter, int amount) {
+    public FocusedDamageAbility(List<Filter> filter, StateAnalyzer<Integer> amount) {
         super(filter);
         this.amount = amount;
     }
@@ -46,9 +46,9 @@ public class FocusedDamageAbility extends Ability {
             for (String playerUID : newState.activeEntities.keySet()) {
                 for (Card card : newState.activeEntities.get(playerUID)) {
                     if (card.equals(selectedSoftware)) {
-                        System.out.println(card.getName());
-                        card.recieveDamage(amount);
-                        animation.add(new ReceiveDamageAnimation(selectedSoftware, amount, card.getOwnerUID()));
+                        int damage = amount.analyze(state, move);
+                        card.recieveDamage(damage);
+                        animation.add(new ReceiveDamageAnimation(selectedSoftware, damage, card.getOwnerUID()));
                         if (card.isDead()) {
                             destroyed.add(card);
                         }

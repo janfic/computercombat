@@ -208,7 +208,7 @@ public class MatchScreen implements Screen {
 
         // Set Info text to be whos turn it is
         updateInfoText();
-        
+
         // Render Animations that are queued
         animations(delta);
 
@@ -300,6 +300,13 @@ public class MatchScreen implements Screen {
                     }
                     this.isSelecting = false;
                     this.selectIndex = -1;
+                    this.selectedCards.clear();
+                    this.selectedComponents.clear();
+                    for (String u : this.softwareActors.keySet()) {
+                        for (SoftwareActor s : this.softwareActors.get(u)) {
+                            s.endSelection();
+                        }
+                    }
                 }
             }
         }

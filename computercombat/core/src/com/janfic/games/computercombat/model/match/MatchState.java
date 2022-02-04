@@ -8,6 +8,7 @@ import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.util.ComponentFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -152,5 +153,17 @@ public class MatchState implements Serializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public int countComponents(ComponentFilter filter) {
+        int count = 0;
+        for (Component[] components : componentBoard) {
+            for (Component component : components) {
+                if (filter.filter(component)) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }
