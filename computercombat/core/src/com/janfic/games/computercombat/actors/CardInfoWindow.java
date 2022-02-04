@@ -122,6 +122,7 @@ public class CardInfoWindow extends Window {
         Label name = new Label(software.getAbility().getName(), skin, "filled");
         name.setAlignment(Align.center);
         Label description = new Label(software.getAbility().getDescription(), skin, "filled");
+        description.setWrap(true);
         description.setAlignment(Align.center);
         abilityInfo.add(name).center().growX().row();
         abilityInfo.add(imageBorder).center().width(48).height(48).expandX().row();
