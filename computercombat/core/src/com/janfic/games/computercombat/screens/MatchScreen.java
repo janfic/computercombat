@@ -106,7 +106,6 @@ public class MatchScreen implements Screen {
         Json json = new Json();
 
         if (matchStateData.type == Type.MATCH_STATE_DATA) {
-            System.out.println(matchStateData.getMessage());
             MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
             this.matchData.setCurrentState(state);
         }
@@ -276,7 +275,7 @@ public class MatchScreen implements Screen {
                         }
                     }
                 }
-                
+
                 if (selectIndex == ability.getSelectFilters().size()) {
                     List<Component> components = new ArrayList<>();
                     List<Card> cards = new ArrayList<>();

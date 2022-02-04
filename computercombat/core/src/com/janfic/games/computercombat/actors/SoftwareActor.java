@@ -90,7 +90,7 @@ public class SoftwareActor extends Panel {
                     selected = true;
                     return;
                 };
-                CardInfoWindow w = new CardInfoWindow(game, software, skin, true);
+                CardInfoWindow w = new CardInfoWindow(game, software, skin, SoftwareActor.this.getSoftware().getRunProgress() >= SoftwareActor.this.getSoftware().getRunRequirements());
                 SoftwareActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
                     @Override
