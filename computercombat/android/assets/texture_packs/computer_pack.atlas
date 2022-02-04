@@ -62,7 +62,7 @@ draw_card
   index: -1
 file
   rotate: false
-  xy: 146, 146
+  xy: 194, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
@@ -75,6 +75,13 @@ firewall
   offset: 0, 0
   index: -1
 flash_drive
+  rotate: false
+  xy: 146, 146
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+gigabyte_flash
   rotate: false
   xy: 98, 98
   size: 46, 46
@@ -153,7 +160,7 @@ shortcut
   index: -1
 speaker
   rotate: false
-  xy: 242, 242
+  xy: 290, 290
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
@@ -174,7 +181,7 @@ tunnel
   index: -1
 virus
   rotate: false
-  xy: 194, 194
+  xy: 242, 242
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
