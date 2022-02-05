@@ -128,11 +128,14 @@ public abstract class Ability implements Serializable {
         UseAbilityMove useAbilityMove = (UseAbilityMove) move;
 
         int index = newState.activeEntities.get(useAbilityMove.getPlayerUID()).indexOf(useAbilityMove.getCard());
-        newState.activeEntities.get(useAbilityMove.getPlayerUID()).get(index).setProgress(0);
+        if (index != -1) {
+            newState.activeEntities.get(useAbilityMove.getPlayerUID()).get(index).setProgress(0);
 
-        List<Card> used = new ArrayList<>();
-        used.add(useAbilityMove.getCard());
-
-        return new ConsumeProgressAnimation(useAbilityMove.getPlayerUID(), used);
+            List<Card> used = new ArrayList<>();
+            used.add(useAbilityMove.getCard());
+            return new ConsumeProgressAnimation(useAbilityMove.getPlayerUID(), used);
+        } else {
+            return null;
+        }
     }
 }

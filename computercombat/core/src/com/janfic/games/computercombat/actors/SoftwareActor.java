@@ -57,26 +57,33 @@ public class SoftwareActor extends Panel {
         super(skin);
 
         this.software = software;
+        buildActor(flipped, software, game);
+    }
+
+    public void buildActor(boolean flipped, Software software, ComputerCombatGame game) {
+        System.out.println("BUILDING ACTOR");
+        this.software = software;
         this.areas = new ArrayList<>();
         this.isSelecting = false;
         this.selected = false;
 
+        this.clear();
         this.defaults().height(48).space(1);
 
-        ProgressBarStyle red = new ProgressBarStyle(skin.get("default-vertical", ProgressBarStyle.class));
-        red.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("df3e23"));
-        ProgressBarStyle green = new ProgressBarStyle(skin.get("default-vertical", ProgressBarStyle.class));
-        green.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("9cdb43"));
-        ProgressBarStyle grey = new ProgressBarStyle(skin.get("default-vertical", ProgressBarStyle.class));
-        grey.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("dae0ea"));
-        ProgressBarStyle blue = new ProgressBarStyle(skin.get("default-vertical", ProgressBarStyle.class));
-        blue.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("249fde"));
+        ProgressBarStyle red = new ProgressBarStyle(getSkin().get("default-vertical", ProgressBarStyle.class));
+        red.knobBefore = getSkin().newDrawable("progress_bar_before_vertical", Color.valueOf("df3e23"));
+        ProgressBarStyle green = new ProgressBarStyle(getSkin().get("default-vertical", ProgressBarStyle.class));
+        green.knobBefore = getSkin().newDrawable("progress_bar_before_vertical", Color.valueOf("9cdb43"));
+        ProgressBarStyle grey = new ProgressBarStyle(getSkin().get("default-vertical", ProgressBarStyle.class));
+        grey.knobBefore = getSkin().newDrawable("progress_bar_before_vertical", Color.valueOf("dae0ea"));
+        ProgressBarStyle blue = new ProgressBarStyle(getSkin().get("default-vertical", ProgressBarStyle.class));
+        blue.knobBefore = getSkin().newDrawable("progress_bar_before_vertical", Color.valueOf("249fde"));
 
         progressBar = new ProgressBar(0, software.getRunRequirements(), 1, true, blue);
         healthBar = new ProgressBar(0, software.getMaxHealth(), 1, true, green);
         defenseBar = new ProgressBar(0, software.getMaxArmor(), 1, true, grey);
         attackBar = new ProgressBar(0, software.getMaxAttack(), 1, true, red);
-        imageArea = new BorderedArea(skin);
+        imageArea = new BorderedArea(getSkin());
         cardRegion = game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName());
         abilityRegion = game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class).findRegion(software.getAbility().getTextureName());
         displayImage = new Image(cardRegion);
@@ -90,7 +97,7 @@ public class SoftwareActor extends Panel {
                     selected = true;
                     return;
                 };
-                CardInfoWindow w = new CardInfoWindow(game, software, skin, SoftwareActor.this.getSoftware().getRunProgress() >= SoftwareActor.this.getSoftware().getRunRequirements());
+                CardInfoWindow w = new CardInfoWindow(game, software, getSkin(), SoftwareActor.this.getSoftware().getRunProgress() >= SoftwareActor.this.getSoftware().getRunRequirements());
                 SoftwareActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
                     @Override
@@ -109,7 +116,7 @@ public class SoftwareActor extends Panel {
         Stack progressStack = new Stack();
         progressStack.add(progressBar);
         Table progressOverlay = new Table();
-        OverlayTextLabelArea<Software> progressLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        OverlayTextLabelArea<Software> progressLabelArea = new OverlayTextLabelArea<Software>(getSkin(), software) {
             @Override
             public String updateLabel(Software dataObject) {
                 progressBar.setValue(dataObject.getRunProgress());
@@ -123,7 +130,7 @@ public class SoftwareActor extends Panel {
         Stack healthStack = new Stack();
         healthStack.add(healthBar);
         Table healthOverlay = new Table();
-        OverlayTextLabelArea<Software> healthLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        OverlayTextLabelArea<Software> healthLabelArea = new OverlayTextLabelArea<Software>(getSkin(), software) {
             @Override
             public String updateLabel(Software dataObject) {
                 healthBar.setValue(dataObject.getHealth());
@@ -137,7 +144,7 @@ public class SoftwareActor extends Panel {
         Stack defenseStack = new Stack();
         defenseStack.add(defenseBar);
         Table defenseOverlay = new Table();
-        OverlayTextLabelArea<Software> defenseLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        OverlayTextLabelArea<Software> defenseLabelArea = new OverlayTextLabelArea<Software>(getSkin(), software) {
             @Override
             public String updateLabel(Software dataObject) {
                 defenseBar.setValue(dataObject.getArmor());
@@ -151,7 +158,7 @@ public class SoftwareActor extends Panel {
         Stack attackStack = new Stack();
         attackStack.add(attackBar);
         Table attackOverlay = new Table();
-        OverlayTextLabelArea<Software> attackLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        OverlayTextLabelArea<Software> attackLabelArea = new OverlayTextLabelArea<Software>(getSkin(), software) {
             @Override
             public String updateLabel(Software dataObject) {
                 attackBar.setValue(dataObject.getAttack());
@@ -164,7 +171,7 @@ public class SoftwareActor extends Panel {
 
         leds = new VerticalGroup();
         for (Class<? extends Component> runComponent : software.getRunComponents()) {
-            leds.addActor(new LEDActor(skin, components.get(runComponent)));
+            leds.addActor(new LEDActor(getSkin(), components.get(runComponent)));
         }
 
         leds.space(3).center();

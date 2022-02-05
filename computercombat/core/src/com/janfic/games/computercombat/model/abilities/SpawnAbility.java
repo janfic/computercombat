@@ -76,7 +76,9 @@ public class SpawnAbility extends Ability {
         }
 
         List<MoveAnimation> animations = new ArrayList<>();
-        animations.add(consumeProgressAnimation);
+        if (consumeProgressAnimation != null) {
+            animations.add(consumeProgressAnimation);
+        }
         animations.add(new SpawnAnimation(destroyed, spawned));
         MoveResult moveResult = new MoveResult(move, state, newState, animations);
         List<MoveResult> afterMove = Move.collectComponentsCheck(newState, move);

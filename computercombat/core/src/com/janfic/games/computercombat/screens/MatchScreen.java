@@ -506,6 +506,10 @@ public class MatchScreen implements Screen {
         return null;
     }
 
+    public ComputerCombatGame getGame() {
+        return game;
+    }
+
     public void buildPanels() {
         leftPanel.clear();
         rightPanel.clear();

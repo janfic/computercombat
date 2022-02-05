@@ -372,4 +372,9 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     public int compareTo(Card o) {
         return this.hashCode() - o.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return name + ": [id: " + id + " matchID: " + matchID + " owner: " + ownerUID + " ]";
+    }
 }

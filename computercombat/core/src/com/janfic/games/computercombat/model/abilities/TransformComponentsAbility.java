@@ -2,7 +2,7 @@ package com.janfic.games.computercombat.model.abilities;
 
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Component;
-import com.janfic.games.computercombat.model.animations.TransformComponentsAnimation;
+import com.janfic.games.computercombat.model.animations.SpawnAnimation;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
@@ -74,7 +74,7 @@ public class TransformComponentsAbility extends Ability {
         }
 
         animations.add(consumeProgress);
-        animations.add(new TransformComponentsAnimation(originalComponents, newComponents));
+        animations.add(new SpawnAnimation(originalComponents, newComponents));
 
         MoveResult result = new MoveResult(move, newState, newState, animations);
         List<MoveResult> afterMove = Move.collectComponentsCheck(newState, move);

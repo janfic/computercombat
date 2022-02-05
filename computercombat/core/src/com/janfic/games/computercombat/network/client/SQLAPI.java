@@ -53,6 +53,7 @@ public class SQLAPI {
             config.addCompilationCustomizers(new ImportCustomizer().addStarImports(
                     "java.util",
                     "com.janfic.games.computercombat.model",
+                    "com.janfic.games.computercombat.network.client",
                     "com.janfic.games.computercombat.model.abilities",
                     "com.janfic.games.computercombat.model.components",
                     "com.janfic.games.computercombat.model.moves",
@@ -209,7 +210,7 @@ public class SQLAPI {
             ResultSet gAResults = getAbilityStatement.executeQuery(sql);
 
             gAResults.next();
-            
+
             Ability a = (Ability) shell.evaluate(gAResults.getString("code"));
             a.setInformation(
                     gAResults.getString("description"),
