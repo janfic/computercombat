@@ -73,6 +73,8 @@ public class MatchScreen implements Screen {
 
     boolean checkGameOver = true;
 
+    float animationSpeed = 0.5f;
+
     public MatchScreen(ComputerCombatGame game, ClientMatch match) {
         this.game = game;
         this.assetManager = game.getAssetManager();
@@ -227,8 +229,6 @@ public class MatchScreen implements Screen {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             if (softwareActor.activatedAbility()) {
                 Ability ability = softwareActor.getSoftware().getAbility();
-                System.out.println("ACTIVATED ABILITY: " + ability);
-                System.out.println("" + ability.getSelectFilters());
 
                 if (isSelecting == false) {
                     this.selectIndex = 0;
@@ -473,7 +473,7 @@ public class MatchScreen implements Screen {
                     board.updateBoard(matchData);
                     int offset = 0;
                     for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
-                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen);
+                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen, animationSpeed);
                         int indexOfUpdate = animation.indexOf(updateData);
                         animation.addAll(indexOfUpdate + 1 + offset, animations);
                         offset += animations.size();

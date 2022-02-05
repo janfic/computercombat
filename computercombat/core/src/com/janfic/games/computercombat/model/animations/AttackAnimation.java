@@ -39,7 +39,7 @@ public class AttackAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         List<List<Action>> animations = new ArrayList<>();
         for (Entry<Card, List<Card>> entry : attacks.entries()) {
             List<Action> attackActions = new ArrayList<>();
@@ -55,18 +55,18 @@ public class AttackAnimation implements MoveAnimation {
                     posBack = attackerActor.stageToLocalCoordinates(posBack);
                     pos = attackerActor.stageToLocalCoordinates(pos);
                     Action attack = Actions.sequence(
-                            Actions.moveTo(pos.x, pos.y, 0.5f, Interpolation.exp5In),
-                            Actions.moveTo(posBack.x, posBack.y, 0.5f, Interpolation.exp5Out)
+                            Actions.moveTo(pos.x, pos.y, 0.5f * animationSpeed, Interpolation.exp5In),
+                            Actions.moveTo(posBack.x, posBack.y, 0.5f * animationSpeed, Interpolation.exp5Out)
                     );
                     Action attackedAction;
                     int armorDecrease = attacked.getArmor() > 0 ? Math.min(attacked.getArmor(), entry.key.getAttack()) : 0;
                     int healthDecrease = attacked.getHealth() <= entry.key.getAttack() - armorDecrease ? attacked.getHealth() : entry.key.getAttack() - armorDecrease;
                     attackedAction = Actions.sequence(
-                            Actions.delay(0.5f),
+                            Actions.delay(0.5f * animationSpeed),
                             Actions.color(Color.RED),
-                            Actions.color(Color.WHITE, 0.4f),
-                            new ChangeStatAction(0.5f, "armor", -armorDecrease),
-                            new ChangeStatAction(0.5f, "health", -healthDecrease)
+                            Actions.color(Color.WHITE, 0.4f * animationSpeed),
+                            new ChangeStatAction(0.5f * animationSpeed, "armor", -armorDecrease),
+                            new ChangeStatAction(0.5f * animationSpeed, "health", -healthDecrease)
                     );
 
                     attackedAction.setActor(attackedActor);
@@ -81,15 +81,15 @@ public class AttackAnimation implements MoveAnimation {
                     posBack = attackerActor.stageToLocalCoordinates(posBack);
                     pos = attackerActor.stageToLocalCoordinates(pos);
                     Action attack = Actions.sequence(
-                            Actions.moveTo(pos.x, pos.y, 0.5f, Interpolation.exp5In),
-                            Actions.moveTo(posBack.x, posBack.y, 0.5f, Interpolation.exp5Out)
+                            Actions.moveTo(pos.x, pos.y, 0.5f * animationSpeed, Interpolation.exp5In),
+                            Actions.moveTo(posBack.x, posBack.y, 0.5f * animationSpeed, Interpolation.exp5Out)
                     );
                     int healthDecrease = entry.key.getAttack();
                     attackedAction = Actions.sequence(
-                            Actions.delay(0.5f),
+                            Actions.delay(0.5f * animationSpeed),
                             Actions.color(Color.RED),
-                            Actions.color(Color.WHITE, 0.4f),
-                            new ChangeStatAction(0.5f, "health", -healthDecrease)
+                            Actions.color(Color.WHITE, 0.4f * animationSpeed),
+                            new ChangeStatAction(0.5f * animationSpeed, "health", -healthDecrease)
                     );
                     attackedAction.setActor(attackedActor);
                     attack.setActor(attackerActor);

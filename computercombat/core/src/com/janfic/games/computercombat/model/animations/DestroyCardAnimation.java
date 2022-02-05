@@ -29,14 +29,14 @@ public class DestroyCardAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         List<List<Action>> animation = new ArrayList<>();
 
         List<Action> actions = new ArrayList<>();
         for (Card card : destroyed) {
             SoftwareActor actor = screen.getSoftwareActorByMatchID(this.playerUID, card.getMatchID());
 
-            Action action = Actions.sequence(Actions.fadeOut(1), Actions.removeActor(), Actions.run(new Runnable() {
+            Action action = Actions.sequence(Actions.fadeOut(1 * animationSpeed), Actions.removeActor(), Actions.run(new Runnable() {
                 @Override
                 public void run() {
                     screen.getSoftwareActors().get(DestroyCardAnimation.this.playerUID).remove(actor);

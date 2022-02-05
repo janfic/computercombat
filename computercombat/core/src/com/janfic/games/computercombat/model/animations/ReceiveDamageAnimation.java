@@ -36,7 +36,7 @@ public class ReceiveDamageAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         List<List<Action>> animations = new ArrayList<>();
         List<Action> changeColorActions = new ArrayList<>();
 
@@ -44,11 +44,11 @@ public class ReceiveDamageAnimation implements MoveAnimation {
         int armorDecrease = reciever.getArmor() > 0 ? Math.min(reciever.getArmor(), damage) : 0;
         int healthDecrease = reciever.getHealth() <= damage - armorDecrease ? reciever.getHealth() : damage - armorDecrease;
         Action attackedAction = Actions.sequence(
-                Actions.delay(0.5f),
+                Actions.delay(0.5f * animationSpeed),
                 Actions.color(Color.RED),
-                Actions.color(Color.WHITE, 0.4f),
-                new ChangeStatAction(0.5f, "armor", -armorDecrease),
-                new ChangeStatAction(0.5f, "health", -healthDecrease)
+                Actions.color(Color.WHITE, 0.4f * animationSpeed),
+                new ChangeStatAction(0.5f * animationSpeed, "armor", -armorDecrease),
+                new ChangeStatAction(0.5f * animationSpeed, "health", -healthDecrease)
         );
         attackedAction.setActor(softwareActor);
         changeColorActions.add(attackedAction);

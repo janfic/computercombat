@@ -32,7 +32,7 @@ public class SwitchAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         List<List<Action>> actions = new ArrayList<>();
 
         if (currentPlayerUID.equals(playerUID)) {
@@ -47,8 +47,18 @@ public class SwitchAnimation implements MoveAnimation {
         List<Action> switchActions = new ArrayList<>();
         Vector2 sA = new Vector2(aActor.getX(), aActor.getY());
         Vector2 sB = new Vector2(bActor.getX(), bActor.getY());
-        Action actionA = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(sA.x, sA.y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
-        Action actionB = Actions.sequence(Actions.rotateTo(0), Actions.moveTo(sB.x, sB.y, 0.35f), Actions.scaleTo(1, 1, 0.25f), Actions.rotateTo(0, 0.25f));
+        Action actionA = Actions.sequence(
+                Actions.rotateTo(0),
+                Actions.moveTo(sA.x, sA.y, 0.35f * animationSpeed),
+                Actions.scaleTo(1, 1, 0.25f * animationSpeed),
+                Actions.rotateTo(0, 0.25f * animationSpeed)
+        );
+        Action actionB = Actions.sequence(
+                Actions.rotateTo(0),
+                Actions.moveTo(sB.x, sB.y, 0.35f * animationSpeed),
+                Actions.scaleTo(1, 1, 0.25f * animationSpeed),
+                Actions.rotateTo(0, 0.25f * animationSpeed)
+        );
         actionA.setActor(bActor);
         actionB.setActor(aActor);
         switchActions.add(actionA);

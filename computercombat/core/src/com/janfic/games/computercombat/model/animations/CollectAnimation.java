@@ -47,7 +47,7 @@ public class CollectAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         Map<String, ComputerActor> computerActors = screen.getComputerActors();
         Map<String, List<SoftwareActor>> softwareActors = screen.getSoftwareActors();
         Board board = screen.getBoard();
@@ -59,11 +59,17 @@ public class CollectAnimation implements MoveAnimation {
             for (ComponentActor componentActor : componentActors) {
                 if (componentActor.getComponent().equals(component)) {
                     boolean isPlayerMove = currentPlayerUID.equals(playerUID);
-                    Action a = Actions.sequence(Actions.fadeOut(0.35f), Actions.delay(0.35f),
-                            Actions.moveTo(isPlayerMove ? 0 : board.getWidth() - 7 - 24, (8 - (componentActor.getComponent().getY() + 1)) * 24 + 7, (isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 6f));
+                    Action a = Actions.sequence(
+                            Actions.fadeOut(0.35f * animationSpeed),
+                            Actions.delay(0.35f * animationSpeed),
+                            Actions.moveTo(isPlayerMove ? 0 : board.getWidth() - 7 - 24, (8 - (componentActor.getComponent().getY() + 1)) * 24 + 7, (isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 6f * animationSpeed));
                     a.setActor(componentActor);
                     componentActor.setZIndex(0);
-                    Action b = Actions.sequence(Actions.fadeOut(0), Actions.visible(true), Actions.fadeIn(0.7f), Actions.fadeOut((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 6f, Interpolation.fade));
+                    Action b = Actions.sequence(
+                            Actions.fadeOut(0),
+                            Actions.visible(true),
+                            Actions.fadeIn(0.7f * animationSpeed),
+                            Actions.fadeOut((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 6f * animationSpeed, Interpolation.fade));
                     b.setActor(componentActor.getCollectedRegion());
                     Image collectedComponent = new Image(board.getSkin(), "collected_component");
 
@@ -95,12 +101,18 @@ public class CollectAnimation implements MoveAnimation {
                     Vector2 end = board.localToStageCoordinates(new Vector2(isPlayerMove ? -5 : board.getWidth() + 3, gutterYs[i]));
                     collectedComponent.setPosition(start.x, start.y);
                     Action c = Actions.sequence(
-                            Actions.delay((isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f + 0.7f - 0.2f),
-                            Actions.scaleTo(1, 4),
-                            Actions.fadeIn(0.2f),
-                            Actions.parallel(Actions.moveTo(end.x, end.y, Math.abs(end.y - start.y) / 100f, Interpolation.exp5), Actions.scaleTo(1, 1, Math.abs(end.y - start.y) / 100f)),
-                            Actions.parallel(Actions.moveBy(isPlayerMove ? -13 : 13, 0, 0.1f, Interpolation.exp5), Actions.scaleTo(2, 1, 0.1f)),
-                            Actions.fadeOut(0.1f),
+                            Actions.delay(animationSpeed * (isPlayerMove ? componentActor.getComponent().getX() : 7 - componentActor.getComponent().getX()) / 4f + 0.7f - 0.2f),
+                            Actions.scaleTo(1, 4 * animationSpeed),
+                            Actions.fadeIn(0.2f * animationSpeed),
+                            Actions.parallel(
+                                    Actions.moveTo(end.x, end.y, Math.abs(end.y - start.y) / 100f * animationSpeed, Interpolation.exp5),
+                                    Actions.scaleTo(1, 1, Math.abs(end.y - start.y) / 100f * animationSpeed)
+                            ),
+                            Actions.parallel(
+                                    Actions.moveBy(isPlayerMove ? -13 : 13, 0, 0.1f * animationSpeed, Interpolation.exp5),
+                                    Actions.scaleTo(2, 1, 0.1f * animationSpeed)
+                            ),
+                            Actions.fadeOut(0.1f * animationSpeed),
                             Actions.run(new Runnable() {
                                 @Override
                                 public void run() {
@@ -118,7 +130,7 @@ public class CollectAnimation implements MoveAnimation {
                                     }
                                 }
                             }),
-                            Actions.delay(0.5f),
+                            Actions.delay(0.5f * animationSpeed),
                             Actions.run(new Runnable() {
                                 @Override
                                 public void run() {

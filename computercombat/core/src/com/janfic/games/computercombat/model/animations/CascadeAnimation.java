@@ -37,7 +37,7 @@ public class CascadeAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         
         Board board = screen.getBoard();
         List<List<Action>> actions = new ArrayList<>();
@@ -54,7 +54,7 @@ public class CascadeAnimation implements MoveAnimation {
                         Action moveAction = Actions.moveTo(
                                 24 * x + 7,
                                 (8 - (cas.getFallenComponent().getY() + 1)) * 24 + 7,
-                                (cas.getFallenComponent().getY() - cas.getOriginalComponent().getY()) / 4f, Interpolation.pow2In);
+                                ((cas.getFallenComponent().getY() - cas.getOriginalComponent().getY()) / 4f) * animationSpeed, Interpolation.pow2In);
                         moveAction.setActor(cell.getActor());
                         cascadeAnimation.add(moveAction);
                         found = true;
@@ -89,7 +89,7 @@ public class CascadeAnimation implements MoveAnimation {
                         Actions.moveTo(
                                 24 * x,
                                 -(columnFall.get(i).getFallenComponent().getY() + 1) * 24,
-                                (columnFall.get(i).getFallenComponent().getY() - (-1 - i)) / 4f,
+                                ((columnFall.get(i).getFallenComponent().getY() - (-1 - i)) / 4f) * animationSpeed,
                                 Interpolation.pow2In)
                 );
                 move.setActor(component);

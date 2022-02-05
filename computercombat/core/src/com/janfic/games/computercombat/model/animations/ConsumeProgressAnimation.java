@@ -30,7 +30,7 @@ public class ConsumeProgressAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         List<List<Action>> animation = new ArrayList<>();
         List<Action> actions = new ArrayList<>();
         int index = -1;
@@ -44,11 +44,11 @@ public class ConsumeProgressAnimation implements MoveAnimation {
         }
 
         if (software.get(0).equals(screen.getComputerActors().get(this.playerUID).getComputer())) {
-            DrainProgressAction drain = new DrainProgressAction(1);
+            DrainProgressAction drain = new DrainProgressAction(1 * animationSpeed);
             drain.setActor(screen.getComputerActors().get(this.playerUID));
             actions.add(drain);
         } else if (index != -1) {
-            DrainProgressAction drain = new DrainProgressAction(1);
+            DrainProgressAction drain = new DrainProgressAction(1 * animationSpeed);
             drain.setActor(softwareActors.get(index));
             actions.add(drain);
         }

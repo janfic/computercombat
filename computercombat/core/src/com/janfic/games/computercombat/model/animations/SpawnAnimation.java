@@ -31,7 +31,7 @@ public class SpawnAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         List<List<Action>> animation = new ArrayList<>();
 
         List<Action> spawn = new ArrayList<>();
@@ -45,7 +45,15 @@ public class SpawnAnimation implements MoveAnimation {
             ComponentActor componentActor = new ComponentActor(component);
             componentActor.setVisible(false);
             screen.getBoard().getBoard()[component.getX()][component.getY()].setActor(componentActor);
-            Action spawnAction = Actions.sequence(Actions.scaleTo(1.5f, 1.5f), Actions.alpha(0), Actions.visible(true), Actions.parallel(Actions.scaleTo(1, 1, 0.5f), Actions.fadeIn(0.5f)));
+            Action spawnAction = Actions.sequence(
+                    Actions.scaleTo(1.5f, 1.5f), 
+                    Actions.alpha(0), 
+                    Actions.visible(true), 
+                    Actions.parallel(
+                            Actions.scaleTo(1, 1, 0.5f * animationSpeed), 
+                            Actions.fadeIn(0.5f * animationSpeed)
+                    )
+            );
             spawnAction.setActor(componentActor);
             spawn.add(spawnAction);
         }

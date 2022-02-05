@@ -30,7 +30,7 @@ public class TransformComponentsAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         List<List<Action>> animation = new ArrayList<>();
 
         List<Action> transformAnimation = new ArrayList<>();
@@ -40,9 +40,9 @@ public class TransformComponentsAnimation implements MoveAnimation {
 
             for (ComponentActor componentActor : screen.getBoard().getComponents()) {
                 if (componentActor.getComponent().equals(originalComponent)) {
-                    Action transformAction = Actions.sequence(Actions.fadeOut(0.25f), Actions.run(() -> {
+                    Action transformAction = Actions.sequence(Actions.fadeOut(0.25f * animationSpeed), Actions.run(() -> {
                         componentActor.setRegion(newComponent);
-                    }), Actions.fadeIn(0.25f));
+                    }), Actions.fadeIn(0.25f * animationSpeed));
                     transformAction.setActor(componentActor);
                     transformAnimation.add(transformAction);
                 }

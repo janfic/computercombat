@@ -39,7 +39,7 @@ public class DrawAnimation implements MoveAnimation {
     }
 
     @Override
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen) {
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         Table leftPanel = screen.getLeftPanel();
         Table rightPanel = screen.getRightPanel();
         Table panel;
@@ -63,7 +63,10 @@ public class DrawAnimation implements MoveAnimation {
             card.setVisible(false);
             card.setPosition(stage.getWidth() / 2, -300);
             t.add(card).expand().center();
-            Action cardAction = Actions.sequence(Actions.moveBy(0, -400), Actions.visible(true), Actions.moveBy(0, 400, 1, Interpolation.fastSlow), Actions.delay(1), Actions.moveBy(0, -400, 1, Interpolation.slowFast));
+            Action cardAction = Actions.sequence(Actions.moveBy(0, -400), Actions.visible(true),
+                    Actions.moveBy(0, 400, 1 * animationSpeed, Interpolation.fastSlow),
+                    Actions.delay(1 * animationSpeed),
+                    Actions.moveBy(0, -400, 1 * animationSpeed, Interpolation.slowFast));
             cardAction.setActor(card);
             cardAnimation.add(cardAction);
             animations.add(cardAnimation);
@@ -80,7 +83,10 @@ public class DrawAnimation implements MoveAnimation {
             panel.add(computerActor).expandY().growX().bottom();
             softwareActor.setVisible(false);
             softwareActors.add(softwareActor);
-            Action softwareActorAction = Actions.sequence(Actions.moveBy(0, -400), Actions.visible(true), Actions.moveBy(0, 400, 1, Interpolation.fastSlow));
+            Action softwareActorAction = Actions.sequence(
+                    Actions.moveBy(0, -400),
+                    Actions.visible(true),
+                    Actions.moveBy(0, 400, 1 * animationSpeed, Interpolation.fastSlow));
             softwareActorAction.setActor(softwareActor);
             softwareAnimation.add(softwareActorAction);
             animations.add(softwareAnimation);

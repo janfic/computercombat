@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface MoveAnimation extends Serializable {
 
-    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen);
+    public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed);
 }
