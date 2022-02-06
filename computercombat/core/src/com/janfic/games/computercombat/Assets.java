@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class Assets {
 
     public static final String COMPONENT_ATLAS = "texture_packs/components.atlas";
-    public static final String SOFTWARES_ATLAS = "texture_packs/computer_pack.atlas";
     public static final String SKIN = "skins/computer_combat_skin.json";
     public static final String SKIN_ATLAS = "skins/computer_combat_skin.atlas";
     public static final String PLAY_BACKGROUND = "play_screen.png";

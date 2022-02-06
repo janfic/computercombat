@@ -1,10 +1,17 @@
 
 algorithms_pack.png
-size: 64,64
+size: 128,64
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 bubble_sort
+  rotate: false
+  xy: 50, 2
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+rng
   rotate: false
   xy: 2, 2
   size: 46, 46
