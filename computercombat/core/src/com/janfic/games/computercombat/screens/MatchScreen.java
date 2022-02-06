@@ -253,7 +253,7 @@ public class MatchScreen implements Screen {
                         for (String uid : this.softwareActors.keySet()) {
                             for (SoftwareActor sa : this.softwareActors.get(uid)) {
                                 if (!sa.isSelecting()) {
-                                    if (!filter.filter(softwareActor.getSoftware(), matchData.getCurrentState(), null)) {
+                                    if (!filter.filter(sa.getSoftware(), matchData.getCurrentState(), null)) {
                                         sa.setColor(Color.GRAY);
                                         sa.setTouchable(Touchable.disabled);
                                     } else {
@@ -266,6 +266,8 @@ public class MatchScreen implements Screen {
                                     for (String u : this.softwareActors.keySet()) {
                                         for (SoftwareActor s : this.softwareActors.get(u)) {
                                             s.endSelection();
+                                            sa.setColor(Color.WHITE);
+                                            sa.setTouchable(Touchable.enabled);
                                         }
                                     }
                                 }
@@ -305,6 +307,8 @@ public class MatchScreen implements Screen {
                     for (String u : this.softwareActors.keySet()) {
                         for (SoftwareActor s : this.softwareActors.get(u)) {
                             s.endSelection();
+                            s.setColor(Color.WHITE);
+                            s.setTouchable(Touchable.enabled);
                         }
                     }
                 }
