@@ -140,7 +140,7 @@ public class Server {
                                     System.out.println(data);
                                     Profile profile = json.fromJson(Profile.class, data.get(0));
                                     Deck deck = json.fromJson(Deck.class, data.get(1));
-                                    boolean[] matchRequest = json.fromJson(boolean[].class, data.get(2));
+                                    boolean[] queuePreferences = json.fromJson(boolean[].class, data.get(2));
                                     MatchClient matchClient = new MatchClient(profile, deck, client);
                                     if (queue.contains(matchClient)) {
                                         r = new Message(Type.QUEUE_POSITION, "" + (queue.indexOf(matchClient) + 1));
@@ -271,7 +271,6 @@ public class Server {
                     for (ServerMatchRoom match : matches) {
                         if (match.isGameOver()) {
                             r.add(match);
-                            System.out.println("here");
                         }
                     }
 

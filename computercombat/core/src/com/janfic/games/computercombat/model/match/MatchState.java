@@ -146,6 +146,9 @@ public class MatchState implements Serializable {
         this.currentPlayerMove = json.readValue("currentPlayerMove", Profile.class, jsonData);
         this.isGameOver = json.readValue("isGameOver", boolean.class, jsonData);
         this.winner = json.readValue("winner", Profile.class, jsonData);
+        if (this.winner.getUID() == null) {
+            this.winner = null;
+        }
         this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
         this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);

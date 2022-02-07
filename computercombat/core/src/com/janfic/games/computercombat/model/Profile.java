@@ -21,8 +21,7 @@ public class Profile implements Serializable {
     private Deck collection;
     private int packets;
 
-    private Profile() {
-        this("defaultUID");
+    public Profile() {
     }
 
     public Profile(String uid) {

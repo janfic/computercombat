@@ -33,74 +33,76 @@ public class ServerMatchRoom {
         Implement HumanPlayer to wait for client message seperately
     
      */
-    private final MatchClient player1, player2;
+    private final MatchClient matchClient1, matchClient2;
     private Match match;
     private MatchData matchData;
     private boolean isGameOver;
     private Thread thread;
 
-    public ServerMatchRoom(MatchClient player1, MatchClient player2) {
+    public ServerMatchRoom(MatchClient matchClient1, MatchClient matchClient2) {
+        this.matchClient1 = matchClient1;
+        this.matchClient2 = matchClient2;
         this.thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Message message1 = new Message(Type.FOUND_MATCH, ServerMatchRoom.this.player2.getProfile().getName());
-                    Message message2 = new Message(Type.FOUND_MATCH, ServerMatchRoom.this.player1.getProfile().getName());
+                    Message message1 = new Message(Type.FOUND_MATCH, ServerMatchRoom.this.matchClient2.getProfile().getName());
+                    Message message2 = new Message(Type.FOUND_MATCH, ServerMatchRoom.this.matchClient1.getProfile().getName());
 
-                    player1.sendMessage(message1);
-                    player2.sendMessage(message2);
+                    matchClient1.sendMessage(message1);
+                    matchClient2.sendMessage(message2);
 
-                    while (player1.hasMessage() == false || player2.hasMessage() == false) {
+                    while (matchClient1.hasMessage() == false || matchClient2.hasMessage() == false) {
                     }
 
-                    Message response1 = player1.readMessage();
-                    Message response2 = player2.readMessage();
+                    Message response1 = matchClient1.readMessage();
+                    Message response2 = matchClient2.readMessage();
 
                     if (response1.type == Type.CANCEL_QUEUE) {
                         Message error = new Message(Type.ERROR, "A PLAYER WASNT READY");
-                        player1.sendMessage(new Message(Type.SUCCESS, "LEFT QUEUE"));
-                        player2.sendMessage(error);
+                        matchClient1.sendMessage(new Message(Type.SUCCESS, "LEFT QUEUE"));
+                        matchClient2.sendMessage(error);
                     }
 
                     if (response2.type == Type.CANCEL_QUEUE) {
                         Message error = new Message(Type.ERROR, "A PLAYER WASNT READY");
-                        player2.sendMessage(new Message(Type.SUCCESS, "LEFT QUEUE"));
-                        player1.sendMessage(error);
+                        matchClient2.sendMessage(new Message(Type.SUCCESS, "LEFT QUEUE"));
+                        matchClient1.sendMessage(error);
                     }
 
                     Json json = new Json();
                     json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
 
                     // Begin Match
-                    Match match = new Match(player1.getProfile(), player2.getProfile(), player1.getDeck(), player2.getDeck());
-                    Message matchData1 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(player1.getProfile().getUID())));
-                    Message matchData2 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(player2.getProfile().getUID())));
+                    Match match = new Match(matchClient1.getProfile(), matchClient2.getProfile(), matchClient1.getDeck(), matchClient2.getDeck());
+                    Message matchData1 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(matchClient1.getProfile().getUID())));
+                    Message matchData2 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(matchClient2.getProfile().getUID())));
                     Timestamp starttime = new Timestamp(System.currentTimeMillis());
-
-                    player1.sendMessage(matchData1);
-                    player2.sendMessage(matchData2);
+             
+                    matchClient1.sendMessage(matchData1);
+                    matchClient2.sendMessage(matchData2);
 
                     // Match Data = End Match Data
-                    matchData = new MatchData(player1.getProfile(), player2.getProfile(), player1.getDeck(), player2.getDeck());
+                    matchData = new MatchData(matchClient1.getProfile(), matchClient2.getProfile(), matchClient1.getDeck(), matchClient2.getDeck());
                     matchData.getMatchStates().add(match.getCurrentState());
 
                     // Main Match Loop
                     while (isGameOver == false) {
                         // Differentiate players ( whos move to wait for? )
                         String currentPlayersMove = match.whosMove();
-                        MatchClient currentPlayer = player1.getProfile().getUID().equals(currentPlayersMove) ? player1 : player2;
-                        MatchClient otherPlayer = player1.getProfile().getUID().equals(currentPlayersMove) ? player2 : player1;
+                        MatchClient currentMatchClient = matchClient1.getProfile().getUID().equals(currentPlayersMove) ? matchClient1 : matchClient2;
+                        MatchClient otherMatchClient = matchClient1.getProfile().getUID().equals(currentPlayersMove) ? matchClient2 : matchClient1;
 
                         // Start Waiting for message
                         float timeStart = System.nanoTime();
                         float delta = 0;
                         // Loop Breaks if message or timeout
-                        while (currentPlayer.hasMessage() == false && currentPlayer.getSocket().isConnected()) {
+                        while (currentMatchClient.hasMessage() == false && currentMatchClient.getSocket().isConnected()) {
                             delta = System.nanoTime() - timeStart;
                             if (delta / 1000000000f >= 10) {
                                 try {
-                                    currentPlayer.sendMessage(new Message(Type.PING, "PING"));
-                                    otherPlayer.sendMessage(new Message(Type.PING, "PING"));
+                                    currentMatchClient.sendMessage(new Message(Type.PING, "PING"));
+                                    otherMatchClient.sendMessage(new Message(Type.PING, "PING"));
                                     timeStart = System.nanoTime();
                                 } catch (Exception e) {
                                     isGameOver = true;
@@ -116,7 +118,7 @@ public class ServerMatchRoom {
 
                         // Recieved Message
                         // Read and Calculate
-                        Message moveMessage = currentPlayer.readMessage();
+                        Message moveMessage = currentMatchClient.readMessage();
                         if (moveMessage.type == Type.MOVE_REQUEST) {
 
                             // Deserialize
@@ -138,13 +140,13 @@ public class ServerMatchRoom {
                                 matchData.add(move, results, match.getCurrentState());
                                 // Serialize and Send
                                 Message response = new Message(Type.MOVE_ACCEPT, json.toJson(results));
-                                currentPlayer.sendMessage(response);
-                                otherPlayer.sendMessage(response);
+                                currentMatchClient.sendMessage(response);
+                                otherMatchClient.sendMessage(response);
                                 isGameOver = match.getCurrentState().isGameOver;
                             } else {
                                 // Send Rejected message
                                 Message notValidMessage = new Message(Type.MOVE_REJECT, "NOT VALID MOVE");
-                                currentPlayer.sendMessage(notValidMessage);
+                                currentMatchClient.sendMessage(notValidMessage);
                             }
                         }
                     } // Match Loop
@@ -152,7 +154,7 @@ public class ServerMatchRoom {
                     // Calculate Match Results
                     MatchState lastState = matchData.getMatchStates().get(matchData.getMatchStates().size() - 1);
                     if (lastState.winner != null) {
-                        matchData.setWinner(lastState.winner.getUID().equals(player2.getProfile().getUID()));
+                        matchData.setWinner(lastState.winner.getUID().equals(matchClient2.getProfile().getUID()));
                     } else {
                         matchData.setWinner(false);
                     }
@@ -164,13 +166,13 @@ public class ServerMatchRoom {
                     // Calculate Rewards
                     HashMap<String, String> rewards1 = new HashMap<>();
                     HashMap<String, String> rewards2 = new HashMap<>();
-                    rewards1.put("Collected", "" + matchData.getRewards().get(player1.getProfile().getUID()));
-                    rewards2.put("Collected", "" + matchData.getRewards().get(player2.getProfile().getUID()));
+                    rewards1.put("Collected", "" + matchData.getRewards().get(matchClient1.getProfile().getUID()));
+                    rewards2.put("Collected", "" + matchData.getRewards().get(matchClient2.getProfile().getUID()));
                     if (matchData.getWinner()) {
-                        matchData.getRewards().put(player2.getProfile().getUID(), matchData.getRewards().get(player2.getProfile().getUID()) + 25);
+                        matchData.getRewards().put(matchClient2.getProfile().getUID(), matchData.getRewards().get(matchClient2.getProfile().getUID()) + 25);
                         rewards2.put("Victory Bonus", "" + 25);
                     } else {
-                        matchData.getRewards().put(player1.getProfile().getUID(), matchData.getRewards().get(player1.getProfile().getUID()) + 25);
+                        matchData.getRewards().put(matchClient1.getProfile().getUID(), matchData.getRewards().get(matchClient1.getProfile().getUID()) + 25);
                         rewards1.put("Victory Bonus", "" + 25);
                     }
 
@@ -182,35 +184,34 @@ public class ServerMatchRoom {
                     }
 
                     // Send Match Results to Clients
-                    MatchResults results1 = new MatchResults(matchData.getRewards().get(player1.getProfile().getUID()), starttime, endtime, player2.getProfile(), !matchData.getWinner(), rewards1);
-                    MatchResults results2 = new MatchResults(matchData.getRewards().get(player2.getProfile().getUID()), starttime, endtime, player1.getProfile(), matchData.getWinner(), rewards2);
+                    MatchResults results1 = new MatchResults(matchData.getRewards().get(matchClient1.getProfile().getUID()), starttime, endtime, matchClient2.getProfile(), !matchData.getWinner(), rewards1);
+                    MatchResults results2 = new MatchResults(matchData.getRewards().get(matchClient2.getProfile().getUID()), starttime, endtime, matchClient1.getProfile(), matchData.getWinner(), rewards2);
 
                     Message results1Message = new Message(Type.MATCH_RESULTS, json.toJson(results1));
                     Message results2Message = new Message(Type.MATCH_RESULTS, json.toJson(results2));
-                    player1.sendMessage(results1Message);
-                    player2.sendMessage(results2Message);
+                    matchClient1.sendMessage(results1Message);
+                    matchClient2.sendMessage(results2Message);
 
-                    player1.getProfile().setPackets(player1.getProfile().getPackets() + matchData.getRewards().get(player1.getProfile().getUID()));
-                    player2.getProfile().setPackets(player2.getProfile().getPackets() + matchData.getRewards().get(player2.getProfile().getUID()));
+                    matchClient1.getProfile().setPackets(matchClient1.getProfile().getPackets() + matchData.getRewards().get(matchClient1.getProfile().getUID()));
+                    matchClient2.getProfile().setPackets(matchClient2.getProfile().getPackets() + matchData.getRewards().get(matchClient2.getProfile().getUID()));
 
                     // Insert Match Data to DB
                     int updates = SQLAPI.getSingleton().recordMatchData(matchData);
-                    SQLAPI.getSingleton().saveProfile(player1.getProfile());
-                    SQLAPI.getSingleton().saveProfile(player2.getProfile());
+                    SQLAPI.getSingleton().saveProfile(matchClient1.getProfile());
+                    SQLAPI.getSingleton().saveProfile(matchClient2.getProfile());
                 } catch (IOException e) {
                 }
             }
         });
-        this.player1 = player1;
-        this.player2 = player2;
+        
     }
 
     public MatchClient getPlayer1() {
-        return player1;
+        return matchClient1;
     }
 
     public MatchClient getPlayer2() {
-        return player2;
+        return matchClient2;
     }
 
     public boolean isGameOver() {
