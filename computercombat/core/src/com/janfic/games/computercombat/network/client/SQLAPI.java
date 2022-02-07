@@ -80,60 +80,74 @@ public class SQLAPI {
 
         try {
             //Get all player owned cards
-            String sql = "SELECT card.* \n"
-                    + "FROM card \n"
+            String sql = "SELECT * FROM card \n"
                     + "JOIN profile_owns_card ON card.id = profile_owns_card.card_id \n"
                     + "JOIN profile ON profile.uid = profile_owns_card.profile_id \n"
-                    + "WHERE profile.uid = '" + uid + "' \n"
-                    + "ORDER BY card.name;";
+                    + "JOIN ability ON card.ability_id = ability.id\n"
+                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
+                    + "JOIN components ON components.id = run_requirements.component_id\n"
+                    + "JOIN collection ON card.collection_id = collection.id\n"
+                    + "WHERE profile.uid = '" + uid + "' ORDER BY card.id;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
-            while (set.next()) {
 
-                //Get Components of Card
-                sql = "SELECT components.* \n"
-                        + "FROM card \n"
-                        + "JOIN run_requirements ON card.id = run_requirements.card_id \n"
-                        + "JOIN components ON components.id = run_requirements.component_id \n"
-                        + "WHERE card.id = " + set.getInt("card.id");
+            boolean next = set.next();
+            while (next) {
+                int currentID = set.getInt("card.id");
 
-                Statement getComponentStatement = connection.createStatement();
-                ResultSet gcResults = getComponentStatement.executeQuery(sql);
+                System.out.println("QUERY: " + currentID);
+
+                Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
+                a.setInformation(
+                        set.getString("ability.description"),
+                        set.getString("ability.textureName"),
+                        set.getString("ability.name"),
+                        set.getString("ability.code"),
+                        set.getInt("ability.id")
+                );
+
+                Collection c = new Collection(
+                        set.getInt("collection.id"),
+                        set.getString("collection.name"),
+                        set.getString("collection.description"),
+                        set.getString("collection.textureName"),
+                        set.getString("collection.path"));
 
                 List<Class<? extends Component>> components = new ArrayList<>();
-                while (gcResults.next()) {
-                    components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + gcResults.getString("components.name")));
-                }
 
-                Ability a = getAbilityByID(set.getInt("card.ability_id"));
+                int id = set.getInt("card.id");
+                String name = set.getString("card.name");
+                String textureName = set.getString("card.textureName");
+                int level = set.getInt("card.level");
+                int maxHealth = set.getInt("card.maxHealth");
+                int maxDefense = set.getInt("card.maxDefense");
+                int maxAttack = set.getInt("card.maxAttack");
+                int runRequirements = set.getInt("card.runRequirements");
 
-                Statement collectionStatement = connection.createStatement();
-                ResultSet collectionResults = collectionStatement.executeQuery("SELECT * FROM collection WHERE id = " + set.getInt("card.collection_id"));
-                collectionResults.next();
+                do {
+                    components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                    next = set.next();
+                } while (next && currentID == set.getInt("card.id"));
 
                 Software s = new Software(
-                        set.getInt("card.id"),
+                        id,
                         uid,
-                        set.getString("card.name"),
-                        new Collection(
-                                collectionResults.getInt("id"),
-                                collectionResults.getString("name"),
-                                collectionResults.getString("description"),
-                                collectionResults.getString("textureName"),
-                                collectionResults.getString("path")),
-                        set.getString("textureName"),
-                        set.getInt("level"),
-                        set.getInt("maxHealth"),
-                        set.getInt("maxDefense"),
-                        set.getInt("maxAttack"),
+                        name,
+                        c,
+                        textureName,
+                        level,
+                        maxHealth,
+                        maxDefense,
+                        maxAttack,
                         1,
                         components.toArray(new Class[0]),
-                        set.getInt("card.runRequirements"),
+                        runRequirements,
                         a
                 );
                 cards.put(s, cards.getOrDefault(s, 0) + 1);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,59 +157,145 @@ public class SQLAPI {
     public Software getCardById(int id, String optionalUID) {
         System.out.println("[SERVER][MYSQL]: Querying for Card Data");
         try {
-            String sql = "SELECT card.* \n"
-                    + "FROM card \n"
-                    + "WHERE card.id = " + id + ";";
+            String sql = "SELECT * FROM card \n"
+                    + "JOIN ability ON card.ability_id = ability.id\n"
+                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
+                    + "JOIN components ON components.id = run_requirements.component_id\n"
+                    + "JOIN collection ON card.collection_id = collection.id\n"
+                    + "WHERE card.id = '" + id + "';";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
 
             set.next();
-            //Get Components of Card
-            sql = "SELECT components.* \n"
-                    + "FROM card \n"
-                    + "JOIN run_requirements ON card.id = run_requirements.card_id \n"
-                    + "JOIN components ON components.id = run_requirements.component_id \n"
-                    + "WHERE card.id = " + set.getInt("card.id");
 
-            Statement getComponentStatement = connection.createStatement();
-            ResultSet gcResults = getComponentStatement.executeQuery(sql);
+            Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
+            a.setInformation(
+                    set.getString("ability.description"),
+                    set.getString("ability.textureName"),
+                    set.getString("ability.name"),
+                    set.getString("ability.code"),
+                    set.getInt("ability.id")
+            );
+
+            Collection c = new Collection(
+                    set.getInt("collection.id"),
+                    set.getString("collection.name"),
+                    set.getString("collection.description"),
+                    set.getString("collection.textureName"),
+                    set.getString("collection.path"));
 
             List<Class<? extends Component>> components = new ArrayList<>();
-            while (gcResults.next()) {
-                components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + gcResults.getString("components.name")));
-            }
 
-            Ability a = getAbilityByID(set.getInt("card.ability_id"));
+            String name = set.getString("card.name");
+            String textureName = set.getString("card.textureName");
+            int level = set.getInt("card.level");
+            int maxHealth = set.getInt("card.maxHealth");
+            int maxDefense = set.getInt("card.maxDefense");
+            int maxAttack = set.getInt("card.maxAttack");
+            int runRequirements = set.getInt("card.runRequirements");
 
-            Statement collectionStatement = connection.createStatement();
-            ResultSet collectionResults = collectionStatement.executeQuery("SELECT * FROM collection WHERE id = " + set.getInt("card.collection_id"));
-            collectionResults.next();
+            do {
+                components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+            } while (set.next());
 
-            return new Software(
-                    set.getInt("card.id"),
-                    optionalUID == null ? "ownerUID" : optionalUID,
-                    set.getString("card.name"),
-                    new Collection(
-                            collectionResults.getInt("id"),
-                            collectionResults.getString("name"),
-                            collectionResults.getString("description"),
-                            collectionResults.getString("textureName"),
-                            collectionResults.getString("path")),
-                    set.getString("textureName"),
-                    set.getInt("level"),
-                    set.getInt("maxHealth"),
-                    set.getInt("maxDefense"),
-                    set.getInt("maxAttack"),
+            Software s = new Software(
+                    id,
+                    optionalUID,
+                    name,
+                    c,
+                    textureName,
+                    level,
+                    maxHealth,
+                    maxDefense,
+                    maxAttack,
                     1,
                     components.toArray(new Class[0]),
-                    set.getInt("card.runRequirements"),
+                    runRequirements,
                     a
             );
+            return s;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public List<Software> getCardsInDeck(int deckID, String uid) {
+        List<Software> cards = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM deck_has_card \n"
+                    + "JOIN card ON deck_has_card.card_id = card.id\n"
+                    + "JOIN ability ON card.ability_id = ability.id\n"
+                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
+                    + "JOIN components ON components.id = run_requirements.component_id\n"
+                    + "JOIN collection ON card.collection_id = collection.id\n"
+                    + "WHERE deck_has_card.deck_id = '" + deckID + "';";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            boolean areRowsLeft = set.next();
+            while (areRowsLeft) {
+                int currentCardID = set.getInt("card.id");
+                Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
+                a.setInformation(
+                        set.getString("ability.description"),
+                        set.getString("ability.textureName"),
+                        set.getString("ability.name"),
+                        set.getString("ability.code"),
+                        set.getInt("ability.id")
+                );
+
+                Collection c = new Collection(
+                        set.getInt("collection.id"),
+                        set.getString("collection.name"),
+                        set.getString("collection.description"),
+                        set.getString("collection.textureName"),
+                        set.getString("collection.path"));
+
+                List<Class<? extends Component>> components = new ArrayList<>();
+
+                int id = set.getInt("card.id");
+                String name = set.getString("card.name");
+                String textureName = set.getString("card.textureName");
+                int level = set.getInt("card.level");
+                int maxHealth = set.getInt("card.maxHealth");
+                int maxDefense = set.getInt("card.maxDefense");
+                int maxAttack = set.getInt("card.maxAttack");
+                int runRequirements = set.getInt("card.runRequirements");
+                int amount = set.getInt("deck_has_card.amount");
+                boolean sameCard = false;
+
+                do {
+                    components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                    areRowsLeft = set.next();
+                    sameCard = areRowsLeft ? currentCardID == set.getInt("card.id") : false;
+                } while (sameCard && areRowsLeft);
+
+                Software s = new Software(
+                        id,
+                        uid,
+                        name,
+                        c,
+                        textureName,
+                        level,
+                        maxHealth,
+                        maxDefense,
+                        maxAttack,
+                        1,
+                        components.toArray(new Class[0]),
+                        runRequirements,
+                        a
+                );
+                cards.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cards;
     }
 
     public Ability getAbilityByID(int id) {
@@ -233,30 +333,82 @@ public class SQLAPI {
         try {
             //Query for decks owned by player
             String sql = "SELECT * FROM deck\n"
-                    + "WHERE deck.profile_id = '" + uid + "';";
+                    + "JOIN deck_has_card ON deck_has_card.deck_id = deck.id\n"
+                    + "JOIN card ON deck_has_card.card_id = card.id\n"
+                    + "JOIN ability ON card.ability_id = ability.id\n"
+                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
+                    + "JOIN components ON components.id = run_requirements.component_id\n"
+                    + "JOIN collection ON card.collection_id = collection.id\n"
+                    + "WHERE deck.profile_id = '" + uid + "' ORDER BY card.id AND deck.id;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
 
-            while (set.next()) {
+            boolean areRowsLeft = set.next();
+            while (areRowsLeft) { // Change to next deck
 
-                int id = set.getInt("id");
-                String name = set.getString("name");
+                int deckID = set.getInt("deck.id");
+                int currentDeckID = set.getInt("deck.id");
+                String deckName = set.getString("name");
+                Deck deck = new Deck(deckName, deckID);
 
-                sql = "SELECT * \n"
-                        + "FROM deck_has_card \n"
-                        + "WHERE deck_has_card.deck_id = " + id + ";";
+                boolean sameDeck = true;
+                while (sameDeck && areRowsLeft) {
+                    int currentCardID = set.getInt("card.id");
+                    Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
+                    a.setInformation(
+                            set.getString("ability.description"),
+                            set.getString("ability.textureName"),
+                            set.getString("ability.name"),
+                            set.getString("ability.code"),
+                            set.getInt("ability.id")
+                    );
 
-                Statement stat = connection.createStatement();
-                ResultSet rs = stat.executeQuery(sql);
+                    Collection c = new Collection(
+                            set.getInt("collection.id"),
+                            set.getString("collection.name"),
+                            set.getString("collection.description"),
+                            set.getString("collection.textureName"),
+                            set.getString("collection.path"));
 
-                Deck deck = new Deck(name, id);
+                    List<Class<? extends Component>> components = new ArrayList<>();
 
-                while (rs.next()) {
-                    Software c = getCardById(rs.getInt("card_id"), uid);
-                    c.setOwnerUID(uid);
-                    deck.addCard(c, rs.getInt("amount"));
+                    int id = set.getInt("card.id");
+                    String name = set.getString("card.name");
+                    String textureName = set.getString("card.textureName");
+                    int level = set.getInt("card.level");
+                    int maxHealth = set.getInt("card.maxHealth");
+                    int maxDefense = set.getInt("card.maxDefense");
+                    int maxAttack = set.getInt("card.maxAttack");
+                    int runRequirements = set.getInt("card.runRequirements");
+                    int amount = set.getInt("deck_has_card.amount");
+                    boolean sameCard = false;
+
+                    do {
+                        components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                        areRowsLeft = set.next();
+                        sameDeck = areRowsLeft ? currentDeckID == set.getInt("deck.id") : false;
+                        sameCard = areRowsLeft ? currentCardID == set.getInt("card.id") && sameDeck : false;
+                    } while (sameCard && areRowsLeft);
+
+                    Software s = new Software(
+                            id,
+                            uid,
+                            name,
+                            c,
+                            textureName,
+                            level,
+                            maxHealth,
+                            maxDefense,
+                            maxAttack,
+                            1,
+                            components.toArray(new Class[0]),
+                            runRequirements,
+                            a
+                    );
+                    deck.addCard(s, amount);
                 }
+
                 decks.add(deck);
             }
         } catch (Exception e) {
