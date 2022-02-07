@@ -1,5 +1,8 @@
 package com.janfic.games.computercombat.model;
 
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Json.Serializable;
+import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 
@@ -7,11 +10,15 @@ import com.janfic.games.computercombat.model.moves.Move;
  *
  * @author Jan Fic
  */
-public abstract class Player {
+public abstract class Player implements Serializable {
 
-    private final String uid;
+    private String uid;
 
-    public Player(String uid, Deck activeDeck, Computer computer) {
+    public Player() {
+        this.uid = null;
+    }
+
+    public Player(String uid, Deck activeDeck) {
         this.uid = uid;
     }
 
@@ -22,4 +29,15 @@ public abstract class Player {
     public abstract void beginMatch(MatchState state, Player opponent);
 
     public abstract Move getMove(MatchState state);
+
+    @Override
+    public void write(Json json) {
+        json.writeType(this.getClass());
+        json.writeValue("uid", uid);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        this.uid = json.readValue("uid", String.class, jsonData);
+    }
 }

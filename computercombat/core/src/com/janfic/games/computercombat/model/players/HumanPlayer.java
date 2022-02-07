@@ -15,12 +15,10 @@ public class HumanPlayer extends Player {
 
     // Make Player Serializable
     
-    public String uid;
     private MatchClient client;
 
     public HumanPlayer(String uid, Deck activeDeck, Computer computer) {
-        super(uid, activeDeck, computer);
-        this.uid = uid;
+        super(uid, activeDeck);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class HumanPlayer extends Player {
     }
 
     public HumanPlayer() {
-        super(null, null, null);
+        super(null, null);
     }
 
     public void setClient(MatchClient client) {

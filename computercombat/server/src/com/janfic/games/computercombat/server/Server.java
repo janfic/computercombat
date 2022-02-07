@@ -137,6 +137,7 @@ public class Server {
                                 case JOIN_QUEUE_REQUEST: {
                                     String content = m.getMessage();
                                     List<String> data = json.fromJson(List.class, content);
+                                    System.out.println(data);
                                     Profile profile = json.fromJson(Profile.class, data.get(0));
                                     Deck deck = json.fromJson(Deck.class, data.get(1));
                                     boolean[] matchRequest = json.fromJson(boolean[].class, data.get(2));

@@ -15,7 +15,7 @@ public class Profile implements Serializable {
 
     private String uid;
     private String name;
-    private String activePlayer;
+    private Player activePlayer;
     private String email;
     private List<Deck> decks;
     private Deck collection;
@@ -29,7 +29,7 @@ public class Profile implements Serializable {
         this.uid = uid;
         this.decks = new ArrayList<>();
         this.collection = new Deck("Collection", 0);
-        this.activePlayer = HumanPlayer.class.getName();
+        this.activePlayer = new HumanPlayer(uid, null, null);
         this.packets = 0;
     }
 
@@ -49,7 +49,7 @@ public class Profile implements Serializable {
         this.email = email;
     }
 
-    public void setActivePlayer(String activePlayer) {
+    public void setActivePlayer(Player activePlayer) {
         this.activePlayer = activePlayer;
     }
 
@@ -59,8 +59,8 @@ public class Profile implements Serializable {
 
     public Player getActivePlayer() {
         try {
-            Player p = (Player) Class.forName(activePlayer).getConstructor(String.class, Deck.class, Computer.class).newInstance(uid, buildDeck(), buildComputer());
-            return p;
+            //Player p = (Player) Class.forName(activePlayer).getConstructor(String.class, Deck.class, Computer.class).newInstance(uid, buildDeck(), buildComputer());
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,14 +83,6 @@ public class Profile implements Serializable {
         return decks;
     }
 
-    private Deck buildDeck() {
-        return null;
-    }
-
-    private Computer buildComputer() {
-        return null;
-    }
-
     @Override
     public void write(Json json) {
         json.writeValue("uid", this.uid);
@@ -107,7 +99,7 @@ public class Profile implements Serializable {
         this.name = json.readValue("name", String.class, jv);
         this.decks = json.readValue("decks", List.class, jv);
         this.collection = json.readValue("collection", Deck.class, jv);
-        this.activePlayer = json.readValue("activePlayer", String.class, jv);
+        this.activePlayer = json.readValue("activePlayer", Player.class, jv);
         this.packets = json.readValue("packets", Integer.class, jv) == null ? 0 : json.readValue("packets", Integer.class, jv);
     }
 }
