@@ -1,2 +1,1 @@
-include ':mysql-connector-java-8.0.26'
 include 'desktop', 'android', 'html', 'core', 'server'

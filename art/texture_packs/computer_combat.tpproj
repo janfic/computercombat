@@ -115,7 +115,7 @@ inputFiles=[{path:abilities_export/algorithms_pack,type:Input,dirFilePrefix:null
 
 ---
 
-name=network_pack
+name=networks_pack
 filename=
 output=../../computercombat/android/assets/texture_packs
 
@@ -149,7 +149,7 @@ limitMemory=true
 useIndexes=true
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:cards_export/networks_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:abilities_export/network_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
+inputFiles=[{path:cards_export/networks_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:abilities_export/networks_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
 
 
 ---
