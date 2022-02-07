@@ -1,4 +1,4 @@
-package com.janfic.games.computercombat.server;
+package com.janfic.games.computercombat.network.server;
 
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Profile;

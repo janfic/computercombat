@@ -1,5 +1,7 @@
 package com.janfic.games.computercombat.server;
 
+import com.janfic.games.computercombat.network.server.MatchClient;
+import com.janfic.games.computercombat.network.server.Client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;

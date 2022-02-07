@@ -1,4 +1,4 @@
-package com.janfic.games.computercombat.server;
+package com.janfic.games.computercombat.network.server;
 
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Json;

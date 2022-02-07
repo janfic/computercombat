@@ -5,6 +5,7 @@ import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Player;
+import com.janfic.games.computercombat.network.server.MatchClient;
 
 /**
  *
@@ -12,7 +13,10 @@ import com.janfic.games.computercombat.model.Player;
  */
 public class HumanPlayer extends Player {
 
+    // Make Player Serializable
+    
     public String uid;
+    private MatchClient client;
 
     public HumanPlayer(String uid, Deck activeDeck, Computer computer) {
         super(uid, activeDeck, computer);
@@ -21,10 +25,20 @@ public class HumanPlayer extends Player {
 
     @Override
     public void beginMatch(MatchState state, Player opponent) {
+        // Build Message to Send to Client
+        
+        // Send message
     }
 
     @Override
     public Move getMove(MatchState state) {
+        // Build Message to Send to Client
+        
+        // Send message
+        
+        // Expect Message in Return
+        
+        // Return Retrieved and Deserialized Move
         return null;
     }
 
@@ -32,4 +46,7 @@ public class HumanPlayer extends Player {
         super(null, null, null);
     }
 
+    public void setClient(MatchClient client) {
+        this.client = client;
+    }
 }
