@@ -220,7 +220,7 @@ public class SQLAPI {
             return null;
         }
     }
-
+    
     public List<Software> getCardsInDeck(int deckID, String uid) {
         List<Software> cards = new ArrayList<>();
 
@@ -331,6 +331,23 @@ public class SQLAPI {
         List<Deck> decks = new ArrayList<>();
 
         try {
+            String sql = "SELECT * FROM deck\n"
+                    + "WHERE deck.profile_id = '" + uid + "';";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            while (set.next()) {
+                int deckID = set.getInt("deck.id");
+                String deckName = set.getString("name");
+                Deck deck = new Deck(deckName, deckID);
+                decks.add(deck);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
             //Query for decks owned by player
             String sql = "SELECT * FROM deck\n"
                     + "JOIN deck_has_card ON deck_has_card.deck_id = deck.id\n"
@@ -345,12 +362,16 @@ public class SQLAPI {
             ResultSet set = statement.executeQuery(sql);
 
             boolean areRowsLeft = set.next();
+
             while (areRowsLeft) { // Change to next deck
 
                 int deckID = set.getInt("deck.id");
                 int currentDeckID = set.getInt("deck.id");
                 String deckName = set.getString("name");
                 Deck deck = new Deck(deckName, deckID);
+                if (decks.contains(deck)) {
+                    deck = decks.get(decks.indexOf(deck));
+                }
 
                 boolean sameDeck = true;
                 while (sameDeck && areRowsLeft) {
@@ -408,13 +429,12 @@ public class SQLAPI {
                     );
                     deck.addCard(s, amount);
                 }
-
-                decks.add(deck);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        System.out.println(decks);
         return decks;
     }
 

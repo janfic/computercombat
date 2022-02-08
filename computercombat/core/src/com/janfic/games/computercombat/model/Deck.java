@@ -145,4 +145,13 @@ public class Deck implements Serializable {
 
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Deck) {
+            Deck o = (Deck) obj;
+            return o.getID() == this.getID();
+        }
+        return super.equals(obj); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
