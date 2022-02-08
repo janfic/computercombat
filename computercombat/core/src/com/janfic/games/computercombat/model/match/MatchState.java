@@ -10,6 +10,7 @@ import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.util.ComponentFilter;
+import com.janfic.games.computercombat.util.NullifyingJson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +60,7 @@ public class MatchState implements Serializable {
     }
 
     public MatchState(MatchState state) {
-        Json json = new Json();
+        Json json = new NullifyingJson();
         MatchState s = json.fromJson(MatchState.class, json.toJson(state));
         this.componentBoard = s.componentBoard;
         this.activeEntities = s.activeEntities;
@@ -146,9 +147,6 @@ public class MatchState implements Serializable {
         this.currentPlayerMove = json.readValue("currentPlayerMove", Profile.class, jsonData);
         this.isGameOver = json.readValue("isGameOver", boolean.class, jsonData);
         this.winner = json.readValue("winner", Profile.class, jsonData);
-        if (this.winner.getUID() == null) {
-            this.winner = null;
-        }
         this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
         this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);
