@@ -338,12 +338,12 @@ public class DecksScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (selectedDeck != null) {
-                        selectedDeck.setColor(Color.LIGHT_GRAY);
+                        selectedDeck.unselect();
                     }
                     deleteButton.setColor(Color.WHITE);
                     deleteButton.setDisabled(false);
                     selectedDeck = d;
-                    selectedDeck.setColor(Color.WHITE);
+                    selectedDeck.select();
                     updateDeckCards();
                 }
             });

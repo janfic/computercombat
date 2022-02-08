@@ -328,10 +328,10 @@ public class QueueScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (selectedDeck != null) {
-                        selectedDeck.setColor(Color.LIGHT_GRAY);
+                        selectedDeck.unselect();
                     }
                     selectedDeck = d;
-                    selectedDeck.setColor(Color.WHITE);
+                    selectedDeck.select();
                 }
             });
             decks.add(d).row();
