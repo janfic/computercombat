@@ -220,7 +220,84 @@ public class SQLAPI {
             return null;
         }
     }
-    
+
+    public List<Software> getCardsInfo(List<Integer> cardIDs, String optionalUID) {
+        List<Software> cards = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM card \n"
+                    + "JOIN ability ON card.ability_id = ability.id\n"
+                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
+                    + "JOIN components ON components.id = run_requirements.component_id\n"
+                    + "JOIN collection ON card.collection_id = collection.id;";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            boolean areRowsLeft = set.next();
+
+            while (areRowsLeft) {
+                if (cardIDs.contains(set.getInt("card.id"))) {
+                    Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
+                    a.setInformation(
+                            set.getString("ability.description"),
+                            set.getString("ability.textureName"),
+                            set.getString("ability.name"),
+                            set.getString("ability.code"),
+                            set.getInt("ability.id")
+                    );
+
+                    Collection c = new Collection(
+                            set.getInt("collection.id"),
+                            set.getString("collection.name"),
+                            set.getString("collection.description"),
+                            set.getString("collection.textureName"),
+                            set.getString("collection.path"));
+
+                    List<Class<? extends Component>> components = new ArrayList<>();
+
+                    String name = set.getString("card.name");
+                    String textureName = set.getString("card.textureName");
+                    int level = set.getInt("card.level");
+                    int id = set.getInt("card.id");
+                    int maxHealth = set.getInt("card.maxHealth");
+                    int maxDefense = set.getInt("card.maxDefense");
+                    int maxAttack = set.getInt("card.maxAttack");
+                    int runRequirements = set.getInt("card.runRequirements");
+
+                    boolean sameCard = false;
+                    do {
+                        components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                        areRowsLeft = set.next();
+                        sameCard = areRowsLeft ? set.getInt("card.id") == id : false;
+                    } while (sameCard);
+
+                    Software s = new Software(
+                            id,
+                            optionalUID,
+                            name,
+                            c,
+                            textureName,
+                            level,
+                            maxHealth,
+                            maxDefense,
+                            maxAttack,
+                            1,
+                            components.toArray(new Class[0]),
+                            runRequirements,
+                            a
+                    );
+                    cards.add(s);
+                } else {
+                    areRowsLeft = set.next();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return cards;
+        }
+        return cards;
+    }
+
     public List<Software> getCardsInDeck(int deckID, String uid) {
         List<Software> cards = new ArrayList<>();
 
