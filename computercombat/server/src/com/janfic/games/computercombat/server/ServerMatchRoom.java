@@ -4,6 +4,7 @@ import com.janfic.games.computercombat.network.server.MatchClient;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.model.Ability;
+import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.match.Match;
 import com.janfic.games.computercombat.model.match.MatchData;
@@ -33,13 +34,38 @@ public class ServerMatchRoom {
         Implement HumanPlayer to wait for client message seperately
     
      */
-    private final MatchClient matchClient1, matchClient2;
+
+    // TODO: add final
+    private Player player1, player2;
+    private MatchClient matchClient1, matchClient2;
     private Match match;
     private MatchData matchData;
     private boolean isGameOver;
     private Thread thread;
 
-    //public ServerMatchRoom(Player player1, Player player2) {
+    public ServerMatchRoom(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+        this.thread = new Thread(new Runnable() {
+            @Override
+            public  void run() {
+                // Begin the match
+                // create a match object
+                // call the beginMatch method on both players
+
+                // set up data collection
+
+                // Start main match loop
+                // while game is not over
+                    // get move of current player
+                    // break if game over
+                    // apply the move
+
+            }
+        });
+    }
+
+    
     public ServerMatchRoom(MatchClient matchClient1, MatchClient matchClient2) {
         this.matchClient1 = matchClient1;
         this.matchClient2 = matchClient2;

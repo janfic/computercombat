@@ -13,6 +13,7 @@ import com.janfic.games.computercombat.model.moves.Move;
 public abstract class Player implements Serializable {
 
     private String uid;
+    private Deck activeDeck;
 
     public Player() {
         this.uid = null;
@@ -20,6 +21,7 @@ public abstract class Player implements Serializable {
 
     public Player(String uid, Deck activeDeck) {
         this.uid = uid;
+        this.activeDeck = activeDeck;
     }
 
     public String getUID() {
@@ -28,7 +30,9 @@ public abstract class Player implements Serializable {
 
     public abstract void beginMatch(MatchState state, Player opponent);
 
-    public abstract Move getMove(MatchState state);
+    public abstract Move getMove();
+
+    public abstract void updateState(MatchState state);
 
     @Override
     public void write(Json json) {

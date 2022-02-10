@@ -82,6 +82,11 @@ public class Profile implements Serializable {
         return decks;
     }
 
+    public Deck getDefensiveDeck() {
+        // TODO: get defensive deck from the database
+        return decks.get(0);
+    }
+
     @Override
     public void write(Json json) {
         json.writeValue("uid", this.uid);
