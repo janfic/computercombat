@@ -3,10 +3,13 @@ package com.janfic.games.computercombat.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -102,7 +105,8 @@ public class DownloadScreen implements Screen {
         packInfoTable.add(packDescription).grow().row();
         packInfoTable.add(packPriceLabel).growX().expandY().bottom().row();
         packInfoTable.add(packetTable).growX().row();
-        packInfoTable.add(new TextButton("Download", skin)).growX();
+        final TextButton downloadButton = new TextButton("Download", skin);
+        packInfoTable.add(downloadButton).growX();
 
         Table titleTable = new Table(skin);
         titleTable.setBackground("border");
@@ -132,6 +136,31 @@ public class DownloadScreen implements Screen {
         table.add(titleTable).growX().colspan(2).row();
 
         stage.addActor(table);
+
+        downloadButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (game.getCurrentProfile().getPackets() >= collections.get(selected).getPrice()) {
+                    downloadButton.addAction(Actions.sequence(
+                            Actions.touchable(Touchable.disabled),
+                            Actions.color(Color.GREEN),
+                            Actions.color(Color.WHITE, 1),
+                            Actions.run(() -> {
+                                game.pushScreen(new OpenPackScreen(game, collections.get(selected)));
+                            }),
+                            Actions.touchable(Touchable.enabled)
+                    ));
+
+                } else {
+                    downloadButton.addAction(Actions.sequence(
+                            Actions.touchable(Touchable.disabled),
+                            Actions.color(Color.RED),
+                            Actions.color(Color.WHITE, 1),
+                            Actions.touchable(Touchable.enabled)
+                    ));
+                }
+            }
+        });
     }
 
     @Override
