@@ -37,17 +37,19 @@ public class Server {
     private ServerSocket socket;
     private final Map<Integer, Client> clients;
     private final Map<String, Profile> profiles;
-    private final List<MatchClient> queue;
+    private final List<MatchClient> liveQueue;
+    private final List<MatchClient> raidQueue;
     private final List<ServerMatchRoom> matches;
     private int MAX_MATCHES = 2;
-    private Thread acceptConnections, maintainConnections, maintainQueue, maintainMatches;
+    private Thread acceptConnections, maintainConnections, maintainLiveQueue, maintainRaidQueue, maintainMatches;
 
     public Server(int max_matches) {
         HeadlessFiles headlessFiles = new HeadlessFiles();
         Gdx.files = headlessFiles;
         SQLAPI.getSingleton();
         clients = new HashMap<>();
-        queue = new ArrayList<>();
+        liveQueue = new ArrayList<>();
+        raidQueue = new ArrayList<>();
         matches = new ArrayList<>();
         profiles = new HashMap<>();
         this.MAX_MATCHES = max_matches;
@@ -142,12 +144,12 @@ public class Server {
                                     Deck deck = json.fromJson(Deck.class, data.get(1));
                                     boolean[] queuePreferences = json.fromJson(boolean[].class, data.get(2));
                                     MatchClient matchClient = new MatchClient(profile, deck, client);
-                                    if (queue.contains(matchClient)) {
-                                        r = new Message(Type.QUEUE_POSITION, "" + (queue.indexOf(matchClient) + 1));
-                                    } else {
+                                    List<MatchClient> queue = queuePreferences[1] ? liveQueue : raidQueue;
+                                    if (!queue.contains(matchClient)) {
                                         queue.add(matchClient);
-                                        r = new Message(Type.QUEUE_POSITION, "" + (queue.indexOf(matchClient) + 1));
                                     }
+                                    r = new Message(Type.QUEUE_POSITION, "" + (queue.indexOf(matchClient) + 1));
+
                                 }
                                 break;
                                 case PROFILE_INFO_REQUEST:
@@ -182,9 +184,9 @@ public class Server {
                                     String content = m.getMessage();
                                     Profile p = profiles.get(content);
                                     boolean isRemoved = false;
-                                    for (MatchClient matchClient : queue) {
+                                    for (MatchClient matchClient : liveQueue) {
                                         if (matchClient.getProfile().getUID().equals(p.getUID())) {
-                                            queue.remove(matchClient);
+                                            liveQueue.remove(matchClient);
                                             r = new Message(Type.SUCCESS, "REMOVED FROM QUEUE");
                                             isRemoved = true;
                                             break;
@@ -218,29 +220,28 @@ public class Server {
                 }
             }
         });
-        maintainQueue = new Thread(new Runnable() {
+        maintainLiveQueue = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
 
-                    if (matches.size() < MAX_MATCHES && queue.size() > 1) {
-                        MatchClient a = queue.get(0);
-                        MatchClient b = queue.get(1);
+                    if (matches.size() < MAX_MATCHES && liveQueue.size() > 1) {
+                        MatchClient a = liveQueue.get(0);
+                        MatchClient b = liveQueue.get(1);
                         ServerMatchRoom room = new ServerMatchRoom(a, b);
-                        queue.remove(a);
-                        queue.remove(b);
+                        liveQueue.remove(a);
+                        liveQueue.remove(b);
                         clients.remove(a.getClientUID());
                         clients.remove(b.getClientUID());
                         matches.add(room);
                         room.start();
-
-                        assert ((queue.contains(a) || queue.contains(b)) == false);
+                        assert ((liveQueue.contains(a) || liveQueue.contains(b)) == false);
                     }
 
                     List<MatchClient> removed = new ArrayList<>();
 
-                    for (int i = 0; i < queue.size(); i++) {
-                        MatchClient c = queue.get(i);
+                    for (int i = 0; i < liveQueue.size(); i++) {
+                        MatchClient c = liveQueue.get(i);
                         if (c.getSocket().isConnected()) {
                             try {
                                 c.sendMessage(new Message(Type.QUEUE_POSITION, "" + (i + 1)));
@@ -253,7 +254,7 @@ public class Server {
                         }
                     }
 
-                    queue.removeAll(removed);
+                    liveQueue.removeAll(removed);
 
                     try {
                         Thread.sleep(2000);
@@ -262,6 +263,48 @@ public class Server {
                     }
                 }
             }
+        });
+        maintainRaidQueue = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+
+                    if (matches.size() < MAX_MATCHES && raidQueue.size() > 0) {
+                        MatchClient a = raidQueue.get(0);
+                        //ServerMatchRoom room = new ServerMatchRoom(a, b);
+                        raidQueue.remove(a);
+                        clients.remove(a.getClientUID());
+                        //matches.add(room);
+                        //room.start();
+                        assert ((raidQueue.contains(a)) == false);
+                    }
+
+                    List<MatchClient> removed = new ArrayList<>();
+
+                    for (int i = 0; i < raidQueue.size(); i++) {
+                        MatchClient c = raidQueue.get(i);
+                        if (c.getSocket().isConnected()) {
+                            try {
+                                c.sendMessage(new Message(Type.QUEUE_POSITION, "" + (i + 1)));
+                            } catch (IOException e) {
+                                removed.add(c);
+                            }
+                        } else {
+                            c.getSocket().dispose();
+                            removed.add(c);
+                        }
+                    }
+
+                    raidQueue.removeAll(removed);
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+
         });
         maintainMatches = new Thread(new Runnable() {
             @Override
@@ -296,7 +339,8 @@ public class Server {
     public void start() {
         acceptConnections.start();
         maintainConnections.start();
-        maintainQueue.start();
+        maintainLiveQueue.start();
+        maintainRaidQueue.start();
         maintainMatches.start();
     }
 

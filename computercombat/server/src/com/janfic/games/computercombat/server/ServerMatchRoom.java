@@ -39,6 +39,7 @@ public class ServerMatchRoom {
     private boolean isGameOver;
     private Thread thread;
 
+    //public ServerMatchRoom(Player player1, Player player2) {
     public ServerMatchRoom(MatchClient matchClient1, MatchClient matchClient2) {
         this.matchClient1 = matchClient1;
         this.matchClient2 = matchClient2;
@@ -46,6 +47,8 @@ public class ServerMatchRoom {
             @Override
             public void run() {
                 try {
+                    // Move to Server 
+                    // #####
                     Message message1 = new Message(Type.FOUND_MATCH, ServerMatchRoom.this.matchClient2.getProfile().getName());
                     Message message2 = new Message(Type.FOUND_MATCH, ServerMatchRoom.this.matchClient1.getProfile().getName());
 
@@ -69,6 +72,7 @@ public class ServerMatchRoom {
                         matchClient2.sendMessage(new Message(Type.SUCCESS, "LEFT QUEUE"));
                         matchClient1.sendMessage(error);
                     }
+                    //#####
 
                     Json json = new Json();
                     json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
@@ -78,11 +82,11 @@ public class ServerMatchRoom {
                     Message matchData1 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(matchClient1.getProfile().getUID())));
                     Message matchData2 = new Message(Type.MATCH_STATE_DATA, json.toJson(match.getPlayerMatchState(matchClient2.getProfile().getUID())));
                     Timestamp starttime = new Timestamp(System.currentTimeMillis());
-             
+
                     matchClient1.sendMessage(matchData1);
                     matchClient2.sendMessage(matchData2);
 
-                    // Match Data = End Match Data
+                    // End Match Data
                     matchData = new MatchData(matchClient1.getProfile(), matchClient2.getProfile(), matchClient1.getDeck(), matchClient2.getDeck());
                     matchData.getMatchStates().add(match.getCurrentState());
 
@@ -203,7 +207,7 @@ public class ServerMatchRoom {
                 }
             }
         });
-        
+
     }
 
     public MatchClient getPlayer1() {
