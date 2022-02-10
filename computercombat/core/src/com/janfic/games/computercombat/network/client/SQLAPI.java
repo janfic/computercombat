@@ -112,7 +112,8 @@ public class SQLAPI {
                         set.getString("collection.name"),
                         set.getString("collection.description"),
                         set.getString("collection.textureName"),
-                        set.getString("collection.path"));
+                        set.getString("collection.path"),
+                        set.getInt("collection.price"));
 
                 List<Class<? extends Component>> components = new ArrayList<>();
 
@@ -183,7 +184,8 @@ public class SQLAPI {
                     set.getString("collection.name"),
                     set.getString("collection.description"),
                     set.getString("collection.textureName"),
-                    set.getString("collection.path"));
+                    set.getString("collection.path"),
+                    set.getInt("collection.price"));
 
             List<Class<? extends Component>> components = new ArrayList<>();
 
@@ -251,7 +253,8 @@ public class SQLAPI {
                             set.getString("collection.name"),
                             set.getString("collection.description"),
                             set.getString("collection.textureName"),
-                            set.getString("collection.path"));
+                            set.getString("collection.path"),
+                            set.getInt("collection.price"));
 
                     List<Class<? extends Component>> components = new ArrayList<>();
 
@@ -330,7 +333,8 @@ public class SQLAPI {
                         set.getString("collection.name"),
                         set.getString("collection.description"),
                         set.getString("collection.textureName"),
-                        set.getString("collection.path"));
+                        set.getString("collection.path"),
+                        set.getInt("collection.price"));
 
                 List<Class<? extends Component>> components = new ArrayList<>();
 
@@ -467,7 +471,8 @@ public class SQLAPI {
                             set.getString("collection.name"),
                             set.getString("collection.description"),
                             set.getString("collection.textureName"),
-                            set.getString("collection.path"));
+                            set.getString("collection.path"),
+                            set.getInt("collection.price"));
 
                     List<Class<? extends Component>> components = new ArrayList<>();
 
@@ -596,13 +601,9 @@ public class SQLAPI {
     public Profile loadProfile(String uid) {
         System.out.println("[SERVER][MYSQL]: Loading Player Profile");
         try {
-            System.out.println(uid);
-
             String sql = "SELECT *\n"
                     + "FROM profile\n"
                     + "WHERE profile.uid = '" + uid + "';";
-
-            System.out.println(connection);
 
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
@@ -751,6 +752,47 @@ public class SQLAPI {
     public void closeConnection() {
         try {
             this.connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Collection> getCollections() {
+        List<Collection> collections = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM collection;";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            while (set.next()) {
+                Collection c = new Collection(
+                        set.getInt("id"),
+                        set.getString("name"),
+                        set.getString("description"),
+                        set.getString("textureName"),
+                        set.getString("path"),
+                        set.getInt("price")
+                );
+
+                collections.add(c);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return collections;
+    }
+
+    public void pingDatabase() {
+        try {
+            String sql = "SELECT 1;";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            set.last();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -27,7 +27,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     protected String ownerUID;
 
     public Card() {
-        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack"), "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
+        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
     }
 
     public Card(int id, String ownerUID, String name, Collection collection, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {

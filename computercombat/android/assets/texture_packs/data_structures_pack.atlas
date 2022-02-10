@@ -1,0 +1,20 @@
+
+data_structures_pack.png
+size: 128,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+data_structures_icon
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+data_structures_pack
+  rotate: false
+  xy: 2, 20
+  size: 116, 180
+  orig: 116, 180
+  offset: 0, 0
+  index: -1

@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedArea;
@@ -129,6 +128,13 @@ public class PlayScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.pushScreen(new DecksScreen(game));
+            }
+        });
+        
+        downloadButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.pushScreen(new DownloadScreen(game));
             }
         });
     }

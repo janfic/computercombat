@@ -85,8 +85,6 @@ public class DecksScreen implements Screen {
         titleTable.add(backButton);
         titleTable.add(title).growX().row();
 
-        table.add(titleTable).growX().colspan(3).row();
-
         decksTable = new Table(skin);
         decksTable.defaults().space(3);
 
@@ -251,6 +249,7 @@ public class DecksScreen implements Screen {
         collectionTable.add(titleRow).growX().row();
         collectionTable.add(collectionPane).grow().row();
 
+        table.add(titleTable).growX().colspan(3).row();
         table.add(decksTable).width(Value.percentWidth(0.20f, table)).growY();
         table.add(deckTable).width(Value.percentWidth(0.25f, table)).growY();
         table.add(collectionTable).grow().row();

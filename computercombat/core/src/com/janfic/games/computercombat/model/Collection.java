@@ -14,21 +14,27 @@ public class Collection implements Serializable {
     private String name, description;
     private String textureName;
     private String path;
+    private int price;
 
     public Collection() {
-        this(1, "Computer", "computer", "computer_pack", "computer_pack");
+        this(1, "Computer", "computer", "computer_pack", "computer_pack", 50);
     }
 
-    public Collection(int id, String name, String description, String textureName, String path) {
+    public Collection(int id, String name, String description, String textureName, String path, int price) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.textureName = textureName;
         this.path = path;
+        this.price = price;
     }
 
     public int getID() {
         return id;
+    }
+
+    public int getPrice() {
+        return price;
     }
 
     public String getDescription() {

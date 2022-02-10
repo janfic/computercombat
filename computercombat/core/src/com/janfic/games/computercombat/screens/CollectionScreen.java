@@ -3,7 +3,6 @@ package com.janfic.games.computercombat.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -38,12 +37,9 @@ public class CollectionScreen implements Screen {
     BorderedGrid filterBar;
     ScrollPane collectionScrollPane;
 
-    ShapeRenderer sr;
-
     public CollectionScreen(ComputerCombatGame game) {
         this.game = game;
         this.skin = game.getAssetManager().get(Assets.SKIN);
-        this.sr = new ShapeRenderer();
     }
 
     @Override
