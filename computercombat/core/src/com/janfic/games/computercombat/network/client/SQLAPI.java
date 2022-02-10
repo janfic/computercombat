@@ -125,6 +125,7 @@ public class SQLAPI {
                 int maxDefense = set.getInt("card.maxDefense");
                 int maxAttack = set.getInt("card.maxAttack");
                 int runRequirements = set.getInt("card.runRequirements");
+                int rarity = set.getInt("card.rarity");
 
                 do {
                     components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
@@ -144,7 +145,8 @@ public class SQLAPI {
                         1,
                         components.toArray(new Class[0]),
                         runRequirements,
-                        a
+                        a,
+                        rarity
                 );
                 cards.put(s, cards.getOrDefault(s, 0) + 1);
             }
@@ -196,6 +198,7 @@ public class SQLAPI {
             int maxDefense = set.getInt("card.maxDefense");
             int maxAttack = set.getInt("card.maxAttack");
             int runRequirements = set.getInt("card.runRequirements");
+            int rarity = set.getInt("card.rarity");
 
             do {
                 components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
@@ -214,7 +217,8 @@ public class SQLAPI {
                     1,
                     components.toArray(new Class[0]),
                     runRequirements,
-                    a
+                    a,
+                    rarity
             );
             return s;
         } catch (Exception e) {
@@ -266,6 +270,7 @@ public class SQLAPI {
                     int maxDefense = set.getInt("card.maxDefense");
                     int maxAttack = set.getInt("card.maxAttack");
                     int runRequirements = set.getInt("card.runRequirements");
+                    int rarity = set.getInt("card.rarity");
 
                     boolean sameCard = false;
                     do {
@@ -287,7 +292,8 @@ public class SQLAPI {
                             1,
                             components.toArray(new Class[0]),
                             runRequirements,
-                            a
+                            a,
+                            rarity
                     );
                     cards.add(s);
                 } else {
@@ -347,6 +353,7 @@ public class SQLAPI {
                 int maxAttack = set.getInt("card.maxAttack");
                 int runRequirements = set.getInt("card.runRequirements");
                 int amount = set.getInt("deck_has_card.amount");
+                int rarity = set.getInt("card.rarity");
                 boolean sameCard = false;
 
                 do {
@@ -368,7 +375,8 @@ public class SQLAPI {
                         1,
                         components.toArray(new Class[0]),
                         runRequirements,
-                        a
+                        a,
+                        rarity
                 );
                 cards.add(s);
             }
@@ -485,6 +493,7 @@ public class SQLAPI {
                     int maxAttack = set.getInt("card.maxAttack");
                     int runRequirements = set.getInt("card.runRequirements");
                     int amount = set.getInt("deck_has_card.amount");
+                    int rarity = set.getInt("card.rarity");
                     boolean sameCard = false;
 
                     do {
@@ -507,7 +516,8 @@ public class SQLAPI {
                             1,
                             components.toArray(new Class[0]),
                             runRequirements,
-                            a
+                            a,
+                            rarity
                     );
                     deck.addCard(s, amount);
                 }
@@ -828,6 +838,7 @@ public class SQLAPI {
                     int maxHealth = set.getInt("card.maxHealth");
                     int maxDefense = set.getInt("card.maxDefense");
                     int maxAttack = set.getInt("card.maxAttack");
+                    int rarity = set.getInt("card.rarity");
                     int runRequirements = set.getInt("card.runRequirements");
 
                     boolean sameCard = false;
@@ -850,7 +861,8 @@ public class SQLAPI {
                             1,
                             components.toArray(new Class[0]),
                             runRequirements,
-                            a
+                            a,
+                            rarity
                     );
                     cards.add(s);
                 } else {

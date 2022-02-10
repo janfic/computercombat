@@ -1,13 +1,27 @@
 
 mystery_pack.png
-size: 128,256
+size: 128,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 mystery_pack
   rotate: false
-  xy: 2, 2
+  xy: 2, 19
   size: 116, 180
   orig: 116, 180
+  offset: 0, 0
+  index: -1
+mystery_pack_opened
+  rotate: false
+  xy: 2, 201
+  size: 116, 180
+  orig: 116, 180
+  offset: 0, 0
+  index: -1
+open_pack_top
+  rotate: false
+  xy: 2, 2
+  size: 116, 15
+  orig: 116, 15
   offset: 0, 0
   index: -1

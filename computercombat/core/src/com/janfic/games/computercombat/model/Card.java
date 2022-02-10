@@ -25,12 +25,13 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     protected String name, textureName;
     protected Collection collection;
     protected String ownerUID;
+    protected int rarity;
 
     public Card() {
-        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null);
+        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null, 0);
     }
 
-    public Card(int id, String ownerUID, String name, Collection collection, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability) {
+    public Card(int id, String ownerUID, String name, Collection collection, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability, int rarity) {
         this.name = name;
         this.collection = collection;
         this.textureName = textureName;
@@ -49,6 +50,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         this.runProgress = 0;
         this.traitsUnlocked = 0;
         this.id = id;
+        this.rarity = rarity;
     }
 
     public boolean isDead() {
@@ -96,6 +98,10 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         return attack;
     }
 
+    public int getRarity() {
+        return rarity;
+    }
+    
     /**
      *
      * @return magic

@@ -69,7 +69,7 @@ public class ComputerActor extends Panel {
                     StorageComponent.class,
                     RAMComponent.class,
                     PowerComponent.class
-                }, 20, a), skin, true);
+                }, 20, a, 0), skin, true);
                 ComputerActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
                     @Override
