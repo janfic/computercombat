@@ -13,70 +13,84 @@ arrange_tasks
   index: -1
 blinding_brightness
   rotate: false
-  xy: 146, 242
+  xy: 168, 328
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 click
   rotate: false
-  xy: 2, 194
+  xy: 50, 242
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 computer
   rotate: false
-  xy: 2, 98
+  xy: 216, 424
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
+computer_pack
+  rotate: false
+  xy: 2, 290
+  size: 116, 180
+  orig: 116, 180
+  offset: 0, 0
+  index: -1
+computer_pack_icon
+  rotate: false
+  xy: 98, 272
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 corrupt
   rotate: false
-  xy: 50, 242
+  xy: 120, 376
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 corrupted_file
   rotate: false
-  xy: 146, 194
+  xy: 216, 328
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 directory
   rotate: false
-  xy: 98, 146
+  xy: 50, 98
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 disk_defragmenter
   rotate: false
-  xy: 98, 194
+  xy: 50, 146
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 draw_card
   rotate: false
-  xy: 50, 98
+  xy: 2, 50
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 file
   rotate: false
-  xy: 146, 146
+  xy: 312, 376
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 flash_drive
   rotate: false
-  xy: 98, 98
+  xy: 264, 328
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
@@ -97,28 +111,28 @@ hardrive
   index: -1
 key_smash
   rotate: false
-  xy: 2, 290
+  xy: 2, 242
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 keyboard
   rotate: false
-  xy: 2, 50
+  xy: 264, 424
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 monitor
   rotate: false
-  xy: 146, 290
+  xy: 168, 376
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 mouse
   rotate: false
-  xy: 194, 290
+  xy: 216, 376
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
@@ -132,63 +146,63 @@ open_file
   index: -1
 open_folder
   rotate: false
-  xy: 2, 242
+  xy: 120, 424
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 open_shortcut
   rotate: false
-  xy: 98, 290
+  xy: 168, 424
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 power_strip
   rotate: false
-  xy: 50, 146
+  xy: 2, 98
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 power_surge
   rotate: false
-  xy: 242, 290
+  xy: 312, 424
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 shortcut
   rotate: false
-  xy: 50, 290
+  xy: 2, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 speaker
   rotate: false
-  xy: 242, 242
+  xy: 50, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 task_bar
   rotate: false
-  xy: 98, 242
+  xy: 120, 328
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 terabyte_onslaught
   rotate: false
-  xy: 194, 242
+  xy: 264, 376
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 violent_volume
   rotate: false
-  xy: 194, 194
+  xy: 360, 424
   size: 46, 46
   orig: 46, 46
   offset: 0, 0

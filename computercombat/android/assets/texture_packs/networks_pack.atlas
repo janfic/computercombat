@@ -1,61 +1,75 @@
 
 networks_pack.png
-size: 512,64
+size: 128,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 firewall
   rotate: false
-  xy: 2, 2
+  xy: 2, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 infect
   rotate: false
-  xy: 146, 2
+  xy: 2, 98
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
+networks_pack
+  rotate: false
+  xy: 2, 242
+  size: 116, 180
+  orig: 116, 180
+  offset: 0, 0
+  index: -1
+networks_pack_icon
+  rotate: false
+  xy: 98, 224
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 remove_bugs
   rotate: false
-  xy: 194, 2
+  xy: 50, 146
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 router
   rotate: false
-  xy: 50, 2
+  xy: 2, 146
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 tunnel
   rotate: false
-  xy: 242, 2
+  xy: 2, 50
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 virus
   rotate: false
-  xy: 338, 2
+  xy: 2, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 web_search
   rotate: false
-  xy: 290, 2
+  xy: 50, 98
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 worm
   rotate: false
-  xy: 98, 2
+  xy: 50, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0

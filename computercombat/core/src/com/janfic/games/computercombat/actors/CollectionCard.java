@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.actors;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -23,9 +24,7 @@ import com.janfic.games.computercombat.model.components.NetworkComponent;
 import com.janfic.games.computercombat.model.components.PowerComponent;
 import com.janfic.games.computercombat.model.components.RAMComponent;
 import com.janfic.games.computercombat.model.components.StorageComponent;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,8 +57,9 @@ public class CollectionCard extends BorderedGrid {
         this.pad(5);
         this.top();
         this.align(Align.top);
+        TextureAtlas texturePack = game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class);
         BorderedArea area = new BorderedArea(skin);
-        area.add(new Image(game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class).findRegion(software.getTextureName())));
+        area.add(new Image(texturePack.findRegion(software.getTextureName())));
         Label l = new Label(software.getName(), skin, "paneled");
         l.setWrap(true);
         l.setAlignment(Align.center);
@@ -134,17 +134,27 @@ public class CollectionCard extends BorderedGrid {
         this.add(healthStack).width(90).height(9).row();
         this.add(runRequirementsStack).width(90).height(9).row();
 
+        Table footer = new Table(skin);
+        footer.defaults().space(0);
         Panel leds = new Panel(skin);
+        leds.defaults().space(9);
         for (Class<? extends Component> runComponent : software.getRunComponents()) {
             LEDActor led = new LEDActor(skin, components.get(runComponent));
             led.setLightOn(true);
-            leds.add(led).padLeft(3).padRight(3);
+            leds.add(led).pad(1);
         }
-        leds.defaults().space(7);
         Label amountLabel = new Label("" + amount, skin, "paneled");
         amountLabel.setAlignment(Align.center);
-        this.add(amountLabel).expand().minWidth(20).bottom().row();
-        this.add(leds).growX().bottom().expand().row();
+        //this.add(amountLabel).expand().minWidth(20).bottom().row();
+        footer.add(leds).height(16).growX().bottom().expand();
+        TextureRegion icon = texturePack.findRegion(software.getCollection().getPath() + "_icon");
+        if (icon != null) {
+            Panel iconPanel = new Panel(skin);
+            Image collectionIcon = new Image(icon);
+            iconPanel.add(collectionIcon).size(8, 8).row();
+            footer.add(iconPanel).height(16);
+        }
+        this.add(footer).expand().growX().bottom();
         newWindowOnClick = new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

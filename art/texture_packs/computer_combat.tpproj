@@ -71,7 +71,7 @@ limitMemory=true
 useIndexes=true
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:cards_export/computer_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:abilities_export/computer_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
+inputFiles=[{path:cards_export/computer_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:abilities_export/computer_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:packs/computer_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
 
 
 ---
@@ -110,7 +110,7 @@ limitMemory=true
 useIndexes=true
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:abilities_export/algorithms_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:cards_export/algorithms_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
+inputFiles=[{path:abilities_export/algorithms_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:cards_export/algorithms_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:packs/algorithms_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
 
 
 ---
@@ -149,7 +149,7 @@ limitMemory=true
 useIndexes=true
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:cards_export/networks_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:abilities_export/networks_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
+inputFiles=[{path:cards_export/networks_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:abilities_export/networks_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false},{path:packs/networks_pack,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
 
 
 ---
