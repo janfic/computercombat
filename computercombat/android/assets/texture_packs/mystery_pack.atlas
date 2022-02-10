@@ -1,0 +1,13 @@
+
+mystery_pack.png
+size: 128,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+mystery_pack
+  rotate: false
+  xy: 2, 2
+  size: 116, 180
+  orig: 116, 180
+  offset: 0, 0
+  index: -1
