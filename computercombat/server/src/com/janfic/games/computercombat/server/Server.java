@@ -4,31 +4,20 @@ import com.janfic.games.computercombat.network.server.MatchClient;
 import com.janfic.games.computercombat.network.server.Client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
-import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
-import com.badlogic.gdx.backends.headless.HeadlessFiles;
-import com.badlogic.gdx.backends.headless.HeadlessNet;
+import com.badlogic.gdx.backends.headless.*;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Json;
-import com.janfic.games.computercombat.model.Deck;
-import com.janfic.games.computercombat.model.Card;
-import com.janfic.games.computercombat.model.Player;
-import com.janfic.games.computercombat.model.Profile;
-import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.*;
+import com.janfic.games.computercombat.model.players.BotPlayer;
 import com.janfic.games.computercombat.model.players.HumanPlayer;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.util.NullifyingJson;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UsernameExistsException;
@@ -246,6 +235,7 @@ public class Server {
                             a.sendMessage(message2);
                             b.sendMessage(message1);
 
+                            // Runs Asyncroniously
                             CompletableFuture.runAsync(() -> {
                                 while (!a.hasMessage() || !b.hasMessage()) {
                                 }
@@ -271,7 +261,6 @@ public class Server {
                                 clientsInMatch.add(b);
                                 matches.add(room);
                                 room.start();
-
                             });
 
                             liveQueue.remove(a);
@@ -280,8 +269,6 @@ public class Server {
                             clients.remove(b.getClientUID());
                         } catch (Exception e) {
                         }
-
-                        assert ((liveQueue.contains(a) || liveQueue.contains(b)) == false);
                     }
 
                     List<MatchClient> removed = new ArrayList<>();
@@ -318,13 +305,34 @@ public class Server {
                     if (matches.size() < MAX_MATCHES && raidQueue.size() > 0) {
                         MatchClient a = raidQueue.get(0);
                         Player playerA = new HumanPlayer(a.getProfile().getUID(), a);
-                        ServerMatchRoom room = new ServerMatchRoom(playerA, getDefensivePlayer());
-                        raidQueue.remove(a);
-                        clients.remove(a.getClientUID());
-                        clientsInMatch.add(a);
-                        matches.add(room);
-                        room.start();
-                        assert ((raidQueue.contains(a)) == false);
+                        Player botPlayer = new BotPlayer("botUID", a.getDeck());
+                        ServerMatchRoom room = new ServerMatchRoom(playerA, botPlayer);
+                        try {
+                            Message message2 = new Message(Type.FOUND_MATCH, "RAID BOT");
+                            a.sendMessage(message2);
+                            // Runs Asyncroniously
+                            CompletableFuture.runAsync(() -> {
+                                while (!a.hasMessage()) {
+                                }
+                                Message responseA = a.readMessage();
+                                try {
+                                    Message leftQUEUE = new Message(Type.SUCCESS, "LEFT QUEUE");
+
+                                    if (responseA.type == Type.CANCEL_QUEUE) {
+                                        a.sendMessage(leftQUEUE);
+                                    }
+                                } catch (Exception e) {
+                                }
+
+                                clientsInMatch.add(a);
+                                matches.add(room);
+                                room.start();
+                            });
+
+                            raidQueue.remove(a);
+                            clients.remove(a.getClientUID());
+                        } catch (Exception e) {
+                        }
                     }
 
                     List<MatchClient> removed = new ArrayList<>();
