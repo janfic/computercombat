@@ -203,7 +203,14 @@ public class QueueScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (!queued && selectedDeck != null) {
-                    Gdx.app.postRunnable(queue);
+                    Json json = new Json();
+                    List<String> data = new ArrayList<>();
+                    data.add(json.toJson(game.getCurrentProfile()));
+                    data.add(json.toJson(selectedDeck.getDeck()));
+                    data.add(json.toJson(new boolean[]{isRanked, isLive}));
+                    Message requestQueue = new Message(Type.JOIN_QUEUE_REQUEST, json.toJson(data));
+
+                    game.getServerAPI().sendMessage(requestQueue);
                 }
             }
         });
@@ -247,6 +254,10 @@ public class QueueScreen implements Screen {
             Message m = game.getServerAPI().readMessage();
             if (m.type == Type.QUEUE_POSITION) {
                 queueStatus.setText("Queued: Position " + m.getMessage() + " in queue");
+                queued = true;
+                queueStatusTable.clearChildren();
+                queueStatusTable.add(cancelQueue);
+                queueStatusTable.add(queueStatus).growX().row();
             }
             if (m.type == Type.SUCCESS && canceled) {
                 queueStatusTable.clearChildren();
@@ -337,33 +348,5 @@ public class QueueScreen implements Screen {
             decks.add(d).row();
         }
     }
-
-    private Runnable queue = new Runnable() {
-        @Override
-        public void run() {
-            Json json = new Json();
-            List<String> data = new ArrayList<>();
-            data.add(json.toJson(game.getCurrentProfile()));
-            data.add(json.toJson(selectedDeck.getDeck()));
-            data.add(json.toJson(new boolean[]{isRanked, isLive}));
-            Message requestQueue = new Message(Type.JOIN_QUEUE_REQUEST, json.toJson(data));
-
-            game.getServerAPI().sendMessage(requestQueue);
-
-            while (game.getServerAPI().hasMessage() == false) {
-            }
-
-            Message response = game.getServerAPI().readMessage();
-
-            if (response.type == Type.QUEUE_POSITION) {
-                queued = true;
-                queueStatus.setText("Queued: Position " + response.getMessage() + " in queue");
-            }
-
-            queueStatusTable.clearChildren();
-            queueStatusTable.add(cancelQueue);
-            queueStatusTable.add(queueStatus).growX().row();
-        }
-    };
 
 }

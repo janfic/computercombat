@@ -20,6 +20,7 @@ public abstract class Player implements Serializable {
 
     public Player() {
         this.uid = null;
+        this.deck = null;
     }
 
     public Player(String uid, Deck deck) {

@@ -146,7 +146,6 @@ public class LoginScreen implements Screen {
                     if (validSignUp) {
                         game.getServerAPI().sendMessage(new Message(Type.LOGIN_REQUEST, userNameField.getText().trim() + ","
                                 + passwordField.getText().trim()));
-                        Gdx.app.postRunnable(loginRunnable);
                     }
                 }
                 return true;
@@ -186,10 +185,8 @@ public class LoginScreen implements Screen {
                 }
 
                 if (validSignUp) {
-
                     game.getServerAPI().sendMessage(new Message(Type.LOGIN_REQUEST, userNameField.getText().trim() + ","
                             + passwordField.getText().trim()));
-                    Gdx.app.postRunnable(loginRunnable);
                 }
             }
         });
@@ -206,6 +203,10 @@ public class LoginScreen implements Screen {
     public void render(float f) {
         stage.act(f);
         stage.draw();
+        if (game.getServerAPI().hasMessage()) {
+            Message m = game.getServerAPI().readMessage();
+            showWindow(m);
+        }
     }
 
     @Override
@@ -232,79 +233,71 @@ public class LoginScreen implements Screen {
 
     Window popup;
 
-    Runnable loginRunnable = new Runnable() {
-        @Override
-        public void run() {
-            while (game.getServerAPI().hasMessage() == false) {
+    public void showWindow(Message message) {
+        popup = new Window("", skin);
+        popup.defaults().space(5);
+        Label messageLabel = new Label("", skin);
+        messageLabel.setWrap(true);
+        messageLabel.setAlignment(Align.center);
+        TextButton okayButton = new TextButton("Okay", skin);
+
+        if (null != message.type) {
+            switch (message.type) {
+                case ERROR:
+                    popup.getTitleLabel().setText("ERROR");
+                    messageLabel.setText("Something went wrong. Try again.");
+                    popup.add(messageLabel).expand().grow().row();
+                    okayButton.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            popup.remove();
+                        }
+                    });
+                    break;
+                case PROFILE_INFO:
+                    Profile profile = SQLAPI.getSingleton().loadProfile(message.getMessage());
+                    game.setCurrentProfile(profile);
+                    game.pushScreen(new PlayScreen(game));
+                    break;
+                case VERIFY_WITH_CODE:
+                    popup.getTitleLabel().setText("Verification");
+                    popup.add(messageLabel).growX().row();
+                    messageLabel.setText("Enter Verification Code:");
+                    TextField codeField = new TextField("", skin);
+                    codeField.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
+                    popup.add(codeField).row();
+                    okayButton.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            if (codeField.getText().trim().length() > 0) {
+                                game.getServerAPI().sendMessage(new Message(Type.VERIFICATION_CODE, userNameField.getText().trim() + "," + codeField.getText().trim()));
+                                Gdx.app.postRunnable(verifyRunnable);
+                            }
+                        }
+                    });
+                    break;
+                case NO_AUTH:
+                    popup.getTitleLabel().setText("Incorrect Login");
+                    messageLabel.setText("Username or Password incorrect. Try Again");
+                    popup.add(messageLabel).expand().grow().row();
+                    okayButton.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            popup.remove();
+                        }
+                    });
+                    break;
+                default:
+                    break;
             }
-
-            Message message = game.getServerAPI().readMessage();
-
-            popup = new Window("", skin);
-            popup.defaults().space(5);
-            Label messageLabel = new Label("", skin);
-            messageLabel.setWrap(true);
-            messageLabel.setAlignment(Align.center);
-            TextButton okayButton = new TextButton("Okay", skin);
-
-            if (null != message.type) {
-                switch (message.type) {
-                    case ERROR:
-                        popup.getTitleLabel().setText("ERROR");
-                        messageLabel.setText("Something went wrong. Try again.");
-                        popup.add(messageLabel).expand().grow().row();
-                        okayButton.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                popup.remove();
-                            }
-                        });
-                        break;
-                    case PROFILE_INFO:
-                        Profile profile = SQLAPI.getSingleton().loadProfile(message.getMessage());
-                        game.setCurrentProfile(profile);
-                        game.pushScreen(new PlayScreen(game));
-                        break;
-                    case VERIFY_WITH_CODE:
-                        popup.getTitleLabel().setText("Verification");
-                        popup.add(messageLabel).growX().row();
-                        messageLabel.setText("Enter Verification Code:");
-                        TextField codeField = new TextField("", skin);
-                        codeField.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
-                        popup.add(codeField).row();
-                        okayButton.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                if (codeField.getText().trim().length() > 0) {
-                                    game.getServerAPI().sendMessage(new Message(Type.VERIFICATION_CODE, userNameField.getText().trim() + "," + codeField.getText().trim()));
-                                    Gdx.app.postRunnable(verifyRunnable);
-                                }
-                            }
-                        });
-                        break;
-                    case NO_AUTH:
-                        popup.getTitleLabel().setText("Incorrect Login");
-                        messageLabel.setText("Username or Password incorrect. Try Again");
-                        popup.add(messageLabel).expand().grow().row();
-                        okayButton.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                popup.remove();
-                            }
-                        });
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            popup.add(okayButton).row();
-
-            popup.setSize(stage.getWidth() / 2, stage.getHeight() / 2);
-            popup.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
-            stage.addActor(popup);
         }
-    };
+
+        popup.add(okayButton).row();
+
+        popup.setSize(stage.getWidth() / 2, stage.getHeight() / 2);
+        popup.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
+        stage.addActor(popup);
+    }
 
     Runnable verifyRunnable = new Runnable() {
         @Override

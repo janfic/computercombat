@@ -7,6 +7,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 
 /**
@@ -19,16 +23,36 @@ public class ServerAPI {
     private boolean isReading;
     private int clientUID;
     Scanner scanner;
+    Queue<Message> messages;
+    Thread thread;
 
     public ServerAPI(Socket socket) {
         this.socket = socket;
         this.scanner = new Scanner(socket.getInputStream());
+        this.messages = new LinkedList<>();
+        this.thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    if (dataAvailable()) {
+                        Message m = readStream();
+                        messages.add(m);
+                    }
+                    try {
+                        this.wait(1000);
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+        });
+        thread.start();
     }
 
     public void sendMessage(Message message) {
         try {
             Json json = new Json();
-            System.out.println(message.type);
+            //System.out.println(message.type);
 //            System.out.println("[CLIENT]: Sending Message to Server (" + this.clientUID + ") : { " + message.getType() + " : " + message.getMessage() + " }");
             String m = json.toJson(message) + "\nEND\n";
             socket.getOutputStream().write(m.getBytes());
@@ -37,7 +61,7 @@ public class ServerAPI {
         }
     }
 
-    public boolean hasMessage() {
+    private boolean dataAvailable() {
         try {
             return socket.getInputStream().available() > 0 && socket.isConnected();
         } catch (IOException ex) {
@@ -45,7 +69,7 @@ public class ServerAPI {
         }
     }
 
-    public Message readMessage() {
+    private Message readStream() {
         String content = "";
         String line = null;
         try {
@@ -72,10 +96,18 @@ public class ServerAPI {
         }
     }
 
-    public void update() {
-        if (hasMessage()) {
-            //System.out.println(readMessage());
-        }
+    public boolean hasMessage() {
+        return !messages.isEmpty();
+    }
+
+    public Message readMessage() {
+        Message m = messages.poll();
+        return m;
+    }
+
+    public Message peekMessage() {
+        Message m = messages.peek();
+        return m;
     }
 
     public boolean isConnected() {

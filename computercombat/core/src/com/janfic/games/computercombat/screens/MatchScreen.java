@@ -72,6 +72,7 @@ public class MatchScreen implements Screen {
     List<ComponentActor> selectedComponents;
     List<SoftwareActor> selectedCards;
 
+    boolean startedMatch = false;
     boolean checkGameOver = true;
 
     float animationSpeed = 0.5f;
@@ -92,20 +93,74 @@ public class MatchScreen implements Screen {
     public void show() {
         this.skin = assetManager.get("skins/computer_combat_skin.json");
         this.componentAtlas = assetManager.get("texture_packs/components.atlas");
-
         this.mainCamera = new OrthographicCamera(1920 / 4, 1080 / 4);
-
         this.mainStage = ComputerCombatGame.makeNewStage(mainCamera);
-
         Gdx.input.setInputProcessor(mainStage);
+    }
 
-        Table table = new Table();
-        //table.defaults().grow().space(5);
-        //table.debugAll();
+    public Board getBoard() {
+        return board;
+    }
 
-        while (game.getServerAPI().hasMessage() == false) {
+    public Map<String, ComputerActor> getComputerActors() {
+        return computerActors;
+    }
+
+    public Map<String, List<SoftwareActor>> getSoftwareActors() {
+        return softwareActors;
+    }
+
+    public BorderedGrid getLeftPanel() {
+        return leftPanel;
+    }
+
+    public BorderedGrid getRightPanel() {
+        return rightPanel;
+    }
+
+    public Stage getMainStage() {
+        return mainStage;
+    }
+
+    public ClientMatch getMatchData() {
+        return matchData;
+    }
+
+    public Skin getSkin() {
+        return skin;
+    }
+
+    @Override
+    public void render(float delta) {
+        // Basic Update and Render Stage
+        if (startedMatch) {
+            mainStage.act(delta);
+            mainStage.draw();
+
+            // Set Info text to be whos turn it is
+            updateInfoText();
+
+            // Render Animations that are queued
+            animations(delta);
+
+            // Accept Opponent / Server sent move
+            listenForServerMessage();
+
+            // Check if player attempted MatchComponentsMove
+            playerMatchComponentsMoveCheck();
+
+            // Check if player attempted UseAbilityMove
+            playerUseAbilityMoveCheck();
+        } else {
+            if (game.getServerAPI().hasMessage()) {
+                Message matchStateData = game.getServerAPI().readMessage();
+                initializeStage(matchStateData);
+                startedMatch = true;
+            }
         }
-        Message matchStateData = game.getServerAPI().readMessage();
+    }
+
+    public void initializeStage(Message matchStateData) {
         Json json = new NullifyingJson();
 
         if (matchStateData.type == Type.MATCH_STATE_DATA) {
@@ -125,6 +180,8 @@ public class MatchScreen implements Screen {
         this.softwareActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID(), new ArrayList<>());
         this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin, game));
         this.computerActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID(), new ComputerActor(skin, game));
+
+        Table table = new Table();
 
         leftPanel = new BorderedGrid(skin);
         leftPanel.pad(7);
@@ -169,60 +226,6 @@ public class MatchScreen implements Screen {
         table.add(rightPanel).pad(1, 0, 1, 0).grow().right();
 
         mainStage.addActor(table);
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public Map<String, ComputerActor> getComputerActors() {
-        return computerActors;
-    }
-
-    public Map<String, List<SoftwareActor>> getSoftwareActors() {
-        return softwareActors;
-    }
-
-    public BorderedGrid getLeftPanel() {
-        return leftPanel;
-    }
-
-    public BorderedGrid getRightPanel() {
-        return rightPanel;
-    }
-
-    public Stage getMainStage() {
-        return mainStage;
-    }
-
-    public ClientMatch getMatchData() {
-        return matchData;
-    }
-
-    public Skin getSkin() {
-        return skin;
-    }
-
-    @Override
-    public void render(float delta) {
-        // Basic Update and Render Stage
-        mainStage.act(delta);
-        mainStage.draw();
-
-        // Set Info text to be whos turn it is
-        updateInfoText();
-
-        // Render Animations that are queued
-        animations(delta);
-
-        // Accept Opponent / Server sent move
-        listenForServerMessage();
-
-        // Check if player attempted MatchComponentsMove
-        playerMatchComponentsMoveCheck();
-
-        // Check if player attempted UseAbilityMove
-        playerUseAbilityMoveCheck();
 
     }
 

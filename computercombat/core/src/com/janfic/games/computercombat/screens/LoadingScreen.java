@@ -69,9 +69,6 @@ public class LoadingScreen implements Screen {
                 } catch (InterruptedException ex) {
                 }
                 game.getServerAPI().sendMessage(new Message(Type.CONNECTION_REQUEST, "CONNECTION_REQUEST"));
-                while (game.getServerAPI().hasMessage() == false) {
-                }
-                Message message = game.getServerAPI().readMessage();
             }
         });
         thread.start();
@@ -87,9 +84,12 @@ public class LoadingScreen implements Screen {
         progressBar.setValue(assetManager.getProgress());
         if (progressBar.getValue() >= 1) {
             statusLabel.setText("Connecting to Server...");
-            if (game.getServerAPI() != null && game.getServerAPI().isConnected()) {
-                game.popScreen();
-                game.pushScreen(new MainMenuScreen(game));
+            if (game.getServerAPI() != null && game.getServerAPI().hasMessage()) {
+                Message m = game.getServerAPI().readMessage();
+                if (m.type == Type.CONNECTION_ACCEPT) {
+                    game.popScreen();
+                    game.pushScreen(new MainMenuScreen(game));
+                }
             }
         }
     }
