@@ -1,8 +1,6 @@
 package com.janfic.games.computercombat.server;
 
 import com.janfic.games.computercombat.network.server.MatchClient;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.moves.MoveResult;
@@ -12,11 +10,7 @@ import com.janfic.games.computercombat.model.match.MatchResults;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
-import com.janfic.games.computercombat.network.Message;
-import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.SQLAPI;
-import com.janfic.games.computercombat.util.ObjectMapSerializer;
-import java.io.IOException;
 import java.util.List;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -27,17 +21,8 @@ import java.util.HashMap;
  */
 public class ServerMatchRoom {
 
-    /*
-    Plan A:
-        Differentiate HumanPlayer vs all others to wait for client message
-    Plan B:
-        Implement HumanPlayer to wait for client message seperately
-    
-     */
-
     // TODO: add final
     private Player player1, player2;
-    private MatchClient matchClient1, matchClient2;
     private Match match;
     private MatchData matchData;
     private boolean isGameOver;
@@ -48,24 +33,111 @@ public class ServerMatchRoom {
         this.player2 = player2;
         this.thread = new Thread(new Runnable() {
             @Override
-            public  void run() {
+            public void run() {
                 // Begin the match
-                // create a match object
-                // call the beginMatch method on both players
+                match = new Match(player1, player2);
+                player1.beginMatch(match.getPlayerMatchState(player1.getUID()), player2);
+                player2.beginMatch(match.getPlayerMatchState(player2.getUID()), player1);
 
-                // set up data collection
+                // set up match data collection
+                Timestamp starttime = new Timestamp(System.currentTimeMillis());
+                matchData = new MatchData(player1, player2);
+                matchData.getMatchStates().add(match.getCurrentState());
 
                 // Start main match loop
-                // while game is not over
+                isGameOver = false;
+                while (isGameOver == false) {
                     // get move of current player
-                    // break if game over
-                    // apply the move
+                    String whosMoveUID = match.whosMove();
+                    Player currentPlayer = whosMoveUID.equals(player1.getUID()) ? player1 : player2;
+                    Player otherPlayer = !whosMoveUID.equals(player1.getUID()) ? player1 : player2;
 
+                    Move move = currentPlayer.getMove();
+
+                    if (move == null) {
+                        isGameOver = true;
+                        break;
+                    }
+
+                    // apply the move
+                    if (move instanceof UseAbilityMove) {
+                        UseAbilityMove m = (UseAbilityMove) move;
+                        m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
+                    }
+                    boolean isValid = match.isValidMove(move);
+                    if (isValid) {
+                        List<MoveResult> results = match.makeMove(move);
+                        currentPlayer.updateState(results);
+                        otherPlayer.updateState(results);
+                        matchData.add(move, results, match.getCurrentState());
+                    }
+
+                    isGameOver = match.getCurrentState().isGameOver;
+                }
+
+                //Build MatchData
+                Timestamp endtime = new Timestamp(System.currentTimeMillis());
+                MatchState lastState = matchData.getMatchStates().get(matchData.getMatchStates().size() - 1);
+                if (lastState.winner != null) {
+                    matchData.setWinner(lastState.winner.getUID().equals(player2.getUID()));
+                } else {
+                    matchData.setWinner(false);
+                }
+
+                matchData.setStartTime(starttime);
+                matchData.setEndTime(endtime);
+
+                // Calculate Rewards
+                HashMap<String, String> rewards1 = new HashMap<>();
+                HashMap<String, String> rewards2 = new HashMap<>();
+                calculateRewards(rewards1, rewards2);
+
+                MatchResults results1 = new MatchResults(matchData.getRewards().get(player1.getUID()), starttime, endtime, player2, !matchData.getWinner(), rewards1);
+                MatchResults results2 = new MatchResults(matchData.getRewards().get(player2.getUID()), starttime, endtime, player1, matchData.getWinner(), rewards2);
+
+                player1.gameOver(results1);
+                player1.gameOver(results2);
+
+                // Insert Match Data to DB
+                // Update Profiles ( packets )
+                System.out.println("END OF MATCH");
             }
         });
     }
 
-    
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void start() {
+        thread.start();
+    }
+
+    public void calculateRewards(HashMap<String, String> rewards1, HashMap<String, String> rewards2) {
+        rewards1.put("Collected", "" + matchData.getRewards().get(player1.getUID()));
+        rewards2.put("Collected", "" + matchData.getRewards().get(player2.getUID()));
+        if (matchData.getWinner()) {
+            matchData.getRewards().put(player2.getUID(), matchData.getRewards().get(player2.getUID()) + 25);
+            rewards2.put("Victory Bonus", "" + 25);
+        } else {
+            matchData.getRewards().put(player1.getUID(), matchData.getRewards().get(player1.getUID()) + 25);
+            rewards1.put("Victory Bonus", "" + 25);
+        }
+    }
+
+    public MatchData getMatchData() {
+        return matchData;
+    }
+
+    /*
     public ServerMatchRoom(MatchClient matchClient1, MatchClient matchClient2) {
         this.matchClient1 = matchClient1;
         this.matchClient2 = matchClient2;
@@ -235,20 +307,5 @@ public class ServerMatchRoom {
         });
 
     }
-
-    public MatchClient getPlayer1() {
-        return matchClient1;
-    }
-
-    public MatchClient getPlayer2() {
-        return matchClient2;
-    }
-
-    public boolean isGameOver() {
-        return isGameOver;
-    }
-
-    public void start() {
-        thread.start();
-    }
+     */
 }

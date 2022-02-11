@@ -7,8 +7,8 @@ import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.moves.Move;
-import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.util.ComponentFilter;
 import com.janfic.games.computercombat.util.NullifyingJson;
 import java.util.ArrayList;
@@ -26,10 +26,10 @@ public class MatchState implements Serializable {
     public Map<String, List<Card>> activeEntities;
     public Map<String, Computer> computers;
     public Map<String, Deck> decks;
-    public List<Profile> players;
-    public Profile currentPlayerMove;
+    public List<Player> players;
+    public Player currentPlayerMove;
     public boolean isGameOver;
-    public Profile winner;
+    public Player winner;
 
     public MatchState() {
         this.componentBoard = null;
@@ -42,7 +42,7 @@ public class MatchState implements Serializable {
         this.winner = null;
     }
 
-    public MatchState(Profile player1, Profile player2, Component[][] componentBoard, Map<String, List<Card>> activeEntities, Map<String, Computer> computers, Map<String, Deck> decks) {
+    public MatchState(Player player1, Player player2, Component[][] componentBoard, Map<String, List<Card>> activeEntities, Map<String, Computer> computers, Map<String, Deck> decks) {
         this.componentBoard = componentBoard;
         this.activeEntities = activeEntities;
         this.computers = computers;
@@ -74,7 +74,7 @@ public class MatchState implements Serializable {
 
     public MatchState(MatchState state, String playerUID) {
         this(state);
-        for (Profile player : players) {
+        for (Player player : players) {
             this.decks.remove(player.getUID());
         }
     }
@@ -94,8 +94,8 @@ public class MatchState implements Serializable {
         return s;
     }
 
-    public Profile getOtherProfile(Profile profile) {
-        for (Profile player : players) {
+    public Player getOtherProfile(Player profile) {
+        for (Player player : players) {
             if (!player.getUID().equals(profile.getUID())) {
                 return player;
             }
@@ -103,8 +103,8 @@ public class MatchState implements Serializable {
         return null;
     }
 
-    public Profile getOtherProfile(String uid) {
-        for (Profile player : players) {
+    public Player getOtherProfile(String uid) {
+        for (Player player : players) {
             if (!player.getUID().equals(uid)) {
                 return player;
             }
@@ -125,11 +125,11 @@ public class MatchState implements Serializable {
     @Override
     public void write(Json json) {
         json.writeValue("players", players, List.class);
-        json.writeValue("currentPlayerMove", currentPlayerMove, Profile.class);
+        json.writeValue("currentPlayerMove", currentPlayerMove, Player.class);
         json.writeValue("activeEntities", activeEntities, Map.class);
         json.writeValue("computers", computers, Map.class);
         json.writeValue("decks", decks, Map.class);
-        json.writeValue("winner", winner, Profile.class);
+        json.writeValue("winner", winner, Player.class);
         json.writeValue("isGameOver", isGameOver, boolean.class);
         String board = "";
         for (Component[] components : componentBoard) {
@@ -144,9 +144,9 @@ public class MatchState implements Serializable {
     @Override
     public void read(Json json, JsonValue jsonData) {
         this.players = json.readValue("players", List.class, jsonData);
-        this.currentPlayerMove = json.readValue("currentPlayerMove", Profile.class, jsonData);
+        this.currentPlayerMove = json.readValue("currentPlayerMove", Player.class, jsonData);
         this.isGameOver = json.readValue("isGameOver", boolean.class, jsonData);
-        this.winner = json.readValue("winner", Profile.class, jsonData);
+        this.winner = json.readValue("winner", Player.class, jsonData);
         this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
         this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);

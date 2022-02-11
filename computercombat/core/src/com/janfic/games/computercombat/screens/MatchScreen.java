@@ -34,6 +34,7 @@ import com.janfic.games.computercombat.network.client.ClientMatch;
 import com.janfic.games.computercombat.util.CardFilter;
 import com.janfic.games.computercombat.util.ComponentFilter;
 import com.janfic.games.computercombat.util.Filter;
+import com.janfic.games.computercombat.util.NullifyingJson;
 import com.janfic.games.computercombat.util.ObjectMapSerializer;
 import java.util.*;
 
@@ -105,7 +106,7 @@ public class MatchScreen implements Screen {
         while (game.getServerAPI().hasMessage() == false) {
         }
         Message matchStateData = game.getServerAPI().readMessage();
-        Json json = new Json();
+        Json json = new NullifyingJson();
 
         if (matchStateData.type == Type.MATCH_STATE_DATA) {
             MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
@@ -121,9 +122,9 @@ public class MatchScreen implements Screen {
         }
 
         this.softwareActors.put(game.getCurrentProfile().getUID(), new ArrayList<>());
-        this.softwareActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ArrayList<>());
+        this.softwareActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID(), new ArrayList<>());
         this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin, game));
-        this.computerActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID(), new ComputerActor(skin, game));
+        this.computerActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID(), new ComputerActor(skin, game));
 
         leftPanel = new BorderedGrid(skin);
         leftPanel.pad(7);
@@ -135,7 +136,7 @@ public class MatchScreen implements Screen {
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
-        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())).expandY().growX().bottom();
+        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())).expandY().growX().bottom();
 
         buttons = new Panel(skin);
         buttons.add(new Label(game.getCurrentProfile().getName() + " vs. " + matchData.getOpponentName(), skin));
@@ -335,7 +336,7 @@ public class MatchScreen implements Screen {
     private void playerMatchComponentsMoveCheck() {
         if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             Move move = board.getMove();
-            Json json = new Json();
+            Json json = new NullifyingJson();
             game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             board.consumeMove();
         }
@@ -346,14 +347,14 @@ public class MatchScreen implements Screen {
             Message serverMessage = game.getServerAPI().readMessage();
             System.out.println(serverMessage.getType());
             if (serverMessage.type == Type.MOVE_ACCEPT) {
-                Json json = new Json();
+                Json json = new NullifyingJson();
                 json.setSerializer(ObjectMap.class,
                         new ObjectMapSerializer());
                 List<MoveResult> results = json.fromJson(List.class, serverMessage.getMessage());
                 animate(results, this);
             } else if (serverMessage.type == Type.PING) {
             } else if (serverMessage.type == Type.MATCH_RESULTS) {
-                Json json = new Json();
+                Json json = new NullifyingJson();
                 json.setSerializer(ObjectMap.class,
                         new ObjectMapSerializer());
                 MatchResults results = json.fromJson(MatchResults.class, serverMessage.getMessage());
@@ -390,11 +391,12 @@ public class MatchScreen implements Screen {
 
     private void gameOver(MatchResults results) {
         if (matchData.getCurrentState().isGameOver && checkGameOver) {
-            infoLabel.setText("GAME OVER! \n " + matchData.getCurrentState().winner.getName() + " wins!");
+            //infoLabel.setText("GAME OVER! \n " + matchData.getCurrentState().winner.getName() + " wins!");
+            boolean isWinner = matchData.getCurrentState().winner.getUID().equals(game.getCurrentProfile().getUID());
             board.setTouchable(Touchable.disabled);
             Window window = new Window("Match Info", skin);
             Table table = new Table(skin);
-            Label label = new Label("GAME OVER!\n " + matchData.getCurrentState().winner.getName() + " wins!", skin);
+            Label label = new Label("GAME OVER!\n " + (isWinner ? "You win!" : matchData.getOpponentName() + " wins."), skin);
             label.setAlignment(Align.center);
             table.add(label).grow();
             table.align(Align.center);
@@ -521,11 +523,11 @@ public class MatchScreen implements Screen {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             leftPanel.add(softwareActor).row();
         }
-        for (SoftwareActor softwareActor : softwareActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())) {
+        for (SoftwareActor softwareActor : softwareActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())) {
             rightPanel.add(softwareActor).row();
         }
 
         leftPanel.add(computerActors.get(game.getCurrentProfile().getUID())).expandY().growX().bottom().row();
-        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile()).getUID())).expandY().growX().bottom().row();
+        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())).expandY().growX().bottom().row();
     }
 }

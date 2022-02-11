@@ -13,11 +13,14 @@ import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.players.HumanPlayer;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.SQLAPI;
+import com.janfic.games.computercombat.util.NullifyingJson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UsernameExistsException;
 
 /**
@@ -40,6 +45,7 @@ public class Server {
     private final List<MatchClient> liveQueue;
     private final List<MatchClient> raidQueue;
     private final List<ServerMatchRoom> matches;
+    private final List<MatchClient> clientsInMatch;
     private int MAX_MATCHES = 2;
     private Thread acceptConnections, maintainConnections, maintainLiveQueue, maintainRaidQueue, maintainMatches;
 
@@ -51,6 +57,7 @@ public class Server {
         liveQueue = new ArrayList<>();
         raidQueue = new ArrayList<>();
         matches = new ArrayList<>();
+        clientsInMatch = new ArrayList<>();
         profiles = new HashMap<>();
         this.MAX_MATCHES = max_matches;
         ServerSocketHints ssh = new ServerSocketHints();
@@ -77,7 +84,7 @@ public class Server {
         maintainConnections = new Thread(new Runnable() {
             @Override
             public void run() {
-                Json json = new Json();
+                Json json = new NullifyingJson();
                 AWSServices services = new AWSServices("us-east-1_pLAKB2Mxw");
 
                 while (true) {
@@ -228,13 +235,52 @@ public class Server {
                     if (matches.size() < MAX_MATCHES && liveQueue.size() > 1) {
                         MatchClient a = liveQueue.get(0);
                         MatchClient b = liveQueue.get(1);
-                        ServerMatchRoom room = new ServerMatchRoom(a, b);
-                        liveQueue.remove(a);
-                        liveQueue.remove(b);
-                        clients.remove(a.getClientUID());
-                        clients.remove(b.getClientUID());
-                        matches.add(room);
-                        room.start();
+                        Player playerA = new HumanPlayer(a.getProfile().getUID(), a);
+                        Player playerB = new HumanPlayer(b.getProfile().getUID(), b);
+                        ServerMatchRoom room = new ServerMatchRoom(playerA, playerB);
+
+                        try {
+                            Message message1 = new Message(Type.FOUND_MATCH, a.getProfile().getName());
+                            Message message2 = new Message(Type.FOUND_MATCH, b.getProfile().getName());
+
+                            a.sendMessage(message2);
+                            b.sendMessage(message1);
+
+                            CompletableFuture.runAsync(() -> {
+                                while (!a.hasMessage() || !b.hasMessage()) {
+                                }
+                                Message responseA = a.readMessage();
+                                Message responseB = b.readMessage();
+
+                                try {
+                                    Message error = new Message(Type.ERROR, "A PLAYER WASNT READY");
+                                    Message leftQUEUE = new Message(Type.SUCCESS, "LEFT QUEUE");
+
+                                    if (responseA.type == Type.CANCEL_QUEUE) {
+                                        a.sendMessage(leftQUEUE);
+                                        b.sendMessage(error);
+                                    }
+                                    if (responseB.type == Type.CANCEL_QUEUE) {
+                                        a.sendMessage(error);
+                                        b.sendMessage(leftQUEUE);
+                                    }
+                                } catch (Exception e) {
+                                }
+
+                                clientsInMatch.add(a);
+                                clientsInMatch.add(b);
+                                matches.add(room);
+                                room.start();
+
+                            });
+
+                            liveQueue.remove(a);
+                            liveQueue.remove(b);
+                            clients.remove(a.getClientUID());
+                            clients.remove(b.getClientUID());
+                        } catch (Exception e) {
+                        }
+
                         assert ((liveQueue.contains(a) || liveQueue.contains(b)) == false);
                     }
 
@@ -271,11 +317,13 @@ public class Server {
 
                     if (matches.size() < MAX_MATCHES && raidQueue.size() > 0) {
                         MatchClient a = raidQueue.get(0);
-                        //ServerMatchRoom room = new ServerMatchRoom(a, b);
+                        Player playerA = new HumanPlayer(a.getProfile().getUID(), a);
+                        ServerMatchRoom room = new ServerMatchRoom(playerA, getDefensivePlayer());
                         raidQueue.remove(a);
                         clients.remove(a.getClientUID());
-                        //matches.add(room);
-                        //room.start();
+                        clientsInMatch.add(a);
+                        matches.add(room);
+                        room.start();
                         assert ((raidQueue.contains(a)) == false);
                     }
 
@@ -318,11 +366,15 @@ public class Server {
                     }
 
                     for (ServerMatchRoom serverMatchRoom : r) {
-                        MatchClient c1 = serverMatchRoom.getPlayer1();
-                        MatchClient c2 = serverMatchRoom.getPlayer2();
+                        Player player1 = serverMatchRoom.getPlayer1();
+                        Player player2 = serverMatchRoom.getPlayer2();
 
-                        clients.put(c1.getClientUID(), c1);
-                        clients.put(c2.getClientUID(), c2);
+                        for (MatchClient matchClient : clientsInMatch) {
+                            String clientUID = matchClient.getProfile().getUID();
+                            if (clientUID.equals(player1.getUID()) || clientUID.equals(player2.getUID())) {
+                                clients.put(matchClient.getClientUID(), matchClient);
+                            }
+                        }
                     }
                     matches.removeAll(r);
 
@@ -393,6 +445,11 @@ public class Server {
         }
     }
 
+    public Player getDefensivePlayer() {
+        // TODO: Retrieve Defensive Player from Randomly chosen profile
+        return null;
+    }
+
     public static Message readMessage(InputStream is) {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -411,6 +468,5 @@ public class Server {
             e.printStackTrace();
             return null;
         }
-
     }
 }

@@ -25,7 +25,6 @@ public class GameRules {
     static {
         componentFrequencies = new HashMap<>();
         componentFrequencies.put(CPUComponent.class, 3);
-        //componentFrequencies.put(GPUComponent.class, 3);
         componentFrequencies.put(RAMComponent.class, 3);
         componentFrequencies.put(NetworkComponent.class, 3);
         componentFrequencies.put(PowerComponent.class, 3);
@@ -255,7 +254,7 @@ public class GameRules {
         for (String string : state.computers.keySet()) {
             if (state.computers.get(string).isDead()) {
                 state.isGameOver = true;
-                for (Profile player : state.players) {
+                for (Player player : state.players) {
                     if (player.getUID().equals(string) == false) {
                         state.winner = player;
                         break;

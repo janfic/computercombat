@@ -2,6 +2,7 @@ package com.janfic.games.computercombat.model.match;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.Profile;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -14,14 +15,14 @@ public class MatchResults implements Json.Serializable {
 
     public int totalPacketsEarned;
     public Timestamp start, end;
-    public Profile opponent;
+    public Player opponent;
     public boolean winner;
     public HashMap<String, String> rewards;
 
     public MatchResults() {
     }
 
-    public MatchResults(int totalPacketsEarned, Timestamp start, Timestamp end, Profile opponent, boolean winner, HashMap<String, String> rewards) {
+    public MatchResults(int totalPacketsEarned, Timestamp start, Timestamp end, Player opponent, boolean winner, HashMap<String, String> rewards) {
         this.totalPacketsEarned = totalPacketsEarned;
         this.start = start;
         this.end = end;
@@ -45,7 +46,7 @@ public class MatchResults implements Json.Serializable {
         this.totalPacketsEarned = json.readValue("totalPacketsEarned", Integer.class, jsonData);
         this.start = Timestamp.valueOf(json.readValue("start", String.class, jsonData));
         this.end = Timestamp.valueOf(json.readValue("end", String.class, jsonData));
-        this.opponent = json.readValue("opponent", Profile.class, jsonData);
+        this.opponent = json.readValue("opponent", Player.class, jsonData);
         this.winner = json.readValue("winner", boolean.class, jsonData);
         this.rewards = json.readValue("rewards", HashMap.class, jsonData);
     }

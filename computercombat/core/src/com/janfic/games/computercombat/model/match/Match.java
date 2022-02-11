@@ -6,7 +6,7 @@ import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.GameRules;
-import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.Move;
 import java.util.ArrayList;
@@ -23,17 +23,16 @@ public class Match {
 
     private MatchState currentState;
 
-    public Match(Profile player1, Profile player2, Deck player1Deck, Deck player2Deck) {
+    public Match(Player player1, Player player2) {
 
         Map<String, List<Card>> activeEntities = new HashMap<>();
         Map<String, Computer> computers = new HashMap<>();
         Map<String, Deck> decks = new HashMap<>();
 
-        player1Deck.shuffle();
-        player2Deck.shuffle();
-
-        decks.put(player1.getUID(), player1Deck);
-        decks.put(player2.getUID(), player2Deck);
+        player1.getActiveDeck().shuffle();
+        player2.getActiveDeck().shuffle();
+        decks.put(player1.getUID(), player1.getActiveDeck());
+        decks.put(player2.getUID(), player2.getActiveDeck());
 
         activeEntities.put(player1.getUID(), new ArrayList<>());
         activeEntities.put(player2.getUID(), new ArrayList<>());

@@ -2,6 +2,7 @@ package com.janfic.games.computercombat.model.match;
 
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.animations.CollectAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
@@ -15,8 +16,7 @@ import java.util.Map;
 
 public class MatchData {
 
-    Profile player1, player2;
-    Deck player1Deck, player2Deck;
+    Player player1, player2;
     List<Move> moves;
     List<MatchState> matchStates;
     List<List<MoveResult>> moveResults;
@@ -24,7 +24,7 @@ public class MatchData {
     Timestamp starttime, endtime;
     Map<String, Integer> rewards;
 
-    public MatchData(Profile player1, Profile player2, Deck player1Deck, Deck player2Deck) {
+    public MatchData(Player player1, Player player2) {
         this.rewards = new HashMap<>();
         rewards.put(player1.getUID(), 0);
         rewards.put(player2.getUID(), 0);
@@ -50,8 +50,6 @@ public class MatchData {
         };
         this.player1 = player1;
         this.player2 = player2;
-        this.player1Deck = player1Deck;
-        this.player2Deck = player2Deck;
     }
 
     public void add(Move move, List<MoveResult> results, MatchState state) {
@@ -72,12 +70,12 @@ public class MatchData {
         return moves;
     }
 
-    public Profile getPlayer1() {
+    public Player getPlayer1() {
         return player1;
     }
 
-    public Profile getPlayer2() {
-        return player2;
+    public Player getPlayer2() {
+        return player2; 
     }
 
     public boolean getWinner() {
@@ -86,14 +84,6 @@ public class MatchData {
 
     public void setWinner(boolean winner) {
         this.winner = winner;
-    }
-
-    public Deck getPlayer1Deck() {
-        return player1Deck;
-    }
-
-    public Deck getPlayer2Deck() {
-        return player2Deck;
     }
 
     public void setStartTime(Timestamp time) {

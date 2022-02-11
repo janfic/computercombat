@@ -1,10 +1,13 @@
 package com.janfic.games.computercombat.model.players;
 
+import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Player;
-import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.model.match.MatchResults;
+import com.janfic.games.computercombat.model.moves.MoveResult;
+import java.util.List;
 
 /**
  *
@@ -12,8 +15,8 @@ import com.janfic.games.computercombat.model.Profile;
  */
 public class BotPlayer extends Player {
 
-    public BotPlayer(String uid, Profile profile, Computer computer) {
-        super(uid, profile.getDefensiveDeck());
+    public BotPlayer(String uid, Deck deck) {
+        super(uid, deck);
     }
 
     @Override
@@ -28,7 +31,12 @@ public class BotPlayer extends Player {
     }
 
     @Override
-    public void updateState(MatchState state) {
+    public void updateState(List<MoveResult> state) {
+        // TODO
+    }
+
+    @Override
+    public void gameOver(MatchResults results) {
         // TODO
     }
 }

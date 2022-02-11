@@ -4,8 +4,8 @@ import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Computer;
+import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.match.MatchState;
-import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation;
 import com.janfic.games.computercombat.model.animations.DrawAnimation;
@@ -79,7 +79,7 @@ public class DrawAbility extends Ability {
 
         DrawAnimation drawAnimation = new DrawAnimation(move.getPlayerUID(), drawnCards);
 
-        for (Profile player : newState.players) {
+        for (Player player : newState.players) {
             if (player.getUID().equals(move.getPlayerUID())) {
                 newState.currentPlayerMove = newState.getOtherProfile(player);
             }

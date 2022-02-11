@@ -2,14 +2,16 @@ package com.janfic.games.computercombat.model.players;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Player;
+import com.janfic.games.computercombat.model.match.MatchResults;
+import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.server.MatchClient;
 import com.janfic.games.computercombat.util.ObjectMapSerializer;
+import java.util.List;
 
 /**
  *
@@ -21,8 +23,12 @@ public class HumanPlayer extends Player {
     private MatchClient client;
     Json json;
 
-    public HumanPlayer(String uid, MatchClient client, Computer computer) {
+    public HumanPlayer() {
+    }
+
+    public HumanPlayer(String uid, MatchClient client) {
         super(uid, client.getDeck());
+        this.client = client;
         this.json = new Json();
         json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
     }
@@ -55,14 +61,14 @@ public class HumanPlayer extends Player {
         } else {
             return null;
         }
-        
+
         // if method returns null, player forfiets?
     }
 
     @Override
-    public void updateState(MatchState state) {
+    public void updateState(List<MoveResult> state) {
         // Build Message to Send to Client
-        Message message = new Message(Type.MATCH_STATE_DATA, json.toJson(state));
+        Message message = new Message(Type.MOVE_ACCEPT, json.toJson(state));
         // Send message
         try {
             client.sendMessage(message);
@@ -71,4 +77,10 @@ public class HumanPlayer extends Player {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void gameOver(MatchResults results) {
+
+    }
+
 }

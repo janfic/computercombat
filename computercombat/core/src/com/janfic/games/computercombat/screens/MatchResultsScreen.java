@@ -86,7 +86,7 @@ public class MatchResultsScreen implements Screen {
 
         Label player1Label = new Label(this.game.getCurrentProfile().getName(), skin);
         player1Label.setAlignment(Align.center);
-        Label player2Label = new Label(this.matchResults.opponent.getName(), skin);
+        Label player2Label = new Label("Opponent's Turn", skin);
         player2Label.setAlignment(Align.center);
         matchPanel.add(player1Label).width(64);
         matchPanel.add().pad(10);
