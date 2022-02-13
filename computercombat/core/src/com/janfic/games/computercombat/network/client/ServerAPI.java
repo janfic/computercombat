@@ -25,6 +25,7 @@ public class ServerAPI {
     Scanner scanner;
     Queue<Message> messages;
     Thread thread;
+    boolean stop;
 
     public ServerAPI(Socket socket) {
         this.socket = socket;
@@ -33,7 +34,7 @@ public class ServerAPI {
         this.thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (stop == false) {
                     if (dataAvailable()) {
                         Message m = readStream();
                         messages.add(m);
@@ -116,5 +117,9 @@ public class ServerAPI {
 
     public Socket getSocket() {
         return socket;
+    }
+
+    public void dispose() {
+        stop = true;
     }
 }

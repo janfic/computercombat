@@ -890,7 +890,7 @@ public class SQLAPI {
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
 
-            set.last();
+            set.next();
         } catch (Exception e) {
             e.printStackTrace();
         }

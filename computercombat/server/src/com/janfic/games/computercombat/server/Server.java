@@ -366,6 +366,9 @@ public class Server {
             @Override
             public void run() {
                 while (true) {
+                    // Ping database to prevent timeout
+                    SQLAPI.getSingleton().pingDatabase();
+
                     List<ServerMatchRoom> r = new ArrayList<>();
                     for (ServerMatchRoom match : matches) {
                         if (match.isGameOver()) {
@@ -387,7 +390,7 @@ public class Server {
                     matches.removeAll(r);
 
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(5000);
                     } catch (Exception e) {
 
                     }

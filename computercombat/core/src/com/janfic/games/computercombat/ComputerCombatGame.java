@@ -29,6 +29,8 @@ public class ComputerCombatGame extends Game {
     Stack<Screen> screenStack;
     Profile currentProfile;
 
+    float timer;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -68,8 +70,10 @@ public class ComputerCombatGame extends Game {
         if (screenStack.isEmpty() == false) {
             screenStack.peek().render(Gdx.graphics.getDeltaTime());
         }
-        if (serverAPI != null) {
-            //serverAPI.update();
+        timer += Gdx.graphics.getDeltaTime();
+        if (timer >= 10) {
+            SQLAPI.getSingleton().pingDatabase();
+            timer = 0;
         }
     }
 
@@ -77,6 +81,7 @@ public class ComputerCombatGame extends Game {
     public void dispose() {
         System.out.println("here");
         batch.dispose();
+        serverAPI.dispose();
         serverAPI.getSocket().dispose();
         SQLAPI.getSingleton().dispose();
     }
