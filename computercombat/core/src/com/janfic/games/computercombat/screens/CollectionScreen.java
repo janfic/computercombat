@@ -7,17 +7,18 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.actors.CollectionCard;
-import com.janfic.games.computercombat.actors.Panel;
+import com.janfic.games.computercombat.actors.FilterWindowActor;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.client.SQLAPI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,15 +38,20 @@ public class CollectionScreen implements Screen {
     BorderedGrid filterBar;
     ScrollPane collectionScrollPane;
 
+    FilterWindowActor filterWindow;
+    List<CollectionCard> cards;
+
     public CollectionScreen(ComputerCombatGame game) {
         this.game = game;
         this.skin = game.getAssetManager().get(Assets.SKIN);
+        this.cards = new ArrayList<CollectionCard>();
     }
 
     @Override
     public void show() {
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
+
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -71,42 +77,20 @@ public class CollectionScreen implements Screen {
         titleTable.add(title).growX();
         titleTable.add(filterButton).row();
 
+        filterWindow = new FilterWindowActor(skin);
         filterButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Window w = new Window("Filter", skin);
-                w.defaults().space(5);
-
-                Panel searchPanel = new Panel(skin);
-                searchPanel.add(new Image(skin.get("magnifying_class_icon", Drawable.class))).pad(5);
-                TextField searchField = new TextField("", skin);
-                searchPanel.add(searchField).growX().row();
-
-                TextButton applyButton = new TextButton("Apply", skin);
-
-                applyButton.addListener(new ClickListener() {
+                filterWindow = new FilterWindowActor(skin);
+                filterWindow.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
+                filterWindow.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
+                filterWindow.addApplyButtonListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        w.remove();
+                        buildCollection();
                     }
                 });
-
-                w.add(searchPanel).expand().top().row();
-                w.add(applyButton).growX().bottom().row();
-
-                TextButton cancel = new TextButton("Cancel", skin);
-                cancel.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        w.remove();
-                    }
-                });
-
-                w.add(cancel).growX().row();
-
-                w.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
-                w.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
-                filterButton.getStage().addActor(w);
+                filterButton.getStage().addActor(filterWindow);
             }
         });
 
@@ -120,7 +104,7 @@ public class CollectionScreen implements Screen {
         table.add(collectionScrollPane).grow().row();
 
         stage.addActor(table);
-        Gdx.app.postRunnable(requestProfileInfoRunnable);
+        buildCollection();
     }
 
     @Override
@@ -151,18 +135,18 @@ public class CollectionScreen implements Screen {
     public void dispose() {
     }
 
-    final Runnable requestProfileInfoRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Profile profile = game.getCurrentProfile();
+    public void buildCollection() {
+        Profile profile = game.getCurrentProfile();
 
-            Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
+        Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
 
-            collection.clearChildren();
-            int row = 0;
+        collection.clearChildren();
+        int row = 0;
 
-            for (Card card : software.keySet()) {
-                CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
+        for (Card card : software.keySet()) {
+            CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
+            if (filterWindow.getFilter().filter(card, null, null)) {
+                cards.add(cc);
                 collection.add(cc);
                 row++;
                 if (row % 4 == 0) {
@@ -171,6 +155,5 @@ public class CollectionScreen implements Screen {
                 }
             }
         }
-    };
-
+    }
 }

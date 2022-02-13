@@ -45,7 +45,7 @@ public class CollectionCard extends BorderedGrid {
         components.put(StorageComponent.class, "STORAGE");
     }
 
-    private static final String[] rarityColors = new String[]{
+    public static final String[] rarityColors = new String[]{
         "BLACK",
         "BUG",
         "CPU",

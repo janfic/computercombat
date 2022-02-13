@@ -217,14 +217,6 @@ public class SoftwareActor extends Panel {
         this.activatedAbility = activatedAbility;
     }
 
-    public List<Component> getSelectedComponents() {
-        return new ArrayList<>();
-    }
-
-    public List<Card> getSelectedSoftwares() {
-        return new ArrayList<>();
-    }
-
     public void addProgress(float amount) {
         this.progressBar.setValue(this.progressBar.getValue() + amount);
     }
