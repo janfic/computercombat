@@ -46,6 +46,8 @@ public class DecksScreen implements Screen {
 
     DragAndDrop deckToCollectionDragAndDrop, collectionToDeckDragAndDrop;
 
+    FilterWindowActor filterWindow;
+
     DeckActor selectedDeck;
 
     boolean isPopup;
@@ -63,6 +65,8 @@ public class DecksScreen implements Screen {
         this.stage = ComputerCombatGame.makeNewStage(stageCamera);
 
         Gdx.input.setInputProcessor(stage);
+
+        filterWindow = new FilterWindowActor(skin);
 
         table = new Table();
         table.setFillParent(true);
@@ -237,6 +241,22 @@ public class DecksScreen implements Screen {
         collectionTitle.setAlignment(Align.center);
         TextButton filterButton = new TextButton("Filter", skin);
 
+        filterButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                filterWindow = new FilterWindowActor(skin);
+                filterWindow.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
+                filterWindow.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
+                filterWindow.addApplyButtonListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        buildCollection();
+                    }
+                });
+                filterButton.getStage().addActor(filterWindow);
+            }
+        });
+
         titleRow.add(collectionTitle).growX();
         titleRow.add(filterButton);
 
@@ -255,8 +275,6 @@ public class DecksScreen implements Screen {
         table.add(collectionTable).grow().row();
 
         stage.addActor(table);
-
-        Gdx.app.postRunnable(requestProfileInfoRunnable);
 
         this.deckToCollectionDragAndDrop = new DragAndDrop();
         this.collectionToDeckDragAndDrop = new DragAndDrop();
@@ -298,6 +316,7 @@ public class DecksScreen implements Screen {
                 updateDeckCards();
             }
         });
+        buildCollection();
     }
 
     @Override
@@ -379,20 +398,18 @@ public class DecksScreen implements Screen {
         }
     }
 
-    final Runnable requestProfileInfoRunnable = new Runnable() {
-        @Override
-        public void run() {
+    public void buildCollection() {
+        Profile profile = game.getCurrentProfile();
 
-            Profile profile = game.getCurrentProfile();
+        Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
 
-            Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
+        collection.clearChildren();
+        int row = 0;
 
-            collection.clearChildren();
-            boolean isEven = false;
-
-            for (Card card : software.keySet()) {
-                CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
-
+        for (Card card : software.keySet()) {
+            CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
+            if (filterWindow.getFilter().filter(card, null, null)) {
+                collection.add(cc);
                 collectionToDeckDragAndDrop.addSource(new Source(cc) {
                     @Override
                     public Payload dragStart(InputEvent ie, float f, float f1, int i) {
@@ -406,12 +423,12 @@ public class DecksScreen implements Screen {
                         return payload;
                     }
                 });
-                collection.add(cc);
-                if (isEven) {
+                row++;
+                if (row % 2 == 0) {
                     collection.row();
+                    row = 0;
                 }
-                isEven = !isEven;
             }
         }
-    };
+    }
 }
