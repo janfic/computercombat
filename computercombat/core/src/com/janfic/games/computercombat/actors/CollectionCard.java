@@ -32,9 +32,9 @@ import java.util.Map;
  * @author Jan Fic
  */
 public class CollectionCard extends BorderedGrid {
-
+    
     public static final Map<Class<? extends Component>, String> components;
-
+    
     static {
         components = new HashMap<>();
         components.put(CPUComponent.class, "CPU");
@@ -44,7 +44,7 @@ public class CollectionCard extends BorderedGrid {
         components.put(RAMComponent.class, "RAM");
         components.put(StorageComponent.class, "STORAGE");
     }
-
+    
     public static final String[] rarityColors = new String[]{
         "BLACK",
         "BUG",
@@ -53,11 +53,11 @@ public class CollectionCard extends BorderedGrid {
         "NETWORK",
         "STORAGE"
     };
-
+    
     Software software;
     int amount;
     EventListener newWindowOnClick;
-
+    
     public CollectionCard(ComputerCombatGame game, Skin skin, Software software, int amount) {
         super(skin);
         this.software = software;
@@ -74,21 +74,21 @@ public class CollectionCard extends BorderedGrid {
         rarityBorder.pad(5);
         rarityBorder.top();
         rarityBorder.align(Align.top);
-
+        
         this.add(rarityBorder).grow();
-
+        
         Table rarityTable = new Table(skin);
         rarityTable.setBackground("panel");
         rarityTable.defaults().expandX();
-
+        
         for (int i = 5; i >= 1; i--) {
             Image r = new Image(skin, rarity <= i ? "rarity_filled" : "rarity_empty");
             r.setColor(skin.getColor(rarityColors[rarity]));
             rarityTable.add(r);
         }
-
+        
         rarityBorder.add(rarityTable).growX().space(0).row();
-
+        
         TextureAtlas texturePack = game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class);
         BorderedArea area = new BorderedArea(skin);
         area.add(new Image(texturePack.findRegion(software.getTextureName())));
@@ -96,9 +96,9 @@ public class CollectionCard extends BorderedGrid {
         l.setWrap(true);
         l.setAlignment(Align.center);
         rarityBorder.add(l).width(90).space(0).row();
-
+        
         rarityBorder.add(area).width(48).height(48).row();
-
+        
         ProgressBar.ProgressBarStyle red = new ProgressBar.ProgressBarStyle(skin.get("default-vertical", ProgressBar.ProgressBarStyle.class));
         red.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("df3e23"));
         ProgressBar.ProgressBarStyle green = new ProgressBar.ProgressBarStyle(skin.get("default-vertical", ProgressBar.ProgressBarStyle.class));
@@ -107,7 +107,7 @@ public class CollectionCard extends BorderedGrid {
         grey.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("dae0ea"));
         ProgressBar.ProgressBarStyle blue = new ProgressBar.ProgressBarStyle(skin.get("default-vertical", ProgressBar.ProgressBarStyle.class));
         blue.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("249fde"));
-
+        
         ProgressBar runBar = new ProgressBar(0, 10, 1, false, blue);
         ProgressBar healthBar = new ProgressBar(0, 10, 1, false, green);
         ProgressBar defenseBar = new ProgressBar(0, 10, 1, false, grey);
@@ -116,7 +116,7 @@ public class CollectionCard extends BorderedGrid {
         healthBar.setValue(10);
         defenseBar.setValue(10);
         attackBar.setValue(10);
-
+        
         Stack defenseStack = new Stack();
         defenseStack.add(defenseBar);
         Table defenseOverlay = new Table();
@@ -161,12 +161,12 @@ public class CollectionCard extends BorderedGrid {
         };
         attackOverlay.add(attackOverlayTextLabelArea).width(12).height(9);
         attackStack.add(attackOverlay);
-
+        
         rarityBorder.add(attackStack).width(80).height(9).row();
         rarityBorder.add(defenseStack).width(80).height(9).row();
         rarityBorder.add(healthStack).width(80).height(9).row();
         rarityBorder.add(runRequirementsStack).width(80).height(9).row();
-
+        
         Table footer = new Table(skin);
         footer.defaults().space(0);
         Panel leds = new Panel(skin);
@@ -176,10 +176,12 @@ public class CollectionCard extends BorderedGrid {
             led.setLightOn(true);
             leds.add(led).pad(1);
         }
+        
         Label amountLabel = new Label("" + amount, skin, "paneled");
         amountLabel.setAlignment(Align.center);
-        //this.add(amountLabel).expand().minWidth(20).bottom().row();
-
+        amountLabel.setFontScale(0.5f);
+        
+        footer.add(amountLabel).growY().width(16);
         footer.add(leds).height(16).growX().bottom().expand();
         TextureRegion icon = texturePack.findRegion(software.getCollection().getPath() + "_icon");
         if (icon != null) {
@@ -193,19 +195,19 @@ public class CollectionCard extends BorderedGrid {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Window w = new CardInfoWindow(game, software, skin, false);
-
+                
                 CollectionCard.this.getStage().addActor(w);
             }
         };
         this.addListener(newWindowOnClick);
     }
-
+    
     @Override
-
+    
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
     }
-
+    
     public EventListener getNewWindowOnClick() {
         return newWindowOnClick;
     }

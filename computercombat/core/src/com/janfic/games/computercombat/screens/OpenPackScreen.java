@@ -23,7 +23,9 @@ import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -41,6 +43,7 @@ public class OpenPackScreen implements Screen {
     CollectionPackActor pack;
     List<Software> collectionCards;
     List<CollectionCard> cardActors;
+    TextButton end;
 
     public OpenPackScreen(ComputerCombatGame game, Collection collection) {
         this.game = game;
@@ -68,6 +71,28 @@ public class OpenPackScreen implements Screen {
 
         TextButton openButton = new TextButton("Open!", skin);
         openButton.setTouchable(Touchable.disabled);
+
+        List<Software> openCards = new ArrayList<>();
+        openCards.add(roll());
+        openCards.add(roll());
+        openCards.add(roll());
+
+        end = new TextButton("Okay", skin);
+        end.setVisible(false);
+        end.setPosition(10, 10);
+        end.setSize(100, 30);
+        end.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Map<Integer, Integer> added = new HashMap<>();
+                for (Software openCard : openCards) {
+                    added.put(openCard.getID(), added.getOrDefault(openCard.getID(), 0) + 1);
+                }
+                SQLAPI.getSingleton().addCardsToProfile(added, game.getCurrentProfile());
+                SQLAPI.getSingleton().saveProfile(game.getCurrentProfile());
+                game.popScreen();
+            }
+        });
 
         table.add(pack).row();
         table.add(openButton).width(100).row();
@@ -100,16 +125,14 @@ public class OpenPackScreen implements Screen {
                                         Actions.moveBy((cardActors.indexOf(openCard) - 1) * 150, 0, 1, Interpolation.circleIn)
                                 ));
                             }
+                        }),
+                        Actions.run(() -> {
+                            end.setVisible(true);
                         })
                 );
                 pack.addAction(open);
             }
         });
-
-        List<Software> openCards = new ArrayList<>();
-        openCards.add(roll());
-        openCards.add(roll());
-        openCards.add(roll());
 
         for (Software openCard : openCards) {
             CollectionCard c = new CollectionCard(game, skin, openCard, 1);
@@ -118,6 +141,7 @@ public class OpenPackScreen implements Screen {
         }
 
         stage.addActor(table);
+        stage.addActor(end);
         table.layout();
     }
 

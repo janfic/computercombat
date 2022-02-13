@@ -146,6 +146,7 @@ public class DownloadScreen implements Screen {
                             Actions.color(Color.GREEN),
                             Actions.color(Color.WHITE, 1),
                             Actions.run(() -> {
+                                game.getCurrentProfile().setPackets(game.getCurrentProfile().getPackets() - collections.get(selected).getPrice());
                                 game.pushScreen(new OpenPackScreen(game, collections.get(selected)));
                             }),
                             Actions.touchable(Touchable.enabled)

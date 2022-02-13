@@ -126,6 +126,7 @@ public class SQLAPI {
                 int maxAttack = set.getInt("card.maxAttack");
                 int runRequirements = set.getInt("card.runRequirements");
                 int rarity = set.getInt("card.rarity");
+                int amount = set.getInt("profile_owns_card.amount");
 
                 do {
                     components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
@@ -142,13 +143,13 @@ public class SQLAPI {
                         maxHealth,
                         maxDefense,
                         maxAttack,
-                        1,
+                        1, // magic
                         components.toArray(new Class[0]),
                         runRequirements,
                         a,
                         rarity
                 );
-                cards.put(s, cards.getOrDefault(s, 0) + 1);
+                cards.put(s, amount);
             }
 
         } catch (Exception e) {
@@ -666,6 +667,36 @@ public class SQLAPI {
         }
     }
 
+    public void addCardsToProfile(Map<Integer, Integer> cards, Profile profile) {
+        try {
+
+            for (Integer id : cards.keySet()) {
+
+                String sql = "SELECT * FROM profile_owns_card \n"
+                        + "WHERE profile_id = '" + profile.getUID() + "' AND card_id = '" + id + "';";
+
+                Statement statement = connection.createStatement();
+                ResultSet rs = statement.executeQuery(sql);
+
+                if (rs.next()) {
+                    sql = "UPDATE profile_owns_card SET amount = amount + " + cards.get(id) + "\n"
+                            + "WHERE profile_id = '" + profile.getUID() + "' AND card_id = " + id + ";";
+
+                    System.out.println("UPDATE");
+
+                    int rowsUpdated = statement.executeUpdate(sql);
+                } else {
+                    sql = "INSERT INTO profile_owns_card (profile_id, card_id, amount)\n"
+                            + "VALUES ('" + profile.getUID() + "'," + id + "," + cards.get(id) + ");";
+
+                    int rowsUpdated = statement.executeUpdate(sql);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public boolean addCardToProfile(int cardID, Profile profile) {
         try {
             String sql = "SELECT uid\n"
