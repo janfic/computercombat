@@ -24,13 +24,16 @@ public class CardInfoWindow extends Window {
     ComputerCombatGame game;
     Software software;
     Skin skin;
+    Actor preventClickActor;
 
     public CardInfoWindow(ComputerCombatGame game, Software software, Skin skin, boolean useAbilityEnabled) {
-        super("Software Info", skin);
+        super("Card Info", skin);
 
         this.game = game;
         this.software = software;
         this.skin = skin;
+
+        this.preventClickActor = new Actor();
 
         useAbilityButton = new TextButton("Use Ability", skin);
         useAbilityButton.setVisible(useAbilityEnabled);
@@ -73,7 +76,8 @@ public class CardInfoWindow extends Window {
         okayButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                CardInfoWindow.this.remove();
+                getStage().getActors().removeValue(preventClickActor, true);
+                CardInfoWindow.this.addAction(Actions.removeActor());
             }
         });
         this.add(okayButton).growX().colspan(3).row();
@@ -83,9 +87,6 @@ public class CardInfoWindow extends Window {
     private void createSoftwareInfo(Skin skin, ComputerCombatGame game, Software software) {
         softwareInfo = new Table();
         softwareInfo.defaults().space(3);
-        Label title = new Label("Software", skin, "title");
-        title.setAlignment(Align.center);
-        softwareInfo.add(title).colspan(2).growX().row();
         CollectionCard c = new CollectionCard(game, skin, software, 1);
         c.removeListener(c.getNewWindowOnClick());
         softwareInfo.add(c);
@@ -132,6 +133,7 @@ public class CardInfoWindow extends Window {
             useAbilityButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    getStage().getActors().removeValue(preventClickActor, true);
                     CardInfoWindow.this.addAction(Actions.removeActor());
                 }
             });
@@ -153,7 +155,11 @@ public class CardInfoWindow extends Window {
         if (stage != null) {
             this.setSize(3 * stage.getWidth() / 4f, stage.getHeight());
             this.setPosition(1 * stage.getWidth() / 8f, stage.getHeight());
+
+            preventClickActor.setBounds(0, 0, stage.getWidth(), stage.getHeight());
+            int index = stage.getActors().indexOf(this, true);
+            stage.getActors().insert(index, preventClickActor);
         }
-        super.setStage(stage); //To change body of generated methods, choose Tools | Templates.
+        super.setStage(stage);
     }
 }

@@ -101,7 +101,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     public int getRarity() {
         return rarity;
     }
-    
+
     /**
      *
      * @return magic
@@ -306,6 +306,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         json.writeValue("attack", this.attack);
         json.writeValue("maxAttack", this.maxAttack);
         json.writeValue("level", this.level);
+        json.writeValue("rarity", this.rarity);
         json.writeValue("magic", this.magic);
         json.writeValue("maxHealth", this.maxHealth);
         json.writeValue("maxArmor", this.maxArmor);
@@ -333,6 +334,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         this.attack = json.readValue("attack", Integer.class, jv);
         this.maxAttack = json.readValue("maxAttack", Integer.class, jv);
         this.level = json.readValue("level", Integer.class, jv);
+        this.rarity = json.readValue("rarity", Integer.class, jv);
         this.maxHealth = json.readValue("maxHealth", Integer.class, jv);
         this.maxArmor = json.readValue("maxArmor", Integer.class, jv);
         this.runProgress = json.readValue("runProgress", Integer.class, jv);
