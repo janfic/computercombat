@@ -81,9 +81,6 @@ public class QueueScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.getServerAPI().sendMessage(new Message(Type.CANCEL_QUEUE, game.getCurrentProfile().getUID()));
-                while (game.getServerAPI().hasMessage() == false) {
-                }
-                game.getServerAPI().readMessage();
                 game.popScreen();
             }
         });
