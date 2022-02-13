@@ -29,6 +29,7 @@ public class ComputerActor extends Panel {
     Computer computer;
     ProgressBar healthBar, progressBar;
     boolean activatedAbility;
+    Label cardsLeft;
 
     public ComputerActor(Skin skin, ComputerCombatGame game) {
         super(skin);
@@ -48,7 +49,8 @@ public class ComputerActor extends Panel {
 
         Table panel = new Table(skin);
         panel.setBackground("border_filled");
-        panel.add(new Label("7", skin)).height(15);
+        cardsLeft = new Label("8", skin);
+        panel.add(cardsLeft).height(15);
 
         table.add(healthBar).width(70).row();
         table.add(progressBar).width(70);
@@ -95,6 +97,10 @@ public class ComputerActor extends Panel {
         this.computer = computer;
         this.healthBar.setValue(computer.getHealth());
         this.progressBar.setValue(computer.getRunProgress());
+    }
+
+    public void setCardsLeft(int amount) {
+        this.cardsLeft.setText("" + amount);
     }
 
     public boolean activatedAbility() {

@@ -481,6 +481,10 @@ public class MatchScreen implements Screen {
                 public void run() {
                     matchData.setCurrentState(moveResult.getOldState());
                     board.updateBoard(matchData);
+                    for (String string : computerActors.keySet()) {
+                        ComputerActor a = computerActors.get(string);
+                        a.setComputer(matchData.getCurrentState().computers.get(string));
+                    }
                     int offset = 0;
                     for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
                         List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen, animationSpeed);
@@ -499,6 +503,10 @@ public class MatchScreen implements Screen {
             @Override
             public void run() {
                 matchData.setCurrentState(moveResults.get(moveResults.size() - 1).getNewState());
+                for (String string : computerActors.keySet()) {
+                    ComputerActor a = computerActors.get(string);
+                    a.setCardsLeft(matchData.getCurrentState().decks.get(string).getStack().size());
+                }
                 board.updateBoard(matchData);
             }
         });

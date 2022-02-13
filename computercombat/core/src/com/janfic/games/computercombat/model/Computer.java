@@ -16,8 +16,6 @@ import com.janfic.games.computercombat.model.components.StorageComponent;
  */
 public class Computer extends Card implements Serializable {
 
-    int deckSize;
-
     public Computer() {
         this("owner");
     }
@@ -33,19 +31,16 @@ public class Computer extends Card implements Serializable {
         this.getAbility().setInformation("Draw a card from you deck", "draw_card", "Draw Card", "new DrawAbility()", 0);
         this.health = 20;
         this.runProgress = 20;
-        this.deckSize = 8;
     }
 
     @Override
     public void write(Json json) {
         super.write(json);
-        json.writeValue("deckSize", deckSize);
     }
 
     @Override
     public void read(Json json, JsonValue jsonData) {
         super.read(json, jsonData);
-        this.deckSize = json.readValue("deckSize", Integer.class, jsonData);
     }
 
     public void drawCard() {
