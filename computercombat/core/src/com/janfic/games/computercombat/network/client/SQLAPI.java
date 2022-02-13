@@ -593,7 +593,14 @@ public class SQLAPI {
 
                 sql = "DELETE FROM deck_has_card \n"
                         + "WHERE deck_has_card.deck_id = " + deck.getID() + ";";
+                rows = statement.executeUpdate(sql);
 
+                sql = "DELETE FROM move \n"
+                        + "WHERE match_id = (SELECT id FROM `match` WHERE deck1_id = '" + deck.getID() + "' OR deck2_id = '" + deck.getID() + "' );";
+                rows = statement.executeUpdate(sql);
+
+                sql = "DELETE FROM computer_combat.`match` \n"
+                        + "WHERE `match`.deck1_id = '" + deck.getID() + "' OR `match`.deck2_id = '" + deck.getID() + "';";
                 rows = statement.executeUpdate(sql);
 
                 sql = "DELETE FROM deck "
