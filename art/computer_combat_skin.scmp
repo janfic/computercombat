@@ -629,6 +629,63 @@ atlasData: {
 			type: NINE_PATCH
 			hidden: false
 		}
+		{
+			file: E:/PROJECTS/computercombat/art/skin_assets/rarity_empty.png
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: rarity_empty
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: E:/PROJECTS/computercombat/art/skin_assets/rarity_filled.png
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: rarity_filled
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: E:/PROJECTS/computercombat/art/skin_assets/rarity_border.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: rarity_border
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: NINE_PATCH
+			hidden: false
+		}
 	]
 	fontDrawables: [
 		{
@@ -2660,7 +2717,7 @@ preferences: {
 	}
 	last-import-export-path: {
 		class: java.lang.String
-		value: E:/PROJECTS/COMPUTERCOMBAT/computercombat/android/assets/skins/computer_combat_skin.json
+		value: E:/PROJECTS/computercombat/computercombat/android/assets/skins/computer_combat_skin.json
 	}
 	resources-relative: {
 		class: java.lang.Boolean

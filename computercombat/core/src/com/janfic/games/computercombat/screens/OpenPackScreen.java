@@ -40,6 +40,7 @@ public class OpenPackScreen implements Screen {
     Collection collection;
     CollectionPackActor pack;
     List<Software> collectionCards;
+    List<CollectionCard> cardActors;
 
     public OpenPackScreen(ComputerCombatGame game, Collection collection) {
         this.game = game;
@@ -57,6 +58,7 @@ public class OpenPackScreen implements Screen {
         this.collectionCards = SQLAPI.getSingleton().getCardsInCollection(collectionIDs, null);
 
         this.pack = new CollectionPackActor(game, skin, collection);
+        pack.setScale(1.25f);
 
         Gdx.input.setInputProcessor(stage);
 
@@ -70,19 +72,37 @@ public class OpenPackScreen implements Screen {
         table.add(pack).row();
         table.add(openButton).width(100).row();
 
-        Action cardAction = Actions.sequence(Actions.visible(false), Actions.delay(2), Actions.moveBy(0, -stage.getHeight() * 2), Actions.visible(true),
+        Action cardAction = Actions.sequence(Actions.visible(false), Actions.delay(1), Actions.moveBy(0, -stage.getHeight() * 2), Actions.visible(true),
                 Actions.moveBy(0, stage.getHeight() * 2, 2, Interpolation.fastSlow),
                 Actions.delay(2));
 
-        Action buttonAction = Actions.sequence(Actions.fadeOut(0), Actions.delay(5), Actions.fadeIn(1), Actions.touchable(Touchable.enabled));
+        Action buttonAction = Actions.sequence(Actions.fadeOut(0), Actions.delay(3), Actions.fadeIn(1), Actions.touchable(Touchable.enabled));
 
         openButton.addAction(buttonAction);
         pack.addAction(cardAction);
 
+        cardActors = new ArrayList<>();
         openButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+
                 pack.open();
+                openButton.setVisible(false);
+                Action open = Actions.sequence(
+                        Actions.moveBy(0, -200, 1),
+                        Actions.run(() -> {
+                            confetti();
+                            for (CollectionCard openCard : cardActors) {
+                                openCard.setPosition(pack.getX(), pack.getY());
+                                openCard.setSize(pack.getWidth() - 4, pack.getHeight());
+                                openCard.addAction(Actions.parallel(
+                                        Actions.moveBy(0, 200, 1, Interpolation.circleOut),
+                                        Actions.moveBy((cardActors.indexOf(openCard) - 1) * 150, 0, 1, Interpolation.circleIn)
+                                ));
+                            }
+                        })
+                );
+                pack.addAction(open);
             }
         });
 
@@ -91,9 +111,10 @@ public class OpenPackScreen implements Screen {
         openCards.add(roll());
         openCards.add(roll());
 
-        List<CollectionCard> cardActors = new ArrayList<>();
         for (Software openCard : openCards) {
-            cardActors.add(new CollectionCard(game, skin, openCard, 1));
+            CollectionCard c = new CollectionCard(game, skin, openCard, 1);
+            cardActors.add(c);
+            stage.addActor(c);
         }
 
         stage.addActor(table);
@@ -126,6 +147,10 @@ public class OpenPackScreen implements Screen {
 
     @Override
     public void dispose() {
+    }
+
+    public void confetti() {
+
     }
 
     public Software roll() {

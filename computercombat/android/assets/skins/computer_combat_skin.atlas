@@ -6,7 +6,7 @@ filter: Nearest,Nearest
 repeat: none
 white-pixel
   rotate: false
-  xy: 32, 230
+  xy: 290, 488
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -45,7 +45,7 @@ border_filled
   index: -1
 button_down
   rotate: false
-  xy: 535, 756
+  xy: 775, 984
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -53,7 +53,7 @@ button_down
   index: -1
 button_over
   rotate: false
-  xy: 775, 984
+  xy: 793, 1014
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -61,7 +61,7 @@ button_over
   index: -1
 button_up
   rotate: false
-  xy: 793, 1014
+  xy: 21, 222
   size: 9, 9
   split: 4, 4, 4, 4
   orig: 9, 9
@@ -69,14 +69,14 @@ button_up
   index: -1
 collected_component
   rotate: false
-  xy: 21, 211
+  xy: 279, 469
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 decked_panel
   rotate: false
-  xy: 804, 1010
+  xy: 21, 207
   size: 7, 13
   split: 3, 3, 3, 9
   orig: 7, 13
@@ -84,7 +84,7 @@ decked_panel
   index: -1
 glow_panel
   rotate: false
-  xy: 293, 500
+  xy: 32, 224
   size: 7, 7
   split: 3, 3, 3, 3
   orig: 7, 7
@@ -92,7 +92,7 @@ glow_panel
   index: -1
 grid
   rotate: false
-  xy: 546, 759
+  xy: 50, 243
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
@@ -106,14 +106,14 @@ info_icon
   index: -1
 led_border
   rotate: false
-  xy: 535, 749
+  xy: 531, 742
   size: 5, 5
   orig: 5, 5
   offset: 0, 0
   index: -1
 led_glow
   rotate: false
-  xy: 517, 738
+  xy: 535, 756
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
@@ -127,21 +127,21 @@ led_light
   index: -1
 left_arrow
   rotate: false
-  xy: 21, 215
+  xy: 39, 233
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
   index: -1
 left_arrow_over
   rotate: false
-  xy: 39, 233
+  xy: 279, 473
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
   index: -1
 left_arrow_pressed
   rotate: false
-  xy: 279, 477
+  xy: 297, 491
   size: 9, 16
   orig: 9, 16
   offset: 0, 0
@@ -197,7 +197,7 @@ lucidaFax8px_0
   index: -1
 magnifying_class_icon
   rotate: false
-  xy: 279, 495
+  xy: 517, 735
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
@@ -211,7 +211,7 @@ mouse
   index: -1
 panel
   rotate: false
-  xy: 259, 255
+  xy: 804, 1016
   size: 7, 7
   split: 3, 3, 3, 3
   orig: 7, 7
@@ -219,7 +219,7 @@ panel
   index: -1
 progress_bar
   rotate: false
-  xy: 528, 742
+  xy: 535, 749
   size: 5, 5
   split: 2, 2, 2, 2
   pad: 1, 1, 1, 1
@@ -242,9 +242,32 @@ progress_bar_before_vertical
   orig: 3, 3
   offset: 0, 0
   index: -1
+rarity_border
+  rotate: false
+  xy: 279, 491
+  size: 16, 16
+  split: 6, 9, 6, 9
+  pad: 7, 7, 7, 7
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+rarity_empty
+  rotate: false
+  xy: 259, 254
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+rarity_filled
+  rotate: false
+  xy: 546, 757
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
 right_arrow
   rotate: false
-  xy: 517, 720
+  xy: 517, 717
   size: 9, 16
   orig: 9, 16
   offset: 0, 0

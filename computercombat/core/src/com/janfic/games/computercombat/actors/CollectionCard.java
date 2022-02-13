@@ -45,6 +45,15 @@ public class CollectionCard extends BorderedGrid {
         components.put(StorageComponent.class, "STORAGE");
     }
 
+    private static final String[] rarityColors = new String[]{
+        "BLACK",
+        "BUG",
+        "CPU",
+        "POWER",
+        "NETWORK",
+        "STORAGE"
+    };
+
     Software software;
     int amount;
     EventListener newWindowOnClick;
@@ -57,14 +66,38 @@ public class CollectionCard extends BorderedGrid {
         this.pad(5);
         this.top();
         this.align(Align.top);
+        int rarity = software.getRarity();
+        Table rarityBorder = new Table(skin);
+        rarityBorder.setBackground("rarity_border");
+        rarityBorder.setColor(skin.getColor(rarityColors[rarity]));
+        rarityBorder.defaults().space(3);
+        rarityBorder.pad(5);
+        rarityBorder.top();
+        rarityBorder.align(Align.top);
+
+        this.add(rarityBorder).grow();
+
+        Table rarityTable = new Table(skin);
+        rarityTable.setBackground("panel");
+        rarityTable.defaults().expandX();
+
+        for (int i = 5; i >= 1; i--) {
+            Image r = new Image(skin, rarity <= i ? "rarity_filled" : "rarity_empty");
+            r.setColor(skin.getColor(rarityColors[rarity]));
+            rarityTable.add(r);
+        }
+
+        rarityBorder.add(rarityTable).growX().space(0).row();
+
         TextureAtlas texturePack = game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class);
         BorderedArea area = new BorderedArea(skin);
         area.add(new Image(texturePack.findRegion(software.getTextureName())));
         Label l = new Label(software.getName(), skin, "paneled");
         l.setWrap(true);
         l.setAlignment(Align.center);
-        add(l).width(100).row();
-        add(area).width(48).height(48).row();
+        rarityBorder.add(l).width(90).space(0).row();
+
+        rarityBorder.add(area).width(48).height(48).row();
 
         ProgressBar.ProgressBarStyle red = new ProgressBar.ProgressBarStyle(skin.get("default-vertical", ProgressBar.ProgressBarStyle.class));
         red.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("df3e23"));
@@ -129,10 +162,10 @@ public class CollectionCard extends BorderedGrid {
         attackOverlay.add(attackOverlayTextLabelArea).width(12).height(9);
         attackStack.add(attackOverlay);
 
-        this.add(attackStack).width(90).height(9).row();
-        this.add(defenseStack).width(90).height(9).row();
-        this.add(healthStack).width(90).height(9).row();
-        this.add(runRequirementsStack).width(90).height(9).row();
+        rarityBorder.add(attackStack).width(80).height(9).row();
+        rarityBorder.add(defenseStack).width(80).height(9).row();
+        rarityBorder.add(healthStack).width(80).height(9).row();
+        rarityBorder.add(runRequirementsStack).width(80).height(9).row();
 
         Table footer = new Table(skin);
         footer.defaults().space(0);
@@ -146,6 +179,7 @@ public class CollectionCard extends BorderedGrid {
         Label amountLabel = new Label("" + amount, skin, "paneled");
         amountLabel.setAlignment(Align.center);
         //this.add(amountLabel).expand().minWidth(20).bottom().row();
+
         footer.add(leds).height(16).growX().bottom().expand();
         TextureRegion icon = texturePack.findRegion(software.getCollection().getPath() + "_icon");
         if (icon != null) {
@@ -154,7 +188,7 @@ public class CollectionCard extends BorderedGrid {
             iconPanel.add(collectionIcon).size(8, 8).row();
             footer.add(iconPanel).height(16);
         }
-        this.add(footer).expand().growX().bottom();
+        rarityBorder.add(footer).expand().growX().bottom();
         newWindowOnClick = new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

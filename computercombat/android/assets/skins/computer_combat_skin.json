@@ -1,5 +1,5 @@
 {
-BitmapFont: {
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	lucidaConsole12px: {
 		file: lucidaConsole12px.fnt
 	}
@@ -22,7 +22,7 @@ BitmapFont: {
 		file: lucidaFax8px.fnt
 	}
 }
-Color: {
+com.badlogic.gdx.graphics.Color: {
 	BLACK: {
 		r: 0
 		g: 0
@@ -90,7 +90,7 @@ Color: {
 		a: 1
 	}
 }
-TintedDrawable: {
+com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	WHITE: {
 		name: white-pixel
 		color: RGBA_255_255_255_255
@@ -104,7 +104,7 @@ TintedDrawable: {
 		color: LIGHT_GREY_SEE_THROUGH
 	}
 }
-TiledDrawable: {
+com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable: {
 	grid_tiled: {
 		region: grid
 		color: RGBA_255_255_255_255
@@ -112,7 +112,7 @@ TiledDrawable: {
 		minHeight: 6
 	}
 }
-ButtonStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
 		up: button_up
 		down: button_down
@@ -129,12 +129,12 @@ ButtonStyle: {
 		over: right_arrow_over
 	}
 }
-ImageTextButtonStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
 		font: lucidaConsole12px
 	}
 }
-LabelStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
 		font: lucidaConsole12px
 		fontColor: RGBA_255_255_255_255
@@ -154,7 +154,7 @@ LabelStyle: {
 		background: border_filled
 	}
 }
-ListStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
 		font: lucidaConsole12px
 		fontColorSelected: RGBA_255_255_255_255
@@ -173,7 +173,7 @@ ListStyle: {
 		over: panel
 	}
 }
-ProgressBarStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: {
 		background: progress_bar
 		knobBefore: progress_bar_before_horizontall
@@ -183,7 +183,7 @@ ProgressBarStyle: {
 		knobBefore: progress_bar_before_vertical
 	}
 }
-ScrollPaneStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: {
 		background: border
 		corner: led_border
@@ -191,7 +191,7 @@ ScrollPaneStyle: {
 		vScrollKnob: button_up
 	}
 }
-SelectBoxStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
 		font: lucidaConsole12px
 		fontColor: RGBA_255_255_255_255
@@ -202,7 +202,7 @@ SelectBoxStyle: {
 		backgroundDisabled: border
 	}
 }
-TextButtonStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
 		font: lucidaConsole12px
 		fontColor: RGBA_255_255_255_255
@@ -211,7 +211,7 @@ TextButtonStyle: {
 		over: button_over
 	}
 }
-TextFieldStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
 		font: lucidaConsole12px
 		fontColor: LIGHT_GREY
@@ -223,13 +223,13 @@ TextFieldStyle: {
 		messageFontColor: LIGHT_GREY
 	}
 }
-TextTooltipStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
 	default: {
 		label: default
 		background: border
 	}
 }
-WindowStyle: {
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
 		background: window
 		titleFont: lucidaConsole12px
