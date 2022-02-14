@@ -56,4 +56,12 @@ public abstract class Player implements Serializable {
         this.uid = json.readValue("uid", String.class, jsonData);
         this.deck = json.readValue("deck", Deck.class, jsonData);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Player) {
+            return ((Player) obj).getUID().equals(this.getUID());
+        }
+        return super.equals(obj);
+    }
 }

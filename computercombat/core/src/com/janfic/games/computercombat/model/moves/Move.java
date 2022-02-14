@@ -23,19 +23,30 @@ import java.util.Map;
 public abstract class Move implements Json.Serializable {
 
     protected String playerUID;
+    private double value;
 
     public Move() {
         this.playerUID = null;
+        this.value = 0;
     }
 
     public Move(String playerUID) {
         this.playerUID = playerUID;
+        this.value = 0;
     }
 
     public abstract List<MoveResult> doMove(MatchState state);
 
     public String getPlayerUID() {
         return playerUID;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    public double getValue() {
+        return value;
     }
 
     @Override
@@ -50,7 +61,9 @@ public abstract class Move implements Json.Serializable {
     }
 
     /**
-     * Checks and calculates if there are any matched but uncollected components on the board.
+     * Checks and calculates if there are any matched but uncollected components
+     * on the board.
+     *
      * @param state - state to check
      * @param move move that caused this new state
      * @return a list of MoveResults

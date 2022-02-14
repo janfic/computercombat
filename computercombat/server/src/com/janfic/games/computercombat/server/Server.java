@@ -10,7 +10,7 @@ import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.*;
-import com.janfic.games.computercombat.model.players.BotPlayer;
+import com.janfic.games.computercombat.model.players.HeuristicBotPlayer;
 import com.janfic.games.computercombat.model.players.HumanPlayer;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
@@ -19,7 +19,6 @@ import com.janfic.games.computercombat.util.NullifyingJson;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UsernameExistsException;
 
 /**
@@ -305,7 +304,7 @@ public class Server {
                     if (matches.size() < MAX_MATCHES && raidQueue.size() > 0) {
                         MatchClient a = raidQueue.get(0);
                         Player playerA = new HumanPlayer(a.getProfile().getUID(), a);
-                        Player botPlayer = new BotPlayer("botUID", a.getDeck());
+                        Player botPlayer = new HeuristicBotPlayer("botUID", a.getDeck());
                         ServerMatchRoom room = new ServerMatchRoom(playerA, botPlayer);
                         try {
                             Message message2 = new Message(Type.FOUND_MATCH, "RAID BOT");
