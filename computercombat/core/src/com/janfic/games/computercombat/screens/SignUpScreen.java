@@ -168,59 +168,6 @@ public class SignUpScreen implements Screen {
                             userNameField.getText().trim() + ","
                             + emailField.getText().trim() + ","
                             + passwordField.getText().trim()));
-
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while (game.getServerAPI().hasMessage() == false) {
-                            }
-
-                            Message message = game.getServerAPI().readMessage();
-
-                            Window window = new Window("", skin);
-                            Label messageLabel = new Label("", skin);
-                            messageLabel.setWrap(true);
-                            TextButton okayButton = new TextButton("Okay", skin);
-                            TextButton xButton = new TextButton("X", skin);
-                            xButton.setColor(Color.RED);
-                            xButton.addListener(new ClickListener() {
-                                @Override
-                                public void clicked(InputEvent event, float x, float y) {
-                                    window.remove();
-                                }
-                            });
-                            window.getTitleTable().add(xButton);
-
-                            if (message.type == Type.ERROR) {
-                                window.getTitleLabel().setText("ERROR");
-                                messageLabel.setText(message.getMessage());
-                                okayButton.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        window.remove();
-                                    }
-                                });
-                            } else if (message.type == Type.PROFILE_INFO) {
-                                window.getTitleLabel().setText("Success!");
-                                messageLabel.setText("Welcome " + userNameField.getText().trim() + "! Your profile has been created! Login to start playing!");
-                                messageLabel.setWrap(true);
-                                okayButton.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        game.popScreen();
-                                    }
-                                });
-                            }
-                            window.add(messageLabel).expand().grow().row();
-                            window.add(okayButton).row();
-
-                            window.setSize(stage.getWidth() / 2, stage.getHeight() / 2);
-                            window.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
-                            stage.addActor(window);
-                        }
-                    });
-
-                    thread.start();
                 }
             }
         });
@@ -266,6 +213,50 @@ public class SignUpScreen implements Screen {
     public void render(float f) {
         stage.act(f);
         stage.draw();
+        if (game.getServerAPI().hasMessage()) {
+            Message message = game.getServerAPI().readMessage();
+
+            Window window = new Window("", skin);
+            Label messageLabel = new Label("", skin);
+            messageLabel.setWrap(true);
+            TextButton okayButton = new TextButton("Okay", skin);
+            TextButton xButton = new TextButton("X", skin);
+            xButton.setColor(Color.RED);
+            xButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    window.remove();
+                }
+            });
+            window.getTitleTable().add(xButton);
+
+            if (message.type == Type.ERROR) {
+                window.getTitleLabel().setText("ERROR");
+                messageLabel.setText(message.getMessage());
+                okayButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        window.remove();
+                    }
+                });
+            } else if (message.type == Type.PROFILE_INFO) {
+                window.getTitleLabel().setText("Success!");
+                messageLabel.setText("Welcome " + userNameField.getText().trim() + "! Your profile has been created! Login to start playing!");
+                messageLabel.setWrap(true);
+                okayButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        game.popScreen();
+                    }
+                });
+            }
+            window.add(messageLabel).expand().grow().row();
+            window.add(okayButton).row();
+
+            window.setSize(stage.getWidth() / 2, stage.getHeight() / 2);
+            window.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
+            stage.addActor(window);
+        }
     }
 
     @Override

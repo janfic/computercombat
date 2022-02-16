@@ -46,6 +46,8 @@ public class LoginScreen implements Screen {
     TooltipManager toolTipManager;
     TextField passwordField, userNameField;
 
+    boolean verifying = false;
+
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX
             = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
@@ -260,21 +262,35 @@ public class LoginScreen implements Screen {
                     game.pushScreen(new PlayScreen(game));
                     break;
                 case VERIFY_WITH_CODE:
-                    popup.getTitleLabel().setText("Verification");
-                    popup.add(messageLabel).growX().row();
-                    messageLabel.setText("Enter Verification Code:");
-                    TextField codeField = new TextField("", skin);
-                    codeField.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
-                    popup.add(codeField).row();
-                    okayButton.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            if (codeField.getText().trim().length() > 0) {
-                                game.getServerAPI().sendMessage(new Message(Type.VERIFICATION_CODE, userNameField.getText().trim() + "," + codeField.getText().trim()));
-                                Gdx.app.postRunnable(verifyRunnable);
+                    if (verifying == false) {
+                        popup.getTitleLabel().setText("Verification");
+                        popup.add(messageLabel).growX().row();
+                        messageLabel.setText("Enter Verification Code:");
+                        TextField codeField = new TextField("", skin);
+                        codeField.setTextFieldFilter(new TextFieldFilter.DigitsOnlyFilter());
+                        popup.add(codeField).row();
+                        okayButton.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                if (codeField.getText().trim().length() > 0) {
+                                    game.getServerAPI().sendMessage(new Message(Type.VERIFICATION_CODE, userNameField.getText().trim() + "," + codeField.getText().trim()));
+                                    verifying = true;
+                                    popup.remove();
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        popup.getTitleLabel().setText("Incorrect Verification Code");
+                        messageLabel.setText("Incorrect Code. Try again.");
+                        popup.add(messageLabel).expand().grow().row();
+                        okayButton.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                popup.remove();
+                            }
+                        });
+                        verifying = false;
+                    }
                     break;
                 case NO_AUTH:
                     popup.getTitleLabel().setText("Incorrect Login");
@@ -287,6 +303,20 @@ public class LoginScreen implements Screen {
                         }
                     });
                     break;
+                case SUCCESS:
+                    if (verifying) {
+                        popup.getTitleLabel().setText("Success!");
+                        messageLabel.setText("Email Successfully Verified!");
+                        popup.add(messageLabel).expand().grow().row();
+                        okayButton.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                popup.remove();
+                                verifying = false;
+                            }
+                        });
+                    }
+                    break;
                 default:
                     break;
             }
@@ -298,57 +328,4 @@ public class LoginScreen implements Screen {
         popup.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
         stage.addActor(popup);
     }
-
-    Runnable verifyRunnable = new Runnable() {
-        @Override
-        public void run() {
-            while (game.getServerAPI().hasMessage() == false) {
-            }
-
-            Message response = game.getServerAPI().readMessage();
-
-            Window window = new Window("", skin);
-            window.defaults().space(5);
-            Label messageLabel = new Label("", skin);
-            messageLabel.setWrap(true);
-            messageLabel.setAlignment(Align.center);
-            TextButton okayButton = new TextButton("Okay", skin);
-
-            if (response.type == Type.SUCCESS) {
-                window.getTitleLabel().setText("Success!");
-                messageLabel.setText("Email Successfully Verified!");
-                window.add(messageLabel).expand().grow().row();
-                okayButton.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        popup.remove();
-                        window.remove();
-                        Gdx.app.postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                window.remove();
-                            }
-                        });
-                    }
-                });
-            } else if (response.type == Type.VERIFY_WITH_CODE) {
-                window.getTitleLabel().setText("Incorrect Verification Code");
-                messageLabel.setText("Incorrect Code. Try again.");
-                window.add(messageLabel).expand().grow().row();
-                okayButton.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        window.remove();
-                    }
-                });
-            }
-
-            window.add(okayButton).row();
-
-            window.setSize(stage.getWidth() / 2, stage.getHeight() / 2);
-            window.setPosition(stage.getWidth() / 4, stage.getHeight() / 4);
-
-            stage.addActor(window);
-        }
-    };
 }
