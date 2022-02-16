@@ -49,8 +49,19 @@ public class HumanPlayer extends Player {
     @Override
     public Move getMove() {
         // Expect Message in Return
+        float timeStart = System.nanoTime();
+        float delta = 0;
         while (client.hasMessage() == false && client.getSocket().isConnected()) {
-            //time out code
+            delta = System.nanoTime() - timeStart;
+            if (delta / 1000000000f >= 10) {
+                try {
+                    client.sendMessage(new Message(Type.PING, "PING"));
+                    System.out.println("PINGED CLIENT");
+                    timeStart = System.nanoTime();
+                } catch (Exception e) {
+                    return null;
+                }
+            }
         }
 
         // Return Retrieved and Deserialized Move

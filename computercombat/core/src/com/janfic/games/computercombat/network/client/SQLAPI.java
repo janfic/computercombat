@@ -96,8 +96,6 @@ public class SQLAPI {
             while (next) {
                 int currentID = set.getInt("card.id");
 
-                System.out.println("QUERY: " + currentID);
-
                 Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
                 a.setInformation(
                         set.getString("ability.description"),
