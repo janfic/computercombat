@@ -38,6 +38,6 @@ public class ChargedAbilitiesHeuristicAnalyzer extends HeuristicAnalyzer {
             newRunProgress += newActiveCard.getRunProgress();
         }
 
-        return Math.max(0, (newRunProgress - oldRunProgress) / Math.min(totalRunRequirements, 1));
+        return Math.max(0, (newRunProgress - oldRunProgress) / Math.max(totalRunRequirements, 1));
     }
 }
