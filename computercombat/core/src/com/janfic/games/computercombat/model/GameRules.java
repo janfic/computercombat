@@ -12,6 +12,9 @@ import com.janfic.games.computercombat.model.components.PowerComponent;
 import com.janfic.games.computercombat.model.components.RAMComponent;
 import com.janfic.games.computercombat.model.components.StorageComponent;
 import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
+import com.janfic.games.computercombat.util.CardFilter;
+import com.janfic.games.computercombat.util.ComponentFilter;
+import com.janfic.games.computercombat.util.Filter;
 import java.util.*;
 
 /**
@@ -34,6 +37,7 @@ public class GameRules {
 
     public static List<Move> getAvailableMoves(MatchState state) {
         List<Move> moves = new ArrayList<>();
+        // Get MatchComponentsMoves
         List<Integer[]> matches = areAvailableComponentMatches(state);
         for (Integer[] match : matches) {
             Component a = state.getComponentBoard()[match[0]][match[1]];
@@ -41,11 +45,12 @@ public class GameRules {
             MatchComponentsMove m = new MatchComponentsMove(state.currentPlayerMove.getUID(), a, b);
             moves.add(m);
         }
+        // Get UseAbilityMoves
         String uid = state.currentPlayerMove.getUID();
         for (Card card : state.activeEntities.get(uid)) {
             if (card.getRunProgress() >= card.getRunRequirements()) {
-                UseAbilityMove m = new UseAbilityMove(uid, card, null, null);
-                moves.add(m);
+                List<UseAbilityMove> generatedMoves = generateMovesWithSelection(0, card, state, new ArrayList<>(), new ArrayList<>());
+                moves.addAll(generatedMoves);
             }
         }
         Computer c = state.computers.get(uid);
@@ -227,8 +232,14 @@ public class GameRules {
     }
 
     public static List<MoveResult> makeMove(MatchState originalState, Move move) {
-        Json json = new Json();
-        List<MoveResult> results = move.doMove(originalState);
+        List<MoveResult> results;
+        if (move instanceof UseAbilityMove) {
+            UseAbilityMove m = (UseAbilityMove) move;
+            m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
+            results = m.doMove(originalState);
+        } else {
+            results = move.doMove(originalState);
+        }
         return results;
     }
 
@@ -264,5 +275,44 @@ public class GameRules {
             }
         }
         return false;
+    }
+
+    private static List<UseAbilityMove> generateMovesWithSelection(int index, Card card, MatchState state, List<Component> selectedComponents, List<Card> selectedCards) {
+        List<UseAbilityMove> moves = new ArrayList<>();
+
+        String uid = state.currentPlayerMove.getUID();
+        List<Filter> selectFilters = card.getAbility().getSelectFilters();
+
+        if (index >= selectFilters.size()) {
+            List<Component> selectedComponentsClone = new ArrayList<>(selectedComponents);
+            List<Card> selectedCardsClone = new ArrayList<>(selectedCards);
+            moves.add(new UseAbilityMove(uid, card, selectedComponentsClone, selectedCardsClone));
+        } else {
+            Filter filter = selectFilters.get(index);
+            if (filter instanceof ComponentFilter) {
+                List<Component> sComps = new ArrayList<>(selectedComponents);
+                List<Card> sCards = new ArrayList<>(selectedCards);
+                List<Component> selectableComponents = state.getComponentsByFilter(
+                        (ComponentFilter) filter, new UseAbilityMove(uid, card, sComps, sCards)
+                );
+                for (Component selectableComponent : selectableComponents) {
+                    sComps.add(selectableComponent);
+                    moves.addAll(generateMovesWithSelection(index + 1, card, state, sComps, sCards));
+                    sComps.remove(sComps.size() - 1);
+                }
+            } else if (filter instanceof CardFilter) {
+                List<Component> sComps = new ArrayList<>(selectedComponents);
+                List<Card> sCards = new ArrayList<>(selectedCards);
+                List<Card> selectableCards = state.getCardsByFilter(
+                        (CardFilter) filter, new UseAbilityMove(uid, card, sComps, sCards)
+                );
+                for (Card selectableCard : selectableCards) {
+                    sCards.add(selectableCard);
+                    moves.addAll(generateMovesWithSelection(index + 1, card, state, sComps, sCards));
+                    sCards.remove(sCards.size() - 1);
+                }
+            }
+        }
+        return moves;
     }
 }

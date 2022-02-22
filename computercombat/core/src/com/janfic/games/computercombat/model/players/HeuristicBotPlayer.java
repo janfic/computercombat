@@ -38,6 +38,7 @@ public class HeuristicBotPlayer extends Player {
         this.priorityList = new ArrayList<>();
         this.priorityList.add(new ExtraTurnHeuristicAnalyzer());
         this.priorityList.add(new DrewCardHeuristicAnalyzer());
+        this.priorityList.add(new UseAbilityHeuristicAnalyzer());
     }
 
     @Override

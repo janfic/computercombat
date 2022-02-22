@@ -9,12 +9,14 @@ import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.util.CardFilter;
 import com.janfic.games.computercombat.util.ComponentFilter;
 import com.janfic.games.computercombat.util.NullifyingJson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  *
@@ -176,6 +178,36 @@ public class MatchState implements Serializable {
             }
         }
         return count;
+    }
+
+    public List<Component> getComponentsByFilter(ComponentFilter filter, Move move) {
+        List<Component> list = getComponentsAsList();
+        list.removeIf(new Predicate<Component>() {
+            @Override
+            public boolean test(Component t) {
+                return !filter.filter(t, MatchState.this, move);
+            }
+        });
+        return list;
+    }
+
+    public List<Card> getAllCards() {
+        List<Card> cards = new ArrayList<>();
+        for (String key : activeEntities.keySet()) {
+            cards.addAll(activeEntities.get(key));
+        }
+        return cards;
+    }
+
+    public List<Card> getCardsByFilter(CardFilter filter, Move move) {
+        List<Card> cards = getAllCards();
+        cards.removeIf(new Predicate<Card>() {
+            @Override
+            public boolean test(Card t) {
+                return !filter.filter(t, MatchState.this, move);
+            }
+        });
+        return cards;
     }
 
 }
