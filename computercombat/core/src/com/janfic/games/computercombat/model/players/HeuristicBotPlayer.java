@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model.players;
 
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.Player;
@@ -45,8 +46,9 @@ public class HeuristicBotPlayer extends Player {
     public Move getMove() {
         List<Move> moves = GameRules.getAvailableMoves(currentState);
         Collections.shuffle(moves);
-
+        Json json = new Json();
         for (Move move : moves) {
+            long startTime = System.currentTimeMillis();
             double moveSum = 0;
             // Repeat move and find average score
             for (int j = 0; j < MOVE_TRIES; j++) {
@@ -63,9 +65,13 @@ public class HeuristicBotPlayer extends Player {
             }
             double moveAverage = moveSum / MOVE_TRIES;
             move.setValue(moveAverage);
+            long endTime = System.currentTimeMillis();
+            System.out.println(json.prettyPrint(move) + " SCORE: " + moveAverage);
+            System.out.println("TIME: " + ((endTime - startTime) / 1000f));
         }
 
         moves.sort(new MoveValueComparator());
+        System.out.println("SELECTED MOVE: " + json.prettyPrint(moves.get(0)) + " \nscore: " + moves.get(0).getValue());
         return moves.get(0);
     }
 
@@ -82,7 +88,14 @@ public class HeuristicBotPlayer extends Player {
 
         @Override
         public int compare(Move a, Move b) {
-            return (int) Math.ceil(b.getValue() - a.getValue());
+
+            double difference = b.getValue() - a.getValue();
+            if (difference > 0) {
+                return 1;
+            } else if (difference < 0) {
+                return -1;
+            }
+            return 0;
         }
     }
 }
