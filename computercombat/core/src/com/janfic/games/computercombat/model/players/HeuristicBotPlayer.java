@@ -46,7 +46,6 @@ public class HeuristicBotPlayer extends Player {
     public Move getMove() {
         List<Move> moves = GameRules.getAvailableMoves(currentState);
         Collections.shuffle(moves);
-        Json json = new Json();
         for (Move move : moves) {
             long startTime = System.currentTimeMillis();
             double moveSum = 0;
@@ -66,12 +65,10 @@ public class HeuristicBotPlayer extends Player {
             double moveAverage = moveSum / MOVE_TRIES;
             move.setValue(moveAverage);
             long endTime = System.currentTimeMillis();
-            System.out.println(json.prettyPrint(move) + " SCORE: " + moveAverage);
             System.out.println("TIME: " + ((endTime - startTime) / 1000f));
         }
 
         moves.sort(new MoveValueComparator());
-        System.out.println("SELECTED MOVE: " + json.prettyPrint(moves.get(0)) + " \nscore: " + moves.get(0).getValue());
         return moves.get(0);
     }
 
