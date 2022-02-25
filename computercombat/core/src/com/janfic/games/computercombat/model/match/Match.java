@@ -63,7 +63,6 @@ public class Match {
             colorBag.addAll(Collections.nCopies(frequency, type));
         }
 
-        System.out.println("GENERATING BOARD");
         // Generate Board
         for (int x = 0; x < componentBoard.length; x++) {
             for (int y = 0; y < componentBoard[x].length; y++) {
@@ -74,28 +73,16 @@ public class Match {
             }
         }
 
-        System.out.println("SETTING NEIGHBORS");
         //Set Neighbors
-        for (int x = 0; x < componentBoard.length; x++) {
-            for (int y = 0; y < componentBoard[x].length; y++) {
-                for (int i = 0; i < Component.coordsToNeighbors.length; i += 3) {
-                    int neighborX = x + Component.coordsToNeighbors[i];
-                    int neighborY = y + Component.coordsToNeighbors[i + 1];
-                    if (neighborX < componentBoard.length && neighborY < componentBoard[x].length && neighborX >= 0 && neighborY >= 0) {
-                        Component c = componentBoard[neighborX][neighborY];
-                        componentBoard[x][y].setNeighbor(Component.coordsToNeighbors[i + 2], c);
-                    }
-                }
-            }
-        }
-
-        System.out.println("DONE SETTING NEIGHBORS");
+        MatchState.buildNeighbors(componentBoard);
 
         return componentBoard;
     }
 
     public MatchState getPlayerMatchState(String playerUID) {
         MatchState copy = new MatchState(currentState, playerUID);
+        MatchState.buildNeighbors(copy.getComponentBoard());
+        currentState.update();
         return copy;
     }
 
@@ -105,7 +92,6 @@ public class Match {
 
     public List<MoveResult> makeMove(Move move) {
         List<MoveResult> r = GameRules.makeMove(currentState, move);
-        this.currentState = r.get(r.size() - 1).getNewState();
         return r;
     }
 

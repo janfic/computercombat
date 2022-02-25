@@ -42,7 +42,7 @@ public class ServerMatchRoom {
                 // set up match data collection
                 Timestamp starttime = new Timestamp(System.currentTimeMillis());
                 matchData = new MatchData(player1, player2);
-                matchData.getMatchStates().add(match.getCurrentState());
+                matchData.getMatchStates().add(new MatchState(match.getCurrentState()));
 
                 // Start main match loop
                 isGameOver = false;
@@ -65,6 +65,8 @@ public class ServerMatchRoom {
                         m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
                     }
                     boolean isValid = match.isValidMove(move);
+                    System.out.println(move);
+                    System.out.println(isValid);
                     if (isValid) {
                         List<MoveResult> results = match.makeMove(move);
                         currentPlayer.updateState(results);

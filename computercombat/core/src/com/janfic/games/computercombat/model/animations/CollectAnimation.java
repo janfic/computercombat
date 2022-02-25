@@ -27,8 +27,8 @@ import java.util.Map;
  */
 public class CollectAnimation implements MoveAnimation {
 
-    private Map<Integer, List<Component>> collected;
-    private Map<Component, Card> progress;
+    public Map<Integer, List<Component>> collected;
+    public Map<Component, Card> progress;
     private List<Component> allComponents;
     private final static int[] gutterYs = new int[]{187, 129, 73, 15, -22};
 

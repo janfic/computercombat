@@ -7,8 +7,14 @@ import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.Player;
+import com.janfic.games.computercombat.model.animations.CascadeAnimation;
+import com.janfic.games.computercombat.model.animations.CascadeAnimation.CascadeData;
+import com.janfic.games.computercombat.model.animations.CollectAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.moves.MoveAnimation;
+import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.util.CardFilter;
 import com.janfic.games.computercombat.util.ComponentFilter;
 import com.janfic.games.computercombat.util.NullifyingJson;
@@ -16,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.function.Predicate;
 
 /**
@@ -80,17 +87,159 @@ public class MatchState implements Serializable {
         }
     }
 
+    private boolean isInvalidBoard() {
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                Component c = componentBoard[x][y];
+                if (c.isInvalid()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public List<MoveResult> results(Move move) {
+        List<MoveResult> results = new ArrayList<>();
+
+        boolean extraTurn = false;
+        while (isInvalidBoard()) {
+            // Save Old State
+            MatchState old = new MatchState(this);
+            // Update
+            update();
+
+            // Collect Components
+            Map<Integer, List<Component>> collected = collectComponents();
+            Map<Component, Card> progress = new HashMap<>();
+            CollectAnimation collectAnimation = new CollectAnimation(collected, progress);
+
+            // Remove, Cascade, then Invalidate
+            // Remove
+            for (Integer matchNumber : collected.keySet()) {
+                for (Component component : collected.get(matchNumber)) {
+                    this.componentBoard[component.getX()][component.getY()].changeColor(0);
+                }
+            }
+
+            // Progress
+            progress(collectAnimation);
+
+            // Cascade
+            // This can be optimized by storing collected components
+            CascadeAnimation cascadeAnimation = new CascadeAnimation(cascade());
+
+            List<MoveAnimation> moveAnimation = new ArrayList<>();
+            moveAnimation.add(collectAnimation);
+            moveAnimation.add(cascadeAnimation);
+
+            for (Integer integer : collected.keySet()) {
+                if (collected.get(integer).size() >= 4) {
+                    extraTurn = true;
+                }
+            }
+            MoveResult result = new MoveResult(move, old, this, moveAnimation);
+            results.add(result);
+        }
+
+        if (extraTurn == false) {
+            MoveResult last = results.get(results.size() - 1);
+            last.getNewState().currentPlayerMove = last.getNewState().getOtherProfile(last.getNewState().currentPlayerMove);
+        }
+
+        return results;
+    }
+
+    public Map<Integer, List<Component>> collectComponents() {
+        int matchNumber = 0;
+        Map<Integer, List<Component>> collected = new HashMap<>();
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                if (componentBoard[x][y].isMatched()) {
+                    List<Component> match = new ArrayList<>();
+                    Stack<Component> bfs = new Stack<>();
+                    bfs.add(componentBoard[x][y]);
+                    while (bfs.isEmpty() == false) {
+                        Component current = bfs.pop();
+                        match.add(new Component(current));
+                        for (Component neighbor : current.getNeighbors(current.getMatchNeighbors())) {
+                            if (neighbor.isMatched()) {
+                                bfs.add(neighbor);
+                            }
+                        }
+                        current.getMatchNeighbors().clear();
+                    }
+                    collected.put(matchNumber, match);
+                    matchNumber++;
+                }
+            }
+        }
+        return collected;
+    }
+
+    public void progress(CollectAnimation collectAnimation) {
+        Map<Component, Card> progress = collectAnimation.progress;
+        for (Component c : collectAnimation.getAllComponents()) {
+            boolean collectedByCard = false;
+            for (Card card : activeEntities.get(currentPlayerMove.getUID())) {
+                if (card.getRunProgress() < card.getRunRequirements()) {
+                    for (Integer requirement : card.getRunComponents()) {
+                        if (c.getColor() == requirement) {
+                            card.recieveComponents(requirement, 1);
+                            collectedByCard = true;
+                            progress.put(c, card);
+                            break;
+                        }
+                    }
+                }
+                if (collectedByCard == true) {
+                    break;
+                }
+            }
+            if (collectedByCard == false) {
+                computers.get(currentPlayerMove.getUID()).recieveProgress(1);
+            }
+        }
+    }
+
+    public List<CascadeData> cascade() {
+        List<CascadeAnimation.CascadeData> cascade = new ArrayList<>();
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = componentBoard[x].length - 1; y >= 0; y--) {
+                if (componentBoard[x][y].getColor() == 0) {
+                    componentBoard[x][y].invalidate();
+                    componentBoard[x][y].invalidateNeighbors();
+                    boolean cascaded = false;
+                    for (int i = y - 1; i >= 0; i--) {
+                        if (componentBoard[x][i].getColor() != 0) {
+                            cascade.add(new CascadeAnimation.CascadeData(new Component(componentBoard[x][i].getColor(), x, y), componentBoard[x][i].getX(), componentBoard[x][i].getY()));
+                            componentBoard[x][y].changeColor(componentBoard[x][i].getColor());
+                            componentBoard[x][i].changeColor(0);
+                            cascaded = true;
+                            break;
+                        }
+                    }
+                    if (cascaded == false) {
+                        componentBoard[x][y].changeColor(GameRules.getNewColor());
+                        cascade.add(new CascadeAnimation.CascadeData(componentBoard[x][y], x, (-y) - 1));
+                    }
+                }
+            }
+        }
+        return cascade;
+    }
+
     public List<Component> getMatches() {
-        List<Component> matches = new ArrayList<>();
+        List<Component> componentsInMatch = new ArrayList<>();
         for (int x = 0; x < componentBoard.length; x++) {
             for (int y = 0; y < componentBoard[x].length; y++) {
                 Component c = componentBoard[x][y];
                 if (c.isMatched()) {
-                    matches.add(c);
+                    componentsInMatch.add(c);
                 }
             }
         }
-        return matches;
+        return componentsInMatch;
     }
 
     public MatchState(MatchState state) {
@@ -104,6 +253,8 @@ public class MatchState implements Serializable {
         this.players = s.players;
         this.winner = s.winner;
         this.isGameOver = s.isGameOver;
+        MatchState.buildNeighbors(this.componentBoard);
+        this.update();        
     }
 
     public MatchState(MatchState state, String playerUID) {
@@ -238,6 +389,22 @@ public class MatchState implements Serializable {
             }
         });
         return cards;
+    }
+
+    public static void buildNeighbors(Component[][] componentBoard) {
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                componentBoard[x][y].invalidate();
+                for (int i = 0; i < Component.coordsToNeighbors.length; i += 3) {
+                    int neighborX = x + Component.coordsToNeighbors[i];
+                    int neighborY = y + Component.coordsToNeighbors[i + 1];
+                    if (neighborX < componentBoard.length && neighborY < componentBoard[x].length && neighborX >= 0 && neighborY >= 0) {
+                        Component c = componentBoard[neighborX][neighborY];
+                        componentBoard[x][y].setNeighbor(Component.coordsToNeighbors[i + 2], c);
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.players.heuristicanalyzers.*;
+import com.janfic.games.computercombat.util.NullifyingJson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,8 +39,7 @@ public class HeuristicBotPlayer extends Player {
         this.currentState = state;
         this.priorityList = new ArrayList<>();
         this.priorityList.add(new ExtraTurnHeuristicAnalyzer());
-        this.priorityList.add(new DrewCardHeuristicAnalyzer());
-        this.priorityList.add(new UseAbilityHeuristicAnalyzer());
+        this.priorityList.add(new ComponentsCollectedHeuristicAnalyzer());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class HeuristicBotPlayer extends Player {
             double moveSum = 0;
             // Repeat move and find average score
             for (int j = 0; j < MOVE_TRIES; j++) {
-                List<MoveResult> results = GameRules.makeMove(currentState, move);
+                List<MoveResult> results = GameRules.makeMove(new MatchState(currentState), move);
                 double totalScore = 0;
                 for (int i = 0; i < priorityList.size(); i++) {
                     HeuristicAnalyzer analyzer = priorityList.get(i);
@@ -67,14 +67,13 @@ public class HeuristicBotPlayer extends Player {
             long endTime = System.currentTimeMillis();
             System.out.println("TIME: " + ((endTime - startTime) / 1000f));
         }
-
         moves.sort(new MoveValueComparator());
         return moves.get(0);
     }
 
     @Override
     public void updateState(List<MoveResult> state) {
-        this.currentState = state.get(state.size() - 1).getNewState();
+        this.currentState = new MatchState(state.get(state.size() - 1).getNewState());
     }
 
     @Override

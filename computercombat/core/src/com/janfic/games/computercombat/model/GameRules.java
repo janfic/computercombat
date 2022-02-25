@@ -106,10 +106,12 @@ public class GameRules {
     };
 
     /**
-     * Given a list of components that have been collected, generate the marks for those components.
+     * Given a list of components that have been collected, generate the marks
+     * for those components.
+     *
      * @param collected
      * @param board
-     * @return 
+     * @return
      */
     public static Map<Integer, List<Component>> collectComponents(Component[] collected, Component[][] board) {
         int currentMark = 1;
@@ -248,6 +250,10 @@ public class GameRules {
         return results;
     }
 
+    public static int getNewColor() {
+        return getNewComponents(1).get(0).getColor();
+    }
+
     public static List<Component> getNewComponents(int count) {
         List<Component> components = new ArrayList<>();
         List<Integer> componentTypes = new ArrayList<>();
@@ -262,6 +268,20 @@ public class GameRules {
                 components.add(newComponent);
             } catch (Exception e) {
             }
+        }
+        return components;
+    }
+
+    public static List<Integer> getNewComponentsColors(int count) {
+        List<Integer> components = new ArrayList<>();
+        List<Integer> componentTypes = new ArrayList<>();
+        for (Integer type : componentFrequencies.keySet()) {
+            int frequency = componentFrequencies.get(type);
+            componentTypes.addAll(Collections.nCopies(frequency, type));
+        }
+        for (int i = 0; i < count; i++) {
+            int j = (int) (Math.random() * componentTypes.size());
+            components.add(componentTypes.get(j));
         }
         return components;
     }

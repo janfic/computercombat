@@ -5,9 +5,11 @@ import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  *
@@ -19,6 +21,7 @@ public class Component implements Serializable {
 
     static {
         colorToTextureName = new HashMap<>();
+        colorToTextureName.put(0, "empty");
         colorToTextureName.put(1, "cpu");
         colorToTextureName.put(2, "ram");
         colorToTextureName.put(3, "storage");
@@ -47,12 +50,13 @@ public class Component implements Serializable {
     private boolean isInvalid; // should this component be updated ( recalculate )
 
     // A List of indicies in which neighbors at these index form a match with this component;
-    private List<Integer> matchNeighbors;
+    private Set<Integer> matchNeighbors;
 
     public Component() {
         this.textureName = null;
         this.neighbors = new Component[12];
-        this.matchNeighbors = new ArrayList<>();
+        this.matchNeighbors = new HashSet<>();
+        isInvalid = true;
     }
 
     public Component(int color, int x, int y) {
@@ -131,15 +135,28 @@ public class Component implements Serializable {
         isInvalid = true;
     }
 
+    public void invalidateNeighbors() {
+        for (int i = 0; i < neighbors.length; i++) {
+            if (neighbors[i] != null) {
+                neighbors[i].invalidate();
+            }
+        }
+    }
+
     public void update() {
         // Reset known information
         matchNeighbors.clear();
+        // Check for cascade
+
         // Check for possible moves
         findMove();
         // Check if part of match
         findMatch();
         // Validate this component
         this.isInvalid = false;
+        if (color == 0) {
+            this.isInvalid = true;
+        }
     }
 
     // Looks at up/down, left/right neighbors to see if they have same color.
@@ -162,7 +179,7 @@ public class Component implements Serializable {
         // Tell neighbors that formed a match with me that they are in a match with this component.
         // PROBLEM: Must be done after the neighbor has been validated, or this information will be erased. 
         for (Integer matchNeighbor : matchNeighbors) {
-            int thisComponentAsNeighborIndex = getNeighborIndex(getX(), getY());
+            int thisComponentAsNeighborIndex = neighbors[matchNeighbor].getNeighborIndex(getX(), getY());
             if (thisComponentAsNeighborIndex != -1) {
                 neighbors[matchNeighbor].getMatchNeighbors().add(thisComponentAsNeighborIndex);
             }
@@ -177,13 +194,21 @@ public class Component implements Serializable {
         return !matchNeighbors.isEmpty();
     }
 
-    public List<Integer> getMatchNeighbors() {
+    public Set<Integer> getMatchNeighbors() {
         return matchNeighbors;
+    }
+
+    public List<Component> getNeighbors(Set<Integer> neighborList) {
+        List<Component> components = new ArrayList<>();
+        for (Integer neighborIndex : neighborList) {
+            components.add(neighbors[neighborIndex]);
+        }
+        return components;
     }
 
     @Override
     public String toString() {
-        return "" + hashCode();
+        return "[ x:" + x + ", y:" + y + ", color: " + color + " ]";
     }
 
     @Override
@@ -219,4 +244,5 @@ public class Component implements Serializable {
         this.y = json.readValue("y", Integer.class, jv);
         this.textureName = json.readValue("textureName", String.class, jv);
     }
+
 }
