@@ -14,11 +14,6 @@ import com.janfic.games.computercombat.model.Collection;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.abilities.DrawAbility;
-import com.janfic.games.computercombat.model.components.CPUComponent;
-import com.janfic.games.computercombat.model.components.NetworkComponent;
-import com.janfic.games.computercombat.model.components.PowerComponent;
-import com.janfic.games.computercombat.model.components.RAMComponent;
-import com.janfic.games.computercombat.model.components.StorageComponent;
 
 /**
  *
@@ -65,13 +60,9 @@ public class ComputerActor extends Panel {
             public void clicked(InputEvent event, float x, float y) {
                 Ability a = new DrawAbility();
                 a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
-                CardInfoWindow w = new CardInfoWindow(game, new Software(0, computer.getOwnerUID(), "Computer", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new Class[]{
-                    CPUComponent.class,
-                    NetworkComponent.class,
-                    StorageComponent.class,
-                    RAMComponent.class,
-                    PowerComponent.class
-                }, 20, a, 0), skin, true);
+                CardInfoWindow w = new CardInfoWindow(
+                        game, new Software(0, computer.getOwnerUID(), "Computer",
+                                new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0), skin, true);
                 ComputerActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
                     @Override

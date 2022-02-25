@@ -18,7 +18,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     protected int level;
     protected int maxHealth, maxArmor, maxAttack;
     protected Ability ability;
-    protected Class<? extends Component>[] runComponents;
+    protected int[] runComponents;
     protected int runProgress, runRequirements;
     protected Trait[] traits;
     protected int traitsUnlocked;
@@ -28,10 +28,10 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
     protected int rarity;
 
     public Card() {
-        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "Default", 1, 0, 0, 0, 0, new Class[]{}, 0, null, 0);
+        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "Default", 1, 0, 0, 0, 0, new int[]{}, 0, null, 0);
     }
 
-    public Card(int id, String ownerUID, String name, Collection collection, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, Class<? extends Component>[] runComponents, int runRequirements, Ability ability, int rarity) {
+    public Card(int id, String ownerUID, String name, Collection collection, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, int[] runComponents, int runRequirements, Ability ability, int rarity) {
         this.name = name;
         this.collection = collection;
         this.textureName = textureName;
@@ -226,8 +226,8 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
      * @param amount
      * @return amount of components left over
      */
-    public int recieveComponents(Class<? extends Component> type, int amount) {
-        for (Class<? extends Component> t : runComponents) {
+    public int recieveComponents(int type, int amount) {
+        for (int t : runComponents) {
             if (type == t) {
                 if (runProgress < runRequirements) {
                     runProgress += amount;
@@ -253,7 +253,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         this.runProgress = runProgress;
     }
 
-    public Class<? extends Component>[] getRunComponents() {
+    public int[] getRunComponents() {
         return runComponents;
     }
 
@@ -313,11 +313,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         json.writeValue("runProgress", this.runProgress);
         json.writeValue("runRequirements", this.runRequirements);
         json.writeValue("ownerUID", this.ownerUID);
-        json.writeArrayStart("runComponents");
-        for (Class<? extends Component> runComponent : runComponents) {
-            json.writeValue((Object) runComponent.getName(), String.class);
-        }
-        json.writeArrayEnd();
+        json.writeValue("runComponents", this.runComponents);
         json.writeValue("ability", ability);
 
     }
@@ -340,17 +336,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card> {
         this.runProgress = json.readValue("runProgress", Integer.class, jv);
         this.runRequirements = json.readValue("runRequirements", Integer.class, jv);
         this.ownerUID = json.readValue("ownerUID", String.class, jv);
-        String[] components = jv.get("runComponents").asStringArray();
-        List<Class<? extends Component>> foundComponents = new ArrayList<>();
-        for (String component : components) {
-            try {
-                Class c = Class.forName(component);
-                foundComponents.add(c);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        this.runComponents = foundComponents.toArray(this.runComponents);
+        this.runComponents = json.readValue("runComponents", int[].class, jv);
         this.ability = json.readValue("ability", Ability.class, jv);
     }
 

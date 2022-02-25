@@ -58,10 +58,7 @@ public class TransformComponentsAbility extends Ability {
                 if (filter.filter(component, state, move)) {
                     int randomIndex = (int) (Math.random() * transformTypes.size());
                     try {
-                        Component c = Component.numberToComponent
-                                .get(transformTypes.get(randomIndex))
-                                .getConstructor(int.class, int.class)
-                                .newInstance(component.getX(), component.getY());
+                        Component c = new Component(transformTypes.get(randomIndex), component.getX(), component.getY());
                         board[component.getX()][component.getY()] = c;
 
                         originalComponents.add(component);

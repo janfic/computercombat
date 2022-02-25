@@ -18,7 +18,6 @@ import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.model.components.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,16 +37,16 @@ public class SoftwareActor extends Panel {
     TextureRegion cardRegion, abilityRegion;
     boolean isSelecting, selected;
 
-    public static final Map<Class<? extends Component>, String> components;
+    public static final Map<Integer, String> components;
 
     static {
         components = new HashMap<>();
-        components.put(CPUComponent.class, "CPU");
-        components.put(BugComponent.class, "BUG");
-        components.put(PowerComponent.class, "POWER");
-        components.put(NetworkComponent.class, "NETWORK");
-        components.put(RAMComponent.class, "RAM");
-        components.put(StorageComponent.class, "STORAGE");
+        components.put(1, "CPU");
+        components.put(5, "BUG");
+        components.put(6, "POWER");
+        components.put(4, "NETWORK");
+        components.put(2, "RAM");
+        components.put(5, "STORAGE");
     }
 
     Software software;
@@ -170,7 +169,7 @@ public class SoftwareActor extends Panel {
         attackStack.add(attackOverlay);
 
         leds = new VerticalGroup();
-        for (Class<? extends Component> runComponent : software.getRunComponents()) {
+        for (Integer runComponent : software.getRunComponents()) {
             leds.addActor(new LEDActor(getSkin(), components.get(runComponent)));
         }
 

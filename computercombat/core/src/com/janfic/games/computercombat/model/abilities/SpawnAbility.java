@@ -22,14 +22,14 @@ import java.util.List;
  */
 public class SpawnAbility extends Ability {
 
-    Class<? extends Component> componentType;
+    int componentType;
     StateAnalyzer<Integer> amount;
 
     public SpawnAbility() {
         super(new ArrayList<>());
     }
 
-    public SpawnAbility(Class<? extends Component> componentType, StateAnalyzer<Integer> amount, List<Filter> selectFilters) {
+    public SpawnAbility(Integer componentType, StateAnalyzer<Integer> amount, List<Filter> selectFilters) {
         super(selectFilters);
         this.componentType = componentType;
         this.amount = amount;
@@ -47,7 +47,7 @@ public class SpawnAbility extends Ability {
         for (int i = 0; i < amountSpawned; i++) {
             int[] newLocation = new int[]{(int) (Math.random() * 8), (int) (Math.random() * 8)};
             boolean duplicate = false;
-            while (newState.getComponentBoard()[newLocation[0]][newLocation[1]].getClass() == componentType || duplicate == true) {
+            while (newState.getComponentBoard()[newLocation[0]][newLocation[1]].getColor() == componentType || duplicate == true) {
                 for (int[] newCoord : newCoords) {
                     if (newLocation[0] == newCoord[0] && newLocation[1] == newCoord[1]) {
                         duplicate = true;
@@ -64,7 +64,7 @@ public class SpawnAbility extends Ability {
         for (int[] newCoord : newCoords) {
             try {
                 Component destroy = newState.getComponentBoard()[newCoord[0]][newCoord[1]];
-                Component spawn = componentType.getConstructor(int.class, int.class).newInstance(newCoord[0], newCoord[1]);
+                Component spawn = new Component(componentType, newCoord[0], newCoord[1]);
                 newState.getComponentBoard()[newCoord[0]][newCoord[1]] = spawn;
 
                 spawned.add(spawn);
@@ -90,17 +90,12 @@ public class SpawnAbility extends Ability {
     @Override
     public void write(Json json) {
         super.write(json);
-        json.writeValue("componentType", componentType.getName(), String.class);
+        json.writeValue("componentType", componentType, Integer.class);
     }
 
     @Override
     public void read(Json json, JsonValue jsonData) {
         super.read(json, jsonData);
-        String type = json.readValue("componentType", String.class, jsonData);
-        try {
-            this.componentType = (Class<? extends Component>) Class.forName(type);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.componentType = json.readValue("componentType", Integer.class, jsonData);
     }
 }

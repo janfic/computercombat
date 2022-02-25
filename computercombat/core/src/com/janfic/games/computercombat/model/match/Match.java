@@ -47,29 +47,60 @@ public class Match {
         }
     }
 
-    private Component[][] makeBoard(Map<Class<? extends Component>, Integer> componentFrequencies) throws Exception {
+    private Component[][] makeBoard(Map<Integer, Integer> colorFrequencies) throws Exception {
         Component[][] componentBoard = new Component[8][8];
-        List<Class<? extends Component>> components = new ArrayList<>();
-        for (Class<? extends Component> type : componentFrequencies.keySet()) {
-            int frequency = componentFrequencies.get(type);
-            components.addAll(Collections.nCopies(frequency, type));
+
+        // Construct Component Frequencies
+        List<Integer> colorBag = new ArrayList<>();
+        for (Integer type : colorFrequencies.keySet()) {
+            int frequency = colorFrequencies.get(type);
+            colorBag.addAll(Collections.nCopies(frequency, type));
+        }
+
+        System.out.println("GENERATING BOARD");
+        // Generate Board
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                int color = colorBag.get((int) (Math.random() * colorBag.size()));
+                Component c = new Component(color, x, y);
+                componentBoard[x][y] = c;
+                c.invalidate();
+            }
+        }
+
+        System.out.println("SETTING NEIGHBORS");
+        //Set Neighbors
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                for (int i = 0; i < Component.coordsToNeighbors.length; i += 3) {
+                    int neighborX = x + Component.coordsToNeighbors[i];
+                    int neighborY = y + Component.coordsToNeighbors[i + 1];
+                    if (neighborX < componentBoard.length && neighborY < componentBoard[x].length && neighborX >= 0 && neighborY >= 0) {
+                        Component c = componentBoard[neighborX][neighborY];
+                        componentBoard[x][y].setNeighbor(Component.coordsToNeighbors[i + 2], c);
+                    }
+                }
+            }
         }
 
         for (int x = 0; x < componentBoard.length; x++) {
             for (int y = 0; y < componentBoard[x].length; y++) {
-                Collections.shuffle(components);
-                Class<? extends Component> component = components.get(0);
-                Component c = component.getConstructor(int.class, int.class).newInstance(x, y);
-                componentBoard[x][y] = c;
+                Component c = componentBoard[x][y];
+                if (c.isInvalid()) {
+                    c.update();
+                }
             }
         }
 
+        System.out.println("DONE SETTING NEIGHBORS");
+
+        // Remove Matches
         while (GameRules.areAvailableComponentMatches(componentBoard).isEmpty() || !GameRules.getCurrentComponentMatches(componentBoard).isEmpty()) {
             for (int x = 0; x < componentBoard.length; x++) {
                 for (int y = 0; y < componentBoard[x].length; y++) {
-                    Collections.shuffle(components);
-                    Class<? extends Component> component = components.get(0);
-                    Component c = component.getConstructor(int.class, int.class).newInstance(x, y);
+                    Collections.shuffle(colorBag);
+                    int color = colorBag.get((int) (Math.random() * colorBag.size()));
+                    Component c = new Component(color, x, y);
                     componentBoard[x][y] = c;
                 }
             }

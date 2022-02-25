@@ -113,7 +113,7 @@ public class SQLAPI {
                         set.getString("collection.path"),
                         set.getInt("collection.price"));
 
-                List<Class<? extends Component>> components = new ArrayList<>();
+                List<Integer> components = new ArrayList<>();
 
                 int id = set.getInt("card.id");
                 String name = set.getString("card.name");
@@ -127,11 +127,16 @@ public class SQLAPI {
                 int amount = set.getInt("profile_owns_card.amount");
 
                 do {
-                    components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                    components.add(set.getInt("components.id"));
                     next = set.next();
                 } while (next && currentID == set.getInt("card.id"));
 
-                Software s = new Software(
+                int[] componentTypes = new int[components.size()];
+                for (int i = 0; i < components.size(); i++) {
+                    componentTypes[i] = components.get(i);
+                }
+
+                Software s = new Software (
                         id,
                         uid,
                         name,
@@ -142,7 +147,7 @@ public class SQLAPI {
                         maxDefense,
                         maxAttack,
                         1, // magic
-                        components.toArray(new Class[0]),
+                        componentTypes,
                         runRequirements,
                         a,
                         rarity
@@ -188,7 +193,7 @@ public class SQLAPI {
                     set.getString("collection.path"),
                     set.getInt("collection.price"));
 
-            List<Class<? extends Component>> components = new ArrayList<>();
+            List<Integer> components = new ArrayList<>();
 
             String name = set.getString("card.name");
             String textureName = set.getString("card.textureName");
@@ -200,8 +205,13 @@ public class SQLAPI {
             int rarity = set.getInt("card.rarity");
 
             do {
-                components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                components.add(set.getInt("components.id"));
             } while (set.next());
+
+            int[] componentTypes = new int[components.size()];
+            for (int i = 0; i < components.size(); i++) {
+                componentTypes[i] = components.get(i);
+            }
 
             Software s = new Software(
                     id,
@@ -214,7 +224,7 @@ public class SQLAPI {
                     maxDefense,
                     maxAttack,
                     1,
-                    components.toArray(new Class[0]),
+                    componentTypes,
                     runRequirements,
                     a,
                     rarity
@@ -259,7 +269,7 @@ public class SQLAPI {
                             set.getString("collection.path"),
                             set.getInt("collection.price"));
 
-                    List<Class<? extends Component>> components = new ArrayList<>();
+                    List<Integer> components = new ArrayList<>();
 
                     String name = set.getString("card.name");
                     String textureName = set.getString("card.textureName");
@@ -273,10 +283,15 @@ public class SQLAPI {
 
                     boolean sameCard = false;
                     do {
-                        components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                        components.add(set.getInt("components.id"));
                         areRowsLeft = set.next();
                         sameCard = areRowsLeft ? set.getInt("card.id") == id : false;
                     } while (sameCard);
+
+                    int[] componentTypes = new int[components.size()];
+                    for (int i = 0; i < components.size(); i++) {
+                        componentTypes[i] = components.get(i);
+                    }
 
                     Software s = new Software(
                             id,
@@ -289,7 +304,7 @@ public class SQLAPI {
                             maxDefense,
                             maxAttack,
                             1,
-                            components.toArray(new Class[0]),
+                            componentTypes,
                             runRequirements,
                             a,
                             rarity
@@ -341,7 +356,7 @@ public class SQLAPI {
                         set.getString("collection.path"),
                         set.getInt("collection.price"));
 
-                List<Class<? extends Component>> components = new ArrayList<>();
+                List<Integer> components = new ArrayList<>();
 
                 int id = set.getInt("card.id");
                 String name = set.getString("card.name");
@@ -356,10 +371,15 @@ public class SQLAPI {
                 boolean sameCard = false;
 
                 do {
-                    components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                    components.add(set.getInt("components.id"));
                     areRowsLeft = set.next();
                     sameCard = areRowsLeft ? currentCardID == set.getInt("card.id") : false;
                 } while (sameCard && areRowsLeft);
+
+                int[] componentTypes = new int[components.size()];
+                for (int i = 0; i < components.size(); i++) {
+                    componentTypes[i] = components.get(i);
+                }
 
                 Software s = new Software(
                         id,
@@ -372,7 +392,7 @@ public class SQLAPI {
                         maxDefense,
                         maxAttack,
                         1,
-                        components.toArray(new Class[0]),
+                        componentTypes,
                         runRequirements,
                         a,
                         rarity
@@ -481,7 +501,7 @@ public class SQLAPI {
                             set.getString("collection.path"),
                             set.getInt("collection.price"));
 
-                    List<Class<? extends Component>> components = new ArrayList<>();
+                    List<Integer> components = new ArrayList<>();
 
                     int id = set.getInt("card.id");
                     String name = set.getString("card.name");
@@ -496,11 +516,16 @@ public class SQLAPI {
                     boolean sameCard = false;
 
                     do {
-                        components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                        components.add(set.getInt("components.id"));
                         areRowsLeft = set.next();
                         sameDeck = areRowsLeft ? currentDeckID == set.getInt("deck.id") : false;
                         sameCard = areRowsLeft ? currentCardID == set.getInt("card.id") && sameDeck : false;
                     } while (sameCard && areRowsLeft);
+
+                    int[] componentTypes = new int[components.size()];
+                    for (int i = 0; i < components.size(); i++) {
+                        componentTypes[i] = components.get(i);
+                    }
 
                     Software s = new Software(
                             id,
@@ -513,7 +538,7 @@ public class SQLAPI {
                             maxDefense,
                             maxAttack,
                             1,
-                            components.toArray(new Class[0]),
+                            componentTypes,
                             runRequirements,
                             a,
                             rarity
@@ -694,7 +719,7 @@ public class SQLAPI {
             e.printStackTrace();
         }
     }
-    
+
     public boolean addCardToProfile(int cardID, Profile profile) {
         try {
             String sql = "SELECT uid\n"
@@ -865,7 +890,7 @@ public class SQLAPI {
                             set.getString("collection.path"),
                             set.getInt("collection.price"));
 
-                    List<Class<? extends Component>> components = new ArrayList<>();
+                    List<Integer> components = new ArrayList<>();
 
                     String name = set.getString("card.name");
                     String textureName = set.getString("card.textureName");
@@ -879,10 +904,15 @@ public class SQLAPI {
 
                     boolean sameCard = false;
                     do {
-                        components.add((Class<? extends Component>) Class.forName("com.janfic.games.computercombat.model.components." + set.getString("components.name")));
+                        components.add(set.getInt("components.id"));
                         areRowsLeft = set.next();
                         sameCard = areRowsLeft ? set.getInt("card.id") == id : false;
                     } while (sameCard);
+
+                    int[] componentTypes = new int[components.size()];
+                    for (int i = 0; i < components.size(); i++) {
+                        componentTypes[i] = components.get(i);
+                    }
 
                     Software s = new Software(
                             id,
@@ -895,7 +925,7 @@ public class SQLAPI {
                             maxDefense,
                             maxAttack,
                             1,
-                            components.toArray(new Class[0]),
+                            componentTypes,
                             runRequirements,
                             a,
                             rarity

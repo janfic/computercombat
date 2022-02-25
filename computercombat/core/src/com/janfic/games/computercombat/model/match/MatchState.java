@@ -136,7 +136,7 @@ public class MatchState implements Serializable {
         String board = "";
         for (Component[] components : componentBoard) {
             for (Component component : components) {
-                board += "" + Component.componentToNumber.get(component.getClass());
+                board += "" + component.getColor();
             }
         }
         assert (board.length() == 64);
@@ -159,9 +159,7 @@ public class MatchState implements Serializable {
             int x = i / 8;
             int y = i % 8;
             try {
-                componentBoard[x][y] = (Component) Component.numberToComponent.get(
-                        Integer.parseInt("" + boardString.substring(i, i + 1)))
-                        .getConstructor(int.class, int.class).newInstance(x, y);
+                componentBoard[x][y] = new Component(Integer.parseInt("" + boardString.substring(i, i + 1)), x, y);
             } catch (Exception e) {
                 e.printStackTrace();
             }

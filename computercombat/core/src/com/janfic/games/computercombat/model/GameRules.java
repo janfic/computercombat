@@ -5,12 +5,6 @@ import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
-import com.janfic.games.computercombat.model.components.BugComponent;
-import com.janfic.games.computercombat.model.components.CPUComponent;
-import com.janfic.games.computercombat.model.components.NetworkComponent;
-import com.janfic.games.computercombat.model.components.PowerComponent;
-import com.janfic.games.computercombat.model.components.RAMComponent;
-import com.janfic.games.computercombat.model.components.StorageComponent;
 import com.janfic.games.computercombat.model.moves.MatchComponentsMove;
 import com.janfic.games.computercombat.util.CardFilter;
 import com.janfic.games.computercombat.util.ComponentFilter;
@@ -23,16 +17,16 @@ import java.util.*;
  */
 public class GameRules {
 
-    public static final Map<Class<? extends Component>, Integer> componentFrequencies;
+    public static final Map<Integer, Integer> componentFrequencies;
 
     static {
         componentFrequencies = new HashMap<>();
-        componentFrequencies.put(CPUComponent.class, 3);
-        componentFrequencies.put(RAMComponent.class, 3);
-        componentFrequencies.put(NetworkComponent.class, 3);
-        componentFrequencies.put(PowerComponent.class, 3);
-        componentFrequencies.put(StorageComponent.class, 3);
-        componentFrequencies.put(BugComponent.class, 1);
+        componentFrequencies.put(1, 3);
+        componentFrequencies.put(2, 3);
+        componentFrequencies.put(3, 3);
+        componentFrequencies.put(4, 3);
+        componentFrequencies.put(6, 3);
+        componentFrequencies.put(5, 1);
     }
 
     public static List<Move> getAvailableMoves(MatchState state) {
@@ -138,7 +132,7 @@ public class GameRules {
 
                 while (stack.isEmpty() == false) {
                     Component currentComponent = stack.pop();
-                    Class c = currentComponent.getClass();
+                    Integer color = currentComponent.getColor();
                     int cx = currentComponent.getX();
                     int cy = currentComponent.getY();
                     for (int[] m : matches) {
@@ -146,7 +140,7 @@ public class GameRules {
                                 || (cx + m[2] >= 0 && cx + m[2] < 8 && cy + m[3] >= 0 && cy + m[3] < 8) == false) {
                             continue;
                         }
-                        if (c == components[cx + m[0]][cy + m[1]].getClass() && c == components[cx + m[2]][cy + m[3]].getClass()) {
+                        if (color == components[cx + m[0]][cy + m[1]].getColor() && color == components[cx + m[2]][cy + m[3]].getColor()) {
                             marks[cx][cy] = currentMark;
                             if (marks[cx + m[0]][cy + m[1]] == 0) {
                                 stack.add(components[cx + m[0]][cy + m[1]]);
@@ -196,7 +190,7 @@ public class GameRules {
                     }
                     int x2 = x + possibleMatch[0], y2 = y + possibleMatch[1];
                     int x3 = x + possibleMatch[2], y3 = y + possibleMatch[3];
-                    if (components[x][y].getClass().equals(components[x2][y2].getClass()) && components[x][y].getClass().equals(components[x3][y3].getClass())) {
+                    if (components[x][y].getColor() == components[x2][y2].getColor() && components[x][y].getColor() == components[x3][y3].getColor()) {
                         possibleMatches.add(new Integer[]{x + possibleMatch[4], y + possibleMatch[5], x + possibleMatch[6], y + possibleMatch[7]});
                     }
                 }
@@ -245,15 +239,15 @@ public class GameRules {
 
     public static List<Component> getNewComponents(int count) {
         List<Component> components = new ArrayList<>();
-        List<Class<? extends Component>> componentTypes = new ArrayList<>();
-        for (Class<? extends Component> type : componentFrequencies.keySet()) {
+        List<Integer> componentTypes = new ArrayList<>();
+        for (Integer type : componentFrequencies.keySet()) {
             int frequency = componentFrequencies.get(type);
             componentTypes.addAll(Collections.nCopies(frequency, type));
         }
         for (int i = 0; i < count; i++) {
             int j = (int) (Math.random() * componentTypes.size());
             try {
-                Component newComponent = componentTypes.get(j).getConstructor(int.class, int.class).newInstance(0, 0);
+                Component newComponent = new Component(componentTypes.get(j), 0, 0);
                 components.add(newComponent);
             } catch (Exception e) {
             }

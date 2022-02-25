@@ -3,8 +3,9 @@ package com.janfic.games.computercombat.model;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
-import com.janfic.games.computercombat.model.components.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -12,61 +13,58 @@ import java.util.Objects;
  *
  * @author Jan Fic
  */
-public abstract class Component implements Serializable {
+public class Component implements Serializable {
 
-    public static final Map<Integer, Class<? extends Component>> numberToComponent;
-    public static final Map<Class<? extends Component>, Integer> componentToNumber;
+    public static Map<Integer, String> colorToTextureName;
 
     static {
-        numberToComponent = new HashMap<>();
-        numberToComponent.put(1, CPUComponent.class);
-        numberToComponent.put(2, RAMComponent.class);
-        numberToComponent.put(3, StorageComponent.class);
-        numberToComponent.put(4, NetworkComponent.class);
-        numberToComponent.put(5, BugComponent.class);
-        numberToComponent.put(6, PowerComponent.class);
-        componentToNumber = new HashMap<>();
-        componentToNumber.put(CPUComponent.class, 1);
-        componentToNumber.put(RAMComponent.class, 2);
-        componentToNumber.put(StorageComponent.class, 3);
-        componentToNumber.put(NetworkComponent.class, 4);
-        componentToNumber.put(BugComponent.class, 5);
-        componentToNumber.put(PowerComponent.class, 6);
+        colorToTextureName = new HashMap<>();
+        colorToTextureName.put(1, "cpu");
+        colorToTextureName.put(2, "ram");
+        colorToTextureName.put(3, "storage");
+        colorToTextureName.put(4, "network");
+        colorToTextureName.put(5, "bug");
+        colorToTextureName.put(6, "power");
     }
 
-    private String name;
-    private String colorHex;
+    /**
+     * Index 0 - 3 represent nearest neighbors ( Cartesian distance 1 ). Index 4
+     * - 7 represent second nearest neighbors ( up left, down left, up right,
+     * down right ) ( diagonals ). Index 8 - 11 represent third nearest
+     * neighbors ( upup, leftleft, rightright, downdown )
+     */
+    public Component[] neighbors;
+
+    public final static int[] coordsToNeighbors = new int[]{
+        0, 1, 0, 1, 0, 1, 0, -1, 2, -1, 0, 3,
+        1, 1, 4, 1, -1, 5, -1, -1, 6, -1, 1, 7,
+        0, 2, 8, 2, 0, 9, 0, -2, 10, -2, 0, 11
+    };
+
     private String textureName;
+    private int color;
     private int x, y;
+    private boolean isInvalid; // should this component be updated ( recalculate )
+
+    // A List of indicies in which neighbors at these index form a match with this component;
+    private List<Integer> matchNeighbors;
 
     public Component() {
-        this.name = null;
-        this.colorHex = null;
         this.textureName = null;
+        this.neighbors = new Component[12];
+        this.matchNeighbors = new ArrayList<>();
     }
 
-    public Component(String name, String hex, int x, int y, String textureName) {
-        this.name = name;
-        this.colorHex = hex;
+    public Component(int color, int x, int y) {
+        this();
+        this.color = color;
         this.x = x;
         this.y = y;
-        this.textureName = textureName;
+        this.textureName = colorToTextureName.get(color);
     }
 
     public Component(Component component) {
-        this.name = component.name;
-        this.colorHex = component.colorHex;
-        this.textureName = component.textureName;
-        this.x = component.x;
-        this.y = component.y;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getColorHex() {
-        return colorHex;
+        this(component.color, component.x, component.y);
     }
 
     public String getTextureName() {
@@ -81,9 +79,86 @@ public abstract class Component implements Serializable {
         return y;
     }
 
+    public int getColor() {
+        return color;
+    }
+
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void setNeighbor(int x, int y, Component c) {
+        for (int i = 0; i < coordsToNeighbors.length; i += 3) {
+            if (x - this.getX() == coordsToNeighbors[i] && y - this.getY() == coordsToNeighbors[i + 1]) {
+                neighbors[coordsToNeighbors[i + 2]] = c;
+            }
+        }
+    }
+
+    public void setNeighbor(int index, Component c) {
+        neighbors[index] = c;
+    }
+
+    public Component getNeighbor(int x, int y) {
+        for (int i = 0; i < coordsToNeighbors.length; i += 3) {
+            if (x - this.getX() == coordsToNeighbors[i] && y - this.getY() == coordsToNeighbors[i + 1]) {
+                return neighbors[coordsToNeighbors[i + 2]];
+            }
+        }
+        return null;
+    }
+
+    public void changeColor(int newColor) {
+        this.color = newColor;
+        this.textureName = colorToTextureName.get(this.color);
+    }
+
+    public boolean isInvalid() {
+        return isInvalid;
+    }
+
+    public void invalidate() {
+        isInvalid = true;
+    }
+
+    public void update() {
+        // Reset known information
+        matchNeighbors.clear();
+        // Check for possible moves
+        findMove();
+        // Check if part of match
+        findMatch();
+        // Validate this component
+        this.isInvalid = false;
+    }
+
+    // Looks at up/down, left/right neighbors to see if they have same color.
+    // This does does not see matches greater than 3 as the same match.
+    // TODO: Add 4+ match support
+    private void findMatch() {
+        if (neighbors[0] != null && neighbors[2] != null
+                && getColor() == neighbors[0].getColor() && getColor() == neighbors[2].getColor()) {
+            matchNeighbors.add(0);
+            matchNeighbors.add(2);
+        }
+        if (neighbors[1] != null && neighbors[3] != null
+                && getColor() == neighbors[1].getColor() && getColor() == neighbors[3].getColor()) {
+            matchNeighbors.add(1);
+            matchNeighbors.add(3);
+        }
+    }
+
+    private void findMove() {
+
+    }
+
+    public boolean isMatched() {
+        return !matchNeighbors.isEmpty();
+    }
+
+    public List<Integer> getMatchNeighbors() {
+        return matchNeighbors;
     }
 
     @Override
@@ -95,7 +170,7 @@ public abstract class Component implements Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof Component) {
             Component c = (Component) obj;
-            return this.x == c.x && this.y == c.y && this.name.equals(c.name);
+            return this.x == c.x && this.y == c.y && this.color == color;
         }
         return super.equals(obj);
     }
@@ -103,28 +178,25 @@ public abstract class Component implements Serializable {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 13 * hash + Objects.hashCode(this.name);
         hash = 13 * hash + this.x;
         hash = 13 * hash + this.y;
+        hash = 13 * hash + this.color;
         return hash;
     }
 
     @Override
     public void write(Json json) {
-        json.writeType(this.getClass());
-        json.writeValue("name", name);
+        json.writeValue("color", color);
         json.writeValue("x", x);
         json.writeValue("y", y);
         json.writeValue("textureName", textureName);
-        json.writeValue("colorHex", colorHex);
     }
 
     @Override
     public void read(Json json, JsonValue jv) {
-        this.name = json.readValue("name", String.class, jv);
+        this.color = json.readValue("color", Integer.class, jv);
         this.x = json.readValue("x", Integer.class, jv);
         this.y = json.readValue("y", Integer.class, jv);
         this.textureName = json.readValue("textureName", String.class, jv);
-        this.colorHex = json.readValue("colorHex", String.class, jv);
     }
 }
