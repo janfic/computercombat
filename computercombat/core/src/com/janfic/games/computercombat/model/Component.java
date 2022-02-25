@@ -109,6 +109,15 @@ public class Component implements Serializable {
         return null;
     }
 
+    public int getNeighborIndex(int x, int y) {
+        for (int i = 0; i < coordsToNeighbors.length; i += 3) {
+            if (x - this.getX() == coordsToNeighbors[i] && y - this.getY() == coordsToNeighbors[i + 1]) {
+                return coordsToNeighbors[i + 2];
+            }
+        }
+        return -1;
+    }
+
     public void changeColor(int newColor) {
         this.color = newColor;
         this.textureName = colorToTextureName.get(this.color);
@@ -135,8 +144,8 @@ public class Component implements Serializable {
 
     // Looks at up/down, left/right neighbors to see if they have same color.
     // This does does not see matches greater than 3 as the same match.
-    // TODO: Add 4+ match support
     private void findMatch() {
+        // Check if component is in the middle of two same colored components.
         if (neighbors[0] != null && neighbors[2] != null
                 && getColor() == neighbors[0].getColor() && getColor() == neighbors[2].getColor()) {
             matchNeighbors.add(0);
@@ -146,6 +155,17 @@ public class Component implements Serializable {
                 && getColor() == neighbors[1].getColor() && getColor() == neighbors[3].getColor()) {
             matchNeighbors.add(1);
             matchNeighbors.add(3);
+        }
+    }
+
+    public void updateMatchedNeighbors() {
+        // Tell neighbors that formed a match with me that they are in a match with this component.
+        // PROBLEM: Must be done after the neighbor has been validated, or this information will be erased. 
+        for (Integer matchNeighbor : matchNeighbors) {
+            int thisComponentAsNeighborIndex = getNeighborIndex(getX(), getY());
+            if (thisComponentAsNeighborIndex != -1) {
+                neighbors[matchNeighbor].getMatchNeighbors().add(thisComponentAsNeighborIndex);
+            }
         }
     }
 

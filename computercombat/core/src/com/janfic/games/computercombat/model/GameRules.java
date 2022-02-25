@@ -105,8 +105,13 @@ public class GameRules {
         {-1, -1, -1, 1, 0, 0, -1, 0}
     };
 
+    /**
+     * Given a list of components that have been collected, generate the marks for those components.
+     * @param collected
+     * @param board
+     * @return 
+     */
     public static Map<Integer, List<Component>> collectComponents(Component[] collected, Component[][] board) {
-        int[][] marks = new int[8][8];
         int currentMark = 1;
         Map<Integer, List<Component>> r = new HashMap<>();
         for (int i = 0; i < collected.length; i++) {
@@ -118,6 +123,12 @@ public class GameRules {
         return r;
     }
 
+    /**
+     * Finds existing matches that are on the board.
+     *
+     * @param components
+     * @return
+     */
     public static Map<Integer, List<Component>> getCurrentComponentMatches(Component[][] components) {
         int[][] marks = new int[8][8];
         int currentMark = 1;

@@ -41,6 +41,12 @@ public class Match {
 
         try {
             this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
+            this.currentState.update();
+            while (currentState.getMatches().isEmpty() == false) {
+                this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
+                this.currentState.update();
+            }
+
         } catch (Exception e) {
             System.err.println("Something went wrong when creating the initial match state: ");
             e.printStackTrace();
@@ -83,28 +89,8 @@ public class Match {
             }
         }
 
-        for (int x = 0; x < componentBoard.length; x++) {
-            for (int y = 0; y < componentBoard[x].length; y++) {
-                Component c = componentBoard[x][y];
-                if (c.isInvalid()) {
-                    c.update();
-                }
-            }
-        }
-
         System.out.println("DONE SETTING NEIGHBORS");
 
-        // Remove Matches
-        while (GameRules.areAvailableComponentMatches(componentBoard).isEmpty() || !GameRules.getCurrentComponentMatches(componentBoard).isEmpty()) {
-            for (int x = 0; x < componentBoard.length; x++) {
-                for (int y = 0; y < componentBoard[x].length; y++) {
-                    Collections.shuffle(colorBag);
-                    int color = colorBag.get((int) (Math.random() * colorBag.size()));
-                    Component c = new Component(color, x, y);
-                    componentBoard[x][y] = c;
-                }
-            }
-        }
         return componentBoard;
     }
 

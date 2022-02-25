@@ -61,6 +61,38 @@ public class MatchState implements Serializable {
         return componentBoard;
     }
 
+    public void update() {
+        // Update invalidated
+        List<Component> matches = new ArrayList<>();
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                Component c = componentBoard[x][y];
+                if (c.isInvalid()) {
+                    c.update();
+                    if (c.isMatched()) {
+                        matches.add(c);
+                    }
+                }
+            }
+        }
+        for (Component component : matches) {
+            component.updateMatchedNeighbors();
+        }
+    }
+
+    public List<Component> getMatches() {
+        List<Component> matches = new ArrayList<>();
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                Component c = componentBoard[x][y];
+                if (c.isMatched()) {
+                    matches.add(c);
+                }
+            }
+        }
+        return matches;
+    }
+
     public MatchState(MatchState state) {
         Json json = new NullifyingJson();
         MatchState s = json.fromJson(MatchState.class, json.toJson(state));
