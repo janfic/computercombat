@@ -46,7 +46,7 @@ public class SoftwareActor extends Panel {
         components.put(6, "POWER");
         components.put(4, "NETWORK");
         components.put(2, "RAM");
-        components.put(5, "STORAGE");
+        components.put(3, "STORAGE");
     }
 
     Software software;

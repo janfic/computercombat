@@ -103,9 +103,8 @@ public class MatchState implements Serializable {
         List<MoveResult> results = new ArrayList<>();
 
         boolean extraTurn = false;
-        while (isInvalidBoard()) {
+        while (isInvalidBoard() || getMatches().isEmpty() == false) {
             // Save Old State
-            MatchState old = new MatchState(this);
             // Update
             update();
 
@@ -113,6 +112,7 @@ public class MatchState implements Serializable {
             Map<Integer, List<Component>> collected = collectComponents();
             Map<Component, Card> progress = new HashMap<>();
             CollectAnimation collectAnimation = new CollectAnimation(collected, progress);
+            progress(collectAnimation);
 
             // Remove, Cascade, then Invalidate
             // Remove
@@ -122,13 +122,9 @@ public class MatchState implements Serializable {
                 }
             }
 
-            // Progress
-            progress(collectAnimation);
-
             // Cascade
             // This can be optimized by storing collected components
             CascadeAnimation cascadeAnimation = new CascadeAnimation(cascade());
-
             List<MoveAnimation> moveAnimation = new ArrayList<>();
             moveAnimation.add(collectAnimation);
             moveAnimation.add(cascadeAnimation);
@@ -138,13 +134,14 @@ public class MatchState implements Serializable {
                     extraTurn = true;
                 }
             }
-            MoveResult result = new MoveResult(move, old, this, moveAnimation);
+            MoveResult result = new MoveResult(move, MatchState.record(this), moveAnimation);
             results.add(result);
         }
 
-        if (extraTurn == false) {
+        if (extraTurn == false && results.size() > 0) {
             MoveResult last = results.get(results.size() - 1);
-            last.getNewState().currentPlayerMove = last.getNewState().getOtherProfile(last.getNewState().currentPlayerMove);
+            last.getState().currentPlayerMove = last.getState().getOtherProfile(last.getState().currentPlayerMove);
+            this.currentPlayerMove = last.getState().currentPlayerMove;
         }
 
         return results;
@@ -209,10 +206,13 @@ public class MatchState implements Serializable {
                 if (componentBoard[x][y].getColor() == 0) {
                     componentBoard[x][y].invalidate();
                     componentBoard[x][y].invalidateNeighbors();
+                    Component above = null;
                     boolean cascaded = false;
                     for (int i = y - 1; i >= 0; i--) {
                         if (componentBoard[x][i].getColor() != 0) {
-                            cascade.add(new CascadeAnimation.CascadeData(new Component(componentBoard[x][i].getColor(), x, y), componentBoard[x][i].getX(), componentBoard[x][i].getY()));
+                            Component fallenComponent = new Component(componentBoard[x][i].getColor(), x, y);
+                            Component originalComponent = new Component(componentBoard[x][i]);
+                            cascade.add(new CascadeAnimation.CascadeData(fallenComponent, originalComponent));
                             componentBoard[x][y].changeColor(componentBoard[x][i].getColor());
                             componentBoard[x][i].changeColor(0);
                             cascaded = true;
@@ -221,7 +221,7 @@ public class MatchState implements Serializable {
                     }
                     if (cascaded == false) {
                         componentBoard[x][y].changeColor(GameRules.getNewColor());
-                        cascade.add(new CascadeAnimation.CascadeData(componentBoard[x][y], x, (-y) - 1));
+                        cascade.add(new CascadeAnimation.CascadeData(new Component(componentBoard[x][y]), x, (-y) - 1));
                     }
                 }
             }
@@ -242,6 +242,10 @@ public class MatchState implements Serializable {
         return componentsInMatch;
     }
 
+    public static MatchState record(MatchState state) {
+        return new MatchState(state);
+    }
+
     public MatchState(MatchState state) {
         Json json = new NullifyingJson();
         MatchState s = json.fromJson(MatchState.class, json.toJson(state));
@@ -254,7 +258,7 @@ public class MatchState implements Serializable {
         this.winner = s.winner;
         this.isGameOver = s.isGameOver;
         MatchState.buildNeighbors(this.componentBoard);
-        this.update();        
+        this.update();
     }
 
     public MatchState(MatchState state, String playerUID) {

@@ -36,6 +36,14 @@ public abstract class Ability implements Serializable {
         this.selectFilters = selectFilters;
     }
 
+    /**
+     * All changes or effects caused by an ability should be applied to the same
+     * state object, but these changes should be recorded in the Move Results
+     *
+     * @param state
+     * @param move
+     * @return
+     */
     public abstract List<MoveResult> doAbility(MatchState state, Move move);
 
     /**

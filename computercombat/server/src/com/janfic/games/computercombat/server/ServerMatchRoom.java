@@ -65,8 +65,6 @@ public class ServerMatchRoom {
                         m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
                     }
                     boolean isValid = match.isValidMove(move);
-                    System.out.println(move);
-                    System.out.println(isValid);
                     if (isValid) {
                         List<MoveResult> results = match.makeMove(move);
                         currentPlayer.updateState(results);

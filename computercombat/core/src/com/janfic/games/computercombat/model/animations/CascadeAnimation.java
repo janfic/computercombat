@@ -38,7 +38,7 @@ public class CascadeAnimation implements MoveAnimation {
 
     @Override
     public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
-        
+
         Board board = screen.getBoard();
         List<List<Action>> actions = new ArrayList<>();
         List<Action> cascadeAnimation = new ArrayList<>();
@@ -121,11 +121,16 @@ public class CascadeAnimation implements MoveAnimation {
         Component originalComponent;
         Component fallenComponent;
 
-        public CascadeData(Component fallenComponent, int ox, int oy) {
+        public CascadeData(Component fallenComponent, Component originalComponent) {
+            this.originalComponent = originalComponent;
+            this.fallenComponent = fallenComponent;
+        }
+
+        public CascadeData(Component fallenComponent, int originalX, int originalY) {
             Json json = new Json();
             int fx = fallenComponent.getX();
             int fy = fallenComponent.getY();
-            fallenComponent.setPosition(ox, oy);
+            fallenComponent.setPosition(originalX, originalY);
             originalComponent = json.fromJson(Component.class, json.toJson(fallenComponent));
             fallenComponent.setPosition(fx, fy);
             this.fallenComponent = fallenComponent;

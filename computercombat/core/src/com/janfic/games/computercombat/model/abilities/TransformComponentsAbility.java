@@ -45,27 +45,23 @@ public class TransformComponentsAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
 
-        MatchState newState = new MatchState(state);
-        Component[][] board = newState.getComponentBoard();
+        Component[][] board = state.getComponentBoard();
 
         List<MoveAnimation> animations = new ArrayList<>();
 
-        MoveAnimation consumeProgress = Ability.consumeCardProgress(newState, move);
+        MoveAnimation consumeProgress = Ability.consumeCardProgress(state, move);
 
         List<Component> originalComponents = new ArrayList<>(), newComponents = new ArrayList<>();
         for (Component[] components : board) {
             for (Component component : components) {
                 if (filter.filter(component, state, move)) {
                     int randomIndex = (int) (Math.random() * transformTypes.size());
-                    try {
-                        Component c = new Component(transformTypes.get(randomIndex), component.getX(), component.getY());
-                        board[component.getX()][component.getY()] = c;
-
-                        originalComponents.add(component);
-                        newComponents.add(c);
-                    } catch (Exception e) {
-
-                    }
+                    Component c = new Component(transformTypes.get(randomIndex), component.getX(), component.getY());
+                    originalComponents.add(new Component(component));
+                    newComponents.add(c);
+                    board[component.getX()][component.getY()].changeColor(transformTypes.get(randomIndex));
+                    board[component.getX()][component.getY()].invalidate();
+                    board[component.getX()][component.getY()].invalidateNeighbors();
                 }
             }
         }
@@ -73,8 +69,8 @@ public class TransformComponentsAbility extends Ability {
         animations.add(consumeProgress);
         animations.add(new SpawnAnimation(originalComponents, newComponents));
 
-        MoveResult result = new MoveResult(move, newState, newState, animations);
-        List<MoveResult> afterMove = Move.collectComponentsCheck(newState, move);
+        MoveResult result = new MoveResult(move, MatchState.record(state), animations);
+        List<MoveResult> afterMove = state.results(move);
 
         results.add(result);
         results.addAll(afterMove);

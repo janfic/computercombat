@@ -30,10 +30,9 @@ public class DestroyCardAbility extends Ability {
         List<MoveResult> results = new ArrayList<>();
 
         List<MoveAnimation> animations = new ArrayList<>();
-        MatchState newState = new MatchState(state);
         List<Card> removed = new ArrayList<>();
         for (Card card : destroyed) {
-            for (Card c : newState.activeEntities.get(card.getOwnerUID())) {
+            for (Card c : state.activeEntities.get(card.getOwnerUID())) {
                 if (c.equals(card)) {
                     removed.add(c);
                     List<Card> destroy = new ArrayList<>();
@@ -43,9 +42,9 @@ public class DestroyCardAbility extends Ability {
             }
         }
         for (Card card : removed) {
-            newState.activeEntities.get(card.getOwnerUID()).remove(card);
+            state.activeEntities.get(card.getOwnerUID()).remove(card);
         }
-        MoveResult result = new MoveResult(move, state, newState, animations);
+        MoveResult result = new MoveResult(move, MatchState.record(state), animations);
 
         results.add(result);
         return results;

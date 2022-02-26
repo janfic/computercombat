@@ -38,7 +38,7 @@ public class DeckCardActor extends Panel {
         components.put(6, "POWER");
         components.put(4, "NETWORK");
         components.put(2, "RAM");
-        components.put(5, "STORAGE");
+        components.put(3, "STORAGE");
     }
 
     public DeckCardActor(ComputerCombatGame game, Skin skin, Deck deck, Software software) {
@@ -50,6 +50,8 @@ public class DeckCardActor extends Panel {
         leds = new Table();
         leds.defaults().space(5);
         for (Integer runComponent : software.getRunComponents()) {
+            System.out.println(runComponent);
+            System.out.println(components.get(runComponent));
             LEDActor led = new LEDActor(skin, components.get(runComponent));
             led.setLightOn(true);
             leds.add(led).row();

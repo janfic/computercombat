@@ -7,37 +7,31 @@ import java.util.List;
 
 public class MoveResult {
 
-    private final MatchState oldState, newState;
+    private final MatchState recordedState;
     private final Move move;
     private final List<MoveAnimation> animations;
 
-    public MoveResult(Move move, MatchState oldState, MatchState newState, List<MoveAnimation> animations) {
+    public MoveResult(Move move, MatchState recordedState, List<MoveAnimation> animations) {
         this.move = move;
-        this.newState = newState;
-        this.oldState = oldState;
         this.animations = animations;
+        this.recordedState = recordedState;
     }
 
-    public MatchState getNewState() {
-        return newState;
+    public MatchState getState() {
+        return recordedState;
     }
 
     public Move getMove() {
         return move;
     }
 
-    public MatchState getOldState() {
-        return oldState;
-    }
-
     public List<MoveAnimation> getAnimations() {
         return animations;
     }
-    
+
     public MoveResult() {
-        this.oldState = null;
-        this.newState = null;
         this.move = null;
         this.animations = null;
+        this.recordedState = null;
     }
 }

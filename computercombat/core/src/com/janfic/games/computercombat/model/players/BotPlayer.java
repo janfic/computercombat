@@ -42,7 +42,7 @@ public class BotPlayer extends Player {
 
     @Override
     public void updateState(List<MoveResult> state) {
-        this.currentState = state.get(state.size() - 1).getNewState();
+        this.currentState = state.get(state.size() - 1).getState();
     }
 
     @Override

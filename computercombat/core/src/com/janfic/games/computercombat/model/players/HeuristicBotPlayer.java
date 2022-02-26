@@ -38,8 +38,9 @@ public class HeuristicBotPlayer extends Player {
     public void beginMatch(MatchState state, Player opponent) {
         this.currentState = state;
         this.priorityList = new ArrayList<>();
-        this.priorityList.add(new ExtraTurnHeuristicAnalyzer());
         this.priorityList.add(new ComponentsCollectedHeuristicAnalyzer());
+        this.priorityList.add(new UseAbilityHeuristicAnalyzer());
+        this.priorityList.add(new ExtraTurnHeuristicAnalyzer());
     }
 
     @Override
@@ -73,7 +74,7 @@ public class HeuristicBotPlayer extends Player {
 
     @Override
     public void updateState(List<MoveResult> state) {
-        this.currentState = new MatchState(state.get(state.size() - 1).getNewState());
+        this.currentState = new MatchState(state.get(state.size() - 1).getState());
     }
 
     @Override

@@ -33,16 +33,15 @@ public class DamageAllAbility extends Ability {
         List<MoveResult> results = new ArrayList<>();
 
         UseAbilityMove abilityMove = (UseAbilityMove) move;
-        MatchState newState = new MatchState(state);
         List<Card> destroyed = new ArrayList<>();
         List<MoveAnimation> animation = new ArrayList<>();
 
-        int index = newState.activeEntities.get(abilityMove.getCard().getOwnerUID()).indexOf(abilityMove.getCard());
-        newState.activeEntities.get(abilityMove.getPlayerUID()).get(index).setProgress(0);
+        int index = state.activeEntities.get(abilityMove.getCard().getOwnerUID()).indexOf(abilityMove.getCard());
+        state.activeEntities.get(abilityMove.getPlayerUID()).get(index).setProgress(0);
 
         String playerUID = state.getOtherProfile(move.getPlayerUID()).getUID();
 
-        for (Card card : newState.activeEntities.get(playerUID)) {
+        for (Card card : state.activeEntities.get(playerUID)) {
             int damage = amount.analyze(state, move);
             for (Card oldCard : state.activeEntities.get(playerUID)) {
                 if (oldCard.equals(card)) {
@@ -56,12 +55,12 @@ public class DamageAllAbility extends Ability {
             }
         }
 
-        MoveResult result = new MoveResult(move, state, newState, animation);
+        MoveResult result = new MoveResult(move, MatchState.record(state), animation);
         results.add(result);
 
         if (destroyed.isEmpty() == false) {
             DestroyCardAbility destroyAbility = new DestroyCardAbility(destroyed);
-            List<MoveResult> r = destroyAbility.doAbility(result.getNewState(), move);
+            List<MoveResult> r = destroyAbility.doAbility(state, move);
             results.addAll(r);
         }
 

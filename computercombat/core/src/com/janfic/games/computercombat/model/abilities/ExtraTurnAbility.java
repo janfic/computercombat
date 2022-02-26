@@ -21,11 +21,9 @@ public class ExtraTurnAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
 
-        MatchState newState = new MatchState(state);
+        state.currentPlayerMove = state.players.get(0).getUID().equals(move.getPlayerUID()) ? state.players.get(0) : state.players.get(1);
 
-        newState.currentPlayerMove = state.players.get(0).getUID().equals(move.getPlayerUID()) ? state.players.get(0) : state.players.get(1);
-
-        MoveResult result = new MoveResult(move, state, newState, new ArrayList<>());
+        MoveResult result = new MoveResult(move, MatchState.record(state), new ArrayList<>());
 
         results.add(result);
         return results;

@@ -475,44 +475,40 @@ public class MatchScreen implements Screen {
         }
         for (; i < moveResults.size(); i++) {
             MoveResult moveResult = moveResults.get(i);
-            List<Action> updateData = new ArrayList<>();
-            Action a = Actions.run(new Runnable() {
+            List<Action> a = new ArrayList<>();
+            List<Action> b = new ArrayList<>();
+            Action animate = Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    matchData.setCurrentState(moveResult.getOldState());
+                    int offset = 0;
+                    for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
+                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen, animationSpeed);
+                        int indexOfUpdate = animation.indexOf(a);
+                        animation.addAll(indexOfUpdate + 1 + offset, animations);
+                        offset += animations.size();
+                    }
+
+                }
+            });
+            Action update = Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    matchData.setCurrentState(moveResult.getState());
                     board.updateBoard(matchData);
                     for (String string : computerActors.keySet()) {
                         ComputerActor a = computerActors.get(string);
                         a.setComputer(matchData.getCurrentState().computers.get(string));
-                    }
-                    int offset = 0;
-                    for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
-                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen, animationSpeed);
-                        int indexOfUpdate = animation.indexOf(updateData);
-                        animation.addAll(indexOfUpdate + 1 + offset, animations);
-                        offset += animations.size();
+                        a.setCardsLeft(matchData.getCurrentState().decks.get(string).getStack().size());
                     }
                 }
             });
-            a.setActor(board);
-            updateData.add(a);
-            animation.add(updateData);
+            animate.setActor(board);
+            update.setActor(board);
+            a.add(animate);
+            b.add(update);
+            animation.add(a);
+            animation.add(b);
         }
-        List<Action> updateData = new ArrayList<>();
-        Action a = Actions.run(new Runnable() {
-            @Override
-            public void run() {
-                matchData.setCurrentState(moveResults.get(moveResults.size() - 1).getNewState());
-                for (String string : computerActors.keySet()) {
-                    ComputerActor a = computerActors.get(string);
-                    a.setCardsLeft(matchData.getCurrentState().decks.get(string).getStack().size());
-                }
-                board.updateBoard(matchData);
-            }
-        });
-        a.setActor(board);
-        updateData.add(a);
-        animation.add(updateData);
     }
 
     public SoftwareActor getSoftwareActorByMatchID(String playerUID, int matchID) {

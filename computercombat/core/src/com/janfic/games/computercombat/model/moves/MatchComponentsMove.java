@@ -30,8 +30,12 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
     public List<MoveResult> doMove(MatchState originalState) {
 
         List<MoveResult> results = new ArrayList<>();
-        MatchState stateOld = new MatchState(originalState);
 
+        // Record Original State
+        MoveResult r = new MoveResult(this, MatchState.record(originalState), new ArrayList<>());
+        results.add(r);
+
+        // Apply Switch
         Component[][] board = originalState.getComponentBoard();
         Component switchB = board[b.getX()][b.getY()];
         Component switchA = board[a.getX()][a.getY()];
@@ -43,8 +47,10 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
         SwitchAnimation switchAnimation = new SwitchAnimation(a, b);
         List<MoveAnimation> animations = new ArrayList<>();
         animations.add(switchAnimation);
-        MoveResult r = new MoveResult(this, stateOld, new MatchState(originalState), animations);
-        results.add(r);
+
+        // Record Switch
+        MoveResult mr = new MoveResult(this, MatchState.record(originalState), animations);
+        results.add(mr);
 
         switchA.invalidate();
         switchB.invalidate();
@@ -55,7 +61,7 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
         //collectLoop = Move.collectComponentsCheck(originalState, this);
         results.addAll(collectLoop);
 
-        GameRules.isGameOver(results.get(results.size() - 1).getNewState());
+        GameRules.isGameOver(originalState);
         return results;
     }
 

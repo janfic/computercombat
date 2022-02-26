@@ -36,10 +36,8 @@ public class TransformCardAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
 
-        MatchState newState = new MatchState(state);
-
         List<MoveAnimation> animations = new ArrayList<>();
-        MoveAnimation consumeProgress = Ability.consumeCardProgress(newState, move);
+        MoveAnimation consumeProgress = Ability.consumeCardProgress(state, move);
 
         List<Card> old = new ArrayList<>();
         List<Card> newC = new ArrayList<>();
@@ -51,7 +49,7 @@ public class TransformCardAbility extends Ability {
                     if (filter.filter(oldCard, state, move)) {
                         Card newCard = SQLAPI.getSingleton().getCardById(newCards.get(oldCards.indexOf(filter)), oldCard.getOwnerUID());
                         newCard.generateMatchID();
-                        newState.activeEntities.get(uid).set(i, newCard);
+                        state.activeEntities.get(uid).set(i, newCard);
                         old.add(oldCard);
                         newC.add(newCard);
                     }
@@ -62,9 +60,8 @@ public class TransformCardAbility extends Ability {
             animations.add(consumeProgress);
         }
         animations.add(new TransformCardAnimation(old, newC));
-
-        MoveResult result = new MoveResult(move, state, newState, animations);
-        result.getNewState().currentPlayerMove = result.getNewState().getOtherProfile(result.getNewState().currentPlayerMove);
+        state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
+        MoveResult result = new MoveResult(move, MatchState.record(state), animations);
 
         results.add(result);
 

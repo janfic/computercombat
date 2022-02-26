@@ -67,6 +67,7 @@ public abstract class Move implements Json.Serializable {
      * @param move move that caused this new state
      * @return a list of MoveResults
      */
+    /*
     public static List<MoveResult> collectComponentsCheck(MatchState state, Move move) {
 
         List<MoveResult> results = new ArrayList<>();
@@ -102,7 +103,9 @@ public abstract class Move implements Json.Serializable {
 
         return results;
     }
+     */
 
+    /*
     public static List<MoveResult> collectComponents(Map<Integer, List<Component>> collected, MatchState originalState, MatchState newState, Move move) {
         Map<Component, Card> progress = new HashMap<>();
         CollectAnimation collectAnimation = new CollectAnimation(collected, progress);
@@ -210,4 +213,5 @@ public abstract class Move implements Json.Serializable {
 
         return results;
     }
+     */
 }

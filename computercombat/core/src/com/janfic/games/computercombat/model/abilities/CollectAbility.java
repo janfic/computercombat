@@ -7,6 +7,7 @@ import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.util.Filter;
@@ -40,11 +41,14 @@ public class CollectAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
 
-        MatchState newState = new MatchState(state);
+        List<MoveAnimation> anim = new ArrayList<>();
+        anim.add(Ability.consumeCardProgress(state, move));
+        results.add(new MoveResult(move, MatchState.record(state), anim));
+
         UseAbilityMove useAbility = (UseAbilityMove) move;
-        int index = newState.activeEntities.get(useAbility.getPlayerUID()).indexOf(useAbility.getCard());
-        newState.activeEntities.get(useAbility.getPlayerUID()).get(index).setProgress(0);
-        Stream<Component> components = newState.getComponentsAsList().stream();
+        int index = state.activeEntities.get(useAbility.getPlayerUID()).indexOf(useAbility.getCard());
+        state.activeEntities.get(useAbility.getPlayerUID()).get(index).setProgress(0);
+        Stream<Component> components = state.getComponentsAsList().stream();
         for (CollectFilter filter : filters) {
             components = components.filter((c) -> {
                 return filter.filter(state, move, c);
@@ -55,15 +59,11 @@ public class CollectAbility extends Ability {
         int count = amount.analyze(state, move);
         list = list.subList(0, Math.min(count, list.size()));
         Component[] c = list.toArray(new Component[0]);
-        Map<Integer, List<Component>> collected = GameRules.collectComponents(c, newState.getComponentBoard());
-        List<MoveResult> result = Move.collectComponents(collected, state, newState, move);
-        List<Card> drained = new ArrayList<>();
-        drained.add(((UseAbilityMove) (move)).getCard());
-        result.get(0).getAnimations().add(0, new ConsumeProgressAnimation(move.getPlayerUID(), drained));
-        List<MoveResult> afterCollection = Move.collectComponentsCheck(result.get(result.size() - 1).getNewState(), move);
-
+        for (Component component : c) {
+            component.getMatchNeighbors().add(-1);
+        }
+        List<MoveResult> result = state.results(move);
         results.addAll(result);
-        results.addAll(afterCollection);
         return results;
     }
 
