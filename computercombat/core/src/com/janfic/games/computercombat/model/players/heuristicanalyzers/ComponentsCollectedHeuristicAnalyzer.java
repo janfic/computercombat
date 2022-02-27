@@ -6,7 +6,8 @@ import com.janfic.games.computercombat.model.moves.MoveResult;
 import java.util.List;
 
 /**
- * Analyzes a move's results to evaluate it based on the number of components collected.
+ * Analyzes a move's results to evaluate it based on the number of components
+ * collected.
  *
  * @author janfc
  */
@@ -19,9 +20,9 @@ public class ComponentsCollectedHeuristicAnalyzer extends HeuristicAnalyzer {
         float maxValue = results.size() * GOOD_NUMBER_OF_COMPONENTS;
 
         Integer totalComponentsCollected = 0;
-        for (MoveResult result: results) {
+        for (MoveResult result : results) {
             List<MoveAnimation> animations = result.getAnimations();
-            for (MoveAnimation animation: animations) {
+            for (MoveAnimation animation : animations) {
                 if (animation instanceof CollectAnimation) {
                     CollectAnimation collectAnimation = (CollectAnimation) animation;
                     Integer componentsCollected = collectAnimation.getAllComponents().size();

@@ -243,14 +243,6 @@ public class MatchState implements Serializable, Cloneable {
         return componentsInMatch;
     }
 
-//    public Component[][] componentBoard;
-//    public Map<String, List<Card>> activeEntities;
-//    public Map<String, Computer> computers;
-//    public Map<String, Deck> decks;
-//    public List<Player> players;
-//    public Player currentPlayerMove;
-//    public boolean isGameOver;
-//    public Player winner;
     @Override
     public Object clone() throws CloneNotSupportedException {
         Player player1 = (Player) players.get(0).clone();
@@ -290,6 +282,9 @@ public class MatchState implements Serializable, Cloneable {
             state.winner = (Player) this.winner.clone();
         }
         state.currentPlayerMove = (Player) this.currentPlayerMove.clone();
+
+        MatchState.buildNeighbors(componentBoard);
+        state.update();
         return state;
     }
 

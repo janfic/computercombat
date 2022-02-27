@@ -1,6 +1,5 @@
 package com.janfic.games.computercombat.model.players;
 
-import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.Player;
@@ -45,7 +44,6 @@ public class HeuristicBotPlayer extends Player {
 
     @Override
     public Move getMove() {
-        System.out.println("Finding Best Move");
         List<Move> moves = GameRules.getAvailableMoves(currentState);
         Collections.shuffle(moves);
         for (Move move : moves) {
@@ -56,19 +54,18 @@ public class HeuristicBotPlayer extends Player {
                 List<MoveResult> results = new ArrayList<>();
                 try {
                     results = GameRules.makeMove((MatchState) currentState.clone(), move);
+                    double totalScore = 0;
+                    for (int i = 0; i < priorityList.size(); i++) {
+                        HeuristicAnalyzer analyzer = priorityList.get(i);
+                        double baseScore = analyzer.analyze(results);
+                        double priorityScalar = Math.pow(2, i);
+                        double priorityScore = priorityScalar * baseScore;
+                        totalScore += priorityScore;
+                    }
+                    moveSum += totalScore;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                double totalScore = 0;
-                for (int i = 0; i < priorityList.size(); i++) {
-                    HeuristicAnalyzer analyzer = priorityList.get(i);
-                    double baseScore = analyzer.analyze(results);
-                    double priorityScalar = Math.pow(2, i);
-                    double priorityScore = priorityScalar * baseScore;
-                    totalScore += priorityScore;
-                }
-                moveSum += totalScore;
             }
             double moveAverage = moveSum / MOVE_TRIES;
             move.setValue(moveAverage);
