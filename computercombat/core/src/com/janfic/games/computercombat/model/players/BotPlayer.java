@@ -49,4 +49,9 @@ public class BotPlayer extends Player {
     public void gameOver(MatchResults results) {
         // TODO
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new BotPlayer(this.getUID(), (Deck) this.getActiveDeck().clone());
+    }
 }

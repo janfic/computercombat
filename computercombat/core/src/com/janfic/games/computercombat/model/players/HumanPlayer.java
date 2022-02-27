@@ -2,6 +2,7 @@ package com.janfic.games.computercombat.model.players;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Player;
@@ -92,6 +93,14 @@ public class HumanPlayer extends Player {
     @Override
     public void gameOver(MatchResults results) {
 
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        HumanPlayer player = new HumanPlayer();
+        player.setUID(this.getUID());
+        player.setDeck((Deck) this.getActiveDeck().clone());
+        return player;
     }
 
 }

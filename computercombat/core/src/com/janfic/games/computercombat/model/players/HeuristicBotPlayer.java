@@ -45,6 +45,7 @@ public class HeuristicBotPlayer extends Player {
 
     @Override
     public Move getMove() {
+        System.out.println("Finding Best Move");
         List<Move> moves = GameRules.getAvailableMoves(currentState);
         Collections.shuffle(moves);
         for (Move move : moves) {
@@ -52,7 +53,13 @@ public class HeuristicBotPlayer extends Player {
             double moveSum = 0;
             // Repeat move and find average score
             for (int j = 0; j < MOVE_TRIES; j++) {
-                List<MoveResult> results = GameRules.makeMove(new MatchState(currentState), move);
+                List<MoveResult> results = new ArrayList<>();
+                try {
+                    results = GameRules.makeMove((MatchState) currentState.clone(), move);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 double totalScore = 0;
                 for (int i = 0; i < priorityList.size(); i++) {
                     HeuristicAnalyzer analyzer = priorityList.get(i);
@@ -94,5 +101,10 @@ public class HeuristicBotPlayer extends Player {
             }
             return 0;
         }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new HeuristicBotPlayer(this.getUID(), (Deck) this.getActiveDeck().clone());
     }
 }

@@ -9,6 +9,7 @@ import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.Player;
+import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation.CascadeData;
 import com.janfic.games.computercombat.model.animations.CollectAnimation;
@@ -29,7 +30,7 @@ import java.util.function.Predicate;
  *
  * @author Jan Fic
  */
-public class MatchState implements Serializable {
+public class MatchState implements Serializable, Cloneable {
 
     public Component[][] componentBoard;
     public Map<String, List<Card>> activeEntities;
@@ -242,8 +243,63 @@ public class MatchState implements Serializable {
         return componentsInMatch;
     }
 
+//    public Component[][] componentBoard;
+//    public Map<String, List<Card>> activeEntities;
+//    public Map<String, Computer> computers;
+//    public Map<String, Deck> decks;
+//    public List<Player> players;
+//    public Player currentPlayerMove;
+//    public boolean isGameOver;
+//    public Player winner;
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Player player1 = (Player) players.get(0).clone();
+        Player player2 = (Player) players.get(1).clone();
+
+        Component[][] componentBoard = new Component[8][8];
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                componentBoard[x][y] = new Component(this.componentBoard[x][y]);
+            }
+        }
+
+        Map<String, List<Card>> activeEntities = new HashMap<>();
+        List<Card> player1Cards = new ArrayList<>();
+        List<Card> player2Cards = new ArrayList<>();
+        activeEntities.put(player1.getUID(), player1Cards);
+        activeEntities.put(player2.getUID(), player2Cards);
+        for (String string : this.activeEntities.keySet()) {
+            for (Card card : this.activeEntities.get(string)) {
+                activeEntities.get(string).add((Software) ((Software) (card)).clone());
+            }
+        }
+
+        Map<String, Deck> decks = new HashMap<>();
+        for (String uid : this.decks.keySet()) {
+            decks.put(uid, (Deck) this.decks.get(uid).clone());
+        }
+
+        Map<String, Computer> computers = new HashMap<>();
+        for (String uid : this.computers.keySet()) {
+            computers.put(uid, (Computer) this.computers.get(uid).clone());
+        }
+
+        MatchState state = new MatchState(player1, player2, componentBoard, activeEntities, computers, decks);
+        state.isGameOver = this.isGameOver;
+        if (this.winner != null) {
+            state.winner = (Player) this.winner.clone();
+        }
+        state.currentPlayerMove = (Player) this.currentPlayerMove.clone();
+        return state;
+    }
+
     public static MatchState record(MatchState state) {
-        return new MatchState(state);
+        try {
+            return (MatchState) state.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public MatchState(MatchState state) {

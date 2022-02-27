@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * @author Jan Fic
  */
-public abstract class Card implements Json.Serializable, Comparable<Card> {
+public abstract class Card implements Json.Serializable, Comparable<Card>, Cloneable {
 
     protected int id, matchID;
     protected int health, armor, attack, magic;

@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.server;
 
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.network.server.MatchClient;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Player;
@@ -65,6 +66,8 @@ public class ServerMatchRoom {
                         m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
                     }
                     boolean isValid = match.isValidMove(move);
+                    System.out.println(move);
+                    System.out.println(new Json().prettyPrint(move));
                     if (isValid) {
                         List<MoveResult> results = match.makeMove(move);
                         currentPlayer.updateState(results);

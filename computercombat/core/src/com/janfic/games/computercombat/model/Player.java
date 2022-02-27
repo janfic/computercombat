@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Jan Fic
  */
-public abstract class Player implements Serializable {
+public abstract class Player implements Serializable, Cloneable {
 
     private String uid;
     private Deck deck;
@@ -30,6 +30,14 @@ public abstract class Player implements Serializable {
 
     public String getUID() {
         return uid;
+    }
+
+    public void setUID(String uid) {
+        this.uid = uid;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
     }
 
     public Deck getActiveDeck() {
@@ -64,4 +72,6 @@ public abstract class Player implements Serializable {
         }
         return super.equals(obj);
     }
+
+    public abstract Object clone() throws CloneNotSupportedException;
 }

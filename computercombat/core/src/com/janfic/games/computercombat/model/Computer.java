@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.model.abilities.DrawAbility;
+import java.util.Arrays;
 
 /**
  *
@@ -34,5 +35,16 @@ public class Computer extends Card implements Serializable {
 
     public void drawCard() {
         this.runProgress = 0;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Computer c = new Computer(this.ownerUID);
+        c.matchID = this.matchID;
+        c.health = this.health;
+        c.armor = this.armor;
+        c.runProgress = this.runProgress;
+        c.attack = this.attack;
+        return c;
     }
 }
