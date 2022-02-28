@@ -346,7 +346,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card>, Clone
             return false;
         }
         if (obj instanceof Card || obj instanceof Software) {
-            return ((Card) obj).hashCode() == this.hashCode();
+            return ((Card) obj).getMatchID() == this.getMatchID();
         }
         return obj.hashCode() == this.hashCode();
     }

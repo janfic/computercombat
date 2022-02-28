@@ -3,6 +3,7 @@ package com.janfic.games.computercombat.model.match;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Computer;
@@ -10,6 +11,7 @@ import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.abilities.AttackAbility;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation.CascadeData;
 import com.janfic.games.computercombat.model.animations.CollectAnimation;
@@ -115,6 +117,31 @@ public class MatchState implements Serializable, Cloneable {
             CollectAnimation collectAnimation = new CollectAnimation(collected, progress);
             progress(collectAnimation);
 
+            // Attack
+            boolean attack = false;
+            for (Integer integer : collected.keySet()) {
+                for (Component component : collected.get(integer)) {
+                    if (component.getColor() == 5) {
+                        attack = true;
+                        break;
+                    }
+                }
+            }
+
+            if (attack && activeEntities.get(currentPlayerMove.getUID()).isEmpty() == false) {
+                ObjectMap<Card, List<Card>> attacks = new ObjectMap<>();
+
+                Card attacker = activeEntities.get(currentPlayerMove.getUID()).get(0);
+                List<Card> attacked = new ArrayList<>();
+                attacked.add(activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).get(0));
+                attacks.put(attacker, attacked);
+
+                AttackAbility attackAbility = new AttackAbility(new ArrayList<>(), attacks);
+
+                List<MoveResult> res = attackAbility.doAbility(this, move);
+                results.addAll(res);
+            }
+
             // Remove, Cascade, then Invalidate
             // Remove
             for (Integer matchNumber : collected.keySet()) {
@@ -207,7 +234,6 @@ public class MatchState implements Serializable, Cloneable {
                 if (componentBoard[x][y].getColor() == 0) {
                     componentBoard[x][y].invalidate();
                     componentBoard[x][y].invalidateNeighbors();
-                    Component above = null;
                     boolean cascaded = false;
                     for (int i = y - 1; i >= 0; i--) {
                         if (componentBoard[x][i].getColor() != 0) {

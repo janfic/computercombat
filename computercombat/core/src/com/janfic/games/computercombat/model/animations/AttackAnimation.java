@@ -59,8 +59,9 @@ public class AttackAnimation implements MoveAnimation {
                             Actions.moveTo(posBack.x, posBack.y, 0.5f * animationSpeed, Interpolation.exp5Out)
                     );
                     Action attackedAction;
-                    int armorDecrease = attacked.getArmor() > 0 ? Math.min(attacked.getArmor(), entry.key.getAttack()) : 0;
-                    int healthDecrease = attacked.getHealth() <= entry.key.getAttack() - armorDecrease ? attacked.getHealth() : entry.key.getAttack() - armorDecrease;
+                    Card a = attackedActor.getSoftware();
+                    int armorDecrease = a.getArmor() > 0 ? Math.min(a.getArmor(), entry.key.getAttack()) : 0;
+                    int healthDecrease = a.getHealth() <= entry.key.getAttack() - armorDecrease ? a.getHealth() : entry.key.getAttack() - armorDecrease;
                     attackedAction = Actions.sequence(
                             Actions.delay(0.5f * animationSpeed),
                             Actions.color(Color.RED),
@@ -68,7 +69,6 @@ public class AttackAnimation implements MoveAnimation {
                             new ChangeStatAction(0.5f * animationSpeed, "armor", -armorDecrease),
                             new ChangeStatAction(0.5f * animationSpeed, "health", -healthDecrease)
                     );
-
                     attackedAction.setActor(attackedActor);
                     attack.setActor(attackerActor);
                     attackActions.add(attack);
