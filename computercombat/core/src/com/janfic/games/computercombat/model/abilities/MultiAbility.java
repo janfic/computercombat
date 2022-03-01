@@ -34,10 +34,9 @@ public class MultiAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
 
-        MatchState lastState = new MatchState(state);
         for (int i = 0; i < abilities.size(); i++) {
             Ability ability = abilities.get(i);
-            List<MoveResult> abilityResults = ability.doAbility(lastState, move);
+            List<MoveResult> abilityResults = ability.doAbility(state, move);
             if (i != 0) {
                 for (MoveResult abilityResult : abilityResults) {
                     int index = -1;
@@ -53,10 +52,9 @@ public class MultiAbility extends Ability {
                 }
             }
             results.addAll(abilityResults);
-            lastState = results.get(results.size() - 1).getNewState();
             if (i < abilities.size() - 1) {
-                if (lastState.currentPlayerMove.getUID() != move.getPlayerUID()) {
-                    lastState.currentPlayerMove = state.getOtherProfile(lastState.currentPlayerMove);
+                if (state.currentPlayerMove.getUID() != move.getPlayerUID()) {
+                    state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
                 }
             }
         }

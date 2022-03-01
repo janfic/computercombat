@@ -36,12 +36,10 @@ public class DrawAbility extends Ability {
     @Override
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> r = new ArrayList<>();
-
         UseAbilityMove abilityMove = (UseAbilityMove) move;
-        MatchState newState = new MatchState(state);
 
-        List<Card> cards = newState.activeEntities.get(move.getPlayerUID());
-        Deck deck = newState.decks.get(move.getPlayerUID());
+        List<Card> cards = state.activeEntities.get(move.getPlayerUID());
+        Deck deck = state.decks.get(move.getPlayerUID());
 
         List<Software> drawnCards = new ArrayList<>();
         if (this.cards == null) {
@@ -63,14 +61,13 @@ public class DrawAbility extends Ability {
 
         List<MoveAnimation> animations = new ArrayList<>();
         if (abilityMove.getCard() instanceof Computer) {
-            newState.computers.get(move.getPlayerUID()).setProgress(0);
+            state.computers.get(move.getPlayerUID()).setProgress(0);
         } else {
-            for (Card card : newState.activeEntities.get(move.getPlayerUID())) {
+            for (Card card : state.activeEntities.get(move.getPlayerUID())) {
                 if (card.equals(abilityMove.getCard())) {
                     card.setProgress(0);
                 }
             }
-
         }
 
         List<Card> drained = new ArrayList<>();
@@ -79,16 +76,16 @@ public class DrawAbility extends Ability {
 
         DrawAnimation drawAnimation = new DrawAnimation(move.getPlayerUID(), drawnCards);
 
-        for (Player player : newState.players) {
+        for (Player player : state.players) {
             if (player.getUID().equals(move.getPlayerUID())) {
-                newState.currentPlayerMove = newState.getOtherProfile(player);
+                state.currentPlayerMove = state.getOtherProfile(player);
             }
         }
 
         animations.add(drainAnimation);
         animations.add(drawAnimation);
 
-        MoveResult result = new MoveResult(move, state, newState, animations);
+        MoveResult result = new MoveResult(move, MatchState.record(state), animations);
 
         r.add(result);
         return r;

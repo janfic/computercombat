@@ -36,16 +36,17 @@ public class FocusedDamageAbility extends Ability {
         List<MoveResult> moveResults = new ArrayList<>();
 
         UseAbilityMove abilityMove = (UseAbilityMove) move;
-        MatchState newState = new MatchState(state);
         List<Card> destroyed = new ArrayList<>();
         List<MoveAnimation> animation = new ArrayList<>();
+        MoveAnimation consume = Ability.consumeCardProgress(state, move);
+        animation.add(consume);
 
-        int index = newState.activeEntities.get(abilityMove.getCard().getOwnerUID()).indexOf(abilityMove.getCard());
-        newState.activeEntities.get(abilityMove.getPlayerUID()).get(index).setProgress(0);
+        int index = state.activeEntities.get(abilityMove.getCard().getOwnerUID()).indexOf(abilityMove.getCard());
+        state.activeEntities.get(abilityMove.getPlayerUID()).get(index).setProgress(0);
 
         for (Card selectedSoftware : abilityMove.getSelectedSoftwares()) {
-            for (String playerUID : newState.activeEntities.keySet()) {
-                for (Card card : newState.activeEntities.get(playerUID)) {
+            for (String playerUID : state.activeEntities.keySet()) {
+                for (Card card : state.activeEntities.get(playerUID)) {
                     if (card.equals(selectedSoftware)) {
                         int damage = amount.analyze(state, move);
                         card.recieveDamage(damage);
@@ -57,21 +58,15 @@ public class FocusedDamageAbility extends Ability {
                 }
             }
         }
-
-        MoveResult result = new MoveResult(move, state, newState, animation);
+        state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
+        MoveResult result = new MoveResult(move, MatchState.record(state), animation);
         moveResults.add(result);
 
         if (destroyed.isEmpty() == false) {
             DestroyCardAbility destroyAbility = new DestroyCardAbility(destroyed);
-            List<MoveResult> r = destroyAbility.doAbility(result.getNewState(), move);
+            List<MoveResult> r = destroyAbility.doAbility(state, move);
             moveResults.addAll(r);
         }
-
-        List<Card> drained = new ArrayList<>();
-        drained.add(((UseAbilityMove) (move)).getCard());
-        moveResults.get(0).getAnimations().add(0, new ConsumeProgressAnimation(move.getPlayerUID(), drained));
-
-        moveResults.get(moveResults.size() - 1).getNewState().currentPlayerMove = newState.getOtherProfile(newState.currentPlayerMove);
         return moveResults;
     }
 

@@ -31,26 +31,25 @@ public class CardToFrontAbility extends Ability {
 
         UseAbilityMove useAbilityMove = (UseAbilityMove) move;
 
-        MatchState newState = new MatchState(state);
-        MoveAnimation consume = Ability.consumeCardProgress(newState, move);
+        MoveAnimation consume = Ability.consumeCardProgress(state, move);
 
         List<Card> toFront = new ArrayList<>();
         toFront.addAll(useAbilityMove.getSelectedSoftwares());
 
         for (Card card : useAbilityMove.getSelectedSoftwares()) {
-            int cardIndex = newState.activeEntities.get(card.getOwnerUID()).indexOf(card);
-            Card newStateCard = newState.activeEntities.get(card.getOwnerUID()).get(cardIndex);
-            newState.activeEntities.get(card.getOwnerUID()).remove(cardIndex);
-            newState.activeEntities.get(card.getOwnerUID()).add(0, newStateCard);
+            int cardIndex = state.activeEntities.get(card.getOwnerUID()).indexOf(card);
+            Card newStateCard = state.activeEntities.get(card.getOwnerUID()).get(cardIndex);
+            state.activeEntities.get(card.getOwnerUID()).remove(cardIndex);
+            state.activeEntities.get(card.getOwnerUID()).add(0, newStateCard);
         }
 
-        newState.currentPlayerMove = newState.getOtherProfile(newState.currentPlayerMove);
+        state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
 
         List<MoveAnimation> animations = new ArrayList<>();
         animations.add(consume);
         animations.add(new CardToFrontAnimation(toFront));
 
-        MoveResult result = new MoveResult(move, state, newState, animations);
+        MoveResult result = new MoveResult(move, MatchState.record(state), animations);
         results.add(result);
 
         return results;

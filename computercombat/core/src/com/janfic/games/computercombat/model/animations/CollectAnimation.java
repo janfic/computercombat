@@ -27,8 +27,8 @@ import java.util.Map;
  */
 public class CollectAnimation implements MoveAnimation {
 
-    private Map<Integer, List<Component>> collected;
-    private Map<Component, Card> progress;
+    public Map<Integer, List<Component>> collected;
+    public Map<Component, Card> progress;
     private List<Component> allComponents;
     private final static int[] gutterYs = new int[]{187, 129, 73, 15, -22};
 
@@ -82,8 +82,8 @@ public class CollectAnimation implements MoveAnimation {
                     final ComputerActor computerActor = computerActors.get(currentPlayerUID);
                     SoftwareActor tempActor = null;
 
-                    if (progress.containsKey("" + component.hashCode())) {
-                        Card c = progress.get("" + component.hashCode());
+                    if (progress.containsKey(component.toString())) {
+                        Card c = progress.get(component.toString());
                         for (int j = 0; j < softwareActors.get(currentPlayerUID).size(); j++) {
                             SoftwareActor softwareActor = softwareActors.get(currentPlayerUID).get(j);
                             if (c.equals(softwareActor.getSoftware())) {
@@ -123,7 +123,7 @@ public class CollectAnimation implements MoveAnimation {
                                         progressActor.getSoftware().recieveProgress(1);
                                         for (Actor actor : progressActor.getLEDs().getChildren()) {
                                             LEDActor led = (LEDActor) actor;
-                                            if (led.getComponentColor().equals(SoftwareActor.components.get(component.getClass()))) {
+                                            if (led.getComponentColor().equals(SoftwareActor.components.get(component.getColor()))) {
                                                 led.setLightOn(true);
                                             }
                                         }
@@ -137,7 +137,7 @@ public class CollectAnimation implements MoveAnimation {
                                     if (progressActor != null) {
                                         for (Actor actor : progressActor.getLEDs().getChildren()) {
                                             LEDActor led = (LEDActor) actor;
-                                            if (led.getComponentColor().equals(SoftwareActor.components.get(component.getClass()))) {
+                                            if (led.getComponentColor().equals(SoftwareActor.components.get(component.getColor()))) {
                                                 led.setLightOn(false);
                                             }
                                         }

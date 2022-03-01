@@ -42,11 +42,16 @@ public class BotPlayer extends Player {
 
     @Override
     public void updateState(List<MoveResult> state) {
-        this.currentState = state.get(state.size() - 1).getNewState();
+        this.currentState = state.get(state.size() - 1).getState();
     }
 
     @Override
     public void gameOver(MatchResults results) {
         // TODO
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new BotPlayer(this.getUID(), (Deck) this.getActiveDeck().clone());
     }
 }

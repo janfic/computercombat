@@ -1,7 +1,7 @@
 "id","name","description","code","textureName"
 0,"Draw","Draw a card from your deck","new DrawAbility();","draw_card"
-1,"Infect","Spawn 5 Bugs on the board","new SpawnAbility(BugComponent.class, {state, move -> A:{return 5;}} as StateAnalyzer<Integer>, []);","infect"
-2,"Open Folder","Collect All Storage Components","new CollectAbility([], [{match, move, c -> F: {return c instanceof StorageComponent;}} as CollectFilter],
+1,"Infect","Spawn 5 Bugs on the board","new SpawnAbility(5, {state, move -> A:{return 5;}} as StateAnalyzer<Integer>, []);","infect"
+2,"Open Folder","Collect All Storage Components","new CollectAbility([], [{match, move, c -> F: {return c.getColor() == 3;}} as CollectFilter],
 	{match, move -> G:{return 64;}} as StateAnalyzer<Integer>
 );","open_folder"
 3,"Tunnel","Collect a row of components","Filter f = new ComponentFilter(""Select a row"") {
@@ -25,7 +25,7 @@ new CollectAbility([f],
 };
 new FocusedDamageAbility([filter], {state, move -> A:{return 5;}} as StateAnalyzer<Integer>);","click"
 5,"Corruption","Transform all Storage Components to Bugs","ComponentFilter filter = new ComponentFilter(""All Storage Components"") {
-     public boolean filter(Component c, MatchState state, Move move) { return c instanceof StorageComponent}
+     public boolean filter(Component c, MatchState state, Move move) { return c.getColor() == 3}
 };
 
 new TransformComponentsAbility(
@@ -33,13 +33,13 @@ new TransformComponentsAbility(
         filter,
         [5]
 );","corrupt"
-6,"Gigabyte Flash","Spawn 8 Storage Components ","new SpawnAbility(StorageComponent.class, {state, move -> A:{return 8;}} as StateAnalyzer, []);","gigabyte_flash"
+6,"Gigabyte Flash","Spawn 8 Storage Components ","new SpawnAbility(3, {state, move -> A:{return 8;}} as StateAnalyzer, []);","gigabyte_flash"
 7,"Terabyte Onslaught","Deal 3 damage boosted by Storage Components. Then Collect half of all Storage Components","Filter filter = new CardFilter(""Choose an opponents card to damage"") {
      public boolean filter(Card card, MatchState state, Move move) {return !card.getOwnerUID().equals(state.currentPlayerMove.getUID());}
     };
 
 ComponentFilter storageFilter = new ComponentFilter(""Storage Components""){
-	public boolean filter(Component component, MatchState state, Move move) {return component instanceof StorageComponent};
+	public boolean filter(Component component, MatchState state, Move move) {return component.getColor() == 3};
 } as ComponentFilter;
     
 StateAnalyzer<Integer> scaleDamage = {
@@ -51,12 +51,12 @@ new MultiAbility(
             new FocusedDamageAbility([filter], scaleDamage),
             new CollectAbility(
 		[],
-		[{match, move, c -> F: {return c instanceof StorageComponent;}} as CollectFilter], 
+		[{match, move, c -> F: {return c.getColor() == 3;}} as CollectFilter], 
 		{MatchState state, move -> A:{return state.countComponents(storageFilter, move).intdiv(2);}} as StateAnalyzer<Integer>)
 	]
 );","terabyte_onslaught"
 8,"Violent Volume","Deal 1 damage to all opponents boosted by Power Components","ComponentFilter powerFilter = new ComponentFilter(""Power Filter"") {
-	public boolean filter(Component c, MatchState state, Move move) {return c instanceof PowerComponent;}
+	public boolean filter(Component c, MatchState state, Move move) {return c.getColor() == 6 }
 };
 
 StateAnalyzer<Integer> powerCount = {state, move -> A:{return 1 + state.countComponents(powerFilter, move).intdiv(2)}} as StateAnalyzer<Integer>;
@@ -84,7 +84,7 @@ new DamageAllAbility(damage);","blinding_brightness"
 			[12],
 			[]
 		),
-		new SpawnAbility(StorageComponent.class, {state, move -> F:{return 5;}} as StateAnalyzer<Integer>, [])
+		new SpawnAbility(3, {state, move -> F:{return 5;}} as StateAnalyzer<Integer>, [])
 	]
 );
 
@@ -94,18 +94,17 @@ new DamageAllAbility(damage);","blinding_brightness"
 ]);","open_shortcut"
 13,"Arrange Tasks","Select an opponent to move to the first position.","Filter filter = new CardFilter(""Choose an opponents card to damage"") {
     	public boolean filter(Card card, MatchState state, Move move) {
-		System.out.println(card.getOwnerUID() + "" ""  + state.currentPlayerMove.getUID());
 		return !card.getOwnerUID().equals(state.currentPlayerMove.getUID())
 	}
 };
 
 new CardToFrontAbility([filter]);","arrange_tasks"
 14,"Power Surge","Double the amount of Power Components on the board.","ComponentFilter powerFilter = new ComponentFilter(""Power Filter"") {
-	public boolean filter(Component c, MatchState state, Move move) {return c instanceof PowerComponent;}
+	public boolean filter(Component c, MatchState state, Move move) {return c.getColor() == 6}
 };
 
 new SpawnAbility(
-	PowerComponent.class,
+	6,
 	{state, move -> A:{ 
 		return state.countComponents(powerFilter, move);
 	}} as StateAnalyzer<Integer>,

@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.server;
 
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.network.server.MatchClient;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Player;
@@ -42,7 +43,7 @@ public class ServerMatchRoom {
                 // set up match data collection
                 Timestamp starttime = new Timestamp(System.currentTimeMillis());
                 matchData = new MatchData(player1, player2);
-                matchData.getMatchStates().add(match.getCurrentState());
+                matchData.getMatchStates().add(new MatchState(match.getCurrentState()));
 
                 // Start main match loop
                 isGameOver = false;

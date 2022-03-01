@@ -11,12 +11,6 @@ import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.model.components.BugComponent;
-import com.janfic.games.computercombat.model.components.CPUComponent;
-import com.janfic.games.computercombat.model.components.NetworkComponent;
-import com.janfic.games.computercombat.model.components.PowerComponent;
-import com.janfic.games.computercombat.model.components.RAMComponent;
-import com.janfic.games.computercombat.model.components.StorageComponent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,16 +29,16 @@ public class DeckCardActor extends Panel {
     Label amountLabel;
     Table leds;
 
-    public static final Map<Class<? extends Component>, String> components;
+    public static final Map<Integer, String> components;
 
     static {
         components = new HashMap<>();
-        components.put(CPUComponent.class, "CPU");
-        components.put(BugComponent.class, "BUG");
-        components.put(PowerComponent.class, "POWER");
-        components.put(NetworkComponent.class, "NETWORK");
-        components.put(RAMComponent.class, "RAM");
-        components.put(StorageComponent.class, "STORAGE");
+        components.put(1, "CPU");
+        components.put(5, "BUG");
+        components.put(6, "POWER");
+        components.put(4, "NETWORK");
+        components.put(2, "RAM");
+        components.put(3, "STORAGE");
     }
 
     public DeckCardActor(ComputerCombatGame game, Skin skin, Deck deck, Software software) {
@@ -55,7 +49,9 @@ public class DeckCardActor extends Panel {
 
         leds = new Table();
         leds.defaults().space(5);
-        for (Class<? extends Component> runComponent : software.getRunComponents()) {
+        for (Integer runComponent : software.getRunComponents()) {
+            System.out.println(runComponent);
+            System.out.println(components.get(runComponent));
             LEDActor led = new LEDActor(skin, components.get(runComponent));
             led.setLightOn(true);
             leds.add(led).row();

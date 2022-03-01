@@ -25,7 +25,7 @@ public class SwitchComponentsAbility extends Ability {
     public SwitchComponentsAbility() {
         super(new ArrayList<>());
     }
-    
+
     public SwitchComponentsAbility(List<Filter> selectFilter) {
         super(selectFilter);
     }
@@ -34,20 +34,18 @@ public class SwitchComponentsAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
 
-        MatchState newState = new MatchState(state);
         UseAbilityMove useAbility = (UseAbilityMove) move;
 
-        Component[][] newBoard = newState.componentBoard;
+        Component[][] newBoard = state.componentBoard;
         Component a = useAbility.getSelectedComponents().get(0);
         Component b = useAbility.getSelectedComponents().get(1);
 
         Component bb = newBoard[b.getX()][b.getY()];
         Component ba = newBoard[a.getX()][a.getY()];
-        int oldBX = b.getX(), oldBY = b.getY();
-        bb.setPosition(a.getX(), a.getY());
-        ba.setPosition(oldBX, oldBY);
-        newBoard[ba.getX()][ba.getY()] = ba;
-        newBoard[bb.getX()][bb.getY()] = bb;
+        bb.invalidate();
+        ba.invalidate();
+        ba.invalidateNeighbors();
+        bb.invalidateNeighbors();
 
         List<Card> drained = new ArrayList<>();
         drained.add(((UseAbilityMove) (move)).getCard());
@@ -56,8 +54,8 @@ public class SwitchComponentsAbility extends Ability {
         anims.add(new ConsumeProgressAnimation(move.getPlayerUID(), drained));
         anims.add(new SwitchAnimation(bb, ba));
 
-        MoveResult r = new MoveResult(move, state, newState, anims);
-        List<MoveResult> collectCheckResults = Move.collectComponentsCheck(r.getNewState(), move);
+        MoveResult r = new MoveResult(move, MatchState.record(state), anims);
+        List<MoveResult> collectCheckResults = state.results(move);
 
         results.add(r);
         results.addAll(collectCheckResults);

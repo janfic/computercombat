@@ -10,7 +10,6 @@ import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.abilities.AttackAbility;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation;
 import com.janfic.games.computercombat.model.animations.CollectAnimation;
-import com.janfic.games.computercombat.model.components.BugComponent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +67,7 @@ public abstract class Move implements Json.Serializable {
      * @param move move that caused this new state
      * @return a list of MoveResults
      */
+    /*
     public static List<MoveResult> collectComponentsCheck(MatchState state, Move move) {
 
         List<MoveResult> results = new ArrayList<>();
@@ -103,24 +103,26 @@ public abstract class Move implements Json.Serializable {
 
         return results;
     }
+     */
 
+    /*
     public static List<MoveResult> collectComponents(Map<Integer, List<Component>> collected, MatchState originalState, MatchState newState, Move move) {
         Map<Component, Card> progress = new HashMap<>();
         CollectAnimation collectAnimation = new CollectAnimation(collected, progress);
         List<MoveAnimation> animation = new ArrayList<>();
 
-        List<BugComponent> bugsCollected = new ArrayList<>();
+        List<Component> bugsCollected = new ArrayList<>();
 
         //Progress
         for (Component c : collectAnimation.getAllComponents()) {
             boolean collectedByCard = false;
-            if (c instanceof BugComponent) {
-                bugsCollected.add((BugComponent) c);
+            if (c.getColor() == 5) {
+                bugsCollected.add(c);
             }
             for (Card card : newState.activeEntities.get(originalState.currentPlayerMove.getUID())) {
                 if (card.getRunProgress() < card.getRunRequirements()) {
-                    for (Class<? extends Component> requirement : card.getRunComponents()) {
-                        if (c.getClass().equals(requirement)) {
+                    for (Integer requirement : card.getRunComponents()) {
+                        if (c.getColor() == requirement) {
                             card.recieveComponents(requirement, 1);
                             collectedByCard = true;
                             progress.put(c, card);
@@ -211,4 +213,5 @@ public abstract class Move implements Json.Serializable {
 
         return results;
     }
+     */
 }

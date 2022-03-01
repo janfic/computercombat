@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Map;
  *
  * @author Jan Fic
  */
-public class Deck implements Serializable {
+public class Deck implements Serializable, Cloneable {
 
     private String name;
     private int id;
@@ -152,6 +153,18 @@ public class Deck implements Serializable {
             return o.getID() == this.getID();
         }
         return super.equals(obj); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Deck clone = new Deck(this.name, this.id);
+        for (String string : cards.keySet()) {
+            clone.cards.put(string, this.cards.get(string));
+        }
+        for (Integer integer : stack) {
+            clone.stack.add(integer);
+        }
+        return clone;
     }
 
 }

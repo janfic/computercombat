@@ -45,10 +45,17 @@ public class UseAbilityMove extends Move implements Json.Serializable {
         return selectedSoftwares;
     }
 
+    /**
+     * IMPORTANT: Move Results are used to RECORD state changes, not to apply
+     * them
+     *
+     * @param state
+     * @return
+     */
     @Override
     public List<MoveResult> doMove(MatchState state) {
         List<MoveResult> results = entity.getAbility().doAbility(state, this);
-        GameRules.isGameOver(results.get(results.size() - 1).getNewState());
+        GameRules.isGameOver(state);
         return results;
     }
 

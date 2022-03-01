@@ -31,31 +31,37 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
 
         List<MoveResult> results = new ArrayList<>();
 
-        MatchState newState = new MatchState(originalState);
+        // Record Original State
+        MoveResult r = new MoveResult(this, MatchState.record(originalState), new ArrayList<>());
+        results.add(r);
 
-        Component[][] board = newState.getComponentBoard();
-        Component bb = board[b.getX()][b.getY()];
-        Component ba = board[a.getX()][a.getY()];
-        int oldBX = b.getX(), oldBY = b.getY();
-        bb.setPosition(a.getX(), a.getY());
-        ba.setPosition(oldBX, oldBY);
-        board[ba.getX()][ba.getY()] = ba;
-        board[bb.getX()][bb.getY()] = bb;
+        // Apply Switch
+        Component[][] board = originalState.getComponentBoard();
+        Component switchB = board[b.getX()][b.getY()];
+        Component switchA = board[a.getX()][a.getY()];
+        int bColor = switchB.getColor();
+        switchB.changeColor(switchA.getColor());
+        switchA.changeColor(bColor);
 
         //Switch and Create 1st MoveResult
         SwitchAnimation switchAnimation = new SwitchAnimation(a, b);
         List<MoveAnimation> animations = new ArrayList<>();
         animations.add(switchAnimation);
-        MoveResult r = new MoveResult(this, originalState, newState, animations);
-        results.add(r);
 
-        originalState = newState;
-        newState = new MatchState(newState);
+        // Record Switch
+        MoveResult mr = new MoveResult(this, MatchState.record(originalState), animations);
+        results.add(mr);
 
-        List<MoveResult> collectLoop = Move.collectComponentsCheck(newState, this);
+        switchA.invalidate();
+        switchB.invalidate();
+        switchA.invalidateNeighbors();
+        switchB.invalidateNeighbors();
+
+        List<MoveResult> collectLoop = originalState.results(this);
+        //collectLoop = Move.collectComponentsCheck(originalState, this);
         results.addAll(collectLoop);
 
-        GameRules.isGameOver(results.get(results.size() - 1).getNewState());
+        GameRules.isGameOver(originalState);
         return results;
     }
 

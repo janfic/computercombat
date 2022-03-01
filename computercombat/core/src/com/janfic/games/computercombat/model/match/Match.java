@@ -41,44 +41,48 @@ public class Match {
 
         try {
             this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
+            this.currentState.update();
+            while (currentState.getMatches().isEmpty() == false) {
+                this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
+                this.currentState.update();
+            }
+
         } catch (Exception e) {
             System.err.println("Something went wrong when creating the initial match state: ");
             e.printStackTrace();
         }
     }
 
-    private Component[][] makeBoard(Map<Class<? extends Component>, Integer> componentFrequencies) throws Exception {
+    private Component[][] makeBoard(Map<Integer, Integer> colorFrequencies) throws Exception {
         Component[][] componentBoard = new Component[8][8];
-        List<Class<? extends Component>> components = new ArrayList<>();
-        for (Class<? extends Component> type : componentFrequencies.keySet()) {
-            int frequency = componentFrequencies.get(type);
-            components.addAll(Collections.nCopies(frequency, type));
+
+        // Construct Component Frequencies
+        List<Integer> colorBag = new ArrayList<>();
+        for (Integer type : colorFrequencies.keySet()) {
+            int frequency = colorFrequencies.get(type);
+            colorBag.addAll(Collections.nCopies(frequency, type));
         }
 
+        // Generate Board
         for (int x = 0; x < componentBoard.length; x++) {
             for (int y = 0; y < componentBoard[x].length; y++) {
-                Collections.shuffle(components);
-                Class<? extends Component> component = components.get(0);
-                Component c = component.getConstructor(int.class, int.class).newInstance(x, y);
+                int color = colorBag.get((int) (Math.random() * colorBag.size()));
+                Component c = new Component(color, x, y);
                 componentBoard[x][y] = c;
+                c.invalidate();
             }
         }
 
-        while (GameRules.areAvailableComponentMatches(componentBoard).isEmpty() || !GameRules.getCurrentComponentMatches(componentBoard).isEmpty()) {
-            for (int x = 0; x < componentBoard.length; x++) {
-                for (int y = 0; y < componentBoard[x].length; y++) {
-                    Collections.shuffle(components);
-                    Class<? extends Component> component = components.get(0);
-                    Component c = component.getConstructor(int.class, int.class).newInstance(x, y);
-                    componentBoard[x][y] = c;
-                }
-            }
-        }
+        //Set Neighbors
+        MatchState.buildNeighbors(componentBoard);
+
         return componentBoard;
     }
 
     public MatchState getPlayerMatchState(String playerUID) {
         MatchState copy = new MatchState(currentState, playerUID);
+        MatchState.buildNeighbors(copy.getComponentBoard());
+        currentState.update();
         return copy;
     }
 
@@ -88,7 +92,6 @@ public class Match {
 
     public List<MoveResult> makeMove(Move move) {
         List<MoveResult> r = GameRules.makeMove(currentState, move);
-        this.currentState = r.get(r.size() - 1).getNewState();
         return r;
     }
 

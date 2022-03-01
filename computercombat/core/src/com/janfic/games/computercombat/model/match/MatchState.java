@@ -3,12 +3,21 @@ package com.janfic.games.computercombat.model.match;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
+import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.Player;
+import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.abilities.AttackAbility;
+import com.janfic.games.computercombat.model.animations.CascadeAnimation;
+import com.janfic.games.computercombat.model.animations.CascadeAnimation.CascadeData;
+import com.janfic.games.computercombat.model.animations.CollectAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
+import com.janfic.games.computercombat.model.moves.MoveAnimation;
+import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.util.CardFilter;
 import com.janfic.games.computercombat.util.ComponentFilter;
 import com.janfic.games.computercombat.util.NullifyingJson;
@@ -16,13 +25,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.function.Predicate;
 
 /**
  *
  * @author Jan Fic
  */
-public class MatchState implements Serializable {
+public class MatchState implements Serializable, Cloneable {
 
     public Component[][] componentBoard;
     public Map<String, List<Card>> activeEntities;
@@ -61,6 +71,258 @@ public class MatchState implements Serializable {
         return componentBoard;
     }
 
+    public void update() {
+        // Update invalidated
+        List<Component> matches = new ArrayList<>();
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                Component c = componentBoard[x][y];
+                if (c.isInvalid()) {
+                    c.update();
+                    if (c.isMatched()) {
+                        matches.add(c);
+                    }
+                }
+            }
+        }
+        for (Component component : matches) {
+            component.updateMatchedNeighbors();
+        }
+    }
+
+    private boolean isInvalidBoard() {
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                Component c = componentBoard[x][y];
+                if (c.isInvalid()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public List<MoveResult> results(Move move) {
+        List<MoveResult> results = new ArrayList<>();
+
+        boolean extraTurn = false;
+        while (isInvalidBoard() || getMatches().isEmpty() == false) {
+            // Save Old State
+            // Update
+            update();
+
+            // Collect Components
+            Map<Integer, List<Component>> collected = collectComponents();
+            Map<Component, Card> progress = new HashMap<>();
+            CollectAnimation collectAnimation = new CollectAnimation(collected, progress);
+            progress(collectAnimation);
+
+            // Attack
+            boolean attack = false;
+            for (Integer integer : collected.keySet()) {
+                for (Component component : collected.get(integer)) {
+                    if (component.getColor() == 5) {
+                        attack = true;
+                        break;
+                    }
+                }
+            }
+
+            if (attack && activeEntities.get(currentPlayerMove.getUID()).isEmpty() == false) {
+                ObjectMap<Card, List<Card>> attacks = new ObjectMap<>();
+
+                Card attacker = activeEntities.get(currentPlayerMove.getUID()).get(0);
+                List<Card> attacked = new ArrayList<>();
+                attacked.add(activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).get(0));
+                attacks.put(attacker, attacked);
+
+                AttackAbility attackAbility = new AttackAbility(new ArrayList<>(), attacks);
+
+                List<MoveResult> res = attackAbility.doAbility(this, move);
+                results.addAll(res);
+            }
+
+            // Remove, Cascade, then Invalidate
+            // Remove
+            for (Integer matchNumber : collected.keySet()) {
+                for (Component component : collected.get(matchNumber)) {
+                    this.componentBoard[component.getX()][component.getY()].changeColor(0);
+                }
+            }
+
+            // Cascade
+            // This can be optimized by storing collected components
+            CascadeAnimation cascadeAnimation = new CascadeAnimation(cascade());
+            List<MoveAnimation> moveAnimation = new ArrayList<>();
+            moveAnimation.add(collectAnimation);
+            moveAnimation.add(cascadeAnimation);
+
+            for (Integer integer : collected.keySet()) {
+                if (collected.get(integer).size() >= 4) {
+                    extraTurn = true;
+                }
+            }
+            MoveResult result = new MoveResult(move, MatchState.record(this), moveAnimation);
+            results.add(result);
+        }
+
+        if (extraTurn == false && results.size() > 0) {
+            MoveResult last = results.get(results.size() - 1);
+            last.getState().currentPlayerMove = last.getState().getOtherProfile(last.getState().currentPlayerMove);
+            this.currentPlayerMove = last.getState().currentPlayerMove;
+        }
+
+        return results;
+    }
+
+    public Map<Integer, List<Component>> collectComponents() {
+        int matchNumber = 0;
+        Map<Integer, List<Component>> collected = new HashMap<>();
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                if (componentBoard[x][y].isMatched()) {
+                    List<Component> match = new ArrayList<>();
+                    Stack<Component> bfs = new Stack<>();
+                    bfs.add(componentBoard[x][y]);
+                    while (bfs.isEmpty() == false) {
+                        Component current = bfs.pop();
+                        match.add(new Component(current));
+                        for (Component neighbor : current.getNeighbors(current.getMatchNeighbors())) {
+                            if (neighbor.isMatched()) {
+                                bfs.add(neighbor);
+                            }
+                        }
+                        current.getMatchNeighbors().clear();
+                    }
+                    collected.put(matchNumber, match);
+                    matchNumber++;
+                }
+            }
+        }
+        return collected;
+    }
+
+    public void progress(CollectAnimation collectAnimation) {
+        Map<Component, Card> progress = collectAnimation.progress;
+        for (Component c : collectAnimation.getAllComponents()) {
+            boolean collectedByCard = false;
+            for (Card card : activeEntities.get(currentPlayerMove.getUID())) {
+                if (card.getRunProgress() < card.getRunRequirements()) {
+                    for (Integer requirement : card.getRunComponents()) {
+                        if (c.getColor() == requirement) {
+                            card.recieveComponents(requirement, 1);
+                            collectedByCard = true;
+                            progress.put(c, card);
+                            break;
+                        }
+                    }
+                }
+                if (collectedByCard == true) {
+                    break;
+                }
+            }
+            if (collectedByCard == false) {
+                computers.get(currentPlayerMove.getUID()).recieveProgress(1);
+            }
+        }
+    }
+
+    public List<CascadeData> cascade() {
+        List<CascadeAnimation.CascadeData> cascade = new ArrayList<>();
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = componentBoard[x].length - 1; y >= 0; y--) {
+                if (componentBoard[x][y].getColor() == 0) {
+                    componentBoard[x][y].invalidate();
+                    componentBoard[x][y].invalidateNeighbors();
+                    boolean cascaded = false;
+                    for (int i = y - 1; i >= 0; i--) {
+                        if (componentBoard[x][i].getColor() != 0) {
+                            Component fallenComponent = new Component(componentBoard[x][i].getColor(), x, y);
+                            Component originalComponent = new Component(componentBoard[x][i]);
+                            cascade.add(new CascadeAnimation.CascadeData(fallenComponent, originalComponent));
+                            componentBoard[x][y].changeColor(componentBoard[x][i].getColor());
+                            componentBoard[x][i].changeColor(0);
+                            cascaded = true;
+                            break;
+                        }
+                    }
+                    if (cascaded == false) {
+                        componentBoard[x][y].changeColor(GameRules.getNewColor());
+                        cascade.add(new CascadeAnimation.CascadeData(new Component(componentBoard[x][y]), x, (-y) - 1));
+                    }
+                }
+            }
+        }
+        return cascade;
+    }
+
+    public List<Component> getMatches() {
+        List<Component> componentsInMatch = new ArrayList<>();
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                Component c = componentBoard[x][y];
+                if (c.isMatched()) {
+                    componentsInMatch.add(c);
+                }
+            }
+        }
+        return componentsInMatch;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Player player1 = (Player) players.get(0).clone();
+        Player player2 = (Player) players.get(1).clone();
+
+        Component[][] componentBoard = new Component[8][8];
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                componentBoard[x][y] = new Component(this.componentBoard[x][y]);
+            }
+        }
+
+        Map<String, List<Card>> activeEntities = new HashMap<>();
+        List<Card> player1Cards = new ArrayList<>();
+        List<Card> player2Cards = new ArrayList<>();
+        activeEntities.put(player1.getUID(), player1Cards);
+        activeEntities.put(player2.getUID(), player2Cards);
+        for (String string : this.activeEntities.keySet()) {
+            for (Card card : this.activeEntities.get(string)) {
+                activeEntities.get(string).add((Software) ((Software) (card)).clone());
+            }
+        }
+
+        Map<String, Deck> decks = new HashMap<>();
+        for (String uid : this.decks.keySet()) {
+            decks.put(uid, (Deck) this.decks.get(uid).clone());
+        }
+
+        Map<String, Computer> computers = new HashMap<>();
+        for (String uid : this.computers.keySet()) {
+            computers.put(uid, (Computer) this.computers.get(uid).clone());
+        }
+
+        MatchState state = new MatchState(player1, player2, componentBoard, activeEntities, computers, decks);
+        state.isGameOver = this.isGameOver;
+        if (this.winner != null) {
+            state.winner = (Player) this.winner.clone();
+        }
+        state.currentPlayerMove = (Player) this.currentPlayerMove.clone();
+
+        MatchState.buildNeighbors(componentBoard);
+        state.update();
+        return state;
+    }
+
+    public static MatchState record(MatchState state) {
+        try {
+            return (MatchState) state.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public MatchState(MatchState state) {
         Json json = new NullifyingJson();
         MatchState s = json.fromJson(MatchState.class, json.toJson(state));
@@ -72,6 +334,8 @@ public class MatchState implements Serializable {
         this.players = s.players;
         this.winner = s.winner;
         this.isGameOver = s.isGameOver;
+        MatchState.buildNeighbors(this.componentBoard);
+        this.update();
     }
 
     public MatchState(MatchState state, String playerUID) {
@@ -136,7 +400,7 @@ public class MatchState implements Serializable {
         String board = "";
         for (Component[] components : componentBoard) {
             for (Component component : components) {
-                board += "" + Component.componentToNumber.get(component.getClass());
+                board += "" + component.getColor();
             }
         }
         assert (board.length() == 64);
@@ -159,9 +423,7 @@ public class MatchState implements Serializable {
             int x = i / 8;
             int y = i % 8;
             try {
-                componentBoard[x][y] = (Component) Component.numberToComponent.get(
-                        Integer.parseInt("" + boardString.substring(i, i + 1)))
-                        .getConstructor(int.class, int.class).newInstance(x, y);
+                componentBoard[x][y] = new Component(Integer.parseInt("" + boardString.substring(i, i + 1)), x, y);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -208,6 +470,22 @@ public class MatchState implements Serializable {
             }
         });
         return cards;
+    }
+
+    public static void buildNeighbors(Component[][] componentBoard) {
+        for (int x = 0; x < componentBoard.length; x++) {
+            for (int y = 0; y < componentBoard[x].length; y++) {
+                componentBoard[x][y].invalidate();
+                for (int i = 0; i < Component.coordsToNeighbors.length; i += 3) {
+                    int neighborX = x + Component.coordsToNeighbors[i];
+                    int neighborY = y + Component.coordsToNeighbors[i + 1];
+                    if (neighborX < componentBoard.length && neighborY < componentBoard[x].length && neighborX >= 0 && neighborY >= 0) {
+                        Component c = componentBoard[neighborX][neighborY];
+                        componentBoard[x][y].setNeighbor(Component.coordsToNeighbors[i + 2], c);
+                    }
+                }
+            }
+        }
     }
 
 }

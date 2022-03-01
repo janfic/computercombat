@@ -15,7 +15,7 @@ public class ChargedAbilitiesHeuristicAnalyzer extends HeuristicAnalyzer {
 
     @Override
     public float analyze(List<MoveResult> results) {
-        MatchState oldState = results.get(0).getOldState();
+        MatchState oldState = results.get(0).getState();
         Map<String, List<Card>> activeEntities = oldState.activeEntities;
 
         String playerUid = results.get(0).getMove().getPlayerUID();
@@ -28,7 +28,7 @@ public class ChargedAbilitiesHeuristicAnalyzer extends HeuristicAnalyzer {
             totalRunRequirements += activeCard.getRunRequirements();
         }
 
-        MatchState endState = results.get(results.size() - 1).getNewState();
+        MatchState endState = results.get(results.size() - 1).getState();
         Map<String, List<Card>> newActiveEntities = endState.activeEntities;
 
         List<Card> newActiveCards = newActiveEntities.get(playerUid);
