@@ -201,7 +201,7 @@ public class Component implements Serializable {
     public List<Component> getNeighbors(Set<Integer> neighborList) {
         List<Component> components = new ArrayList<>();
         for (Integer neighborIndex : neighborList) {
-            if (neighborIndex > 0) {
+            if (neighborIndex >= 0) {
                 components.add(neighbors[neighborIndex]);
             }
         }
@@ -217,7 +217,7 @@ public class Component implements Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof Component) {
             Component c = (Component) obj;
-            return this.x == c.x && this.y == c.y && this.color == color;
+            return this.x == c.x && this.y == c.y && this.color == c.color;
         }
         return super.equals(obj);
     }
