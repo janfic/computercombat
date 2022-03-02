@@ -44,6 +44,7 @@ public class OpenPackScreen implements Screen {
     List<Software> collectionCards;
     List<CollectionCard> cardActors;
     TextButton end;
+    List<Collection> collections;
 
     public OpenPackScreen(ComputerCombatGame game, Collection collection) {
         this.game = game;
@@ -55,9 +56,16 @@ public class OpenPackScreen implements Screen {
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
         this.skin = game.getAssetManager().get(Assets.SKIN);
+        this.collections = SQLAPI.getSingleton().getCollections();
 
         List<Integer> collectionIDs = new ArrayList<>();
         collectionIDs.add(collection.getID());
+        if (collection.getID() == 0) {
+            for (Collection c : collections) {
+                collectionIDs.add(c.getID());
+            }
+        }
+        collectionIDs.remove(0);
         this.collectionCards = SQLAPI.getSingleton().getCardsInCollection(collectionIDs, null);
 
         this.pack = new CollectionPackActor(game, skin, collection);
