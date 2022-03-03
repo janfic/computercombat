@@ -13,11 +13,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.network.Message;
 import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.client.ServerAPI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -52,7 +58,7 @@ public class LoadingScreen implements Screen {
         Gdx.graphics.setCursor(Gdx.graphics.newCursor(cursor, 0, 0));
 
         this.progressBar = new ProgressBar(0, 1, 0.01f, false, skin.get("default-horizontal", ProgressBarStyle.class));
-        this.statusLabel = new Label("Loading...", skin);
+        this.statusLabel = new Label("Loading Assets...", skin);
 
         Table table = new Table(skin);
         table.setFillParent(true);
@@ -62,12 +68,42 @@ public class LoadingScreen implements Screen {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-//                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "ec2-44-196-13-213.compute-1.amazonaws.com", 7272, new SocketHints())));
-                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "localhost", 7272, new SocketHints())));
-//                game.setServerAPI(new ServerAPI(Gdx.net.newClientSocket(Net.Protocol.TCP, "161.35.101.2", 7272, new SocketHints())));
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ex) {
+                int index = 0;
+                int tries = 0;
+                JsonReader json = new JsonReader();
+                JsonValue parsed = json.parse(Gdx.files.internal("connections.json"));
+
+                List<String> connections = new ArrayList<>();
+
+                for (JsonValue jsonValue : parsed.child) {
+                    connections.add(jsonValue.getString("ip") + " " + jsonValue.getString("port"));
+                }
+
+                System.out.println(connections);
+                boolean connected = false;
+                while (connected == false) {
+                    try {
+                        String[] connection = connections.get(index).split(" ");
+                        game.setServerAPI(new ServerAPI(
+                                Gdx.net.newClientSocket(
+                                        Net.Protocol.TCP,
+                                        connection[0],
+                                        Integer.parseInt(connection[1]),
+                                        new SocketHints()))
+                        );
+                        connected = true;
+                        Thread.sleep(5);
+                    } catch (Exception e) {
+                        tries++;
+                        statusLabel.setText("Failed to Connect to server. Trying again. (" + tries + ")");
+                        if (tries > 4) {
+                            statusLabel.setText("Trying a different server...");
+                            tries = 0;
+                            index++;
+                            index = index % connections.size();
+                        }
+                        e.printStackTrace();
+                    }
                 }
                 game.getServerAPI().sendMessage(new Message(Type.CONNECTION_REQUEST, "CONNECTION_REQUEST"));
             }
@@ -84,7 +120,6 @@ public class LoadingScreen implements Screen {
         assetManager.update();
         progressBar.setValue(assetManager.getProgress());
         if (progressBar.getValue() >= 1) {
-            statusLabel.setText("Connecting to Server...");
             if (game.getServerAPI() != null && game.getServerAPI().hasMessage()) {
                 Message m = game.getServerAPI().readMessage();
                 if (m.type == Type.CONNECTION_ACCEPT) {
