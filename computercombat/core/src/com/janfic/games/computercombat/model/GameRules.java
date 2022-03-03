@@ -47,7 +47,7 @@ public class GameRules {
                 moves.addAll(generatedMoves);
             }
         }
-        Computer c = state.computers.get(uid);
+        Card c = state.computers.get(uid);
         if (c.getRunProgress() >= c.getRunRequirements()) {
             UseAbilityMove m = new UseAbilityMove(uid, c, null, null);
             moves.add(m);

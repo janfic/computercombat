@@ -15,7 +15,6 @@ import com.janfic.games.computercombat.actors.CollectionCard;
 import com.janfic.games.computercombat.actors.FilterWindowActor;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Profile;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +143,7 @@ public class CollectionScreen implements Screen {
         int row = 0;
 
         for (Card card : software.keySet()) {
-            CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
+            CollectionCard cc = new CollectionCard(game, skin, card, software.get(card));
             if (filterWindow.getFilter().filter(card, null, null)) {
                 cards.add(cc);
                 collection.add(cc);

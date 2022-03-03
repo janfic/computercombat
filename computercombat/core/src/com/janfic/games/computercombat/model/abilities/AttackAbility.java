@@ -4,8 +4,6 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
-import com.janfic.games.computercombat.model.Software;
-import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.animations.AttackAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
@@ -40,7 +38,7 @@ public class AttackAbility extends Ability {
         for (Entry<Card, List<Card>> entry : attacks.entries()) {
             List<Card> attacked = entry.value;
             for (Card c : attacked) {
-                if (c instanceof Software) {
+                if (c.getID() > 0) {
                     for (Card cardAttacked : state.activeEntities.get(opponentUID)) {
                         if (c.equals(cardAttacked)) {
                             cardAttacked.recieveDamage(entry.key.getAttack());
@@ -51,8 +49,8 @@ public class AttackAbility extends Ability {
                             break;
                         }
                     }
-                } else if (c instanceof Computer) {
-                    Computer cardAttacked = state.computers.get(opponentUID);
+                } else if (c.getID() == 0) {
+                    Card cardAttacked = state.computers.get(opponentUID);
                     cardAttacked.recieveDamage(entry.key.getAttack());
                     animation.add(new AttackAnimation(currentUID, opponentUID, attacks));
                 }

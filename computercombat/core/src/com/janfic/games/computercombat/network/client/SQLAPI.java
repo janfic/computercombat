@@ -4,15 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
 import com.janfic.games.computercombat.model.Ability;
-import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Collection;
-import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.match.MatchData;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Profile;
-import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import groovy.lang.GroovyShell;
 import java.sql.Connection;
@@ -136,7 +134,7 @@ public class SQLAPI {
                     componentTypes[i] = components.get(i);
                 }
 
-                Software s = new Software (
+                Card s = new Card(
                         id,
                         uid,
                         name,
@@ -161,7 +159,7 @@ public class SQLAPI {
         return cards;
     }
 
-    public Software getCardById(int id, String optionalUID) {
+    public Card getCardById(int id, String optionalUID) {
         System.out.println("[SERVER][MYSQL]: Querying for Card Data");
         try {
             String sql = "SELECT * FROM card \n"
@@ -213,7 +211,7 @@ public class SQLAPI {
                 componentTypes[i] = components.get(i);
             }
 
-            Software s = new Software(
+            Card s = new Card(
                     id,
                     optionalUID,
                     name,
@@ -236,8 +234,8 @@ public class SQLAPI {
         }
     }
 
-    public List<Software> getCardsInfo(List<Integer> cardIDs, String optionalUID) {
-        List<Software> cards = new ArrayList<>();
+    public List<Card> getCardsInfo(List<Integer> cardIDs, String optionalUID) {
+        List<Card> cards = new ArrayList<>();
         try {
             String sql = "SELECT * FROM card \n"
                     + "JOIN ability ON card.ability_id = ability.id\n"
@@ -293,7 +291,7 @@ public class SQLAPI {
                         componentTypes[i] = components.get(i);
                     }
 
-                    Software s = new Software(
+                    Card s = new Card(
                             id,
                             optionalUID,
                             name,
@@ -321,8 +319,8 @@ public class SQLAPI {
         return cards;
     }
 
-    public List<Software> getCardsInDeck(int deckID, String uid) {
-        List<Software> cards = new ArrayList<>();
+    public List<Card> getCardsInDeck(int deckID, String uid) {
+        List<Card> cards = new ArrayList<>();
 
         try {
             String sql = "SELECT * FROM deck_has_card \n"
@@ -381,7 +379,7 @@ public class SQLAPI {
                     componentTypes[i] = components.get(i);
                 }
 
-                Software s = new Software(
+                Card s = new Card(
                         id,
                         uid,
                         name,
@@ -527,7 +525,7 @@ public class SQLAPI {
                         componentTypes[i] = components.get(i);
                     }
 
-                    Software s = new Software(
+                    Card s = new Card(
                             id,
                             uid,
                             name,
@@ -856,8 +854,8 @@ public class SQLAPI {
         return collections;
     }
 
-    public List<Software> getCardsInCollection(List<Integer> collectionIDs, String optionalUID) {
-        List<Software> cards = new ArrayList<>();
+    public List<Card> getCardsInCollection(List<Integer> collectionIDs, String optionalUID) {
+        List<Card> cards = new ArrayList<>();
 
         try {
             String sql = "SELECT * FROM card \n"
@@ -914,7 +912,7 @@ public class SQLAPI {
                         componentTypes[i] = components.get(i);
                     }
 
-                    Software s = new Software(
+                    Card s = new Card(
                             id,
                             optionalUID,
                             name,

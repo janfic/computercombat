@@ -3,10 +3,8 @@ package com.janfic.games.computercombat.model.abilities;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
-import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.match.MatchState;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation;
 import com.janfic.games.computercombat.model.animations.DrawAnimation;
 import com.janfic.games.computercombat.model.moves.Move;
@@ -41,17 +39,17 @@ public class DrawAbility extends Ability {
         List<Card> cards = state.activeEntities.get(move.getPlayerUID());
         Deck deck = state.decks.get(move.getPlayerUID());
 
-        List<Software> drawnCards = new ArrayList<>();
+        List<Card> drawnCards = new ArrayList<>();
         if (this.cards == null) {
             if (deck.size() > 0) {
-                Software s = deck.draw();
+                Card s = deck.draw();
                 s.setOwnerUID(move.getPlayerUID());
                 cards.add(s);
                 drawnCards.add(s);
             }
         } else {
             for (StateAnalyzer<Integer> card : this.cards) {
-                Software s = SQLAPI.getSingleton().getCardById(card.analyze(state, move), move.getPlayerUID());
+                Card s = SQLAPI.getSingleton().getCardById(card.analyze(state, move), move.getPlayerUID());
                 s.setOwnerUID(move.getPlayerUID());
                 s.generateMatchID();
                 cards.add(s);
@@ -60,7 +58,7 @@ public class DrawAbility extends Ability {
         }
 
         List<MoveAnimation> animations = new ArrayList<>();
-        if (abilityMove.getCard() instanceof Computer) {
+        if (abilityMove.getCard().getID() == 0) {
             state.computers.get(move.getPlayerUID()).setProgress(0);
         } else {
             for (Card card : state.activeEntities.get(move.getPlayerUID())) {

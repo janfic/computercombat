@@ -18,8 +18,8 @@ import com.janfic.games.computercombat.Assets;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.actors.CollectionCard;
 import com.janfic.games.computercombat.actors.CollectionPackActor;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Collection;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +41,7 @@ public class OpenPackScreen implements Screen {
 
     Collection collection;
     CollectionPackActor pack;
-    List<Software> collectionCards;
+    List<Card> collectionCards;
     List<CollectionCard> cardActors;
     TextButton end;
     List<Collection> collections;
@@ -80,7 +80,7 @@ public class OpenPackScreen implements Screen {
         TextButton openButton = new TextButton("Open!", skin);
         openButton.setTouchable(Touchable.disabled);
 
-        List<Software> openCards = new ArrayList<>();
+        List<Card> openCards = new ArrayList<>();
         openCards.add(roll());
         openCards.add(roll());
         openCards.add(roll());
@@ -93,7 +93,7 @@ public class OpenPackScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Map<Integer, Integer> added = new HashMap<>();
-                for (Software openCard : openCards) {
+                for (Card openCard : openCards) {
                     added.put(openCard.getID(), added.getOrDefault(openCard.getID(), 0) + 1);
                 }
                 SQLAPI.getSingleton().addCardsToProfile(added, game.getCurrentProfile());
@@ -142,7 +142,7 @@ public class OpenPackScreen implements Screen {
             }
         });
 
-        for (Software openCard : openCards) {
+        for (Card openCard : openCards) {
             CollectionCard c = new CollectionCard(game, skin, openCard, 1);
             cardActors.add(c);
             stage.addActor(c);
@@ -185,7 +185,7 @@ public class OpenPackScreen implements Screen {
 
     }
 
-    public Software roll() {
+    public Card roll() {
         int r = (int) (Math.random() * 5 * 5 * 5) + 1;
         int selectedRarity = 1;
         for (int i = 1; i <= 5; i++) {
@@ -194,8 +194,8 @@ public class OpenPackScreen implements Screen {
                 break;
             }
         }
-        List<Software> pool = new ArrayList<>();
-        for (Software card : collectionCards) {
+        List<Card> pool = new ArrayList<>();
+        for (Card card : collectionCards) {
             if (card.getRarity() == selectedRarity) {
                 pool.add(card);
             }

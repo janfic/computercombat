@@ -19,7 +19,6 @@ import com.janfic.games.computercombat.actors.*;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Profile;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.HashSet;
 import java.util.List;
@@ -290,7 +289,7 @@ public class DecksScreen implements Screen {
                 if (selectedDeck == null) {
                     return;
                 }
-                Software card = (Software) payload.getObject();
+                Card card = (Card) payload.getObject();
                 selectedDeck.getDeck().removeCard(card, 1);
 
                 updateDeckCards();
@@ -308,7 +307,7 @@ public class DecksScreen implements Screen {
                 if (selectedDeck == null) {
                     return;
                 }
-                Software card = (Software) payload.getObject();
+                Card card = (Card) payload.getObject();
                 if (card.getID() == 0) { // prevent adding computer to deck
                     return;
                 }
@@ -374,9 +373,9 @@ public class DecksScreen implements Screen {
 
         Set<Integer> inDeck = new HashSet<>();
         inDeck.addAll(selectedDeck.getDeck().getStack());
-        List<Software> cards = SQLAPI.getSingleton().getCardsInfo(selectedDeck.getDeck().getStack(), game.getCurrentProfile().getUID());
+        List<Card> cards = SQLAPI.getSingleton().getCardsInfo(selectedDeck.getDeck().getStack(), game.getCurrentProfile().getUID());
         System.out.println(cards);
-        for (Software card : cards) {
+        for (Card card : cards) {
             DeckCardActor dca = new DeckCardActor(game, skin, selectedDeck.getDeck(), card);
 
             Source source = new Source(dca.getImageArea()) {
@@ -407,7 +406,7 @@ public class DecksScreen implements Screen {
         int row = 0;
 
         for (Card card : software.keySet()) {
-            CollectionCard cc = new CollectionCard(game, skin, (Software) card, software.get(card));
+            CollectionCard cc = new CollectionCard(game, skin, card, software.get(card));
             if (filterWindow.getFilter().filter(card, null, null)) {
                 collection.add(cc);
                 collectionToDeckDragAndDrop.addSource(new Source(cc) {

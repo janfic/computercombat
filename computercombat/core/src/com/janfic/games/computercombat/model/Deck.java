@@ -46,14 +46,14 @@ public class Deck implements Serializable, Cloneable {
         return id;
     }
 
-    public void addCard(Software card, int amount) {
+    public void addCard(Card card, int amount) {
         cards.put("" + card.getID(), cards.getOrDefault("" + card.getID(), 0) + amount);
         for (int i = 0; i < amount; i++) {
             this.stack.add(card.getID());
         }
     }
 
-    public void removeCard(Software card, int amount) {
+    public void removeCard(Card card, int amount) {
         int a = cards.getOrDefault("" + card.getID(), 0) - amount;
         if (a > 0) {
             cards.put("" + card.getID(), a);
@@ -85,8 +85,8 @@ public class Deck implements Serializable, Cloneable {
         this.name = name;
     }
 
-    public Software draw() {
-        Software r = SQLAPI.getSingleton().getCardById(stack.get(0), null);
+    public Card draw() {
+        Card r = SQLAPI.getSingleton().getCardById(stack.get(0), null);
         r.generateMatchID();
         stack.remove(0);
         int amount = cards.get("" + r.getID());

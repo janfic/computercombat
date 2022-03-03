@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.janfic.games.computercombat.ComputerCombatGame;
-import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.Card;
 
 /**
  *
@@ -22,11 +22,11 @@ public class CardInfoWindow extends Window {
     Cell<Table> midSection;
     TextButton useAbilityButton;
     ComputerCombatGame game;
-    Software software;
+    Card software;
     Skin skin;
     Actor preventClickActor;
     
-    public CardInfoWindow(ComputerCombatGame game, Software software, Skin skin, boolean useAbilityEnabled) {
+    public CardInfoWindow(ComputerCombatGame game, Card software, Skin skin, boolean useAbilityEnabled) {
         super("Card Info", skin);
         
         this.game = game;
@@ -61,7 +61,7 @@ public class CardInfoWindow extends Window {
         
     }
     
-    private void createSoftwareInfo(Skin skin, ComputerCombatGame game, Software software) {
+    private void createSoftwareInfo(Skin skin, ComputerCombatGame game, Card software) {
         softwareInfo = new Table();
         softwareInfo.defaults().space(3);
         Table cardTable = new Table(skin);
@@ -103,7 +103,7 @@ public class CardInfoWindow extends Window {
         });
     }
     
-    private void createAbilityInfo(Skin skin, ComputerCombatGame game, Software software) {
+    private void createAbilityInfo(Skin skin, ComputerCombatGame game, Card software) {
         abilityInfo = new Table();
         abilityInfo.defaults().space(5);
         Label title = new Label("Ability", skin, "title");
@@ -143,7 +143,7 @@ public class CardInfoWindow extends Window {
         abilityInfo.add(cardInfoButton).growX().row();
     }
     
-    public void createMoreInfo(Skin skin, ComputerCombatGame game, Software software) {
+    public void createMoreInfo(Skin skin, ComputerCombatGame game, Card software) {
         moreInfo = new Table();
         moreInfo.defaults().space(5);
         Label title = new Label("More", skin, "title");

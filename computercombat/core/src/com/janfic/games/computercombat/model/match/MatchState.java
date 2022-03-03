@@ -6,11 +6,9 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
-import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.Player;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.abilities.AttackAbility;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation;
 import com.janfic.games.computercombat.model.animations.CascadeAnimation.CascadeData;
@@ -36,7 +34,7 @@ public class MatchState implements Serializable, Cloneable {
 
     public Component[][] componentBoard;
     public Map<String, List<Card>> activeEntities;
-    public Map<String, Computer> computers;
+    public Map<String, Card> computers;
     public Map<String, Deck> decks;
     public List<Player> players;
     public Player currentPlayerMove;
@@ -54,7 +52,7 @@ public class MatchState implements Serializable, Cloneable {
         this.winner = null;
     }
 
-    public MatchState(Player player1, Player player2, Component[][] componentBoard, Map<String, List<Card>> activeEntities, Map<String, Computer> computers, Map<String, Deck> decks) {
+    public MatchState(Player player1, Player player2, Component[][] componentBoard, Map<String, List<Card>> activeEntities, Map<String, Card> computers, Map<String, Deck> decks) {
         this.componentBoard = componentBoard;
         this.activeEntities = activeEntities;
         this.computers = computers;
@@ -294,7 +292,7 @@ public class MatchState implements Serializable, Cloneable {
         activeEntities.put(player2.getUID(), player2Cards);
         for (String string : this.activeEntities.keySet()) {
             for (Card card : this.activeEntities.get(string)) {
-                activeEntities.get(string).add((Software) ((Software) (card)).clone());
+                activeEntities.get(string).add((Card) (card.clone()));
             }
         }
 
@@ -303,9 +301,9 @@ public class MatchState implements Serializable, Cloneable {
             decks.put(uid, (Deck) this.decks.get(uid).clone());
         }
 
-        Map<String, Computer> computers = new HashMap<>();
+        Map<String, Card> computers = new HashMap<>();
         for (String uid : this.computers.keySet()) {
-            computers.put(uid, (Computer) this.computers.get(uid).clone());
+            computers.put(uid, (Card) this.computers.get(uid).clone());
         }
 
         MatchState state = new MatchState(player1, player2, componentBoard, activeEntities, computers, decks);
@@ -420,7 +418,7 @@ public class MatchState implements Serializable, Cloneable {
         this.isGameOver = json.readValue("isGameOver", boolean.class, jsonData);
         this.winner = json.readValue("winner", Player.class, jsonData);
         this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
-        this.computers = json.readValue("computers", HashMap.class, Computer.class, jsonData);
+        this.computers = json.readValue("computers", HashMap.class, Card.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);
         String boardString = json.readValue("componentBoard", String.class, jsonData);
         componentBoard = new Component[8][8];

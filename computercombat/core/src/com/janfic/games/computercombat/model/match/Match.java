@@ -1,12 +1,14 @@
 package com.janfic.games.computercombat.model.match;
 
 import com.badlogic.gdx.utils.Json;
+import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.Collection;
 import com.janfic.games.computercombat.model.Component;
-import com.janfic.games.computercombat.model.Computer;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.GameRules;
 import com.janfic.games.computercombat.model.Player;
+import com.janfic.games.computercombat.model.abilities.DrawAbility;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.Move;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class Match {
     public Match(Player player1, Player player2) {
 
         Map<String, List<Card>> activeEntities = new HashMap<>();
-        Map<String, Computer> computers = new HashMap<>();
+        Map<String, Card> computers = new HashMap<>();
         Map<String, Deck> decks = new HashMap<>();
 
         player1.getActiveDeck().shuffle();
@@ -36,9 +38,15 @@ public class Match {
 
         activeEntities.put(player1.getUID(), new ArrayList<>());
         activeEntities.put(player2.getUID(), new ArrayList<>());
-        computers.put(player1.getUID(), new Computer());
-        computers.put(player2.getUID(), new Computer());
-
+        Ability a = new DrawAbility();
+        a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
+        computers.put(player1.getUID(), new Card(0, player1.getUID(), "Computer", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0));
+        computers.put(player2.getUID(), new Card(0, player2.getUID(), "Computer", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0));
+        computers.get(player1.getUID()).setProgress(20);
+        computers.get(player2.getUID()).setProgress(20);
+        computers.get(player1.getUID()).setHealth(20);
+        computers.get(player2.getUID()).setHealth(20);
+        
         try {
             this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
             this.currentState.update();

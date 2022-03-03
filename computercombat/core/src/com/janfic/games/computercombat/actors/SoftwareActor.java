@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Component;
-import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.Card;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,17 +49,17 @@ public class SoftwareActor extends Panel {
         components.put(3, "STORAGE");
     }
 
-    Software software;
-    List<OverlayTextLabelArea<Software>> areas;
+    Card software;
+    List<OverlayTextLabelArea<Card>> areas;
 
-    public SoftwareActor(Skin skin, boolean flipped, Software software, ComputerCombatGame game) {
+    public SoftwareActor(Skin skin, boolean flipped, Card software, ComputerCombatGame game) {
         super(skin);
 
         this.software = software;
         buildActor(flipped, software, game);
     }
 
-    public void buildActor(boolean flipped, Software software, ComputerCombatGame game) {
+    public void buildActor(boolean flipped, Card software, ComputerCombatGame game) {
         System.out.println("BUILDING ACTOR");
         this.software = software;
         this.areas = new ArrayList<>();
@@ -115,9 +115,9 @@ public class SoftwareActor extends Panel {
         Stack progressStack = new Stack();
         progressStack.add(progressBar);
         Table progressOverlay = new Table();
-        OverlayTextLabelArea<Software> progressLabelArea = new OverlayTextLabelArea<Software>(getSkin(), software) {
+        OverlayTextLabelArea<Card> progressLabelArea = new OverlayTextLabelArea<Card>(getSkin(), software) {
             @Override
-            public String updateLabel(Software dataObject) {
+            public String updateLabel(Card dataObject) {
                 progressBar.setValue(dataObject.getRunProgress());
                 return "" + dataObject.getRunProgress();
             }
@@ -129,9 +129,9 @@ public class SoftwareActor extends Panel {
         Stack healthStack = new Stack();
         healthStack.add(healthBar);
         Table healthOverlay = new Table();
-        OverlayTextLabelArea<Software> healthLabelArea = new OverlayTextLabelArea<Software>(getSkin(), software) {
+        OverlayTextLabelArea<Card> healthLabelArea = new OverlayTextLabelArea<Card>(getSkin(), software) {
             @Override
-            public String updateLabel(Software dataObject) {
+            public String updateLabel(Card dataObject) {
                 healthBar.setValue(dataObject.getHealth());
                 return "" + dataObject.getHealth();
             }
@@ -143,9 +143,9 @@ public class SoftwareActor extends Panel {
         Stack defenseStack = new Stack();
         defenseStack.add(defenseBar);
         Table defenseOverlay = new Table();
-        OverlayTextLabelArea<Software> defenseLabelArea = new OverlayTextLabelArea<Software>(getSkin(), software) {
+        OverlayTextLabelArea<Card> defenseLabelArea = new OverlayTextLabelArea<Card>(getSkin(), software) {
             @Override
-            public String updateLabel(Software dataObject) {
+            public String updateLabel(Card dataObject) {
                 defenseBar.setValue(dataObject.getArmor());
                 return "" + dataObject.getArmor();
             }
@@ -157,9 +157,9 @@ public class SoftwareActor extends Panel {
         Stack attackStack = new Stack();
         attackStack.add(attackBar);
         Table attackOverlay = new Table();
-        OverlayTextLabelArea<Software> attackLabelArea = new OverlayTextLabelArea<Software>(getSkin(), software) {
+        OverlayTextLabelArea<Card> attackLabelArea = new OverlayTextLabelArea<Card>(getSkin(), software) {
             @Override
-            public String updateLabel(Software dataObject) {
+            public String updateLabel(Card dataObject) {
                 attackBar.setValue(dataObject.getAttack());
                 return "" + dataObject.getAttack();
             }
@@ -192,7 +192,7 @@ public class SoftwareActor extends Panel {
         }
     }
 
-    public List<OverlayTextLabelArea<Software>> getOverlayTextLabelAreas() {
+    public List<OverlayTextLabelArea<Card>> getOverlayTextLabelAreas() {
         return areas;
     }
 
@@ -200,11 +200,11 @@ public class SoftwareActor extends Panel {
         return leds;
     }
 
-    public Software getSoftware() {
+    public Card getSoftware() {
         return software;
     }
 
-    public void setSoftware(Software software) {
+    public void setSoftware(Card software) {
         this.software = software;
     }
 

@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Component;
-import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.Card;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,11 +48,11 @@ public class CollectionCard extends BorderedGrid {
         "STORAGE"
     };
     
-    Software software;
+    Card software;
     int amount;
     EventListener newWindowOnClick;
     
-    public CollectionCard(ComputerCombatGame game, Skin skin, Software software, int amount) {
+    public CollectionCard(ComputerCombatGame game, Skin skin, Card software, int amount) {
         super(skin);
         this.software = software;
         this.amount = amount;
@@ -114,9 +114,9 @@ public class CollectionCard extends BorderedGrid {
         Stack defenseStack = new Stack();
         defenseStack.add(defenseBar);
         Table defenseOverlay = new Table();
-        OverlayTextLabelArea<Software> defenseOverlayTextLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        OverlayTextLabelArea<Card> defenseOverlayTextLabelArea = new OverlayTextLabelArea<Card>(skin, software) {
             @Override
-            public String updateLabel(Software dataObject) {
+            public String updateLabel(Card dataObject) {
                 return "" + dataObject.getMaxArmor();
             }
         };
@@ -125,9 +125,9 @@ public class CollectionCard extends BorderedGrid {
         Stack runRequirementsStack = new Stack();
         runRequirementsStack.add(runBar);
         Table runRequirementsOverlay = new Table();
-        OverlayTextLabelArea<Software> runOverlayTextLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        OverlayTextLabelArea<Card> runOverlayTextLabelArea = new OverlayTextLabelArea<Card>(skin, software) {
             @Override
-            public String updateLabel(Software dataObject) {
+            public String updateLabel(Card dataObject) {
                 return "" + dataObject.getRunRequirements();
             }
         };
@@ -136,9 +136,9 @@ public class CollectionCard extends BorderedGrid {
         Stack healthStack = new Stack();
         healthStack.add(healthBar);
         Table healthOverlay = new Table();
-        OverlayTextLabelArea<Software> healthOverlayTextLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        OverlayTextLabelArea<Card> healthOverlayTextLabelArea = new OverlayTextLabelArea<Card>(skin, software) {
             @Override
-            public String updateLabel(Software dataObject) {
+            public String updateLabel(Card dataObject) {
                 return "" + dataObject.getMaxHealth();
             }
         };
@@ -147,9 +147,9 @@ public class CollectionCard extends BorderedGrid {
         Stack attackStack = new Stack();
         attackStack.add(attackBar);
         Table attackOverlay = new Table();
-        OverlayTextLabelArea<Software> attackOverlayTextLabelArea = new OverlayTextLabelArea<Software>(skin, software) {
+        OverlayTextLabelArea<Card> attackOverlayTextLabelArea = new OverlayTextLabelArea<Card>(skin, software) {
             @Override
-            public String updateLabel(Software dataObject) {
+            public String updateLabel(Card dataObject) {
                 return "" + dataObject.getMaxAttack();
             }
         };

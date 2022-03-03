@@ -10,16 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.ComputerCombatGame;
-import com.janfic.games.computercombat.actors.Board;
 import com.janfic.games.computercombat.actors.CollectionCard;
 import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
-import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -28,12 +26,12 @@ import java.util.Map;
 public class DrawAnimation implements MoveAnimation {
 
     String playerUID;
-    List<Software> newSoftware;
+    List<Card> newSoftware;
 
     public DrawAnimation() {
     }
 
-    public DrawAnimation(String playerUID, List<Software> newSoftware) {
+    public DrawAnimation(String playerUID, List<Card> newSoftware) {
         this.playerUID = playerUID;
         this.newSoftware = newSoftware;
     }

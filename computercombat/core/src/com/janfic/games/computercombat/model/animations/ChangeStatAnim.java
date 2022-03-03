@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Card;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class ChangeStatAnim implements MoveAnimation {
         List<List<Action>> animation = new ArrayList<>();
 
         List<Action> actions = new ArrayList<>();
-        if (card instanceof Software) {
+        if (card instanceof Card) {
             SoftwareActor softwareActor = screen.getSoftwareActorByMatchID(this.playerUID, card.getMatchID());
             Action action = new ChangeStatAction(1 * animationSpeed, statChange, newAmount);
             action.setActor(softwareActor);

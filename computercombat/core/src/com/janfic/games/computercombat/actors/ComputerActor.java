@@ -10,9 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Ability;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Collection;
-import com.janfic.games.computercombat.model.Computer;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.abilities.DrawAbility;
 
 /**
@@ -21,7 +20,7 @@ import com.janfic.games.computercombat.model.abilities.DrawAbility;
  */
 public class ComputerActor extends Panel {
 
-    Computer computer;
+    Card computer;
     ProgressBar healthBar, progressBar;
     boolean activatedAbility;
     Label cardsLeft;
@@ -52,7 +51,12 @@ public class ComputerActor extends Panel {
 
         this.add(panel).height(15).width(20);
         this.add(table).grow();
-        setComputer(new Computer());
+        Ability a = new DrawAbility();
+        a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
+        setComputer(new Card(0, game.getCurrentProfile().getUID(), "Computer", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0));
+        computer.setProgress(20);
+        computer.setHealth(20);
+        setComputer(computer);
 
         this.setTouchable(Touchable.enabled);
         this.addListener(new ClickListener() {
@@ -61,7 +65,7 @@ public class ComputerActor extends Panel {
                 Ability a = new DrawAbility();
                 a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
                 CardInfoWindow w = new CardInfoWindow(
-                        game, new Software(0, computer.getOwnerUID(), "Computer",
+                        game, new Card(0, computer.getOwnerUID(), "Computer",
                                 new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0), skin, true);
                 ComputerActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
@@ -84,7 +88,7 @@ public class ComputerActor extends Panel {
         }
     }
 
-    public void setComputer(Computer computer) {
+    public void setComputer(Card computer) {
         this.computer = computer;
         this.healthBar.setValue(computer.getHealth());
         this.progressBar.setValue(computer.getRunProgress());
@@ -98,7 +102,7 @@ public class ComputerActor extends Panel {
         return activatedAbility;
     }
 
-    public Computer getComputer() {
+    public Card getComputer() {
         return computer;
     }
 

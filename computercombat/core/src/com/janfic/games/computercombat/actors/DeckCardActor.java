@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Align;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.Component;
-import com.janfic.games.computercombat.model.Software;
+import com.janfic.games.computercombat.model.Card;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class DeckCardActor extends Panel {
     ComputerCombatGame game;
 
     Deck deck;
-    Software software;
+    Card software;
 
     BorderedArea imageArea;
     Label amountLabel;
@@ -41,7 +41,7 @@ public class DeckCardActor extends Panel {
         components.put(3, "STORAGE");
     }
 
-    public DeckCardActor(ComputerCombatGame game, Skin skin, Deck deck, Software software) {
+    public DeckCardActor(ComputerCombatGame game, Skin skin, Deck deck, Card software) {
         super(skin);
         this.game = game;
         this.software = software;

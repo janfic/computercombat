@@ -12,8 +12,6 @@ import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Card;
-import com.janfic.games.computercombat.model.Computer;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.animations.ChangeStatAnim.ChangeStatAction;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.screens.MatchScreen;
@@ -48,7 +46,7 @@ public class AttackAnimation implements MoveAnimation {
             attackerActor.setZIndex(1000);
             attackerActor.getParent().setZIndex(Integer.MAX_VALUE);
             for (Card attacked : entry.value) {
-                if (attacked instanceof Software) {
+                if (attacked.getID() > 0) {
                     SoftwareActor attackedActor = screen.getSoftwareActorByMatchID(attackedUID, attacked.getMatchID());
                     Vector2 posBack = attackerActor.localToStageCoordinates(new Vector2(attackerActor.getX(), attackerActor.getY()));
                     Vector2 pos = attackedActor.localToStageCoordinates(new Vector2(attackedActor.getX(), attackedActor.getY()));
@@ -73,7 +71,7 @@ public class AttackAnimation implements MoveAnimation {
                     attack.setActor(attackerActor);
                     attackActions.add(attack);
                     attackActions.add(attackedAction);
-                } else if (attacked instanceof Computer) {
+                } else if (attacked.getID() == 0) {
                     ComputerActor attackedActor = screen.getComputerActors().get(attackedUID);
                     Action attackedAction;
                     Vector2 posBack = attackerActor.localToStageCoordinates(new Vector2(attackerActor.getX(), attackerActor.getY()));

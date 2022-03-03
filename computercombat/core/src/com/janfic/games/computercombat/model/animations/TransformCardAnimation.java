@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Card;
-import com.janfic.games.computercombat.model.Software;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class TransformCardAnimation implements MoveAnimation {
                     Actions.repeat(10, Actions.sequence(Actions.moveBy(5, 0.2f * animationSpeed), Actions.moveBy(-5, 0.2f * animationSpeed))),
                     Actions.moveBy(2.5f, 0.2f * animationSpeed),
                     Actions.run(() -> {
-                        actor.buildActor(!currentPlayerUID.equals(playerUID), (Software) newCards.get(oldCards.indexOf(oldCard)), screen.getGame());
+                        actor.buildActor(!currentPlayerUID.equals(playerUID), newCards.get(oldCards.indexOf(oldCard)), screen.getGame());
                     })
             );
             transformAction.setActor(actor);

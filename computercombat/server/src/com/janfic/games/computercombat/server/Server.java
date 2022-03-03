@@ -162,7 +162,7 @@ public class Server {
                                     List<Card> cardInfo = new ArrayList<>();
                                     for (String card : cards) {
                                         String data = services.getFileAsString("cards/" + card + ".json");
-                                        Software c = json.fromJson(Software.class, data);
+                                        Card c = json.fromJson(Card.class, data);
                                         cardInfo.add(c);
                                     }
                                     r = new Message(Type.CARD_INFO_RESPONSE, json.toJson(cardInfo));

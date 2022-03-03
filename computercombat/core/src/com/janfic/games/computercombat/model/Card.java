@@ -4,6 +4,7 @@ import com.janfic.games.computercombat.model.match.MatchState;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ import java.util.Objects;
  *
  * @author Jan Fic
  */
-public abstract class Card implements Json.Serializable, Comparable<Card>, Cloneable {
+public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
 
     protected int id, matchID;
     protected int health, armor, attack, magic;
@@ -345,7 +346,7 @@ public abstract class Card implements Json.Serializable, Comparable<Card>, Clone
         if (obj == null) {
             return false;
         }
-        if (obj instanceof Card || obj instanceof Software) {
+        if (obj instanceof Card) {
             return ((Card) obj).getMatchID() == this.getMatchID();
         }
         return obj.hashCode() == this.hashCode();
@@ -370,5 +371,17 @@ public abstract class Card implements Json.Serializable, Comparable<Card>, Clone
     @Override
     public String toString() {
         return name + ": [id: " + id + " matchID: " + matchID + " owner: " + ownerUID + " ]";
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        int[] runComponents = Arrays.copyOf(this.runComponents, this.runComponents.length);
+        Card s = new Card(this.id, this.ownerUID, this.name, this.collection, this.textureName, this.level, this.maxHealth, this.maxArmor, this.maxAttack, this.magic, runComponents, this.runRequirements, this.ability, this.rarity);
+        s.matchID = this.matchID;
+        s.health = this.health;
+        s.armor = this.armor;
+        s.runProgress = this.runProgress;
+        s.attack = this.attack;
+        return s;
     }
 }
