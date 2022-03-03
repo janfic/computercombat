@@ -3,6 +3,8 @@ package com.janfic.games.computercombat.model;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.janfic.games.computercombat.model.abilities.DrawAbility;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,12 +29,13 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
     protected Collection collection;
     protected String ownerUID;
     protected int rarity;
+    protected String description;
 
     public Card() {
-        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "Default", 1, 0, 0, 0, 0, new int[]{}, 0, null, 0);
+        this(0, "none", "CARD", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "Default", 1, 0, 0, 0, 0, new int[]{}, 0, null, 0, "description");
     }
 
-    public Card(int id, String ownerUID, String name, Collection collection, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, int[] runComponents, int runRequirements, Ability ability, int rarity) {
+    public Card(int id, String ownerUID, String name, Collection collection, String textureName, int level, int startingHealth, int startingArmor, int startingAttack, int startingMagic, int[] runComponents, int runRequirements, Ability ability, int rarity, String description) {
         this.name = name;
         this.collection = collection;
         this.textureName = textureName;
@@ -52,6 +55,7 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
         this.traitsUnlocked = 0;
         this.id = id;
         this.rarity = rarity;
+        this.description = description;
     }
 
     public boolean isDead() {
@@ -294,6 +298,10 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
         this.ability = ability;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public void write(Json json) {
         json.writeType(getClass());
@@ -316,7 +324,7 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
         json.writeValue("ownerUID", this.ownerUID);
         json.writeValue("runComponents", this.runComponents);
         json.writeValue("ability", ability);
-
+        json.writeValue("description", description);
     }
 
     @Override
@@ -339,6 +347,7 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
         this.ownerUID = json.readValue("ownerUID", String.class, jv);
         this.runComponents = json.readValue("runComponents", int[].class, jv);
         this.ability = json.readValue("ability", Ability.class, jv);
+        this.description = json.readValue("description", String.class, jv);
     }
 
     @Override
@@ -376,12 +385,20 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         int[] runComponents = Arrays.copyOf(this.runComponents, this.runComponents.length);
-        Card s = new Card(this.id, this.ownerUID, this.name, this.collection, this.textureName, this.level, this.maxHealth, this.maxArmor, this.maxAttack, this.magic, runComponents, this.runRequirements, this.ability, this.rarity);
+        Card s = new Card(this.id, this.ownerUID, this.name, this.collection, this.textureName, this.level, this.maxHealth, this.maxArmor, this.maxAttack, this.magic, runComponents, this.runRequirements, this.ability, this.rarity, this.description);
         s.matchID = this.matchID;
         s.health = this.health;
         s.armor = this.armor;
         s.runProgress = this.runProgress;
         s.attack = this.attack;
+        s.description = this.description;
         return s;
+    }
+
+    public static Card makeComputer(String uid) {
+        Card c = SQLAPI.getSingleton().getCardById(0, uid);
+        c.setProgress(20);
+        c.setHealth(20);
+        return c;
     }
 }

@@ -17,7 +17,7 @@ import com.janfic.games.computercombat.model.Card;
  * @author Jan Fic
  */
 public class CardInfoWindow extends Window {
-    
+
     Table softwareInfo, abilityInfo, moreInfo;
     Cell<Table> midSection;
     TextButton useAbilityButton;
@@ -25,24 +25,24 @@ public class CardInfoWindow extends Window {
     Card software;
     Skin skin;
     Actor preventClickActor;
-    
+
     public CardInfoWindow(ComputerCombatGame game, Card software, Skin skin, boolean useAbilityEnabled) {
         super("Card Info", skin);
-        
+
         this.game = game;
         this.software = software;
         this.skin = skin;
-        
+
         this.preventClickActor = new Actor();
-        
+
         useAbilityButton = new TextButton("Use Ability", skin);
         useAbilityButton.setColor(Color.SKY);
         useAbilityButton.setVisible(useAbilityEnabled);
-        
+
         createSoftwareInfo(skin, game, software);
         createAbilityInfo(skin, game, software);
         createMoreInfo(skin, game, software);
-        
+
         if (useAbilityEnabled) {
             this.midSection = this.add(abilityInfo).pad(2).grow();
         } else {
@@ -58,9 +58,9 @@ public class CardInfoWindow extends Window {
             }
         });
         this.add(okayButton).growX().colspan(3).row();
-        
+
     }
-    
+
     private void createSoftwareInfo(Skin skin, ComputerCombatGame game, Card software) {
         softwareInfo = new Table();
         softwareInfo.defaults().space(3);
@@ -102,7 +102,7 @@ public class CardInfoWindow extends Window {
             }
         });
     }
-    
+
     private void createAbilityInfo(Skin skin, ComputerCombatGame game, Card software) {
         abilityInfo = new Table();
         abilityInfo.defaults().space(5);
@@ -142,7 +142,7 @@ public class CardInfoWindow extends Window {
         });
         abilityInfo.add(cardInfoButton).growX().row();
     }
-    
+
     public void createMoreInfo(Skin skin, ComputerCombatGame game, Card software) {
         moreInfo = new Table();
         moreInfo.defaults().space(5);
@@ -157,7 +157,7 @@ public class CardInfoWindow extends Window {
         imageBorder.add(i).width(46).height(46);
         Label name = new Label(software.getName(), skin, "title");
         name.setAlignment(Align.center);
-        Label description = new Label("software.getDescription()", skin, "filled");
+        Label description = new Label(software.getDescription(), skin, "filled");
         description.setWrap(true);
         description.setAlignment(Align.center);
         moreInfo.add(name).center().growX().row();
@@ -172,22 +172,22 @@ public class CardInfoWindow extends Window {
         });
         moreInfo.add(cardInfoButton).growX().row();
     }
-    
+
     public void setUseAbilityButtonVisibility(boolean isVisible) {
         useAbilityButton.setVisible(isVisible);
         createAbilityInfo(skin, game, software);
     }
-    
+
     public TextButton getUseAbilityButton() {
         return useAbilityButton;
     }
-    
+
     @Override
     protected void setStage(Stage stage) {
         if (stage != null) {
             this.setSize(3 * stage.getWidth() / 4f, stage.getHeight());
             this.setPosition(1 * stage.getWidth() / 8f, stage.getHeight());
-            
+
             preventClickActor.setBounds(0, 0, stage.getWidth(), stage.getHeight());
             int index = stage.getActors().indexOf(this, true);
             stage.getActors().insert(index, preventClickActor);

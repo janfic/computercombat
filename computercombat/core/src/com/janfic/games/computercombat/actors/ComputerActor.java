@@ -51,11 +51,7 @@ public class ComputerActor extends Panel {
 
         this.add(panel).height(15).width(20);
         this.add(table).grow();
-        Ability a = new DrawAbility();
-        a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
-        setComputer(new Card(0, game.getCurrentProfile().getUID(), "Computer", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0));
-        computer.setProgress(20);
-        computer.setHealth(20);
+        computer = Card.makeComputer(game.getCurrentProfile().getUID());
         setComputer(computer);
 
         this.setTouchable(Touchable.enabled);
@@ -65,8 +61,7 @@ public class ComputerActor extends Panel {
                 Ability a = new DrawAbility();
                 a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
                 CardInfoWindow w = new CardInfoWindow(
-                        game, new Card(0, computer.getOwnerUID(), "Computer",
-                                new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0), skin, true);
+                        game, computer, skin, true);
                 ComputerActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
                     @Override

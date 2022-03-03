@@ -123,6 +123,7 @@ public class SQLAPI {
                 int runRequirements = set.getInt("card.runRequirements");
                 int rarity = set.getInt("card.rarity");
                 int amount = set.getInt("profile_owns_card.amount");
+                String description = set.getString("card.description");
 
                 do {
                     components.add(set.getInt("components.id"));
@@ -148,7 +149,8 @@ public class SQLAPI {
                         componentTypes,
                         runRequirements,
                         a,
-                        rarity
+                        rarity,
+                        description
                 );
                 cards.put(s, amount);
             }
@@ -201,6 +203,7 @@ public class SQLAPI {
             int maxAttack = set.getInt("card.maxAttack");
             int runRequirements = set.getInt("card.runRequirements");
             int rarity = set.getInt("card.rarity");
+            String description = set.getString("card.description");
 
             do {
                 components.add(set.getInt("components.id"));
@@ -225,7 +228,8 @@ public class SQLAPI {
                     componentTypes,
                     runRequirements,
                     a,
-                    rarity
+                    rarity,
+                    description
             );
             return s;
         } catch (Exception e) {
@@ -278,6 +282,7 @@ public class SQLAPI {
                     int maxAttack = set.getInt("card.maxAttack");
                     int runRequirements = set.getInt("card.runRequirements");
                     int rarity = set.getInt("card.rarity");
+                    String description = set.getString("card.description");
 
                     boolean sameCard = false;
                     do {
@@ -305,7 +310,8 @@ public class SQLAPI {
                             componentTypes,
                             runRequirements,
                             a,
-                            rarity
+                            rarity,
+                            description
                     );
                     cards.add(s);
                 } else {
@@ -367,6 +373,7 @@ public class SQLAPI {
                 int amount = set.getInt("deck_has_card.amount");
                 int rarity = set.getInt("card.rarity");
                 boolean sameCard = false;
+                String description = set.getString("card.description");
 
                 do {
                     components.add(set.getInt("components.id"));
@@ -393,7 +400,8 @@ public class SQLAPI {
                         componentTypes,
                         runRequirements,
                         a,
-                        rarity
+                        rarity,
+                        description
                 );
                 cards.add(s);
             }
@@ -512,6 +520,7 @@ public class SQLAPI {
                     int amount = set.getInt("deck_has_card.amount");
                     int rarity = set.getInt("card.rarity");
                     boolean sameCard = false;
+                    String description = set.getString("card.description");
 
                     do {
                         components.add(set.getInt("components.id"));
@@ -539,7 +548,8 @@ public class SQLAPI {
                             componentTypes,
                             runRequirements,
                             a,
-                            rarity
+                            rarity,
+                            description
                     );
                     deck.addCard(s, amount);
                 }
@@ -899,6 +909,7 @@ public class SQLAPI {
                     int maxAttack = set.getInt("card.maxAttack");
                     int rarity = set.getInt("card.rarity");
                     int runRequirements = set.getInt("card.runRequirements");
+                    String description = set.getString("card.description");
 
                     boolean sameCard = false;
                     do {
@@ -926,7 +937,8 @@ public class SQLAPI {
                             componentTypes,
                             runRequirements,
                             a,
-                            rarity
+                            rarity,
+                            description
                     );
                     cards.add(s);
                 } else {

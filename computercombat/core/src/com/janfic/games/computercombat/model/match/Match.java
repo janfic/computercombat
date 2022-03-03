@@ -38,15 +38,9 @@ public class Match {
 
         activeEntities.put(player1.getUID(), new ArrayList<>());
         activeEntities.put(player2.getUID(), new ArrayList<>());
-        Ability a = new DrawAbility();
-        a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
-        computers.put(player1.getUID(), new Card(0, player1.getUID(), "Computer", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0));
-        computers.put(player2.getUID(), new Card(0, player2.getUID(), "Computer", new Collection(1, "Computer", "computer", "computer_pack", "computer_pack", 50), "computer", 1, 20, 0, 0, 0, new int[]{1, 2, 3, 4, 6}, 20, a, 0));
-        computers.get(player1.getUID()).setProgress(20);
-        computers.get(player2.getUID()).setProgress(20);
-        computers.get(player1.getUID()).setHealth(20);
-        computers.get(player2.getUID()).setHealth(20);
-        
+        computers.put(player1.getUID(), Card.makeComputer(player1.getUID()));
+        computers.put(player2.getUID(), Card.makeComputer(player1.getUID()));
+
         try {
             this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
             this.currentState.update();
