@@ -102,7 +102,6 @@ public class LoadingScreen implements Screen {
                             index++;
                             index = index % connections.size();
                         }
-                        e.printStackTrace();
                     }
                 }
                 game.getServerAPI().sendMessage(new Message(Type.CONNECTION_REQUEST, "CONNECTION_REQUEST"));
