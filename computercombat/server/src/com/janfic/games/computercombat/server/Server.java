@@ -302,11 +302,11 @@ public class Server {
                 while (true) {
 
                     if (matches.size() < MAX_MATCHES && raidQueue.size() > 0) {
-                        MatchClient a = raidQueue.get(0);
-                        Player playerA = new HumanPlayer(a.getProfile().getUID(), a);
-                        Player botPlayer = new HeuristicBotPlayer("botUID", a.getDeck());
-                        ServerMatchRoom room = new ServerMatchRoom(playerA, botPlayer);
                         try {
+                            MatchClient a = raidQueue.get(0);
+                            Player playerA = new HumanPlayer(a.getProfile().getUID(), a);
+                            Player botPlayer = new HeuristicBotPlayer("botUID", (Deck) a.getDeck().clone());
+                            ServerMatchRoom room = new ServerMatchRoom(playerA, botPlayer);
                             Message message2 = new Message(Type.FOUND_MATCH, "RAID BOT");
                             a.sendMessage(message2);
                             // Runs Asyncroniously

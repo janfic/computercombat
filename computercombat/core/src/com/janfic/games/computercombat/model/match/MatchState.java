@@ -129,17 +129,7 @@ public class MatchState implements Serializable, Cloneable {
             }
 
             if (attack && activeEntities.get(currentPlayerMove.getUID()).isEmpty() == false) {
-                ObjectMap<Card, List<Card>> attacks = new ObjectMap<>();
-
-                Card attacker = activeEntities.get(currentPlayerMove.getUID()).get(0);
-                List<Card> attacked = new ArrayList<>();
-                attacked.add(activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).get(0));
-                attacks.put(attacker, attacked);
-
-                AttackAbility attackAbility = new AttackAbility(new ArrayList<>(), attacks);
-
-                List<MoveResult> res = attackAbility.doAbility(this, move);
-                results.addAll(res);
+                results.addAll(attack(move));
             }
 
             // Remove, Cascade, then Invalidate
@@ -173,6 +163,22 @@ public class MatchState implements Serializable, Cloneable {
         }
 
         return results;
+    }
+
+    public List<MoveResult> attack(Move move) {
+        ObjectMap<Card, List<Card>> attacks = new ObjectMap<>();
+        Card attacker = activeEntities.get(currentPlayerMove.getUID()).get(0);
+        List<Card> attacked = new ArrayList<>();
+        if (activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).isEmpty()) {
+            attacked.add(computers.get(this.getOtherProfile(currentPlayerMove).getUID()));
+        } else {
+            attacked.add(activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).get(0));
+        }
+        attacks.put(attacker, attacked);
+        AttackAbility attackAbility = new AttackAbility(new ArrayList<>(), attacks);
+
+        List<MoveResult> res = attackAbility.doAbility(this, move);
+        return res;
     }
 
     public Map<Integer, List<Component>> collectComponents() {
