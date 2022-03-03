@@ -6,12 +6,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.network.client.SQLAPI;
@@ -37,6 +42,10 @@ public class ComputerCombatGame extends Game {
         assetManager = new AssetManager();
         screenStack = new Stack<>();
         Skin skin = new Skin(Gdx.files.internal(Assets.SKIN));
+        ObjectMap<String, BitmapFont> fonts = skin.getAll(BitmapFont.class);
+        for (Entry<String, BitmapFont> entry : fonts.entries()) {
+            entry.value.getData().markupEnabled = true;
+        }
         assetManager.load(Assets.SKIN, Skin.class);
         for (FileHandle file : Gdx.files.internal("texture_packs").list(".atlas")) {
             assetManager.load(file.path(), TextureAtlas.class);
@@ -45,6 +54,10 @@ public class ComputerCombatGame extends Game {
         assetManager.load(Assets.TITLE, Texture.class);
         assetManager.load(Assets.MAIN_MENU_BACKGROUND, Texture.class);
         pushScreen(new LoadingScreen(this));
+        for (Entry<String, Color> entry : skin.getAll(Color.class).entries()) {
+            System.out.println(entry);
+            Colors.put(entry.key, entry.value);
+        }
     }
 
     public Screen popScreen() {

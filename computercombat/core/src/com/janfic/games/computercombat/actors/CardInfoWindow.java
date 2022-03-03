@@ -117,9 +117,10 @@ public class CardInfoWindow extends Window {
         imageBorder.add(i).width(46).height(46);
         Label name = new Label(software.getAbility().getName(), skin, "title");
         name.setAlignment(Align.center);
-        Label description = new Label(software.getAbility().getDescription(), skin, "filled");
+        Label description = new Label(software.getAbility().getDescription(), skin, "title");
         description.setWrap(true);
         description.setAlignment(Align.center);
+        description.getStyle().font.getData().markupEnabled = true;
         abilityInfo.add(name).center().growX().row();
         abilityInfo.add(imageBorder).center().width(48).height(48).expandX().row();
         abilityInfo.add(description).center().grow().row();
@@ -157,7 +158,7 @@ public class CardInfoWindow extends Window {
         imageBorder.add(i).width(46).height(46);
         Label name = new Label(software.getName(), skin, "title");
         name.setAlignment(Align.center);
-        Label description = new Label(software.getDescription(), skin, "filled");
+        Label description = new Label(software.getDescription(), skin, "title");
         description.setWrap(true);
         description.setAlignment(Align.center);
         moreInfo.add(name).center().growX().row();
