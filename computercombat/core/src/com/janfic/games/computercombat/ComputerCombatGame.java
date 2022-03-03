@@ -55,7 +55,6 @@ public class ComputerCombatGame extends Game {
         assetManager.load(Assets.MAIN_MENU_BACKGROUND, Texture.class);
         pushScreen(new LoadingScreen(this));
         for (Entry<String, Color> entry : skin.getAll(Color.class).entries()) {
-            System.out.println(entry);
             Colors.put(entry.key, entry.value);
         }
     }
