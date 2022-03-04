@@ -92,7 +92,12 @@ public class HumanPlayer extends Player {
 
     @Override
     public void gameOver(MatchResults results) {
-
+        Message message = new Message(Type.MATCH_RESULTS, json.toJson(results));
+        try {
+            client.sendMessage(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

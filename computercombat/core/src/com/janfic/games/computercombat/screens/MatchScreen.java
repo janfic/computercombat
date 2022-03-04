@@ -74,7 +74,6 @@ public class MatchScreen implements Screen {
     List<SoftwareActor> selectedCards;
 
     boolean startedMatch = false;
-    boolean checkGameOver = true;
 
     float animationSpeed = 0.5f;
 
@@ -182,6 +181,10 @@ public class MatchScreen implements Screen {
         this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin, game));
         this.computerActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID(), new ComputerActor(skin, game));
 
+        for (String string : computerActors.keySet()) {
+            computerActors.get(string).setCardsLeft(matchData.getCurrentState().decks.get(string).getStack().size());
+        }
+
         Table table = new Table();
 
         leftPanel = new BorderedGrid(skin);
@@ -227,7 +230,6 @@ public class MatchScreen implements Screen {
         table.add(rightPanel).pad(1, 0, 1, 0).grow().right();
 
         mainStage.addActor(table);
-
     }
 
     private void playerUseAbilityMoveCheck() {
@@ -362,7 +364,6 @@ public class MatchScreen implements Screen {
                 json.setSerializer(ObjectMap.class,
                         new ObjectMapSerializer());
                 MatchResults results = json.fromJson(MatchResults.class, serverMessage.getMessage());
-
                 gameOver(results);
             }
         }
@@ -394,33 +395,28 @@ public class MatchScreen implements Screen {
     }
 
     private void gameOver(MatchResults results) {
-        if (matchData.getCurrentState().isGameOver && checkGameOver) {
-            //infoLabel.setText("GAME OVER! \n " + matchData.getCurrentState().winner.getName() + " wins!");
-            boolean isWinner = matchData.getCurrentState().winner.getUID().equals(game.getCurrentProfile().getUID());
-            board.setTouchable(Touchable.disabled);
-            Window window = new Window("Match Info", skin);
-            Table table = new Table(skin);
-            Label label = new Label("GAME OVER!\n " + (isWinner ? "You win!" : matchData.getOpponentName() + " wins."), skin);
-            label.setAlignment(Align.center);
-            table.add(label).grow();
-            table.align(Align.center);
-            TextButton okayButton = new TextButton("Okay", skin);
-            okayButton.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    game.popScreen();
-                    game.pushScreen(new MatchResultsScreen(game, results));
-                }
-            });
-            table.row();
-            table.add(okayButton).growX();
-            window.add(table).grow();
-            window.setSize(mainStage.getWidth() / 2, mainStage.getHeight() / 2);
-            window.setPosition(mainStage.getWidth() / 4, mainStage.getHeight() / 4);
-            this.mainStage.addActor(window);
-            checkGameOver = false;
-
-        }
+        boolean isWinner = results.winner;
+        board.setTouchable(Touchable.disabled);
+        Window window = new Window("Match Info", skin);
+        Table table = new Table(skin);
+        Label label = new Label("GAME OVER!\n " + (isWinner ? "You win!" : matchData.getOpponentName() + " wins."), skin);
+        label.setAlignment(Align.center);
+        table.add(label).grow();
+        table.align(Align.center);
+        TextButton okayButton = new TextButton("Okay", skin);
+        okayButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.popScreen();
+                game.pushScreen(new MatchResultsScreen(game, results));
+            }
+        });
+        table.row();
+        table.add(okayButton).growX();
+        window.add(table).grow();
+        window.setSize(mainStage.getWidth() / 2, mainStage.getHeight() / 2);
+        window.setPosition(mainStage.getWidth() / 4, mainStage.getHeight() / 4);
+        this.mainStage.addActor(window);
     }
 
     private void updateInfoText() {

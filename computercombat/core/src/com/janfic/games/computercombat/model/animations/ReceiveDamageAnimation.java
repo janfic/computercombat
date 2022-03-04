@@ -41,8 +41,9 @@ public class ReceiveDamageAnimation implements MoveAnimation {
         List<Action> changeColorActions = new ArrayList<>();
 
         SoftwareActor softwareActor = screen.getSoftwareActorByMatchID(reciever.getOwnerUID(), reciever.getMatchID());
-        int armorDecrease = reciever.getArmor() > 0 ? Math.min(reciever.getArmor(), damage) : 0;
-        int healthDecrease = reciever.getHealth() <= damage - armorDecrease ? reciever.getHealth() : damage - armorDecrease;
+        Card a = softwareActor.getSoftware();
+        int armorDecrease = a.getArmor() > 0 ? Math.min(a.getArmor(), damage) : 0;
+        int healthDecrease = a.getHealth() <= damage - armorDecrease ? a.getHealth() : damage - armorDecrease;
         Action attackedAction = Actions.sequence(
                 Actions.delay(0.5f * animationSpeed),
                 Actions.color(Color.RED),

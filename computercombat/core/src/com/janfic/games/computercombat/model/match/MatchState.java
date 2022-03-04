@@ -344,9 +344,6 @@ public class MatchState implements Serializable, Cloneable {
 
     public MatchState(MatchState state, String playerUID) {
         this(state);
-        for (Player player : players) {
-            this.decks.remove(player.getUID());
-        }
     }
 
     public String toStringBoard() {

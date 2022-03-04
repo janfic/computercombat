@@ -97,7 +97,7 @@ public class ServerMatchRoom {
                 MatchResults results2 = new MatchResults(matchData.getRewards().get(player2.getUID()), starttime, endtime, player1, matchData.getWinner(), rewards2);
 
                 player1.gameOver(results1);
-                player1.gameOver(results2);
+                player2.gameOver(results2);
 
                 // Insert Match Data to DB
                 // Update Profiles ( packets )

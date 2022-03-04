@@ -38,8 +38,9 @@ public class ComputerActor extends Panel {
 
         Table table = new Table();
 
-        healthBar = new ProgressBar(0, 20, 1, false, green);
-        progressBar = new ProgressBar(0, 20, 1, false, blue);
+        healthBar = new ProgressBar(0, computer.getMaxHealth(), 1, false, green);
+        progressBar = new ProgressBar(0, computer.getRunRequirements(), 1, false, blue);
+        computer = Card.makeComputer(game.getCurrentProfile().getUID());
 
         Table panel = new Table(skin);
         panel.setBackground("border_filled");
@@ -51,7 +52,6 @@ public class ComputerActor extends Panel {
 
         this.add(panel).height(15).width(20);
         this.add(table).grow();
-        computer = Card.makeComputer(game.getCurrentProfile().getUID());
         setComputer(computer);
 
         this.setTouchable(Touchable.enabled);
