@@ -39,7 +39,7 @@ public class Match {
         activeEntities.put(player1.getUID(), new ArrayList<>());
         activeEntities.put(player2.getUID(), new ArrayList<>());
         computers.put(player1.getUID(), Card.makeComputer(player1.getUID()));
-        computers.put(player2.getUID(), Card.makeComputer(player1.getUID()));
+        computers.put(player2.getUID(), Card.makeComputer(player2.getUID()));
 
         try {
             this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);

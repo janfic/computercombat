@@ -176,10 +176,12 @@ public class MatchScreen implements Screen {
             }
         }
 
-        this.softwareActors.put(game.getCurrentProfile().getUID(), new ArrayList<>());
-        this.softwareActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID(), new ArrayList<>());
-        this.computerActors.put(game.getCurrentProfile().getUID(), new ComputerActor(skin, game));
-        this.computerActors.put(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID(), new ComputerActor(skin, game));
+        String currentUID = game.getCurrentProfile().getUID();
+        String opponentUID = matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID();
+        this.softwareActors.put(currentUID, new ArrayList<>());
+        this.softwareActors.put(opponentUID, new ArrayList<>());
+        this.computerActors.put(currentUID, new ComputerActor(skin, game, matchData.getCurrentState().computers.get(currentUID)));
+        this.computerActors.put(opponentUID, new ComputerActor(skin, game, matchData.getCurrentState().computers.get(opponentUID)));
 
         for (String string : computerActors.keySet()) {
             computerActors.get(string).setCardsLeft(matchData.getCurrentState().decks.get(string).getStack().size());

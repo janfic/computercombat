@@ -25,7 +25,7 @@ public class ComputerActor extends Panel {
     boolean activatedAbility;
     Label cardsLeft;
 
-    public ComputerActor(Skin skin, ComputerCombatGame game) {
+    public ComputerActor(Skin skin, ComputerCombatGame game, Card computer) {
         super(skin);
 
         this.defaults().space(1);
@@ -40,7 +40,7 @@ public class ComputerActor extends Panel {
 
         healthBar = new ProgressBar(0, computer.getMaxHealth(), 1, false, green);
         progressBar = new ProgressBar(0, computer.getRunRequirements(), 1, false, blue);
-        computer = Card.makeComputer(game.getCurrentProfile().getUID());
+        setComputer(computer);
 
         Table panel = new Table(skin);
         panel.setBackground("border_filled");
@@ -52,7 +52,6 @@ public class ComputerActor extends Panel {
 
         this.add(panel).height(15).width(20);
         this.add(table).grow();
-        setComputer(computer);
 
         this.setTouchable(Touchable.enabled);
         this.addListener(new ClickListener() {
@@ -61,7 +60,7 @@ public class ComputerActor extends Panel {
                 Ability a = new DrawAbility();
                 a.setInformation("Draw a card from your deck", "draw_card", "Draw", "new DrawAbility()", 0);
                 CardInfoWindow w = new CardInfoWindow(
-                        game, computer, skin, true);
+                        game, ComputerActor.this.computer, skin, true);
                 ComputerActor.this.getStage().addActor(w);
                 w.getUseAbilityButton().addListener(new ClickListener() {
                     @Override
