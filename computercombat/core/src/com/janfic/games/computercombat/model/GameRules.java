@@ -288,14 +288,10 @@ public class GameRules {
 
     public static boolean isGameOver(MatchState state) {
         for (String string : state.computers.keySet()) {
-            if (state.computers.get(string).isDead()) {
+            boolean nomorecards = state.decks.get(string).getStack().size() == 0 && state.activeEntities.get(string).size() == 0;
+            if (state.computers.get(string).isDead() || nomorecards) {
                 state.isGameOver = true;
-                for (Player player : state.players) {
-                    if (player.getUID().equals(string) == false) {
-                        state.winner = player;
-                        break;
-                    }
-                }
+                state.winner = state.getOtherProfile(string);
                 return true;
             }
         }
