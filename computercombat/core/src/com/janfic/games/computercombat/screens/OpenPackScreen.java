@@ -65,9 +65,10 @@ public class OpenPackScreen implements Screen {
                 collectionIDs.add(c.getID());
             }
         }
-        collectionIDs.remove(0);
-        this.collectionCards = SQLAPI.getSingleton().getCardsInCollection(collectionIDs, null);
+        collectionIDs.remove((Integer) 0);
+        this.collectionCards = SQLAPI.getSingleton().getCardsInCollection(collectionIDs, game.getCurrentProfile().getUID());
 
+        System.out.println(collectionCards);
         this.pack = new CollectionPackActor(game, skin, collection);
         pack.setScale(1.25f);
 

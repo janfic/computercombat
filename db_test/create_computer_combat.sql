@@ -287,11 +287,6 @@ USE `computer_combat` ;
 CREATE TABLE IF NOT EXISTS `computer_combat`.`card_info` (`card_id` INT, `name` INT, `maxAttack` INT, `maxHealth` INT, `maxDefense` INT, `runRequirements` INT, `level` INT, `textureName` INT, `rarity` INT, `ability_id` INT, `description` INT, `code` INT, `ability_name` INT, `ability_textureName` INT, `component_id` INT, `collection_id` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `computer_combat`.`card_wins`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `computer_combat`.`card_wins` (`match_id` INT, `deck_id` INT, `card_id` INT, `did_win` INT);
-
--- -----------------------------------------------------
 -- Placeholder table for view `computer_combat`.`deck_wins`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `computer_combat`.`deck_wins` (`match_id` INT, `deck_id` INT, `did_win` INT);
@@ -302,13 +297,6 @@ CREATE TABLE IF NOT EXISTS `computer_combat`.`deck_wins` (`match_id` INT, `deck_
 DROP TABLE IF EXISTS `computer_combat`.`card_info`;
 USE `computer_combat`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`admin`@`%` SQL SECURITY DEFINER VIEW `computer_combat`.`card_info` AS select `computer_combat`.`card`.`id` AS `card_id`,`computer_combat`.`card`.`name` AS `name`,`computer_combat`.`card`.`maxAttack` AS `maxAttack`,`computer_combat`.`card`.`maxHealth` AS `maxHealth`,`computer_combat`.`card`.`maxDefense` AS `maxDefense`,`computer_combat`.`card`.`runRequirements` AS `runRequirements`,`computer_combat`.`card`.`level` AS `level`,`computer_combat`.`card`.`textureName` AS `textureName`,`computer_combat`.`card`.`rarity` AS `rarity`,`computer_combat`.`ability`.`id` AS `ability_id`,`computer_combat`.`ability`.`description` AS `description`,`computer_combat`.`ability`.`code` AS `code`,`computer_combat`.`ability`.`name` AS `ability_name`,`computer_combat`.`ability`.`textureName` AS `ability_textureName`,`computer_combat`.`components`.`id` AS `component_id`,`computer_combat`.`collection`.`id` AS `collection_id` from ((((`computer_combat`.`card` join `computer_combat`.`ability` on((`computer_combat`.`card`.`ability_id` = `computer_combat`.`ability`.`id`))) join `computer_combat`.`run_requirements` on((`computer_combat`.`card`.`id` = `computer_combat`.`run_requirements`.`card_id`))) join `computer_combat`.`components` on((`computer_combat`.`components`.`id` = `computer_combat`.`run_requirements`.`component_id`))) join `computer_combat`.`collection` on((`computer_combat`.`card`.`collection_id` = `computer_combat`.`collection`.`id`)));
-
--- -----------------------------------------------------
--- View `computer_combat`.`card_wins`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `computer_combat`.`card_wins`;
-USE `computer_combat`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`admin`@`%` SQL SECURITY DEFINER VIEW `computer_combat`.`card_wins` AS select `computer_combat`.`deck_wins`.`match_id` AS `match_id`,`computer_combat`.`deck_wins`.`deck_id` AS `deck_id`,`computer_combat`.`deck_has_card`.`card_id` AS `card_id`,`computer_combat`.`deck_wins`.`did_win` AS `did_win` from (`computer_combat`.`deck_wins` join `computer_combat`.`deck_has_card` on((`computer_combat`.`deck_wins`.`deck_id` = `computer_combat`.`deck_has_card`.`deck_id`)));
 
 -- -----------------------------------------------------
 -- View `computer_combat`.`deck_wins`

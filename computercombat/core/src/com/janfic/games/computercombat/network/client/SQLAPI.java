@@ -32,7 +32,8 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
  */
 public class SQLAPI {
 
-    String url = "jdbc:mysql://computer-combat-db.cloqezbutiub.us-east-1.rds.amazonaws.com:3306";
+//    String url = "jdbc:mysql://computer-combat-db.cloqezbutiub.us-east-1.rds.amazonaws.com:3306";
+    String url = "jdbc:mysql://137.184.137.169:30306";
 
     private static SQLAPI singleton;
     private Properties properties;
@@ -880,7 +881,7 @@ public class SQLAPI {
             boolean areRowsLeft = set.next();
 
             while (areRowsLeft) {
-                if (collectionIDs.contains(set.getInt("collection.id"))) {
+                if (collectionIDs.contains(set.getInt("card.collection_id"))) {
                     Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
                     a.setInformation(
                             set.getString("ability.description"),
