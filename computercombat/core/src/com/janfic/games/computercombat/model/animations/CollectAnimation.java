@@ -106,7 +106,10 @@ public class CollectAnimation implements MoveAnimation {
                             Actions.fadeIn(0.2f * animationSpeed),
                             Actions.parallel(
                                     Actions.moveTo(end.x, end.y, Math.abs(end.y - start.y) / 100f * animationSpeed, Interpolation.exp5),
-                                    Actions.scaleTo(1, 1, Math.abs(end.y - start.y) / 100f * animationSpeed)
+                                    Actions.sequence(
+                                            Actions.scaleTo(1, 10, Math.abs(end.y - start.y) / 200f * animationSpeed, Interpolation.circleIn),
+                                            Actions.scaleTo(1, 1, Math.abs(end.y - start.y) / 200f * animationSpeed, Interpolation.circleOut)
+                                    )
                             ),
                             Actions.parallel(
                                     Actions.moveBy(isPlayerMove ? -13 : 13, 0, 0.1f * animationSpeed, Interpolation.exp5),
