@@ -131,7 +131,8 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height);
+        this.stage.getViewport().update(width, height);
+        camera.update();
     }
 
     @Override

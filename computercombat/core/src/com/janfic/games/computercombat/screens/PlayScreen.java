@@ -31,19 +31,19 @@ public class PlayScreen implements Screen {
      * RAM - Decks Power - Bug - Attack / Play
      */
     ComputerCombatGame game;
-    
+
     Stage stage;
     OrthographicCamera camera;
-    
+
     Texture background;
     Skin skin;
-    
+
     public PlayScreen(ComputerCombatGame game) {
         this.game = game;
         this.background = game.getAssetManager().get(Assets.PLAY_BACKGROUND, Texture.class);
         this.skin = game.getAssetManager().get(Assets.SKIN);
     }
-    
+
     @Override
     public void show() {
 
@@ -51,17 +51,17 @@ public class PlayScreen implements Screen {
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
         this.stage = ComputerCombatGame.makeNewStage(camera);
         Gdx.input.setInputProcessor(stage);
-        
+
         Image image = new Image(background);
         image.setSize(stage.getWidth(), stage.getHeight());
-        
+
         TextButton playButton = new TextButton("Play", skin);
         TextButton upgradeButton = new TextButton("Upgrade", skin);
         TextButton collectionButton = new TextButton("Collection", skin);
         TextButton decksButton = new TextButton("Decks", skin);
         TextButton settingsButton = new TextButton("Settings", skin);
         TextButton downloadButton = new TextButton("Download", skin);
-        
+
         stage.addActor(image);
         stage.addActor(playButton);
         stage.addActor(upgradeButton);
@@ -69,7 +69,7 @@ public class PlayScreen implements Screen {
         stage.addActor(collectionButton);
         stage.addActor(settingsButton);
         stage.addActor(downloadButton);
-        
+
         playButton.setPosition(190, 170);
         playButton.setWidth(collectionButton.getWidth());
         settingsButton.setPosition(290, 230);
@@ -81,15 +81,15 @@ public class PlayScreen implements Screen {
         decksButton.setPosition(220, 20);
         decksButton.setWidth(collectionButton.getWidth());
         collectionButton.setPosition(20, 100);
-        
+
         Table table = new Table();
         table.setFillParent(true);
-        
+
         BorderedGrid grid = new BorderedGrid(skin);
         grid.pad(9);
         grid.defaults().space(5).growX();
         grid.top();
-        
+
         BorderedArea imageArea = new BorderedArea(skin);
         TextButton profileButton = new TextButton("Profile", skin);
         TextButton defenseButton = new TextButton("Defense", skin);
@@ -98,39 +98,39 @@ public class PlayScreen implements Screen {
         packetTable.defaults().space(10);
         packetTable.add(packetsImage).size(24, 24);
         packetTable.add(new Label("" + game.getCurrentProfile().getPackets(), skin));
-        
+
         grid.add(imageArea).growX().height(80).row();
         grid.add(profileButton).row();
         grid.add(defenseButton).row();
         grid.add(packetTable).expand().bottom().row();
-        
+
         table.add(grid).expand().growY().right().width(100);
-        
+
         stage.addActor(table);
-        
+
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.pushScreen(new QueueScreen(game));
             }
-            
+
         });
-        
+
         collectionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.pushScreen(new CollectionScreen(game));
             }
-            
+
         });
-        
+
         decksButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.pushScreen(new DecksScreen(game));
             }
         });
-        
+
         downloadButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -138,31 +138,34 @@ public class PlayScreen implements Screen {
             }
         });
     }
-    
+
     @Override
     public void render(float f) {
         stage.act(f);
         stage.draw();
     }
-    
+
     @Override
-    public void resize(int i, int i1) {
+    public void resize(int width, int height) {
+        System.out.println("here");
+        this.stage.getViewport().update(width, height);
+        camera.update();
     }
-    
+
     @Override
     public void pause() {
     }
-    
+
     @Override
     public void resume() {
     }
-    
+
     @Override
     public void hide() {
     }
-    
+
     @Override
     public void dispose() {
     }
-    
+
 }

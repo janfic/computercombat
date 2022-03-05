@@ -100,7 +100,9 @@ public class ComputerCombatGame extends Game {
 
     @Override
     public void resize(int width, int height) {
-        screenStack.get(0).resize(width, height);
+        for (Screen screen : screenStack) {
+            screen.resize(width, height);
+        }
     }
 
     public static Stage makeNewStage(Camera cam) {

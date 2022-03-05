@@ -140,6 +140,8 @@ public class MatchResultsScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        this.stage.getViewport().update(width, height);
+        camera.update();
     }
 
     @Override

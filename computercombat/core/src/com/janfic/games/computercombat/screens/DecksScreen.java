@@ -325,7 +325,9 @@ public class DecksScreen implements Screen {
     }
 
     @Override
-    public void resize(int i, int i1) {
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height);
+        stageCamera.update();
     }
 
     @Override
