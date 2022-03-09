@@ -246,7 +246,7 @@ public class SQLAPI {
                     + "JOIN ability ON card.ability_id = ability.id\n"
                     + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
                     + "JOIN components ON components.id = run_requirements.component_id\n"
-                    + "JOIN collection ON card.collection_id = collection.id;";
+                    + "JOIN collection ON card.collection_id = collection.id ORDER BY card.id;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
@@ -289,7 +289,9 @@ public class SQLAPI {
                     do {
                         components.add(set.getInt("components.id"));
                         areRowsLeft = set.next();
+                        System.out.println(areRowsLeft + " " + set.getInt("card.id") + " " + id);
                         sameCard = areRowsLeft ? set.getInt("card.id") == id : false;
+                        System.out.println(sameCard);
                     } while (sameCard);
 
                     int[] componentTypes = new int[components.size()];

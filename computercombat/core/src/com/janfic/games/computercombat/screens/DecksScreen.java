@@ -373,10 +373,7 @@ public class DecksScreen implements Screen {
     private void updateDeckCards() {
         deckCards.clearChildren();
 
-        Set<Integer> inDeck = new HashSet<>();
-        inDeck.addAll(selectedDeck.getDeck().getStack());
         List<Card> cards = SQLAPI.getSingleton().getCardsInfo(selectedDeck.getDeck().getStack(), game.getCurrentProfile().getUID());
-        System.out.println(cards);
         for (Card card : cards) {
             DeckCardActor dca = new DeckCardActor(game, skin, selectedDeck.getDeck(), card);
 
