@@ -289,9 +289,7 @@ public class SQLAPI {
                     do {
                         components.add(set.getInt("components.id"));
                         areRowsLeft = set.next();
-                        System.out.println(areRowsLeft + " " + set.getInt("card.id") + " " + id);
                         sameCard = areRowsLeft ? set.getInt("card.id") == id : false;
-                        System.out.println(sameCard);
                     } while (sameCard);
 
                     int[] componentTypes = new int[components.size()];
