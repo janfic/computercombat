@@ -86,7 +86,6 @@ public class HumanPlayer extends Player {
             client.sendMessage(message);
 
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -96,7 +95,7 @@ public class HumanPlayer extends Player {
         try {
             client.sendMessage(message);
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 

@@ -786,14 +786,11 @@ public class SQLAPI {
             for (int i = 0; i < data.getMoves().size(); i++) {
                 // Insert Move Results
                 List<MoveResult> moveResults = data.getMoveResults().get(i);
-                Map<String, List<MoveResult>> map = new HashMap<>();
-                map.put("move", moveResults);
 
                 // Insert Move
-                sql = "INSERT INTO move (data, match_id, move_number) VALUES ('"
-                        + json.toJson(map) + "'," + match_id + "," + (i + 1) + ");";
+                sql = "INSERT INTO move (`data`, `match_id`, `move_number`) "
+                        + "VALUES (JSON_QUOTE('" + json.toJson(moveResults) + "')," + match_id + "," + (i + 1) + ");";
                 System.out.println(sql);
-                System.out.println(json.prettyPrint(map));
                 updates = statement.executeUpdate(sql);
                 r += updates;
             }
