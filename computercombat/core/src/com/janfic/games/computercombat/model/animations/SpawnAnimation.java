@@ -64,6 +64,7 @@ public class SpawnAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
+        json.writeType(getClass());
         json.writeValue("spawned", spawned, List.class);
         json.writeValue("oldComponents", oldComponents, List.class);
     }

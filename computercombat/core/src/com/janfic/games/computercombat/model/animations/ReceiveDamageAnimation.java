@@ -60,6 +60,7 @@ public class ReceiveDamageAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
+        json.writeType(getClass());
         json.writeValue("reciever", reciever, Card.class);
         json.writeValue("playerUID", playerUID, String.class);
         json.writeValue("damage", damage, Integer.class);
