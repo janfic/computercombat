@@ -94,7 +94,6 @@ public class DrawAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
-        json.writeType(this.getClass());
         json.writeValue("playerUID", playerUID);
         json.writeValue("newSoftware", newSoftware);
     }

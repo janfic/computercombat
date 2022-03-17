@@ -304,7 +304,6 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
 
     @Override
     public void write(Json json) {
-        json.writeType(getClass());
         json.writeValue("name", this.name);
         json.writeValue("id", this.id);
         json.writeValue("matchID", this.matchID);

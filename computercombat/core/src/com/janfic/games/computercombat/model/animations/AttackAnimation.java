@@ -104,7 +104,6 @@ public class AttackAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
-        json.writeType(getClass());
         json.writeValue("attacks", attacks, ObjectMap.class);
         json.writeValue("attackedUID", attackedUID, String.class);
         json.writeValue("attackerUID", attackerUID, String.class);

@@ -71,7 +71,6 @@ public class SwitchAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
-        json.writeType(this.getClass());
         json.writeValue("a", a);
         json.writeValue("b", b);
     }

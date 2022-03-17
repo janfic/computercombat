@@ -786,32 +786,14 @@ public class SQLAPI {
             for (int i = 0; i < data.getMoves().size(); i++) {
                 // Insert Move Results
                 List<MoveResult> moveResults = data.getMoveResults().get(i);
-                sql = "INSERT INTO move_results (data) VALUES ('" + json.toJson(moveResults) + "');";
-                updates = statement.executeUpdate(sql);
-                r += updates;
-
-                // Get Move Result ID
-                sql = "SELECT LAST_INSERT_ID();";
-                results = statement.executeQuery(sql);
-                results.next();
-                int move_results_id = results.getInt(1);
+                Map<String, List<MoveResult>> map = new HashMap<>();
+                map.put("move", moveResults);
 
                 // Insert Move
-                Move move = data.getMoves().get(i);
-                sql = "INSERT INTO move (data, match_id, move_results_id, move_number) VALUES ('"
-                        + json.toJson(move) + "'," + match_id + "," + move_results_id + "," + (i + 1) + ");";
-                updates = statement.executeUpdate(sql);
-                r += updates;
-            }
-
-            // Insert Match States
-            for (int i = 0; i < data.getMatchStates().size(); i++) {
-                MatchState state = data.getMatchStates().get(i);
-                sql = "INSERT INTO match_state (match_id, match_state_number, data) VALUES ("
-                        + match_id + ","
-                        + i + ",'"
-                        + json.toJson(state)
-                        + "');";
+                sql = "INSERT INTO move (data, match_id, move_number) VALUES ('"
+                        + json.toJson(map) + "'," + match_id + "," + (i + 1) + ");";
+                System.out.println(sql);
+                System.out.println(json.prettyPrint(map));
                 updates = statement.executeUpdate(sql);
                 r += updates;
             }
