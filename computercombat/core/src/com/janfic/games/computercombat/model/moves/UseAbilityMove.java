@@ -61,7 +61,7 @@ public class UseAbilityMove extends Move implements Json.Serializable {
 
     @Override
     public void write(Json json) {
-        json.writeType(this.getClass());
+        super.write(json);
         json.writeValue("player", playerUID);
         json.writeValue("entity", entity, Card.class);
         json.writeValue("selectedComponents", selectedComponents, List.class);

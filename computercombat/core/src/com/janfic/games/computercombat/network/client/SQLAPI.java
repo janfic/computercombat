@@ -242,11 +242,12 @@ public class SQLAPI {
     public List<Card> getCardsInfo(List<Integer> cardIDs, String optionalUID) {
         List<Card> cards = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM card \n"
+            String sql = "SELECT *, group_concat(run_requirements.component_id) as components\n"
+                    + "FROM card \n"
                     + "JOIN ability ON card.ability_id = ability.id\n"
                     + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
                     + "JOIN components ON components.id = run_requirements.component_id\n"
-                    + "JOIN collection ON card.collection_id = collection.id;";
+                    + "JOIN collection ON card.collection_id = collection.id GROUP BY card.id;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
@@ -254,70 +255,11 @@ public class SQLAPI {
             boolean areRowsLeft = set.next();
 
             while (areRowsLeft) {
-                if (cardIDs.contains(set.getInt("card.id"))) {
-                    Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
-                    a.setInformation(
-                            set.getString("ability.description"),
-                            set.getString("ability.textureName"),
-                            set.getString("ability.name"),
-                            set.getString("ability.code"),
-                            set.getInt("ability.id")
-                    );
-
-                    Collection c = new Collection(
-                            set.getInt("collection.id"),
-                            set.getString("collection.name"),
-                            set.getString("collection.description"),
-                            set.getString("collection.textureName"),
-                            set.getString("collection.path"),
-                            set.getInt("collection.price"));
-
-                    List<Integer> components = new ArrayList<>();
-
-                    String name = set.getString("card.name");
-                    String textureName = set.getString("card.textureName");
-                    int level = set.getInt("card.level");
-                    int id = set.getInt("card.id");
-                    int maxHealth = set.getInt("card.maxHealth");
-                    int maxDefense = set.getInt("card.maxDefense");
-                    int maxAttack = set.getInt("card.maxAttack");
-                    int runRequirements = set.getInt("card.runRequirements");
-                    int rarity = set.getInt("card.rarity");
-                    String description = set.getString("card.description");
-
-                    boolean sameCard = false;
-                    do {
-                        components.add(set.getInt("components.id"));
-                        areRowsLeft = set.next();
-                        sameCard = areRowsLeft ? set.getInt("card.id") == id : false;
-                    } while (sameCard);
-
-                    int[] componentTypes = new int[components.size()];
-                    for (int i = 0; i < components.size(); i++) {
-                        componentTypes[i] = components.get(i);
-                    }
-
-                    Card s = new Card(
-                            id,
-                            optionalUID,
-                            name,
-                            c,
-                            textureName,
-                            level,
-                            maxHealth,
-                            maxDefense,
-                            maxAttack,
-                            1,
-                            componentTypes,
-                            runRequirements,
-                            a,
-                            rarity,
-                            description
-                    );
-                    cards.add(s);
-                } else {
-                    areRowsLeft = set.next();
+                Card c = readCardFromSet(set, optionalUID);
+                if (cardIDs.contains(c.getID())) {
+                    cards.add(c);
                 }
+                areRowsLeft = set.next();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -326,85 +268,65 @@ public class SQLAPI {
         return cards;
     }
 
-    public List<Card> getCardsInDeck(int deckID, String uid) {
-        List<Card> cards = new ArrayList<>();
-
+    public Deck getDeck(int deckID, String uid) {
         try {
-            String sql = "SELECT * FROM deck_has_card \n"
+            String sql = "SELECT * FROM deck\n"
+                    + "WHERE deck.profile_id = '" + uid + "' AND deck.id = '" + deckID + "';";
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            if (set.next() == false) {
+                return null;
+            }
+
+            Deck deck = new Deck(set.getString("deck.name"), deckID);
+
+            sql = "SELECT *, group_concat(run_requirements.component_id) as components\n"
+                    + "FROM deck_has_card \n"
                     + "JOIN card ON deck_has_card.card_id = card.id\n"
                     + "JOIN ability ON card.ability_id = ability.id\n"
                     + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
                     + "JOIN components ON components.id = run_requirements.component_id\n"
                     + "JOIN collection ON card.collection_id = collection.id\n"
-                    + "WHERE deck_has_card.deck_id = '" + deckID + "';";
+                    + "WHERE deck_has_card.deck_id = '" + deckID + "' GROUP BY card.id;";
+
+            set = statement.executeQuery(sql);
+
+            boolean areRowsLeft = set.next();
+            while (areRowsLeft) {
+                Card c = readCardFromSet(set, uid);
+                int amount = set.getInt("deck_has_card.amount");
+                deck.addCard(c, amount);
+                areRowsLeft = set.next();
+            }
+
+            return deck;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Card> getCardsInDeck(int deckID, String uid) {
+        List<Card> cards = new ArrayList<>();
+
+        try {
+            String sql = "SELECT *, group_concat(run_requirements.component_id) as components\n"
+                    + "FROM deck_has_card \n"
+                    + "JOIN card ON deck_has_card.card_id = card.id\n"
+                    + "JOIN ability ON card.ability_id = ability.id\n"
+                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
+                    + "JOIN components ON components.id = run_requirements.component_id\n"
+                    + "JOIN collection ON card.collection_id = collection.id\n"
+                    + "WHERE deck_has_card.deck_id = '" + deckID + "' GROUP BY card.id;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
 
             boolean areRowsLeft = set.next();
             while (areRowsLeft) {
-                int currentCardID = set.getInt("card.id");
-                Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
-                a.setInformation(
-                        set.getString("ability.description"),
-                        set.getString("ability.textureName"),
-                        set.getString("ability.name"),
-                        set.getString("ability.code"),
-                        set.getInt("ability.id")
-                );
-
-                Collection c = new Collection(
-                        set.getInt("collection.id"),
-                        set.getString("collection.name"),
-                        set.getString("collection.description"),
-                        set.getString("collection.textureName"),
-                        set.getString("collection.path"),
-                        set.getInt("collection.price"));
-
-                List<Integer> components = new ArrayList<>();
-
-                int id = set.getInt("card.id");
-                String name = set.getString("card.name");
-                String textureName = set.getString("card.textureName");
-                int level = set.getInt("card.level");
-                int maxHealth = set.getInt("card.maxHealth");
-                int maxDefense = set.getInt("card.maxDefense");
-                int maxAttack = set.getInt("card.maxAttack");
-                int runRequirements = set.getInt("card.runRequirements");
-                int amount = set.getInt("deck_has_card.amount");
-                int rarity = set.getInt("card.rarity");
-                boolean sameCard = false;
-                String description = set.getString("card.description");
-
-                do {
-                    components.add(set.getInt("components.id"));
-                    areRowsLeft = set.next();
-                    sameCard = areRowsLeft ? currentCardID == set.getInt("card.id") : false;
-                } while (sameCard && areRowsLeft);
-
-                int[] componentTypes = new int[components.size()];
-                for (int i = 0; i < components.size(); i++) {
-                    componentTypes[i] = components.get(i);
-                }
-
-                Card s = new Card(
-                        id,
-                        uid,
-                        name,
-                        c,
-                        textureName,
-                        level,
-                        maxHealth,
-                        maxDefense,
-                        maxAttack,
-                        1,
-                        componentTypes,
-                        runRequirements,
-                        a,
-                        rarity,
-                        description
-                );
-                cards.add(s);
+                Card c = readCardFromSet(set, uid);
+                cards.add(c);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -454,112 +376,11 @@ public class SQLAPI {
 
             while (set.next()) {
                 int deckID = set.getInt("deck.id");
-                String deckName = set.getString("name");
-                Deck deck = new Deck(deckName, deckID);
-                decks.add(deck);
+                decks.add(getDeck(deckID, uid));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        try {
-            //Query for decks owned by player
-            String sql = "SELECT * FROM deck\n"
-                    + "JOIN deck_has_card ON deck_has_card.deck_id = deck.id\n"
-                    + "JOIN card ON deck_has_card.card_id = card.id\n"
-                    + "JOIN ability ON card.ability_id = ability.id\n"
-                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
-                    + "JOIN components ON components.id = run_requirements.component_id\n"
-                    + "JOIN collection ON card.collection_id = collection.id\n"
-                    + "WHERE deck.profile_id = '" + uid + "' ORDER BY card.id AND deck.id;";
-
-            Statement statement = connection.createStatement();
-            ResultSet set = statement.executeQuery(sql);
-
-            boolean areRowsLeft = set.next();
-
-            while (areRowsLeft) { // Change to next deck
-
-                int deckID = set.getInt("deck.id");
-                int currentDeckID = set.getInt("deck.id");
-                String deckName = set.getString("name");
-                Deck deck = new Deck(deckName, deckID);
-                if (decks.contains(deck)) {
-                    deck = decks.get(decks.indexOf(deck));
-                }
-
-                boolean sameDeck = true;
-                while (sameDeck && areRowsLeft) {
-                    int currentCardID = set.getInt("card.id");
-                    Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
-                    a.setInformation(
-                            set.getString("ability.description"),
-                            set.getString("ability.textureName"),
-                            set.getString("ability.name"),
-                            set.getString("ability.code"),
-                            set.getInt("ability.id")
-                    );
-
-                    Collection c = new Collection(
-                            set.getInt("collection.id"),
-                            set.getString("collection.name"),
-                            set.getString("collection.description"),
-                            set.getString("collection.textureName"),
-                            set.getString("collection.path"),
-                            set.getInt("collection.price"));
-
-                    List<Integer> components = new ArrayList<>();
-
-                    int id = set.getInt("card.id");
-                    String name = set.getString("card.name");
-                    String textureName = set.getString("card.textureName");
-                    int level = set.getInt("card.level");
-                    int maxHealth = set.getInt("card.maxHealth");
-                    int maxDefense = set.getInt("card.maxDefense");
-                    int maxAttack = set.getInt("card.maxAttack");
-                    int runRequirements = set.getInt("card.runRequirements");
-                    int amount = set.getInt("deck_has_card.amount");
-                    int rarity = set.getInt("card.rarity");
-                    boolean sameCard = false;
-                    String description = set.getString("card.description");
-
-                    do {
-                        components.add(set.getInt("components.id"));
-                        areRowsLeft = set.next();
-                        sameDeck = areRowsLeft ? currentDeckID == set.getInt("deck.id") : false;
-                        sameCard = areRowsLeft ? currentCardID == set.getInt("card.id") && sameDeck : false;
-                    } while (sameCard && areRowsLeft);
-
-                    int[] componentTypes = new int[components.size()];
-                    for (int i = 0; i < components.size(); i++) {
-                        componentTypes[i] = components.get(i);
-                    }
-
-                    Card s = new Card(
-                            id,
-                            uid,
-                            name,
-                            c,
-                            textureName,
-                            level,
-                            maxHealth,
-                            maxDefense,
-                            maxAttack,
-                            1,
-                            componentTypes,
-                            runRequirements,
-                            a,
-                            rarity,
-                            description
-                    );
-                    deck.addCard(s, amount);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(decks);
         return decks;
     }
 
@@ -786,32 +607,10 @@ public class SQLAPI {
             for (int i = 0; i < data.getMoves().size(); i++) {
                 // Insert Move Results
                 List<MoveResult> moveResults = data.getMoveResults().get(i);
-                sql = "INSERT INTO move_results (data) VALUES ('" + json.toJson(moveResults) + "');";
-                updates = statement.executeUpdate(sql);
-                r += updates;
-
-                // Get Move Result ID
-                sql = "SELECT LAST_INSERT_ID();";
-                results = statement.executeQuery(sql);
-                results.next();
-                int move_results_id = results.getInt(1);
 
                 // Insert Move
-                Move move = data.getMoves().get(i);
-                sql = "INSERT INTO move (data, match_id, move_results_id, move_number) VALUES ('"
-                        + json.toJson(move) + "'," + match_id + "," + move_results_id + "," + (i + 1) + ");";
-                updates = statement.executeUpdate(sql);
-                r += updates;
-            }
-
-            // Insert Match States
-            for (int i = 0; i < data.getMatchStates().size(); i++) {
-                MatchState state = data.getMatchStates().get(i);
-                sql = "INSERT INTO match_state (match_id, match_state_number, data) VALUES ("
-                        + match_id + ","
-                        + i + ",'"
-                        + json.toJson(state)
-                        + "');";
+                sql = "INSERT INTO move (`data`, `match_id`, `move_number`) "
+                        + "VALUES (JSON_QUOTE('" + json.toJson(moveResults) + "')," + match_id + "," + (i + 1) + ");";
                 updates = statement.executeUpdate(sql);
                 r += updates;
             }
@@ -869,11 +668,11 @@ public class SQLAPI {
         List<Card> cards = new ArrayList<>();
 
         try {
-            String sql = "SELECT * FROM card \n"
+            String sql = "SELECT *, group_concat(run_requirements.component_id) as components FROM card \n"
                     + "JOIN ability ON card.ability_id = ability.id\n"
                     + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
                     + "JOIN components ON components.id = run_requirements.component_id\n"
-                    + "JOIN collection ON card.collection_id = collection.id;";
+                    + "JOIN collection ON card.collection_id = collection.id GROUP BY card.id;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
@@ -882,66 +681,8 @@ public class SQLAPI {
 
             while (areRowsLeft) {
                 if (collectionIDs.contains(set.getInt("card.collection_id"))) {
-                    Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
-                    a.setInformation(
-                            set.getString("ability.description"),
-                            set.getString("ability.textureName"),
-                            set.getString("ability.name"),
-                            set.getString("ability.code"),
-                            set.getInt("ability.id")
-                    );
-
-                    Collection c = new Collection(
-                            set.getInt("collection.id"),
-                            set.getString("collection.name"),
-                            set.getString("collection.description"),
-                            set.getString("collection.textureName"),
-                            set.getString("collection.path"),
-                            set.getInt("collection.price"));
-
-                    List<Integer> components = new ArrayList<>();
-
-                    String name = set.getString("card.name");
-                    String textureName = set.getString("card.textureName");
-                    int level = set.getInt("card.level");
-                    int id = set.getInt("card.id");
-                    int maxHealth = set.getInt("card.maxHealth");
-                    int maxDefense = set.getInt("card.maxDefense");
-                    int maxAttack = set.getInt("card.maxAttack");
-                    int rarity = set.getInt("card.rarity");
-                    int runRequirements = set.getInt("card.runRequirements");
-                    String description = set.getString("card.description");
-
-                    boolean sameCard = false;
-                    do {
-                        components.add(set.getInt("components.id"));
-                        areRowsLeft = set.next();
-                        sameCard = areRowsLeft ? set.getInt("card.id") == id : false;
-                    } while (sameCard);
-
-                    int[] componentTypes = new int[components.size()];
-                    for (int i = 0; i < components.size(); i++) {
-                        componentTypes[i] = components.get(i);
-                    }
-
-                    Card s = new Card(
-                            id,
-                            optionalUID,
-                            name,
-                            c,
-                            textureName,
-                            level,
-                            maxHealth,
-                            maxDefense,
-                            maxAttack,
-                            1,
-                            componentTypes,
-                            runRequirements,
-                            a,
-                            rarity,
-                            description
-                    );
-                    cards.add(s);
+                    Card c = readCardFromSet(set, optionalUID);
+                    cards.add(c);
                 } else {
                     areRowsLeft = set.next();
                 }
@@ -951,6 +692,69 @@ public class SQLAPI {
         }
 
         return cards;
+    }
+
+    private Card readCardFromSet(ResultSet set, String uid) {
+        try {
+
+            Ability a = (Ability) shell.evaluate(set.getString("ability.code"));
+            a.setInformation(
+                    set.getString("ability.description"),
+                    set.getString("ability.textureName"),
+                    set.getString("ability.name"),
+                    set.getString("ability.code"),
+                    set.getInt("ability.id")
+            );
+
+            Collection collection = new Collection(
+                    set.getInt("collection.id"),
+                    set.getString("collection.name"),
+                    set.getString("collection.description"),
+                    set.getString("collection.textureName"),
+                    set.getString("collection.path"),
+                    set.getInt("collection.price"));
+
+            String name = set.getString("card.name");
+            String textureName = set.getString("card.textureName");
+            int level = set.getInt("card.level");
+            int id = set.getInt("card.id");
+            int maxHealth = set.getInt("card.maxHealth");
+            int maxDefense = set.getInt("card.maxDefense");
+            int maxAttack = set.getInt("card.maxAttack");
+            int runRequirements = set.getInt("card.runRequirements");
+            int rarity = set.getInt("card.rarity");
+            String description = set.getString("card.description");
+            String components = set.getString("components");
+            String[] c = components.split(",");
+
+            int[] componentTypes = new int[c.length];
+            for (int i = 0; i < c.length; i++) {
+                componentTypes[i] = Integer.parseInt(c[i]);
+            }
+
+            Card s = new Card(
+                    id,
+                    uid,
+                    name,
+                    collection,
+                    textureName,
+                    level,
+                    maxHealth,
+                    maxDefense,
+                    maxAttack,
+                    1,
+                    componentTypes,
+                    runRequirements,
+                    a,
+                    rarity,
+                    description
+            );
+
+            return s;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void pingDatabase() {

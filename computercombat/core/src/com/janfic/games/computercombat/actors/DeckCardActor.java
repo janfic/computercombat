@@ -50,8 +50,6 @@ public class DeckCardActor extends Panel {
         leds = new Table();
         leds.defaults().space(5);
         for (Integer runComponent : software.getRunComponents()) {
-            System.out.println(runComponent);
-            System.out.println(components.get(runComponent));
             LEDActor led = new LEDActor(skin, components.get(runComponent));
             led.setLightOn(true);
             leds.add(led).row();

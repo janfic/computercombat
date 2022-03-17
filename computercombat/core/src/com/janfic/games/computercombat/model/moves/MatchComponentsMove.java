@@ -67,8 +67,7 @@ public class MatchComponentsMove extends Move implements Json.Serializable {
 
     @Override
     public void write(Json json) {
-        json.writeType(this.getClass());
-        json.writeValue("playerUID", playerUID);
+        super.write(json);
         json.writeValue("a", a);
         json.writeValue("b", b);
     }
