@@ -680,12 +680,11 @@ public class SQLAPI {
             boolean areRowsLeft = set.next();
 
             while (areRowsLeft) {
-                if (collectionIDs.contains(set.getInt("card.collection_id"))) {
+                if (collectionIDs.contains(set.getInt("card.collection_id")) && set.getInt("card.id") != 0) {
                     Card c = readCardFromSet(set, optionalUID);
                     cards.add(c);
-                } else {
-                    areRowsLeft = set.next();
                 }
+                areRowsLeft = set.next();
             }
         } catch (Exception e) {
             e.printStackTrace();

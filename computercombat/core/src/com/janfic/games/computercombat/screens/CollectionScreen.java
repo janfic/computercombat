@@ -14,9 +14,11 @@ import com.janfic.games.computercombat.actors.BorderedGrid;
 import com.janfic.games.computercombat.actors.CollectionCard;
 import com.janfic.games.computercombat.actors.FilterWindowActor;
 import com.janfic.games.computercombat.model.Card;
+import com.janfic.games.computercombat.model.Collection;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,8 @@ import java.util.Map;
 public class CollectionScreen implements Screen {
 
     ComputerCombatGame game;
+
+    Collection pack;
 
     Stage stage;
 
@@ -46,6 +50,11 @@ public class CollectionScreen implements Screen {
         this.cards = new ArrayList<CollectionCard>();
     }
 
+    public CollectionScreen(ComputerCombatGame game, Collection collection) {
+        this(game);
+        this.pack = collection;
+    }
+
     @Override
     public void show() {
         this.camera = new OrthographicCamera(1920 / 4, 1080 / 4);
@@ -61,7 +70,7 @@ public class CollectionScreen implements Screen {
         Table titleTable = new Table(skin);
         titleTable.setBackground("border");
 
-        Label title = new Label("Collection", skin);
+        Label title = new Label(pack == null ? "Collection" : pack.getName() + " Collection", skin);
         title.setAlignment(Align.center);
         TextButton backButton = new TextButton("Back", skin);
         backButton.addListener(new ClickListener() {
@@ -136,8 +145,17 @@ public class CollectionScreen implements Screen {
 
     public void buildCollection() {
         Profile profile = game.getCurrentProfile();
-
-        Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
+        Map<Card, Integer> software = new HashMap<>();
+        if (pack == null) {
+            software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
+        } else {
+            List<Integer> collections = new ArrayList<>();
+            collections.add(pack.getID());
+            List<Card> cards = SQLAPI.getSingleton().getCardsInCollection(collections, null);
+            for (Card card : cards) {
+                software.put(card, 1);
+            }
+        }
 
         collection.clearChildren();
         int row = 0;
