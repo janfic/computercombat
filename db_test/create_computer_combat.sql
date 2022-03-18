@@ -245,6 +245,10 @@ CREATE TABLE IF NOT EXISTS `computer_combat`.`run_requirements` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
+CREATE VIEW `join_components` AS
+SELECT card.id as card, group_concat(components.id) as components FROM card
+JOIN run_requirements ON card.id = run_requirements.card_id
+JOIN components ON components.id = run_requirements.component_id GROUP BY card.id;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
