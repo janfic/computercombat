@@ -13,14 +13,14 @@ coaxial_cable
   index: -1
 datagram
   rotate: false
-  xy: 98, 20
+  xy: 238, 202
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 ethernet
   rotate: false
-  xy: 334, 202
+  xy: 146, 20
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
@@ -41,21 +41,21 @@ firewall
   index: -1
 hyper_speed
   rotate: false
-  xy: 430, 154
+  xy: 430, 106
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 infect
   rotate: false
-  xy: 382, 154
+  xy: 334, 202
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 light_speed
   rotate: false
-  xy: 194, 20
+  xy: 382, 202
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
@@ -97,14 +97,14 @@ recieve_packets
   index: -1
 remove_bugs
   rotate: false
-  xy: 286, 106
+  xy: 334, 154
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 router
   rotate: false
-  xy: 334, 154
+  xy: 98, 20
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
@@ -118,42 +118,42 @@ super_speed
   index: -1
 tcp
   rotate: false
-  xy: 382, 202
+  xy: 382, 106
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 tcp_handshake
   rotate: false
-  xy: 146, 20
+  xy: 286, 106
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 tunnel
   rotate: false
-  xy: 334, 106
+  xy: 382, 154
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 udp
   rotate: false
-  xy: 238, 202
+  xy: 334, 106
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 virus
   rotate: false
-  xy: 430, 106
+  xy: 194, 20
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 web_search
   rotate: false
-  xy: 382, 106
+  xy: 430, 154
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
