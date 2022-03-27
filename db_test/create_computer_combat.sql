@@ -18,7 +18,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema computer_combat
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `computer_combat` DEFAULT CHARACTER SET utf8 ;
-USE `computer_combat` ;
+USE `computer_combat`;
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
 -- -----------------------------------------------------

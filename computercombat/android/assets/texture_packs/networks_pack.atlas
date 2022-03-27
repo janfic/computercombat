@@ -4,191 +4,226 @@ size: 512,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+black_box
+  rotate: false
+  xy: 238, 98
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
 coaxial_cable
   rotate: false
-  xy: 334, 202
+  xy: 146, 12
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 datagram
   rotate: false
-  xy: 98, 20
+  xy: 98, 12
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 decrypt
   rotate: false
-  xy: 238, 106
+  xy: 286, 146
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 decryption
   rotate: false
-  xy: 382, 154
+  xy: 430, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 encrypt
   rotate: false
-  xy: 430, 154
+  xy: 430, 146
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 encryption
   rotate: false
-  xy: 50, 20
+  xy: 50, 12
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 ethernet
   rotate: false
-  xy: 334, 154
+  xy: 382, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 fiber
   rotate: false
-  xy: 194, 20
+  xy: 290, 50
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 firewall
   rotate: false
-  xy: 2, 20
+  xy: 2, 12
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 hyper_speed
   rotate: false
-  xy: 386, 58
+  xy: 242, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 infect
   rotate: false
-  xy: 286, 106
+  xy: 242, 50
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 light_speed
   rotate: false
-  xy: 338, 58
+  xy: 386, 2
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+nat_box
+  rotate: false
+  xy: 338, 50
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 networks_pack
   rotate: false
-  xy: 120, 68
+  xy: 120, 60
   size: 116, 180
   orig: 116, 180
   offset: 0, 0
   index: -1
 networks_pack_icon
   rotate: false
-  xy: 2, 2
+  xy: 478, 224
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 networks_pack_opened
   rotate: false
-  xy: 2, 68
+  xy: 2, 60
   size: 116, 180
   orig: 116, 180
   offset: 0, 0
   index: -1
 packet
   rotate: false
-  xy: 286, 202
+  xy: 286, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 recieve_packets
   rotate: false
-  xy: 238, 154
+  xy: 238, 146
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 remove_bugs
   rotate: false
-  xy: 334, 106
+  xy: 382, 146
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+route_packets
+  rotate: false
+  xy: 290, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 router
   rotate: false
-  xy: 430, 202
+  xy: 382, 98
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 super_speed
   rotate: false
-  xy: 286, 154
+  xy: 334, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 tcp
   rotate: false
-  xy: 382, 106
+  xy: 386, 50
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 tcp_handshake
   rotate: false
-  xy: 382, 202
+  xy: 334, 98
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+the_cloud
+  rotate: false
+  xy: 430, 98
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 tunnel
   rotate: false
-  xy: 430, 106
+  xy: 194, 12
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 udp
   rotate: false
-  xy: 238, 202
+  xy: 238, 194
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 virus
   rotate: false
-  xy: 290, 58
+  xy: 338, 2
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 web_search
   rotate: false
-  xy: 242, 58
+  xy: 434, 50
+  size: 46, 46
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+wifi
+  rotate: false
+  xy: 334, 146
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
   index: -1
 worm
   rotate: false
-  xy: 146, 20
+  xy: 286, 98
   size: 46, 46
   orig: 46, 46
   offset: 0, 0
