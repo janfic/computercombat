@@ -29,6 +29,11 @@ public class HeuristicBotPlayer extends Player {
     public HeuristicBotPlayer() {
     }
 
+    public HeuristicBotPlayer(String uid, Deck deck, List<HeuristicAnalyzer> heuristicAnalyzerPriorityList) {
+        this(uid, deck);
+        this.priorityList = heuristicAnalyzerPriorityList;
+    }
+
     public HeuristicBotPlayer(String uid, Deck deck) {
         super(uid, deck);
     }
@@ -36,15 +41,6 @@ public class HeuristicBotPlayer extends Player {
     @Override
     public void beginMatch(MatchState state, Player opponent) {
         this.currentState = state;
-        this.priorityList = new ArrayList<>();
-        this.priorityList.add(new ComponentsCollectedHeuristicAnalyzer());
-        this.priorityList.add(new ExtraTurnHeuristicAnalyzer());
-        this.priorityList.add(new DamageHeuristicAnalyzer());
-        this.priorityList.add(new KeepComponentTypeHeuristicAnalyzer(6));
-        this.priorityList.add(new UseAbilityHeuristicAnalyzer());
-        this.priorityList.add(new IncreaseComponentTypeHeuristicAnalyzer(6));
-        this.priorityList.add(new ChargeAbilitiesHeuristicAnalyzer());
-        this.priorityList.add(new CompletelyChargeAbilitiesHeuristicAnalyzer());
     }
 
     @Override
