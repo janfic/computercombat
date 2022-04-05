@@ -12,7 +12,6 @@ public class BotCard {
 
     private HeuristicAnalyzer heuristicAnalyzer;
 
-
     public BotCard() {
 
     }
@@ -47,4 +46,11 @@ public class BotCard {
         return this.heuristicAnalyzer;
     }
 
+    public String toString() {
+        return "BotCard: [ id: " + id
+                + " , name: " + name
+                + " , description: " + description
+                + " , heuristicAnalyzer: " + heuristicAnalyzer
+                + " , code: " + code + "]";
+    }
 }

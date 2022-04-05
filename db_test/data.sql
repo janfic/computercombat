@@ -28,6 +28,25 @@ INSERT INTO `ability` VALUES (0,'Draw','Draw a card from your deck','new DrawAbi
 UNLOCK TABLES;
 
 --
+-- Dumping data for table `bot`
+--
+
+LOCK TABLES `bot` WRITE;
+/*!40000 ALTER TABLE `bot` DISABLE KEYS */;
+/*!40000 ALTER TABLE `bot` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `bot_card`
+--
+
+LOCK TABLES `bot_card` WRITE;
+/*!40000 ALTER TABLE `bot_card` DISABLE KEYS */;
+INSERT INTO `bot_card` VALUES (0,'Gain Extra Turn','Values moves that yeild an extra turn.','default','new ExtraTurnHeuristicAnalyzer()'),(1,'Use Ability','Values moves that use abilities.','default','new UseAbilityHeuristicAnalyzer()'),(2,'Charge Ability','Values moves that charge cards\' abilities.','default','new ChargeAbilitiesHeuristicAnalyzer()'),(3,'Finish Charging Ability','Values moves that finish charging cards\' abilities','default','new CompletelyChargeAbilitiesHeuristicAnalyzer()'),(4,'Collect Components','Values moves with higher amount of collected components.','default','new ComponentsCollectedHeuristicAnalyzer()'),(5,'Draw Card','Values moves that draw another card.','default','new DrewCardHeuristicAnalyzer()'),(6,'Damage Opponent','Values moves that damage other cards or opponent\'s computer.','default','new DamageHeuristicAnalyzer()'),(7,'Increase CPU Components','Values moves that increase the amount of CPU Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(1)'),(8,'Increase RAM Components','Values moves that increase the amount of RAM Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(2)'),(9,'Increase Storage Components','Values moves that increase the amount of Storage Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(3)'),(10,'Increase Network Components','Values moves that increase the amount of Network Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(4)'),(11,'Increase Bug Components','Values moves that increase the amount of Bug Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(5)'),(12,'Increase Power Components','Values moves that increase the amount of Power Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(6)'),(13,'Keep CPU Components','Values moves that maintain the amount of CPU Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(1)'),(14,'Keep RAM Components','Values moves that maintain the amount of RAM Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(2)'),(15,'Keep Storage Components','Values moves that maintain the amount of Storage Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(3)'),(16,'Keep Network Components','Values moves that maintain the amount of Network Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(4)'),(17,'Keep Bug Components','Values moves that maintain the amount of Bug Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(5)'),(18,'Keep Power Components','Values moves that maintain the amount of Power Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(6)');
+/*!40000 ALTER TABLE `bot_card` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping data for table `card`
 --
 
@@ -98,15 +117,6 @@ INSERT INTO `move` VALUES (9,'\"[{\\\"class\\\":\\\"com.janfic.games.computercom
 UNLOCK TABLES;
 
 --
--- Dumping data for table `player`
---
-
-LOCK TABLES `player` WRITE;
-/*!40000 ALTER TABLE `player` DISABLE KEYS */;
-/*!40000 ALTER TABLE `player` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Dumping data for table `profile`
 --
 
@@ -145,4 +155,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-28 11:14:12
+-- Dump completed on 2022-04-05 14:12:28

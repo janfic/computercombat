@@ -7,11 +7,10 @@ import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Collection;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.match.MatchData;
-import com.janfic.games.computercombat.model.match.MatchState;
-import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.moves.MoveResult;
+import com.janfic.games.computercombat.model.players.BotCard;
 import groovy.lang.GroovyShell;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,7 +32,8 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 public class SQLAPI {
 
 //    String url = "jdbc:mysql://computer-combat-db.cloqezbutiub.us-east-1.rds.amazonaws.com:3306";
-    String url = "jdbc:mysql://137.184.137.169:30306";
+//    String url = "jdbc:mysql://137.184.137.169:30306";
+    String url = "jdbc:mysql://localhost:30306";
 
     private static SQLAPI singleton;
     private Properties properties;
@@ -767,5 +767,67 @@ public class SQLAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<BotCard> getBotCardsByIDs(List<Integer> ids) {
+        List<BotCard> botCards = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM bot_card;";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            boolean hasNext = set.next();
+            while (hasNext) {
+
+                if (ids.contains(set.getInt("id"))) {
+                    BotCard botCard = new BotCard(
+                            set.getInt("id"),
+                            set.getString("name"),
+                            set.getString("textureName"),
+                            set.getString("description"),
+                            set.getString("code"));
+
+                    botCards.add(botCard);
+                }
+
+                hasNext = set.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return botCards;
+    }
+
+    public List<BotCard> getAllBotCards() {
+        List<BotCard> botCards = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM bot_card;";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            boolean hasNext = set.next();
+            while (hasNext) {
+
+                BotCard botCard = new BotCard(
+                        set.getInt("id"),
+                        set.getString("name"),
+                        set.getString("textureName"),
+                        set.getString("description"),
+                        set.getString("code"));
+
+                botCards.add(botCard);
+
+                hasNext = set.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return botCards;
     }
 }

@@ -19,9 +19,12 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.model.players.BotCard;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.network.client.ServerAPI;
 import com.janfic.games.computercombat.screens.LoadingScreen;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class ComputerCombatGame extends Game {
@@ -57,6 +60,8 @@ public class ComputerCombatGame extends Game {
         for (Entry<String, Color> entry : skin.getAll(Color.class).entries()) {
             Colors.put(entry.key, entry.value);
         }
+
+        System.out.println(SQLAPI.getSingleton().getAllBotCards());
     }
 
     public Screen popScreen() {
