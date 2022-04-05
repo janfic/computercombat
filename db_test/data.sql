@@ -16,7 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 USE `computer_combat`;
-
 --
 -- Dumping data for table `ability`
 --
