@@ -206,6 +206,7 @@ public class SoftwareActor extends Panel {
 
     public void setSoftware(Card software) {
         this.software = software;
+        
     }
 
     public boolean activatedAbility() {

@@ -53,7 +53,7 @@ public class MultiAbility extends Ability {
             }
             results.addAll(abilityResults);
             if (i < abilities.size() - 1) {
-                if (state.currentPlayerMove.getUID() != move.getPlayerUID()) {
+                if (state.currentPlayerMove.getUID().equals(move.getPlayerUID())) {
                     state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
                 }
             }
