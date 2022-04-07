@@ -305,7 +305,7 @@ public class Server {
                         try {
                             MatchClient a = raidQueue.get(0);
                             Player playerA = new HumanPlayer(a.getProfile().getUID(), a);
-                            Player botPlayer = new HeuristicBotPlayer("botUID", (Deck) a.getDeck().clone());
+                            Player botPlayer = SQLAPI.getSingleton().createBotFromID(0);
                             ServerMatchRoom room = new ServerMatchRoom(playerA, botPlayer);
                             Message message2 = new Message(Type.FOUND_MATCH, "RAID BOT");
                             a.sendMessage(message2);
