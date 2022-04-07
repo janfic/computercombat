@@ -5,10 +5,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.*;
@@ -40,6 +43,8 @@ public class DecksScreen implements Screen {
 
     Table table, decks, deckCards;
     Table decksTable, deckTable, collectionTable, collection;
+    ProgressBar deckSize;
+    OverlayTextLabelArea<DeckActor> deckSizeArea;
 
     TextButton createButton, deleteButton;
 
@@ -99,6 +104,12 @@ public class DecksScreen implements Screen {
         populateDecks();
         ScrollPane decksScroll = new ScrollPane(decks, skin);
         decksScroll.setFadeScrollBars(false);
+        decksScroll.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                stage.setScrollFocus(decksScroll);
+            }
+        });
         createButton = new TextButton("Create", skin);
 
         createButton.addListener(new ClickListener() {
@@ -209,25 +220,74 @@ public class DecksScreen implements Screen {
         Label cardsTitle = new Label("Cards", skin, "title");
         cardsTitle.setAlignment(Align.center);
 
+        deckSize = new ProgressBar(0, 8, 1, false, skin);
+        deckSize.setWidth(100);
+        Stack deckSizeStack = new Stack();
+        deckSizeStack.add(deckSize);
+        Table deckSizeOverlay = new Table();
+        deckSizeArea = new OverlayTextLabelArea<DeckActor>(skin, selectedDeck) {
+            @Override
+            public String updateLabel(DeckActor dataObject) {
+                if (dataObject != null) {
+                    int amount = dataObject.getDeck().getCardCount(-1);
+                    deckSize.setValue(dataObject.getDeck().getCardCount(-1));
+                    return "" + dataObject.getDeck().getCardCount(-1);
+                } else {
+                    return "-";
+                }
+            }
+        };
+        deckSizeOverlay.add(deckSizeArea).expand().fillX().width(9).height(9);
+        deckSizeStack.add(deckSizeOverlay);
+
         deckCards = new Table();
         deckCards.defaults().space(5);
 
         ScrollPane deckCardsPane = new ScrollPane(deckCards, skin);
         deckCardsPane.setFadeScrollBars(false);
-
+        deckCardsPane.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                stage.setScrollFocus(deckCardsPane);
+            }
+        });
         TextButton saveButton = new TextButton("Save", skin);
 
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (selectedDeck != null) {
-                    SQLAPI.getSingleton().savePlayerDeck(selectedDeck.getDeck(), game.getCurrentProfile().getUID());
-                    saveButton.addAction(Actions.sequence(Actions.color(Color.GREEN), Actions.color(Color.WHITE, 2)));
+                    int amount = selectedDeck.getDeck().getCardCount(-1);
+                    if (amount != 8) {
+                        Window window = new Window("Invalid Deck", skin);
+                        window.setSize(stage.getWidth() / 2f, stage.getHeight() / 2f);
+                        window.setPosition(stage.getWidth() / 4f, stage.getHeight() / 4f);
+                        Label info = new Label("The selected deck will be saved. But it is invalid for play due because it has " + amount + " cards.\n Decks must have exactly 8 cards.", skin);
+                        info.setWrap(true);
+                        info.setAlignment(Align.center);
+                        TextButton okay = new TextButton("Okay", skin);
+                        okay.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                window.remove();
+                                SQLAPI.getSingleton().savePlayerDeck(selectedDeck.getDeck(), game.getCurrentProfile().getUID());
+                                saveButton.addAction(Actions.sequence(Actions.color(Color.GREEN), Actions.color(Color.WHITE, 2)));
+                            }
+                        });
+                        window.add(info).grow().row();
+                        window.add(okay).growX().row();
+                        stage.addActor(window);
+                    } else {
+                        SQLAPI.getSingleton().savePlayerDeck(selectedDeck.getDeck(), game.getCurrentProfile().getUID());
+                        saveButton.addAction(Actions.sequence(Actions.color(Color.GREEN), Actions.color(Color.WHITE, 2)));
+                    }
+
                 }
             }
         });
 
         deckTable.add(cardsTitle).growX().row();
+        deckTable.add(deckSizeStack).width(100).row();
         deckTable.add(deckCardsPane).grow().row();
         deckTable.add(saveButton).growX().row();
 
@@ -264,6 +324,12 @@ public class DecksScreen implements Screen {
 
         ScrollPane collectionPane = new ScrollPane(collection, skin);
         collectionPane.setFadeScrollBars(false);
+        collectionPane.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                stage.setScrollFocus(collectionPane);
+            }
+        });
 
         collectionTable.add(titleRow).growX().row();
         collectionTable.add(collectionPane).grow().row();
@@ -363,11 +429,31 @@ public class DecksScreen implements Screen {
                     deleteButton.setDisabled(false);
                     selectedDeck = d;
                     selectedDeck.select();
+                    updateDeckProgress();
                     updateDeckCards();
                 }
             });
             decks.add(d).row();
         }
+    }
+
+    private void updateDeckProgress() {
+        deckSizeArea.setDataObject(selectedDeck);
+        int amount = selectedDeck.getDeck().getCardCount(-1);
+        if (amount < 8) {
+            ProgressBarStyle grey = new ProgressBarStyle(skin.get("default-vertical", ProgressBarStyle.class));
+            grey.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("dae0ea"));
+            deckSize.setStyle(grey);
+        } else if (amount > 8) {
+            ProgressBarStyle red = new ProgressBarStyle(skin.get("default-vertical", ProgressBarStyle.class));
+            red.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("df3e23"));
+            deckSize.setStyle(red);
+        } else {
+            ProgressBarStyle green = new ProgressBarStyle(skin.get("default-vertical", ProgressBarStyle.class));
+            green.knobBefore = skin.newDrawable("progress_bar_before_vertical", Color.valueOf("9cdb43"));
+            deckSize.setStyle(green);
+        }
+        deckSize.setValue(amount);
     }
 
     private void updateDeckCards() {
@@ -394,6 +480,7 @@ public class DecksScreen implements Screen {
             deckCards.add(dca).row();
             deckToCollectionDragAndDrop.addSource(source);
         }
+        updateDeckProgress();
     }
 
     public void buildCollection() {

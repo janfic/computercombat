@@ -28,9 +28,15 @@ public class DeckActor extends Table {
         Label name = new Label(deck.getName(), skin);
         name.setWrap(true);
         name.setAlignment(Align.center);
-        selectSignal = new LEDActor(skin, "NETWORK");
+        selectSignal = new LEDActor(skin, deck.getCardCount(-1) == 8 ? "NETWORK" : "BUG");
+        selectSignal.setScale(2);
         this.add(selectSignal).expandX().right().row();
         this.add(name).grow().center();
+    }
+    
+    @Override
+    public void act(float delta) {
+        selectSignal.setColor(skin.getColor(deck.getCardCount(-1) == 8 ? "NETWORK" : "BUG"));
     }
     
     public Deck getDeck() {

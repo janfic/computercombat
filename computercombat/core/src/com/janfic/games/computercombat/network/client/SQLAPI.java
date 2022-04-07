@@ -243,12 +243,10 @@ public class SQLAPI {
     public List<Card> getCardsInfo(List<Integer> cardIDs, String optionalUID) {
         List<Card> cards = new ArrayList<>();
         try {
-            String sql = "SELECT *, group_concat(run_requirements.component_id) as components\n"
-                    + "FROM card \n"
+            String sql = "SELECT * FROM card\n"
                     + "JOIN ability ON card.ability_id = ability.id\n"
-                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
-                    + "JOIN components ON components.id = run_requirements.component_id\n"
-                    + "JOIN collection ON card.collection_id = collection.id GROUP BY card.id;";
+                    + "JOIN join_components ON card.id = join_components.card\n"
+                    + "JOIN collection ON card.collection_id = collection.id ;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
@@ -282,14 +280,12 @@ public class SQLAPI {
 
             Deck deck = new Deck(set.getString("deck.name"), deckID);
 
-            sql = "SELECT *, group_concat(run_requirements.component_id) as components\n"
-                    + "FROM deck_has_card \n"
+            sql = "SELECT * FROM deck_has_card \n"
                     + "JOIN card ON deck_has_card.card_id = card.id\n"
                     + "JOIN ability ON card.ability_id = ability.id\n"
-                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
-                    + "JOIN components ON components.id = run_requirements.component_id\n"
+                    + "JOIN join_components ON join_components.card = card.id\n"
                     + "JOIN collection ON card.collection_id = collection.id\n"
-                    + "WHERE deck_has_card.deck_id = '" + deckID + "' GROUP BY card.id;";
+                    + "WHERE deck_has_card.deck_id = '" + deckID + "';";
 
             set = statement.executeQuery(sql);
 
@@ -312,14 +308,12 @@ public class SQLAPI {
         List<Card> cards = new ArrayList<>();
 
         try {
-            String sql = "SELECT *, group_concat(run_requirements.component_id) as components\n"
-                    + "FROM deck_has_card \n"
+            String sql = "SELECT * FROM deck_has_card \n"
                     + "JOIN card ON deck_has_card.card_id = card.id\n"
                     + "JOIN ability ON card.ability_id = ability.id\n"
-                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
-                    + "JOIN components ON components.id = run_requirements.component_id\n"
+                    + "JOIN join_components ON join_components.card = card.id\n"
                     + "JOIN collection ON card.collection_id = collection.id\n"
-                    + "WHERE deck_has_card.deck_id = '" + deckID + "' GROUP BY card.id;";
+                    + "WHERE deck_has_card.deck_id = '" + deckID + "';";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
@@ -669,11 +663,10 @@ public class SQLAPI {
         List<Card> cards = new ArrayList<>();
 
         try {
-            String sql = "SELECT *, group_concat(run_requirements.component_id) as components FROM card \n"
+            String sql = "SELECT * FROM card\n"
                     + "JOIN ability ON card.ability_id = ability.id\n"
-                    + "JOIN run_requirements ON card.id = run_requirements.card_id\n"
-                    + "JOIN components ON components.id = run_requirements.component_id\n"
-                    + "JOIN collection ON card.collection_id = collection.id GROUP BY card.id;";
+                    + "JOIN join_components ON card.id = join_components.card \n"
+                    + "JOIN collection ON card.collection_id = collection.id;";
 
             Statement statement = connection.createStatement();
             ResultSet set = statement.executeQuery(sql);
