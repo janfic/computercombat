@@ -18,7 +18,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema computer_combat
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `computer_combat` DEFAULT CHARACTER SET utf8 ;
-USE `computer_combat` ;
+USE `computer_combat`;
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
 -- -----------------------------------------------------
@@ -245,6 +245,10 @@ CREATE TABLE IF NOT EXISTS `computer_combat`.`run_requirements` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
+CREATE VIEW `join_components` AS
+SELECT card.id as card, group_concat(components.id) as components FROM card
+JOIN run_requirements ON card.id = run_requirements.card_id
+JOIN components ON components.id = run_requirements.component_id GROUP BY card.id;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

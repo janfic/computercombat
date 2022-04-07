@@ -26,8 +26,8 @@ public class FocusedDamageAbility extends Ability {
         super(new ArrayList<>());
     }
 
-    public FocusedDamageAbility(List<Filter> filter, StateAnalyzer<Integer> amount) {
-        super(filter);
+    public FocusedDamageAbility(List<Filter> selectFilters, StateAnalyzer<Integer> amount) {
+        super(selectFilters);
         this.amount = amount;
     }
 
