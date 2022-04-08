@@ -150,7 +150,7 @@ public class CollectionScreen implements Screen {
         Profile profile = game.getCurrentProfile();
         Map<Card, Integer> playerCards = new HashMap<>();
         Map<Card, Integer> allCards = new HashMap<>();
-        List<Card> ac = SQLAPI.getSingleton().getCardsInfo(new ArrayList<>(), null);
+        List<Card> ac = SQLAPI.getSingleton().getCardsInfo(null, null);
         playerCards = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
 
         for (Card card : ac) {

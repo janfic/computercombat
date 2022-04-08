@@ -53,6 +53,7 @@ public class DecksScreen implements Screen {
     FilterWindowActor filterWindow;
 
     DeckActor selectedDeck;
+    Map<Card, Integer> software;
 
     boolean isPopup;
 
@@ -68,6 +69,8 @@ public class DecksScreen implements Screen {
 
         this.stage = ComputerCombatGame.makeNewStage(stageCamera);
 
+        Profile profile = game.getCurrentProfile();
+        software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
         Gdx.input.setInputProcessor(stage);
 
         filterWindow = new FilterWindowActor(game, skin);
@@ -376,8 +379,10 @@ public class DecksScreen implements Screen {
                 if (card.getID() == 0) { // prevent adding computer to deck
                     return;
                 }
-                selectedDeck.getDeck().addCard(card, 1);
-                updateDeckCards();
+                if (selectedDeck.getDeck().getCardCount(card.getID()) < software.get(card)) {
+                    selectedDeck.getDeck().addCard(card, 1);
+                    updateDeckCards();
+                }
             }
         });
         buildCollection();
@@ -484,9 +489,7 @@ public class DecksScreen implements Screen {
 
     public void buildCollection() {
         Profile profile = game.getCurrentProfile();
-
-        Map<Card, Integer> software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
-
+        software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
         collection.clearChildren();
         int row = 0;
 
@@ -494,13 +497,25 @@ public class DecksScreen implements Screen {
             Table cardTable = new Table();
             CollectionCard cc = new CollectionCard(game, skin, card, software.get(card));
             cardTable.add(cc).colspan(3).grow().row();
-            TextButton addButton = new TextButton("+", skin);
+            TextButton addButton = new TextButton("+", skin) {
+                @Override
+                public void act(float delta) {
+                    super.act(delta); //To change body of generated methods, choose Tools | Templates.
+                    if (selectedDeck != null && selectedDeck.getDeck().getCardCount(card.getID()) >= software.get(card)) {
+                        this.setColor(Color.RED);
+                    } else {
+                        this.setColor(Color.WHITE);
+                    }
+                }
+            };
             addButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (selectedDeck != null) {
-                        selectedDeck.getDeck().addCard(card, 1);
-                        updateDeckCards();
+                        if (selectedDeck.getDeck().getCardCount(card.getID()) < software.get(card)) {
+                            selectedDeck.getDeck().addCard(card, 1);
+                            updateDeckCards();
+                        }
                     }
                 }
             });
