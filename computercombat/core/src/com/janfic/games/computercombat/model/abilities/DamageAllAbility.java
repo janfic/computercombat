@@ -57,6 +57,7 @@ public class DamageAllAbility extends Ability {
             }
         }
 
+        state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
         MoveResult result = new MoveResult(move, MatchState.record(state), animation);
         results.add(result);
 

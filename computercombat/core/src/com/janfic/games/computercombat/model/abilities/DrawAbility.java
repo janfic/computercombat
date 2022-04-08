@@ -40,20 +40,22 @@ public class DrawAbility extends Ability {
         Deck deck = state.decks.get(move.getPlayerUID());
 
         List<Card> drawnCards = new ArrayList<>();
-        if (this.cards == null) {
-            if (deck.size() > 0) {
-                Card s = deck.draw();
-                s.setOwnerUID(move.getPlayerUID());
-                cards.add(s);
-                drawnCards.add(s);
-            }
-        } else {
-            for (StateAnalyzer<Integer> card : this.cards) {
-                Card s = SQLAPI.getSingleton().getCardById(card.analyze(state, move), move.getPlayerUID());
-                s.setOwnerUID(move.getPlayerUID());
-                s.generateMatchID();
-                cards.add(s);
-                drawnCards.add(s);
+        if (cards.size() < 4) {
+            if (this.cards == null) {
+                if (deck.size() > 0) {
+                    Card s = deck.draw();
+                    s.setOwnerUID(move.getPlayerUID());
+                    cards.add(s);
+                    drawnCards.add(s);
+                }
+            } else {
+                for (StateAnalyzer<Integer> card : this.cards) {
+                    Card s = SQLAPI.getSingleton().getCardById(card.analyze(state, move), move.getPlayerUID());
+                    s.setOwnerUID(move.getPlayerUID());
+                    s.generateMatchID();
+                    cards.add(s);
+                    drawnCards.add(s);
+                }
             }
         }
 
@@ -67,7 +69,6 @@ public class DrawAbility extends Ability {
                 }
             }
         }
-
         List<Card> drained = new ArrayList<>();
         drained.add(((UseAbilityMove) (move)).getCard());
         ConsumeProgressAnimation drainAnimation = new ConsumeProgressAnimation(move.getPlayerUID(), drained);

@@ -403,7 +403,6 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
 
     public static Card makeComputer(String uid) {
         Card c = SQLAPI.getSingleton().getCardById(0, uid);
-        c.setProgress(c.getRunRequirements());
         return c;
     }
 }
