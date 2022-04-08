@@ -103,14 +103,6 @@ public class FilterWindowActor extends Window {
         applyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                filter = new CardFilter() {
-                    @Override
-                    public boolean filter(Card card, MatchState state, Move move) {
-                        return nameFilter.filter(card, state, move)
-                                && collectionFilter.filter(card, state, move)
-                                && rarityFilter.filter(card, state, move);
-                    }
-                };
                 remove();
             }
         });
@@ -148,7 +140,9 @@ public class FilterWindowActor extends Window {
         this.filter = new CardFilter() {
             @Override
             public boolean filter(Card card, MatchState state, Move move) {
-                return true;
+                return nameFilter.filter(card, state, move)
+                        && collectionFilter.filter(card, state, move)
+                        && rarityFilter.filter(card, state, move);
             }
         };
 
@@ -189,8 +183,7 @@ public class FilterWindowActor extends Window {
     }
 
     private void buildCollectionTable() {
-        collectionTable.clearActions();
-        collections.clear();
+        collectionTable.clear();
         List<Collection> collections = SQLAPI.getSingleton().getCollections();
         for (Collection collection : collections) {
             Table table = new Table();
@@ -201,7 +194,12 @@ public class FilterWindowActor extends Window {
                 continue;
             }
             table.add(new Image(icon)).row();
-            LEDActor led = new LEDActor(skin, "NETWORK");
+            LEDActor led = new LEDActor(skin, "NETWORK") {
+                @Override
+                public void act(float delta) {
+                    this.setLightOn(FilterWindowActor.this.collections.contains((Integer) collection.getID()));
+                }
+            };
             table.add(led);
             collectionTable.add(table);
             table.addListener(new ClickListener() {

@@ -93,11 +93,6 @@ public class CollectionScreen implements Screen {
         filterButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                List<Integer> collections = new ArrayList<>();
-                if (pack != null) {
-                    collections.add(pack.getID());
-                }
-                filterWindow = new FilterWindowActor(collections, game, skin);
                 filterWindow.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
                 filterWindow.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
                 filterWindow.addApplyButtonListener(new ClickListener() {

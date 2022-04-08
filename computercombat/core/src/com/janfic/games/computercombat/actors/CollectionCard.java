@@ -86,7 +86,6 @@ public class CollectionCard extends BorderedGrid {
         TextureAtlas texturePack = game.getAssetManager().get("texture_packs/" + software.getCollection().getTextureName() + ".atlas", TextureAtlas.class);
         BorderedArea area = new BorderedArea(skin);
         area.add(new Image(texturePack.findRegion(software.getTextureName())));
-        System.out.println(texturePack.findRegion(software.getTextureName()));
         Label l = new Label(software.getName(), skin, "paneled");
         l.setWrap(true);
         l.setAlignment(Align.center);
