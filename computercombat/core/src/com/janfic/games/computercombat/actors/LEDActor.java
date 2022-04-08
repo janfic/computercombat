@@ -33,7 +33,8 @@ public class LEDActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.setColor(Color.WHITE);
+        Color c = batch.getColor();
+        batch.setColor(getColor());
         ledBorder.draw(batch, getX(), getY(), getWidth(), getHeight());
         if (lightOn == false) {
             batch.setColor(ledColor.cpy().mul(0.75f, 0.75f, 0.75f, 1));
@@ -45,7 +46,7 @@ public class LEDActor extends Actor {
         if (lightOn) {
             ledGlow.draw(batch, getX() - 2, getY() - 2, getWidth() + 4, getHeight() + 4);
         }
-        batch.setColor(Color.WHITE);
+        batch.setColor(c);
     }
 
     public void setLightOn(boolean lightOn) {

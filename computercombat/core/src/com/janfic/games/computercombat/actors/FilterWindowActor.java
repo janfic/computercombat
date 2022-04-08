@@ -35,8 +35,9 @@ public class FilterWindowActor extends Window {
     ComputerCombatGame game;
     TextButton applyButton;
     CardFilter filter;
-    CardFilter nameFilter, rarityFilter, collectionFilter;
+    CardFilter nameFilter, rarityFilter, collectionFilter, unownedFilter;
     int rarity = -1;
+    boolean showUnowned = false;
     Table rarityTable, collectionTable;
 
     List<Integer> collections;
@@ -98,6 +99,29 @@ public class FilterWindowActor extends Window {
                 }
             }
         };
+        unownedFilter = new CardFilter() {
+            @Override
+            public boolean filter(Card card, MatchState state, Move move) {
+                if (showUnowned) {
+                    return true;
+                }
+                return card.getOwnerUID() != null;
+            }
+        };
+
+        TextButton showUnownedButton = new TextButton("Off", skin) {
+            @Override
+            public void act(float delta) {
+                super.act(delta); //To change body of generated methods, choose Tools | Templates.
+                this.setText(showUnowned ? "On" : "Off");
+            }
+        };
+        showUnownedButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showUnowned = !showUnowned;
+            }
+        });
 
         applyButton = new TextButton("Apply", skin);
         applyButton.addListener(new ClickListener() {
@@ -110,12 +134,15 @@ public class FilterWindowActor extends Window {
         Label searchLabel = new Label("Name:", skin);
         Label rarityLabel = new Label("Rarity: ", skin);
         Label collectionLabel = new Label("Collection: ", skin);
+        Label showUnowned = new Label("Show Unowned: ", skin);
         add(searchLabel).expandX();
         add(searchPanel).growX().row();
         add(rarityLabel).expandX();
         add(rarityTable).growX().row();
         add(collectionLabel).expandX();
         add(collectionTable).growX().row();
+        add(showUnowned).expandX();
+        add(showUnownedButton).expandX().width(100).row();
 
         Table buttons = new Table(skin);
         buttons.add(applyButton).growX();
@@ -143,7 +170,8 @@ public class FilterWindowActor extends Window {
             public boolean filter(Card card, MatchState state, Move move) {
                 return nameFilter.filter(card, state, move)
                         && collectionFilter.filter(card, state, move)
-                        && rarityFilter.filter(card, state, move);
+                        && rarityFilter.filter(card, state, move)
+                        && unownedFilter.filter(card, state, move);
             }
         };
 
