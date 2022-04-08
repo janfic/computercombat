@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -339,8 +340,27 @@ public class QueueScreen implements Screen {
                     if (selectedDeck != null) {
                         selectedDeck.unselect();
                     }
-                    selectedDeck = d;
-                    selectedDeck.select();
+                    if (d.getDeck().getCardCount(-1) != 8) {
+                        Window window = new Window("Invalid Deck", skin);
+                        window.setSize(stage.getWidth() / 2f, stage.getHeight() / 2f);
+                        window.setPosition(stage.getWidth() / 4f, stage.getHeight() / 4f);
+                        Label info = new Label("This is an invalid deck and cannot be played with: Invalid amount of cards.", skin);
+                        info.setWrap(true);
+                        info.setAlignment(Align.center);
+                        TextButton okay = new TextButton("Okay", skin);
+                        okay.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                window.remove();
+                            }
+                        });
+                        window.add(info).grow().row();
+                        window.add(okay).growX().row();
+                        stage.addActor(window);
+                    } else {
+                        selectedDeck = d;
+                        selectedDeck.select();
+                    }
                 }
             });
             decks.add(d).row();
