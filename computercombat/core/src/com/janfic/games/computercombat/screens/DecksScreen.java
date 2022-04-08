@@ -303,7 +303,6 @@ public class DecksScreen implements Screen {
         filterButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                filterWindow = new FilterWindowActor(game, skin);
                 filterWindow.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
                 filterWindow.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
                 filterWindow.addApplyButtonListener(new ClickListener() {
@@ -492,9 +491,45 @@ public class DecksScreen implements Screen {
         int row = 0;
 
         for (Card card : software.keySet()) {
+            Table cardTable = new Table();
             CollectionCard cc = new CollectionCard(game, skin, card, software.get(card));
+            cardTable.add(cc).colspan(3).grow().row();
+            TextButton addButton = new TextButton("+", skin);
+            addButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (selectedDeck != null) {
+                        selectedDeck.getDeck().addCard(card, 1);
+                        updateDeckCards();
+                    }
+                }
+            });
+            TextButton removeButton = new TextButton("-", skin);
+            removeButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (selectedDeck != null) {
+                        selectedDeck.getDeck().removeCard(card, 1);
+                        updateDeckCards();
+                    }
+                }
+            });
+            Label amountInDeck = new Label("-", skin) {
+                @Override
+                public void act(float delta) {
+                    super.act(delta);
+                    if (selectedDeck != null) {
+                        this.setText("" + selectedDeck.getDeck().getCardCount(card.getID()));
+                    } else {
+                        this.setText("-");
+                    }
+                }
+            };
+            cardTable.add(removeButton).expandX().width(30);
+            cardTable.add(amountInDeck);
+            cardTable.add(addButton).expandX().width(30);
             if (filterWindow.getFilter().filter(card, null, null)) {
-                collection.add(cc);
+                collection.add(cardTable);
                 collectionToDeckDragAndDrop.addSource(new Source(cc) {
                     @Override
                     public Payload dragStart(InputEvent ie, float f, float f1, int i) {

@@ -126,6 +126,7 @@ public class FilterWindowActor extends Window {
             public void clicked(InputEvent event, float x, float y) {
                 searchField.setText("");
                 rarity = -1;
+                collections.clear();
                 buildRarityTable();
             }
         });
@@ -197,6 +198,7 @@ public class FilterWindowActor extends Window {
             LEDActor led = new LEDActor(skin, "NETWORK") {
                 @Override
                 public void act(float delta) {
+                    super.act(delta);
                     this.setLightOn(FilterWindowActor.this.collections.contains((Integer) collection.getID()));
                 }
             };
