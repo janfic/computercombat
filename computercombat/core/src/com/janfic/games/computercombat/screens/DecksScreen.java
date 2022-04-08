@@ -70,7 +70,7 @@ public class DecksScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        filterWindow = new FilterWindowActor(skin);
+        filterWindow = new FilterWindowActor(game, skin);
 
         table = new Table();
         table.setFillParent(true);
@@ -303,7 +303,7 @@ public class DecksScreen implements Screen {
         filterButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                filterWindow = new FilterWindowActor(skin);
+                filterWindow = new FilterWindowActor(game, skin);
                 filterWindow.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
                 filterWindow.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
                 filterWindow.addApplyButtonListener(new ClickListener() {

@@ -255,7 +255,7 @@ public class SQLAPI {
 
             while (areRowsLeft) {
                 Card c = readCardFromSet(set, optionalUID);
-                if (cardIDs.contains(c.getID())) {
+                if (cardIDs.contains(c.getID()) || cardIDs.isEmpty() && c.getID() != 0) {
                     cards.add(c);
                 }
                 areRowsLeft = set.next();
