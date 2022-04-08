@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.janfic.games.computercombat.ComputerCombatGame;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Collection;
+import com.janfic.games.computercombat.model.Component;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.network.client.SQLAPI;
@@ -35,12 +36,12 @@ public class FilterWindowActor extends Window {
     ComputerCombatGame game;
     TextButton applyButton;
     CardFilter filter;
-    CardFilter nameFilter, rarityFilter, collectionFilter, unownedFilter;
+    CardFilter nameFilter, rarityFilter, collectionFilter, unownedFilter, componentFilter;
     int rarity = -1;
-    boolean showUnowned = false;
-    Table rarityTable, collectionTable;
+    public boolean showUnowned = false, allComponentsNeeded;
+    Table rarityTable, collectionTable, componentsTable;
 
-    List<Integer> collections;
+    List<Integer> collections, components;
     Skin skin;
 
     public FilterWindowActor(List<Integer> collections, ComputerCombatGame game, Skin skin) {
@@ -61,13 +62,18 @@ public class FilterWindowActor extends Window {
 
         rarityTable = new Table(skin);
         collectionTable = new Table(skin);
+        componentsTable = new Table(skin);
         collections = new ArrayList<>();
+        components = new ArrayList<>();
         collectionTable.setBackground("panel");
         collectionTable.defaults().expandX();
+        componentsTable.setBackground("panel");
+        componentsTable.defaults().expandX();
         rarityTable.setBackground("panel");
         rarityTable.defaults().expandX();
         buildRarityTable();
         buildCollectionTable();
+        buildComponentsTable();
 
         nameFilter = new CardFilter() {
             @Override
@@ -108,6 +114,31 @@ public class FilterWindowActor extends Window {
                 return card.getOwnerUID() != null;
             }
         };
+        componentFilter = new CardFilter() {
+            @Override
+            public boolean filter(Card card, MatchState state, Move move) {
+                if (components.isEmpty()) {
+                    return true;
+                }
+                if (allComponentsNeeded) {
+                    int count = 0;
+                    for (int runComponent : card.getRunComponents()) {
+                        if (!components.contains(runComponent)) {
+                            return false;
+                        }
+                        count++;
+                    }
+                    return components.size() == count;
+                } else {
+                    for (int runComponent : card.getRunComponents()) {
+                        if (components.contains(runComponent)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        };
 
         TextButton showUnownedButton = new TextButton("Off", skin) {
             @Override
@@ -134,6 +165,7 @@ public class FilterWindowActor extends Window {
         Label searchLabel = new Label("Name:", skin);
         Label rarityLabel = new Label("Rarity: ", skin);
         Label collectionLabel = new Label("Collection: ", skin);
+        Label componentsLabel = new Label("Components: ", skin);
         Label showUnowned = new Label("Show Unowned: ", skin);
         add(searchLabel).expandX();
         add(searchPanel).growX().row();
@@ -141,6 +173,8 @@ public class FilterWindowActor extends Window {
         add(rarityTable).growX().row();
         add(collectionLabel).expandX();
         add(collectionTable).growX().row();
+        add(componentsLabel).expandX();
+        add(componentsTable).growX().row();
         add(showUnowned).expandX();
         add(showUnownedButton).expandX().width(100).row();
 
@@ -171,7 +205,8 @@ public class FilterWindowActor extends Window {
                 return nameFilter.filter(card, state, move)
                         && collectionFilter.filter(card, state, move)
                         && rarityFilter.filter(card, state, move)
-                        && unownedFilter.filter(card, state, move);
+                        && unownedFilter.filter(card, state, move)
+                        && componentFilter.filter(card, state, move);
             }
         };
 
@@ -245,6 +280,55 @@ public class FilterWindowActor extends Window {
                 }
             });
         }
+
+    }
+
+    private void buildComponentsTable() {
+        componentsTable.clear();
+        for (int i = 1; i <= 6; i++) {
+            if (i == 5) {
+                continue;
+            }
+            final int j = i;
+            Table table = new Table();
+            table.defaults().pad(1);
+            table.add(new ComponentActor(game.getAssetManager().get("texture_packs/components.atlas"), new Component(i, 0, 0))).row();
+            LEDActor led = new LEDActor(skin, Component.colorToTextureName.get(j).toUpperCase()) {
+                @Override
+                public void act(float delta) {
+                    super.act(delta);
+                    this.setLightOn(FilterWindowActor.this.components.contains((Integer) j));
+                }
+            };
+            table.add(led);
+            componentsTable.add(table);
+            table.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (FilterWindowActor.this.components.contains(j)) {
+                        FilterWindowActor.this.components.remove((Integer) j);
+                        led.setLightOn(false);
+                    } else {
+                        FilterWindowActor.this.components.add((Integer) j);
+                        led.setLightOn(true);
+                    }
+                }
+            });
+        }
+        TextButton toggleComponentFilterType = new TextButton("", skin) {
+            @Override
+            public void act(float delta) {
+                super.act(delta); //To change body of generated methods, choose Tools | Templates.
+                this.setText(allComponentsNeeded ? "All" : "One");
+            }
+        };
+        toggleComponentFilterType.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                allComponentsNeeded = !allComponentsNeeded;
+            }
+        });
+        componentsTable.add(toggleComponentFilterType).growX();
     }
 
     @Override

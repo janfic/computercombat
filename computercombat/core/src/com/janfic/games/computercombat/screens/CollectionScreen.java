@@ -53,7 +53,6 @@ public class CollectionScreen implements Screen {
     public CollectionScreen(ComputerCombatGame game, Collection collection) {
         this(game);
         this.pack = collection;
-
     }
 
     @Override
@@ -90,17 +89,21 @@ public class CollectionScreen implements Screen {
             collections.add(pack.getID());
         }
         filterWindow = new FilterWindowActor(collections, game, skin);
+        if (pack != null) {
+            filterWindow.showUnowned = true;
+        }
+        filterWindow.addApplyButtonListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                buildCollection();
+            }
+        });
         filterButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                filterWindow.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
+                filterWindow.setSize(4 * stage.getWidth() / 5, stage.getHeight());
                 filterWindow.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
-                filterWindow.addApplyButtonListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        buildCollection();
-                    }
-                });
+
                 filterButton.getStage().addActor(filterWindow);
             }
         });
