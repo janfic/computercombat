@@ -1,6 +1,7 @@
 package com.janfic.games.computercombat.model.abilities;
 
 import com.janfic.games.computercombat.model.Ability;
+import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.animations.ConsumeProgressAnimation;
 import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
@@ -53,6 +54,12 @@ public class MultiAbility extends Ability {
             }
             results.addAll(abilityResults);
             if (i < abilities.size() - 1) {
+                for (Player player : state.players) {
+                    if (player.getUID().equals(move.getPlayerUID())) {
+                        state.currentPlayerMove = player;
+                    }
+                }
+            } else {
                 if (state.currentPlayerMove.getUID().equals(move.getPlayerUID())) {
                     state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
                 }
