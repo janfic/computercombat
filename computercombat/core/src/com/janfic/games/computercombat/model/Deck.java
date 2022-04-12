@@ -66,7 +66,15 @@ public class Deck implements Serializable, Cloneable {
     }
 
     public int getCardCount(Integer cardID) {
-        return cards.getOrDefault("" + cardID, 0);
+        if (cardID >= 0) {
+            return cards.getOrDefault("" + cardID, 0);
+        } else {
+            int amount = 0;
+            for (String string : cards.keySet()) {
+                amount += cards.get(string);
+            }
+            return amount;
+        }
     }
 
     public String getName() {

@@ -84,20 +84,26 @@ public class CollectionScreen implements Screen {
         titleTable.add(backButton);
         titleTable.add(title).growX();
         titleTable.add(filterButton).row();
-
-        filterWindow = new FilterWindowActor(skin);
+        List<Integer> collections = new ArrayList<>();
+        if (pack != null) {
+            collections.add(pack.getID());
+        }
+        filterWindow = new FilterWindowActor(collections, game, skin);
+        if (pack != null) {
+            filterWindow.showUnowned = true;
+        }
+        filterWindow.addApplyButtonListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                buildCollection();
+            }
+        });
         filterButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                filterWindow = new FilterWindowActor(skin);
-                filterWindow.setSize(4 * stage.getWidth() / 5, 4 * stage.getHeight() / 5);
+                filterWindow.setSize(4 * stage.getWidth() / 5, stage.getHeight());
                 filterWindow.setPosition(stage.getWidth() / 10, stage.getHeight() / 10);
-                filterWindow.addApplyButtonListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        buildCollection();
-                    }
-                });
+
                 filterButton.getStage().addActor(filterWindow);
             }
         });
@@ -145,23 +151,34 @@ public class CollectionScreen implements Screen {
 
     public void buildCollection() {
         Profile profile = game.getCurrentProfile();
-        Map<Card, Integer> software = new HashMap<>();
-        if (pack == null) {
-            software = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
-        } else {
-            List<Integer> collections = new ArrayList<>();
-            collections.add(pack.getID());
-            List<Card> cards = SQLAPI.getSingleton().getCardsInCollection(collections, null);
-            for (Card card : cards) {
-                software.put(card, 1);
+        Map<Card, Integer> playerCards = new HashMap<>();
+        Map<Card, Integer> allCards = new HashMap<>();
+        List<Card> ac = SQLAPI.getSingleton().getCardsInfo(null, null);
+        playerCards = SQLAPI.getSingleton().getPlayerOwnedCards(profile.getUID());
+
+        for (Card card : ac) {
+            for (Card c : playerCards.keySet()) {
+                if (card.getID() == c.getID()) {
+                    card.setOwnerUID(profile.getUID());
+                    break;
+                }
             }
         }
 
+        for (Card card : ac) {
+            allCards.put(card, 0);
+        }
+        for (Card card : playerCards.keySet()) {
+            allCards.put(card, playerCards.get(card));
+        }
         collection.clearChildren();
         int row = 0;
 
-        for (Card card : software.keySet()) {
-            CollectionCard cc = new CollectionCard(game, skin, card, software.get(card));
+        for (Card card : allCards.keySet()) {
+            CollectionCard cc = new CollectionCard(game, skin, card, allCards.get(card));
+            if (allCards.get(card) == 0) {
+                cc.setColor(1, 1, 1, 0.5f);
+            }
             if (filterWindow.getFilter().filter(card, null, null)) {
                 cards.add(cc);
                 collection.add(cc);

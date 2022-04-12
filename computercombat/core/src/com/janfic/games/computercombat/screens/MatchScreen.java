@@ -154,8 +154,10 @@ public class MatchScreen implements Screen {
         } else {
             if (game.getServerAPI().hasMessage()) {
                 Message matchStateData = game.getServerAPI().readMessage();
-                initializeStage(matchStateData);
-                startedMatch = true;
+                if (matchStateData.type == Type.MATCH_STATE_DATA) {
+                    initializeStage(matchStateData);
+                    startedMatch = true;
+                }
             }
         }
     }
@@ -163,10 +165,8 @@ public class MatchScreen implements Screen {
     public void initializeStage(Message matchStateData) {
         Json json = new NullifyingJson();
 
-        if (matchStateData.type == Type.MATCH_STATE_DATA) {
-            MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
-            this.matchData.setCurrentState(state);
-        }
+        MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
+        this.matchData.setCurrentState(state);
 
         Component[][] componentBoard = this.matchData.getCurrentState().componentBoard;
         board = new Board(skin, matchData, game, animation);
@@ -185,6 +185,13 @@ public class MatchScreen implements Screen {
 
         for (String string : computerActors.keySet()) {
             computerActors.get(string).setCardsLeft(matchData.getCurrentState().decks.get(string).getStack().size());
+        }
+
+        for (String string : state.activeEntities.keySet()) {
+            for (Card card : state.activeEntities.get(string)) {
+                SoftwareActor a = new SoftwareActor(skin, !string.equals(game.getCurrentProfile().getUID()), card, game);
+                softwareActors.get(string).add(a);
+            }
         }
 
         Table table = new Table();
@@ -232,6 +239,7 @@ public class MatchScreen implements Screen {
         table.add(rightPanel).pad(1, 0, 1, 0).grow().right();
 
         mainStage.addActor(table);
+        buildPanels();
     }
 
     private void playerUseAbilityMoveCheck() {

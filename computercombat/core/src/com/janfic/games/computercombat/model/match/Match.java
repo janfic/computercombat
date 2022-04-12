@@ -48,6 +48,14 @@ public class Match {
                 this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
                 this.currentState.update();
             }
+            for (int i = 0; i < 4; i++) {
+                Card c = decks.get(player1.getUID()).draw();
+                c.setOwnerUID(player1.getUID());
+                Card b = decks.get(player2.getUID()).draw();
+                b.setOwnerUID(player2.getUID());
+                this.currentState.activeEntities.get(player1.getUID()).add(c);
+                this.currentState.activeEntities.get(player2.getUID()).add(b);
+            }
 
         } catch (Exception e) {
             System.err.println("Something went wrong when creating the initial match state: ");

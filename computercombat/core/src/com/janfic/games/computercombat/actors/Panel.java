@@ -22,9 +22,9 @@ public class Panel extends Table {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        Color c = batch.getColor();
         batch.setColor(getColor());
         panel.draw(batch, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
         super.draw(batch, parentAlpha); //To change body of generated methods, choose Tools | Templates.
-        batch.setColor(Color.WHITE);
     }
 }

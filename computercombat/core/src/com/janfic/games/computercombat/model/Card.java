@@ -188,6 +188,12 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
      */
     public int changeArmor(int armor) {
         this.armor += armor;
+        if (this.armor < 0) {
+            armor = 0;
+        }
+        if (this.armor > maxArmor) {
+            maxArmor = armor;
+        }
         return armor;
     }
 
@@ -397,7 +403,6 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
 
     public static Card makeComputer(String uid) {
         Card c = SQLAPI.getSingleton().getCardById(0, uid);
-        c.setProgress(c.getRunRequirements());
         return c;
     }
 }

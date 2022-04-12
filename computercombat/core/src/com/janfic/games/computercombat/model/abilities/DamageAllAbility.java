@@ -9,6 +9,7 @@ import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
+import com.janfic.games.computercombat.util.CardFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class DamageAllAbility extends Ability {
 
     StateAnalyzer<Integer> amount;
+    CardFilter filter;
 
     public DamageAllAbility() {
         super(new ArrayList<>());
@@ -26,6 +28,11 @@ public class DamageAllAbility extends Ability {
 
     public DamageAllAbility(StateAnalyzer<Integer> amount) {
         this.amount = amount;
+    }
+
+    public DamageAllAbility(CardFilter filter, StateAnalyzer<Integer> amount) {
+        this.amount = amount;
+        this.filter = filter;
     }
 
     @Override
@@ -39,22 +46,18 @@ public class DamageAllAbility extends Ability {
         int index = state.activeEntities.get(abilityMove.getCard().getOwnerUID()).indexOf(abilityMove.getCard());
         state.activeEntities.get(abilityMove.getPlayerUID()).get(index).setProgress(0);
 
-        String playerUID = state.getOtherProfile(move.getPlayerUID()).getUID();
-
-        for (Card card : state.activeEntities.get(playerUID)) {
-            int damage = amount.analyze(state, move);
-            for (Card oldCard : state.activeEntities.get(playerUID)) {
-                if (oldCard.equals(card)) {
-                    animation.add(new ReceiveDamageAnimation(oldCard, damage, playerUID));
-                    break;
+        for (Card card : state.getAllCards()) {
+            if (filter == null || filter.filter(card, state, move)) {
+                int damage = amount.analyze(state, move);
+                animation.add(new ReceiveDamageAnimation(card, damage, card.getOwnerUID()));
+                card.recieveDamage(damage);
+                if (card.isDead()) {
+                    destroyed.add(card);
                 }
-            }
-            card.recieveDamage(damage);
-            if (card.isDead()) {
-                destroyed.add(card);
             }
         }
 
+        state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
         MoveResult result = new MoveResult(move, MatchState.record(state), animation);
         results.add(result);
 
