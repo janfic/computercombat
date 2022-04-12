@@ -10,4 +10,4 @@ COPY users.sql /docker-entrypoint-initdb.d/users.sql
 
 ENV TZ UTC
 ENV MYSQL_ROOT_PASSWORD computercombat
-EXPOSE 30306
+EXPOSE 3036

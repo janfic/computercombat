@@ -37,9 +37,9 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
  */
 public class SQLAPI {
 
-//    String url = "jdbc:mysql://computer-combat-db.cloqezbutiub.us-east-1.rds.amazonaws.com:3306";
 //    String url = "jdbc:mysql://137.184.137.169:30306";
-    String url = "jdbc:mysql://localhost:30306";
+//    String url = "jdbc:mysql://67.205.183.72:3036";
+    String url = "jdbc:mysql://localhost:3036";
 
     private static SQLAPI singleton;
     private Properties properties;

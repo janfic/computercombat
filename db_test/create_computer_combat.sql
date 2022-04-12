@@ -65,6 +65,7 @@ CREATE TABLE `bot` (
   `profile_uid` varchar(45) NOT NULL,
   `priority_list` varchar(45) NOT NULL,
   `name` varchar(45) NOT NULL,
+  `deck_id` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
