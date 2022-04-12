@@ -404,6 +404,15 @@ public class Server {
         maintainLiveQueue.start();
         maintainRaidQueue.start();
         maintainMatches.start();
+        addBotMatch();
+    }
+
+    public void addBotMatch() {
+        Player player1 = SQLAPI.getSingleton().createBotFromID(2);
+        Player player2 = SQLAPI.getSingleton().createBotFromID(1);
+        ServerMatchRoom room = new ServerMatchRoom(player1, player2);
+        matches.add(room);
+        room.start();
     }
 
     public static void main(String[] args) {

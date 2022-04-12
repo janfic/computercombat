@@ -23,6 +23,8 @@ SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 -- -----------------------------------------------------
 -- Table `computer_combat`.`ability`
 -- -----------------------------------------------------
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE IF NOT EXISTS `computer_combat`.`ability` (
   `id` INT NOT NULL,
   `name` VARCHAR(45) NOT NULL,
@@ -31,6 +33,23 @@ CREATE TABLE IF NOT EXISTS `computer_combat`.`ability` (
   `textureName` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Table structure for table `profile`
+--
+
+DROP TABLE IF EXISTS `profile`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `profile` (
+  `uid` varchar(45) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `email` tinytext NOT NULL,
+  `packets` int(10) unsigned zerofill NOT NULL,
+  PRIMARY KEY (`uid`),
+  UNIQUE KEY `idProfile_UNIQUE` (`uid`),
+  UNIQUE KEY `userName_UNIQUE` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -164,18 +183,6 @@ CREATE TABLE `deck_has_card` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Temporary view structure for view `join_components`
---
-
-DROP TABLE IF EXISTS `join_components`;
-/*!50001 DROP VIEW IF EXISTS `join_components`*/;
-SET @saved_cs_client     = @@character_set_client;
-/*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `join_components` AS SELECT 
- 1 AS `card`,
- 1 AS `components`*/;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `match`

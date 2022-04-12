@@ -65,6 +65,7 @@ public class ServerMatchRoom {
                     }
                     boolean isValid = match.isValidMove(move);
                     if (isValid) {
+                        System.out.println(move.getPlayerUID() + ": " + move.getClass());
                         List<MoveResult> results = match.makeMove(move);
                         currentPlayer.updateState(results);
                         otherPlayer.updateState(results);

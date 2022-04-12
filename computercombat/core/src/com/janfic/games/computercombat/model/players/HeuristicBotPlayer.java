@@ -71,7 +71,6 @@ public class HeuristicBotPlayer extends Player {
             double moveAverage = moveSum / MOVE_TRIES;
             move.setValue(moveAverage);
             long endTime = System.currentTimeMillis();
-            System.out.println("TIME: " + ((endTime - startTime) / 1000f));
         }
         moves.sort(new MoveValueComparator());
         return moves.get(0);

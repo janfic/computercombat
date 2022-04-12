@@ -32,6 +32,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `bot` WRITE;
 /*!40000 ALTER TABLE `bot` DISABLE KEYS */;
+INSERT INTO `bot` VALUES (1,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','0 1','bot 1','2113487789'),(2,'91a6c870-8d1b-4cfd-af0e-0ecb9d625333','0 1','bot 2','1132156873');
 /*!40000 ALTER TABLE `bot` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -44,6 +45,10 @@ LOCK TABLES `bot_card` WRITE;
 INSERT INTO `bot_card` VALUES (0,'Gain Extra Turn','Values moves that yeild an extra turn.','default','new ExtraTurnHeuristicAnalyzer()'),(1,'Use Ability','Values moves that use abilities.','default','new UseAbilityHeuristicAnalyzer()'),(2,'Charge Ability','Values moves that charge cards\' abilities.','default','new ChargeAbilitiesHeuristicAnalyzer()'),(3,'Finish Charging Ability','Values moves that finish charging cards\' abilities','default','new CompletelyChargeAbilitiesHeuristicAnalyzer()'),(4,'Collect Components','Values moves with higher amount of collected components.','default','new ComponentsCollectedHeuristicAnalyzer()'),(5,'Draw Card','Values moves that draw another card.','default','new DrewCardHeuristicAnalyzer()'),(6,'Damage Opponent','Values moves that damage other cards or opponent\'s computer.','default','new DamageHeuristicAnalyzer()'),(7,'Increase CPU Components','Values moves that increase the amount of CPU Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(1)'),(8,'Increase RAM Components','Values moves that increase the amount of RAM Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(2)'),(9,'Increase Storage Components','Values moves that increase the amount of Storage Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(3)'),(10,'Increase Network Components','Values moves that increase the amount of Network Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(4)'),(11,'Increase Bug Components','Values moves that increase the amount of Bug Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(5)'),(12,'Increase Power Components','Values moves that increase the amount of Power Components on the board.','default','new IncreaseComponentTypeHeuristicAnalyzer(6)'),(13,'Keep CPU Components','Values moves that maintain the amount of CPU Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(1)'),(14,'Keep RAM Components','Values moves that maintain the amount of RAM Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(2)'),(15,'Keep Storage Components','Values moves that maintain the amount of Storage Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(3)'),(16,'Keep Network Components','Values moves that maintain the amount of Network Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(4)'),(17,'Keep Bug Components','Values moves that maintain the amount of Bug Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(5)'),(18,'Keep Power Components','Values moves that maintain the amount of Power Components on the board.','default','new KeepComponentTypeHeuristicAnalyzer(6)');
 /*!40000 ALTER TABLE `bot_card` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping data for table `card`
+--
 
 LOCK TABLES `card` WRITE;
 /*!40000 ALTER TABLE `card` DISABLE KEYS */;
@@ -92,22 +97,12 @@ INSERT INTO `deck_has_card` VALUES (1690378354,4,1),(1690378354,6,2),(1690378354
 UNLOCK TABLES;
 
 --
--- Dumping data for table `match`
+-- Dumping data for table `player`
 --
 
-LOCK TABLES `match` WRITE;
-/*!40000 ALTER TABLE `match` DISABLE KEYS */;
-INSERT INTO `match` VALUES (86,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',673726932,673726932,0,'2022-03-16 21:32:54','2022-03-16 21:33:16',25,3),(87,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',673726932,673726932,0,'2022-03-16 22:21:14','2022-03-16 22:25:50',25,0),(88,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',673726932,673726932,0,'2022-03-16 22:33:43','2022-03-16 22:34:12',25,3),(89,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',673726932,673726932,0,'2022-04-06 12:49:38','2022-04-06 12:51:49',41,7),(90,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',673726932,673726932,0,'2022-04-06 12:56:19','2022-04-06 12:59:28',25,19),(91,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',673726932,673726932,1,'2022-04-06 13:43:58','2022-04-06 13:47:25',12,32),(92,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',673726932,673726932,0,'2022-04-06 23:03:25','2022-04-06 23:08:15',31,6),(93,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',673726932,673726932,1,'2022-04-06 23:08:54','2022-04-06 23:10:12',6,32),(94,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',2113487789,2113487789,0,'2022-04-08 15:26:21','2022-04-08 15:27:16',32,0),(95,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',2113487789,2113487789,0,'2022-04-08 15:28:18','2022-04-08 15:29:32',25,0),(96,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',2113487789,2113487789,0,'2022-04-08 15:31:49','2022-04-08 15:32:41',25,9),(97,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',2113487789,2113487789,0,'2022-04-08 15:33:48','2022-04-08 15:41:22',67,19),(98,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',1864431213,1864431213,0,'2022-04-08 16:00:11','2022-04-08 16:01:32',33,0),(99,'67ec7d73-78c7-4831-bdcc-f864dd5c2db4','botUID',1864431213,1864431213,0,'2022-04-08 16:11:15','2022-04-08 16:11:35',25,0);
-/*!40000 ALTER TABLE `match` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `move`
---
-
-LOCK TABLES `move` WRITE;
-/*!40000 ALTER TABLE `move` DISABLE KEYS */;
-/*!40000 ALTER TABLE `move` ENABLE KEYS */;
+LOCK TABLES `player` WRITE;
+/*!40000 ALTER TABLE `player` DISABLE KEYS */;
+/*!40000 ALTER TABLE `player` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -116,7 +111,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `profile` WRITE;
 /*!40000 ALTER TABLE `profile` DISABLE KEYS */;
-INSERT INTO `profile` VALUES ('02ede276-8d60-4313-9df3-41bcda1b9495','newtest','greyjan.fic@gmail.com',0000000000),('49646eae-d1ef-4067-9360-de1ad38f5993','greyjan','janfc6@gmail.com',0000000339),('4ea014e6-c193-4240-beda-938502d688d5','greytest','greyjan.fic@gmail.com',0000000000),('67ec7d73-78c7-4831-bdcc-f864dd5c2db4','janfic','jan.fic18@ncf.edu',0000001943),('84c5a288-43f9-4f4f-a117-43b54b092c52','othertest','greyjan.fic@gmail.com',0000000000),('91a6c870-8d1b-4cfd-af0e-0ecb9d625333','blakeearth','isaac@blake.earth',0000000172),('982b987e-d0fe-46b9-91ab-6dd1564dc203','testtest','greyjan.fic@gmail.com',0000000000),('botUID','null','null',0000000668),('f07cdf89-8b4b-4d7a-b44f-aac78c978f54','Noetherian','mlepinski@gmail.com',0000000000);
+INSERT INTO `profile` VALUES ('02ede276-8d60-4313-9df3-41bcda1b9495','newtest','greyjan.fic@gmail.com',0000000000),('49646eae-d1ef-4067-9360-de1ad38f5993','greyjan','janfc6@gmail.com',0000000339),('4ea014e6-c193-4240-beda-938502d688d5','greytest','greyjan.fic@gmail.com',0000000000),('67ec7d73-78c7-4831-bdcc-f864dd5c2db4','janfic','jan.fic18@ncf.edu',0000002220),('84c5a288-43f9-4f4f-a117-43b54b092c52','othertest','greyjan.fic@gmail.com',0000000000),('91a6c870-8d1b-4cfd-af0e-0ecb9d625333','blakeearth','isaac@blake.earth',0000000348),('982b987e-d0fe-46b9-91ab-6dd1564dc203','testtest','greyjan.fic@gmail.com',0000000000),('botUID','null','null',0000000668),('f07cdf89-8b4b-4d7a-b44f-aac78c978f54','Noetherian','mlepinski@gmail.com',0000000000);
 /*!40000 ALTER TABLE `profile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,3 +144,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+-- Dump completed on 2022-04-12 15:17:19
