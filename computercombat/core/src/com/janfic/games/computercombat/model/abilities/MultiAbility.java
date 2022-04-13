@@ -59,10 +59,6 @@ public class MultiAbility extends Ability {
                         state.currentPlayerMove = player;
                     }
                 }
-            } else {
-                if (state.currentPlayerMove.getUID().equals(move.getPlayerUID())) {
-                    state.currentPlayerMove = state.getOtherProfile(state.currentPlayerMove);
-                }
             }
         }
 

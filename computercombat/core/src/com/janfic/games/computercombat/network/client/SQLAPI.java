@@ -445,7 +445,7 @@ public class SQLAPI {
                 rows = statement.executeUpdate(sql);
 
                 sql = "DELETE FROM move \n"
-                        + "WHERE match_id = (SELECT id FROM `match` WHERE deck1_id = '" + deck.getID() + "' OR deck2_id = '" + deck.getID() + "' );";
+                        + "WHERE match_id IN (SELECT id FROM `match` WHERE deck1_id = '" + deck.getID() + "' OR deck2_id = '" + deck.getID() + "' );";
                 rows = statement.executeUpdate(sql);
 
                 sql = "DELETE FROM computer_combat.`match` \n"
