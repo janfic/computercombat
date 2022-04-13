@@ -404,7 +404,7 @@ public class Server {
         maintainLiveQueue.start();
         maintainRaidQueue.start();
         maintainMatches.start();
-        //addBotMatch();
+        addBotMatch();
     }
 
     public void addBotMatch() {
