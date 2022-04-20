@@ -311,49 +311,48 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
     @Override
     public void write(Json json) {
         json.writeType(getClass());
-        json.writeValue("name", this.name);
+        json.writeValue("ownerUID", this.ownerUID);
         json.writeValue("id", this.id);
         json.writeValue("matchID", this.matchID);
-        json.writeValue("collection", this.collection);
-        json.writeValue("textureName", this.textureName);
-        json.writeValue("health", this.health);
-        json.writeValue("armor", this.armor);
-        json.writeValue("attack", this.attack);
-        json.writeValue("maxAttack", this.maxAttack);
-        json.writeValue("level", this.level);
-        json.writeValue("rarity", this.rarity);
-        json.writeValue("magic", this.magic);
-        json.writeValue("maxHealth", this.maxHealth);
-        json.writeValue("maxArmor", this.maxArmor);
-        json.writeValue("runProgress", this.runProgress);
-        json.writeValue("runRequirements", this.runRequirements);
-        json.writeValue("ownerUID", this.ownerUID);
-        json.writeValue("runComponents", this.runComponents);
-        json.writeValue("ability", ability);
-        json.writeValue("description", description);
+        if (matchID != 0) {
+            json.writeValue("matchID", this.matchID);
+            json.writeValue("health", this.health);
+            json.writeValue("attack", this.attack);
+            json.writeValue("armor", this.armor);
+            json.writeValue("maxHealth", this.maxHealth);
+            json.writeValue("maxArmor", this.maxArmor);
+            json.writeValue("runProgress", this.runProgress);
+            json.writeValue("maxAttack", this.maxAttack);
+            json.writeValue("runRequirements", this.runRequirements);
+        }
+//        json.writeValue("name", this.name);
+//        json.writeValue("id", this.id);
+//        json.writeValue("matchID", this.matchID);
+//        json.writeValue("collection", this.collection);
+//        json.writeValue("textureName", this.textureName);
+//        json.writeValue("level", this.level);
+//        json.writeValue("rarity", this.rarity);
+//        json.writeValue("magic", this.magic);
+//        json.writeValue("runRequirements", this.runRequirements);
+//        json.writeValue("runComponents", this.runComponents);
+//        json.writeValue("ability", ability);
+//        json.writeValue("description", description);
     }
 
     @Override
     public void read(Json json, JsonValue jv) {
-        this.name = json.readValue("name", String.class, jv);
         this.id = json.readValue("id", Integer.class, jv);
         this.matchID = json.readValue("matchID", Integer.class, jv);
-        this.collection = json.readValue("collection", Collection.class, jv);
-        this.textureName = json.readValue("textureName", String.class, jv);
-        this.health = json.readValue("health", Integer.class, jv);
-        this.armor = json.readValue("armor", Integer.class, jv);
-        this.attack = json.readValue("attack", Integer.class, jv);
-        this.maxAttack = json.readValue("maxAttack", Integer.class, jv);
-        this.level = json.readValue("level", Integer.class, jv);
-        this.rarity = json.readValue("rarity", Integer.class, jv);
-        this.maxHealth = json.readValue("maxHealth", Integer.class, jv);
-        this.maxArmor = json.readValue("maxArmor", Integer.class, jv);
-        this.runProgress = json.readValue("runProgress", Integer.class, jv);
-        this.runRequirements = json.readValue("runRequirements", Integer.class, jv);
         this.ownerUID = json.readValue("ownerUID", String.class, jv);
-        this.runComponents = json.readValue("runComponents", int[].class, jv);
-        this.ability = json.readValue("ability", Ability.class, jv);
-        this.description = json.readValue("description", String.class, jv);
+        if (matchID != 0) {
+            this.health = json.readValue("health", Integer.class, jv);
+            this.armor = json.readValue("armor", Integer.class, jv);
+            this.attack = json.readValue("attack", Integer.class, jv);
+            this.maxAttack = json.readValue("maxAttack", Integer.class, jv);
+            this.runProgress = json.readValue("runProgress", Integer.class, jv);
+            this.maxHealth = json.readValue("maxHealth", Integer.class, jv);
+            this.maxArmor = json.readValue("maxArmor", Integer.class, jv);
+        }
     }
 
     @Override
@@ -370,8 +369,6 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 79 * hash + Objects.hashCode(this.name);
-        hash = 79 * hash + Objects.hashCode(this.collection.getID());
         hash = 79 * hash + Objects.hashCode(this.id);
         hash = 79 * hash + Objects.hashCode(this.matchID);
         hash = 79 * hash + Objects.hashCode(this.ownerUID);

@@ -499,7 +499,7 @@ public class MatchScreen implements Screen {
             Action update = Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    matchData.setCurrentState(moveResult.getState());
+                    matchData.updateState(moveResult.getState());
                     board.updateBoard(matchData);
                     for (String string : computerActors.keySet()) {
                         ComputerActor a = computerActors.get(string);

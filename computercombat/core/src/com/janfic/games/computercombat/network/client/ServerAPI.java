@@ -34,10 +34,12 @@ public class ServerAPI {
         this.thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                Json json = new Json();
                 while (stop == false) {
                     if (dataAvailable()) {
                         Message m = readStream();
                         messages.add(m);
+                        System.out.println("RECIEVED MESSAGE\nSIZE: " + json.toJson(m).length());
                     }
                     try {
                         this.wait(1000);
