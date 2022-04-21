@@ -106,7 +106,6 @@ public class CascadeAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
-        json.writeType(this.getClass());
         json.writeValue("cascade", cascade);
     }
 
@@ -149,7 +148,6 @@ public class CascadeAnimation implements MoveAnimation {
 
         @Override
         public void write(Json json) {
-            json.writeType(this.getClass());
             json.writeValue("originalComponent", this.originalComponent);
             json.writeValue("fallenComponent", this.fallenComponent);
         }

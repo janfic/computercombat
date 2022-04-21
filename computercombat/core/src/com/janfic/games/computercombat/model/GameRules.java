@@ -213,29 +213,35 @@ public class GameRules {
     }
 
     public static MatchState shuffleBoard(MatchState state) {
-        MatchState nextState = new MatchState(state);
-        Component[][] components = nextState.getComponentBoard();
+        try {
 
-        while (areAvailableComponentMatches(nextState).isEmpty() == false) {
+            MatchState nextState = (MatchState) state.clone();
+            Component[][] components = nextState.getComponentBoard();
 
-            List<Component> componentList = new ArrayList<>();
-            for (Component[] component : components) {
-                for (Component c : component) {
-                    componentList.add(c);
+            while (areAvailableComponentMatches(nextState).isEmpty() == false) {
+
+                List<Component> componentList = new ArrayList<>();
+                for (Component[] component : components) {
+                    for (Component c : component) {
+                        componentList.add(c);
+                    }
+                }
+
+                Collections.shuffle(componentList);
+
+                int index = 0;
+                for (int x = 0; x < components.length; x++) {
+                    for (int y = 0; y < components[x].length; y++) {
+                        components[x][y] = componentList.get(index);
+                        index++;
+                    }
                 }
             }
-
-            Collections.shuffle(componentList);
-
-            int index = 0;
-            for (int x = 0; x < components.length; x++) {
-                for (int y = 0; y < components[x].length; y++) {
-                    components[x][y] = componentList.get(index);
-                    index++;
-                }
-            }
+            return nextState;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return nextState;
     }
 
     public static List<MoveResult> makeMove(MatchState originalState, Move move) {
@@ -302,6 +308,8 @@ public class GameRules {
         List<UseAbilityMove> moves = new ArrayList<>();
 
         String uid = state.currentPlayerMove.getUID();
+        System.out.println(card);
+        System.out.println(card.getAbility());
         List<Filter> selectFilters = card.getAbility().getSelectFilters();
 
         if (index >= selectFilters.size()) {

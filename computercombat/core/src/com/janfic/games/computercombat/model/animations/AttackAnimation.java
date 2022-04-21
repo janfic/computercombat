@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -16,7 +17,9 @@ import com.janfic.games.computercombat.model.animations.ChangeStatAnim.ChangeSta
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
 import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -25,12 +28,12 @@ import java.util.List;
 public class AttackAnimation implements MoveAnimation {
 
     String attackedUID, attackerUID;
-    ObjectMap<Card, List<Card>> attacks;
+    Map<String, Array<Integer>> attacks;
 
     public AttackAnimation() {
     }
 
-    public AttackAnimation(String attackerUID, String attackedUID, ObjectMap<Card, List<Card>> attacks) {
+    public AttackAnimation(String attackerUID, String attackedUID, Map<String, Array<Integer>> attacks) {
         this.attackedUID = attackedUID;
         this.attackerUID = attackerUID;
         this.attacks = attacks;
@@ -39,15 +42,18 @@ public class AttackAnimation implements MoveAnimation {
     @Override
     public List<List<Action>> animate(String currentPlayerUID, String playerUID, MatchScreen screen, float animationSpeed) {
         List<List<Action>> animations = new ArrayList<>();
-        for (Entry<Card, List<Card>> entry : attacks.entries()) {
+        for (String key : attacks.keySet()) {
             List<Action> attackActions = new ArrayList<>();
 
-            SoftwareActor attackerActor = screen.getSoftwareActorByMatchID(attackerUID, entry.key.getMatchID());
+            System.out.println(" HERE " + key);
+            SoftwareActor attackerActor = screen.getSoftwareActorByMatchID(attackerUID, Integer.parseInt(key));
             attackerActor.setZIndex(1000);
             attackerActor.getParent().setZIndex(Integer.MAX_VALUE);
-            for (Card attacked : entry.value) {
+            for (Integer matchID : attacks.get(key)) {
+                Card attacker = attackerActor.getSoftware();
+                Card attacked = screen.getSoftwareActorByMatchID(attackedUID, matchID).getSoftware();
                 if (attacked.getID() > 0) {
-                    SoftwareActor attackedActor = screen.getSoftwareActorByMatchID(attackedUID, attacked.getMatchID());
+                    SoftwareActor attackedActor = screen.getSoftwareActorByMatchID(attackedUID, matchID);
                     Vector2 posBack = attackerActor.localToStageCoordinates(new Vector2(attackerActor.getX(), attackerActor.getY()));
                     Vector2 pos = attackedActor.localToStageCoordinates(new Vector2(attackedActor.getX(), attackedActor.getY()));
                     posBack = attackerActor.stageToLocalCoordinates(posBack);
@@ -58,8 +64,8 @@ public class AttackAnimation implements MoveAnimation {
                     );
                     Action attackedAction;
                     Card a = attackedActor.getSoftware();
-                    int armorDecrease = a.getArmor() > 0 ? Math.min(a.getArmor(), entry.key.getAttack()) : 0;
-                    int healthDecrease = a.getHealth() <= entry.key.getAttack() - armorDecrease ? a.getHealth() : entry.key.getAttack() - armorDecrease;
+                    int armorDecrease = a.getArmor() > 0 ? Math.min(a.getArmor(), attacker.getAttack()) : 0;
+                    int healthDecrease = a.getHealth() <= attacker.getAttack() - armorDecrease ? a.getHealth() : attacker.getAttack() - armorDecrease;
                     attackedAction = Actions.sequence(
                             Actions.delay(0.5f * animationSpeed),
                             Actions.color(Color.RED),
@@ -82,7 +88,7 @@ public class AttackAnimation implements MoveAnimation {
                             Actions.moveTo(pos.x, pos.y, 0.5f * animationSpeed, Interpolation.exp5In),
                             Actions.moveTo(posBack.x, posBack.y, 0.5f * animationSpeed, Interpolation.exp5Out)
                     );
-                    int healthDecrease = entry.key.getAttack();
+                    int healthDecrease = attacker.getAttack();
                     attackedAction = Actions.sequence(
                             Actions.delay(0.5f * animationSpeed),
                             Actions.color(Color.RED),
@@ -104,15 +110,14 @@ public class AttackAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
-        json.writeType(getClass());
-        json.writeValue("attacks", attacks, ObjectMap.class);
+        json.writeValue("attacks", attacks, Map.class);
         json.writeValue("attackedUID", attackedUID, String.class);
         json.writeValue("attackerUID", attackerUID, String.class);
     }
 
     @Override
     public void read(Json json, JsonValue jsonData) {
-        this.attacks = json.readValue("attacks", ObjectMap.class, jsonData);
+        this.attacks = json.readValue("attacks", Map.class, jsonData);
         this.attackerUID = json.readValue("attackerUID", String.class, jsonData);
         this.attackedUID = json.readValue("attackedUID", String.class, jsonData);
     }

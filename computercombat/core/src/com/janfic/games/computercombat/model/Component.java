@@ -234,17 +234,16 @@ public class Component implements Serializable {
     @Override
     public void write(Json json) {
         json.writeValue("color", color);
-        json.writeValue("x", x);
-        json.writeValue("y", y);
-        json.writeValue("textureName", textureName);
+        json.writeValue("position", "" + x + " " + y);
     }
 
     @Override
     public void read(Json json, JsonValue jv) {
         this.color = json.readValue("color", Integer.class, jv);
-        this.x = json.readValue("x", Integer.class, jv);
-        this.y = json.readValue("y", Integer.class, jv);
-        this.textureName = json.readValue("textureName", String.class, jv);
+        String[] position = json.readValue("position", String.class, jv).split(" ");
+        this.x = Integer.parseInt(position[0]);
+        this.y = Integer.parseInt(position[1]);
+        this.textureName = colorToTextureName.get(this.color);
     }
 
 }

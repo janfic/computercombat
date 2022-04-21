@@ -58,7 +58,6 @@ public class ConsumeProgressAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
-        json.writeType(getClass());
         json.writeValue("playerUID", playerUID, String.class);
         json.writeValue("software", software, List.class);
     }

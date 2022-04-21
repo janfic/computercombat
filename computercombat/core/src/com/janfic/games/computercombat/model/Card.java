@@ -310,12 +310,10 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
 
     @Override
     public void write(Json json) {
-        json.writeType(getClass());
         json.writeValue("ownerUID", this.ownerUID);
         json.writeValue("id", this.id);
         json.writeValue("matchID", this.matchID);
         if (matchID != 0) {
-            json.writeValue("matchID", this.matchID);
             json.writeValue("health", this.health);
             json.writeValue("attack", this.attack);
             json.writeValue("armor", this.armor);
@@ -382,7 +380,7 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
 
     @Override
     public String toString() {
-        return name + ": [id: " + id + " matchID: " + matchID + " owner: " + ownerUID + " ]";
+        return name + ": [\n\tid: " + id + "\n\tmatchID: " + matchID + "\n\towner: " + ownerUID + ",\n\tability: " + ability + "\n]";
     }
 
     @Override
@@ -400,6 +398,7 @@ public class Card implements Json.Serializable, Comparable<Card>, Cloneable {
 
     public static Card makeComputer(String uid) {
         Card c = SQLAPI.getSingleton().getCardById(0, uid);
+        c.generateMatchID();
         return c;
     }
 }

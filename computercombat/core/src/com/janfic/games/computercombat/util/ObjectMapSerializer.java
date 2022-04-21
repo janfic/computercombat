@@ -1,45 +1,56 @@
 package com.janfic.games.computercombat.util;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  *
  * @author Jan Fic
  */
-public class ObjectMapSerializer<K, V extends List> implements Json.Serializer<ObjectMap<K, V>> {
+public class ObjectMapSerializer implements Json.Serializer<Map> {
 
     @Override
-    public void write(Json json, ObjectMap<K, V> object, Class knownType) {
+    public void write(Json json, Map object, Class knownType) {
         json.writeObjectStart();
 
-        json.writeArrayStart("entries");
-
-        for (Entry<?, ?> entry : object.entries()) {
+        for (Object key : object.keySet()) {
             json.writeObjectStart();
-            json.writeValue("key", entry.key, entry.key.getClass());
-            json.writeValue("value", entry.value, entry.value.getClass());
+            json.writeValue(key.toString(), object.get(key));
             json.writeObjectEnd();
         }
-
         json.writeArrayEnd();
         json.writeObjectEnd();
 
     }
 
     @Override
-    public ObjectMap<K, V> read(Json json, JsonValue jsonData, Class type) {
+    public Map read(Json json, JsonValue jsonData, Class type) {
 
-        ObjectMap<K, V> result = new ObjectMap<>();
+        Map result = new HashMap<>();
+
+        System.out.println("HERERERERER");
 
         JsonValue entries = jsonData.child;
         for (JsonValue child = entries.child; child != null; child = child.next) {
-            result.put((K) json.readValue(null, child.get("key")), (V) json.readValue(List.class, child.get("value")));
-        }
+            Object key = json.readValue(null, child.get("key"));
+            Object value = json.readValue(null, child.get("value"));
+            if (value instanceof Array) {
+                List arrayList = new ArrayList<>();
+                for (Object object : (Array) value) {
+                    arrayList.add(object);
+                }
+                value = arrayList;
+            }
+            result.put(
+                    key, value
+            );
 
+        }
         return result;
     }
 }

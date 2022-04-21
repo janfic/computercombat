@@ -22,25 +22,25 @@ import java.util.Map;
  * @author Jan Fic
  */
 public class Match {
-
+    
     private MatchState currentState;
-
+    
     public Match(Player player1, Player player2) {
-
+        
         Map<String, List<Card>> activeEntities = new HashMap<>();
         Map<String, Card> computers = new HashMap<>();
         Map<String, Deck> decks = new HashMap<>();
-
+        
         player1.getActiveDeck().shuffle();
         player2.getActiveDeck().shuffle();
         decks.put(player1.getUID(), player1.getActiveDeck());
         decks.put(player2.getUID(), player2.getActiveDeck());
-
+        
         activeEntities.put(player1.getUID(), new ArrayList<>());
         activeEntities.put(player2.getUID(), new ArrayList<>());
         computers.put(player1.getUID(), Card.makeComputer(player1.getUID()));
         computers.put(player2.getUID(), Card.makeComputer(player2.getUID()));
-
+        
         try {
             this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
             this.currentState.update();
@@ -48,7 +48,7 @@ public class Match {
                 this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
                 this.currentState.update();
             }
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 3; i++) {
                 Card c = decks.get(player1.getUID()).draw();
                 c.setOwnerUID(player1.getUID());
                 Card b = decks.get(player2.getUID()).draw();
@@ -56,13 +56,13 @@ public class Match {
                 this.currentState.activeEntities.get(player1.getUID()).add(c);
                 this.currentState.activeEntities.get(player2.getUID()).add(b);
             }
-
+            
         } catch (Exception e) {
             System.err.println("Something went wrong when creating the initial match state: ");
             e.printStackTrace();
         }
     }
-
+    
     private Component[][] makeBoard(Map<Integer, Integer> colorFrequencies) throws Exception {
         Component[][] componentBoard = new Component[8][8];
 
@@ -85,35 +85,35 @@ public class Match {
 
         //Set Neighbors
         MatchState.buildNeighbors(componentBoard);
-
+        
         return componentBoard;
     }
-
+    
     public MatchState getPlayerMatchState(String playerUID) {
-        MatchState copy = new MatchState(currentState, playerUID);
+        MatchState copy = currentState.clone(currentState, playerUID);
         MatchState.buildNeighbors(copy.getComponentBoard());
         currentState.update();
         return copy;
     }
-
+    
     public MatchState getCurrentState() {
         return currentState;
     }
-
+    
     public List<MoveResult> makeMove(Move move) {
         List<MoveResult> r = GameRules.makeMove(currentState, move);
         return r;
     }
-
+    
     public String whosMove() {
         return currentState.currentPlayerMove.getUID();
     }
-
+    
     public boolean isValidMove(Move move) {
         List<Move> moves = GameRules.getAvailableMoves(currentState);
         boolean found = moves.contains(move);
         Json j = new Json();
-
+        
         return found;
     }
 }

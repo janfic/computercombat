@@ -13,6 +13,7 @@ import com.janfic.games.computercombat.network.Type;
 import com.janfic.games.computercombat.network.server.MatchClient;
 import com.janfic.games.computercombat.util.ObjectMapSerializer;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -31,7 +32,7 @@ public class HumanPlayer extends Player {
         super(uid, client.getDeck());
         this.client = client;
         this.json = new Json();
-        json.setSerializer(ObjectMap.class, new ObjectMapSerializer());
+        json.setSerializer(Map.class, new ObjectMapSerializer());
     }
 
     @Override

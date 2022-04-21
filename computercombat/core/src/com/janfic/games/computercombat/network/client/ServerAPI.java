@@ -39,7 +39,7 @@ public class ServerAPI {
                     if (dataAvailable()) {
                         Message m = readStream();
                         messages.add(m);
-                        System.out.println("RECIEVED MESSAGE\nSIZE: " + json.toJson(m).length());
+                        System.out.println("RECIEVED MESSAGE\nSIZE: " + json.toJson(m).length() + "\n Message: \n" + json.prettyPrint(m));
                     }
                     try {
                         this.wait(1000);

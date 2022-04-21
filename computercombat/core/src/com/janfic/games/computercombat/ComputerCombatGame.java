@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -22,6 +23,10 @@ import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.network.client.ServerAPI;
 import com.janfic.games.computercombat.screens.LoadingScreen;
+import com.janfic.games.computercombat.util.NullifyingJson;
+import com.janfic.games.computercombat.util.ObjectMapSerializer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class ComputerCombatGame extends Game {

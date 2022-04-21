@@ -1,6 +1,8 @@
 package com.janfic.games.computercombat.server;
 
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.Ability;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.moves.MoveResult;
@@ -11,6 +13,7 @@ import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.client.SQLAPI;
+import com.janfic.games.computercombat.util.NullifyingJson;
 import java.util.List;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -41,11 +44,15 @@ public class ServerMatchRoom {
                 // set up match data collection
                 Timestamp starttime = new Timestamp(System.currentTimeMillis());
                 matchData = new MatchData(player1, player2);
-                matchData.getMatchStates().add(new MatchState(match.getCurrentState()));
+                matchData.getMatchStates().add(MatchState.record(match.getCurrentState()));
 
                 // Start main match loop
+                Json json = new NullifyingJson();
                 isGameOver = false;
                 while (isGameOver == false) {
+
+                    System.out.println(match.getCurrentState().activeEntities.get(player1.getUID()));
+
                     // get move of current player
                     String whosMoveUID = match.whosMove();
                     Player currentPlayer = whosMoveUID.equals(player1.getUID()) ? player1 : player2;
@@ -61,7 +68,14 @@ public class ServerMatchRoom {
                     // apply the move
                     if (move instanceof UseAbilityMove) {
                         UseAbilityMove m = (UseAbilityMove) move;
-                        m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
+                        for (Card c : match.getCurrentState().activeEntities.get(m.getPlayerUID())) {
+                            if (c.getMatchID() == m.getCard().getMatchID()) {
+                                m.getCard().setAbility(Ability.getAbilityFromCode(c.getAbility()));
+                            }
+                        }
+                        if (m.getCard().getID() == 0) {
+                            m.getCard().setAbility(Ability.getAbilityFromCode(match.getCurrentState().computers.get(m.getPlayerUID()).getAbility()));
+                        }
                     }
                     boolean isValid = match.isValidMove(move);
                     if (isValid) {

@@ -73,6 +73,8 @@ public class MatchScreen implements Screen {
     List<ComponentActor> selectedComponents;
     List<SoftwareActor> selectedCards;
 
+    Json json;
+
     boolean startedMatch = false;
 
     float animationSpeed = 0.5f;
@@ -87,6 +89,8 @@ public class MatchScreen implements Screen {
         this.selectIndex = -1;
         this.selectedCards = new ArrayList<>();
         this.selectedComponents = new ArrayList<>();
+        this.json = new NullifyingJson();
+        json.setSerializer(Map.class, new ObjectMapSerializer());
     }
 
     @Override
@@ -163,10 +167,9 @@ public class MatchScreen implements Screen {
     }
 
     public void initializeStage(Message matchStateData) {
-        Json json = new NullifyingJson();
 
         MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
-        this.matchData.setCurrentState(state);
+        this.matchData.initializeState(state);
 
         Component[][] componentBoard = this.matchData.getCurrentState().componentBoard;
         board = new Board(skin, matchData, game, animation);
@@ -309,7 +312,6 @@ public class MatchScreen implements Screen {
                             components,
                             cards
                     );
-                    Json json = new Json();
                     softwareActor.setActivatedAbility(false);
                     System.out.println("USED ABILITY MOVE");
                     if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
@@ -341,7 +343,6 @@ public class MatchScreen implements Screen {
                     new ArrayList<>(),
                     new ArrayList<>()
             );
-            Json json = new Json();
             computerActor.setActivatedAbility(false);
             if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
                 game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
@@ -352,7 +353,6 @@ public class MatchScreen implements Screen {
     private void playerMatchComponentsMoveCheck() {
         if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
             Move move = board.getMove();
-            Json json = new NullifyingJson();
             game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             board.consumeMove();
         }
@@ -363,16 +363,10 @@ public class MatchScreen implements Screen {
             Message serverMessage = game.getServerAPI().readMessage();
             System.out.println(serverMessage.getType());
             if (serverMessage.type == Type.MOVE_ACCEPT) {
-                Json json = new NullifyingJson();
-                json.setSerializer(ObjectMap.class,
-                        new ObjectMapSerializer());
                 List<MoveResult> results = json.fromJson(List.class, serverMessage.getMessage());
                 animate(results, this);
             } else if (serverMessage.type == Type.PING) {
             } else if (serverMessage.type == Type.MATCH_RESULTS) {
-                Json json = new NullifyingJson();
-                json.setSerializer(ObjectMap.class,
-                        new ObjectMapSerializer());
                 MatchResults results = json.fromJson(MatchResults.class, serverMessage.getMessage());
                 gameOver(results);
             }
