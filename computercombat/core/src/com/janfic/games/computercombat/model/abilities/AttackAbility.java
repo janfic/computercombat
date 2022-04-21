@@ -33,7 +33,7 @@ public class AttackAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
         String currentUID = move.getPlayerUID();
-        String opponentUID = state.getOtherProfile(state.currentPlayerMove).getUID();
+        String opponentUID = state.getOtherProfile(state.currentPlayerMove);
 
         List<Card> destroyed = new ArrayList<>();
         List<MoveAnimation> animation = new ArrayList<>();

@@ -38,9 +38,9 @@ public class MatchState implements Serializable, Cloneable {
     public Map<String, Card> computers;
     public Map<String, Deck> decks;
     public List<Player> players;
-    public Player currentPlayerMove;
+    public String currentPlayerMove;
     public boolean isGameOver;
-    public Player winner;
+    public String winner;
 
     public MatchState() {
         this.componentBoard = null;
@@ -58,7 +58,7 @@ public class MatchState implements Serializable, Cloneable {
         this.activeEntities = activeEntities;
         this.computers = computers;
         this.decks = decks;
-        this.currentPlayerMove = player1;
+        this.currentPlayerMove = player1.getUID();
         this.players = new ArrayList<>();
         this.players.add(player1);
         this.players.add(player2);
@@ -127,7 +127,7 @@ public class MatchState implements Serializable, Cloneable {
                 }
             }
 
-            if (attack && activeEntities.get(currentPlayerMove.getUID()).isEmpty() == false) {
+            if (attack && activeEntities.get(currentPlayerMove).isEmpty() == false) {
                 results.addAll(attack(move));
             }
 
@@ -166,12 +166,12 @@ public class MatchState implements Serializable, Cloneable {
 
     public List<MoveResult> attack(Move move) {
         Map<String, Array<Integer>> attacks = new HashMap<>();
-        String attacker = "" + activeEntities.get(currentPlayerMove.getUID()).get(0).getMatchID();
+        String attacker = "" + activeEntities.get(currentPlayerMove).get(0).getMatchID();
         Array<Integer> attacked = new Array<>();
-        if (activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).isEmpty()) {
-            attacked.add(computers.get(this.getOtherProfile(currentPlayerMove).getUID()).getMatchID());
+        if (activeEntities.get(this.getOtherProfile(currentPlayerMove)).isEmpty()) {
+            attacked.add(computers.get(this.getOtherProfile(currentPlayerMove)).getMatchID());
         } else {
-            attacked.add(activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).get(0).getMatchID());
+            attacked.add(activeEntities.get(this.getOtherProfile(currentPlayerMove)).get(0).getMatchID());
         }
         attacks.put(attacker, attacked);
         AttackAbility attackAbility = new AttackAbility(new ArrayList<>(), attacks);
@@ -211,7 +211,7 @@ public class MatchState implements Serializable, Cloneable {
         Map<Component, Card> progress = collectAnimation.progress;
         for (Component c : collectAnimation.getAllComponents()) {
             boolean collectedByCard = false;
-            for (Card card : activeEntities.get(currentPlayerMove.getUID())) {
+            for (Card card : activeEntities.get(currentPlayerMove)) {
                 if (card.getRunProgress() < card.getRunRequirements()) {
                     for (Integer requirement : card.getRunComponents()) {
                         if (c.getColor() == requirement) {
@@ -227,7 +227,7 @@ public class MatchState implements Serializable, Cloneable {
                 }
             }
             if (collectedByCard == false) {
-                computers.get(currentPlayerMove.getUID()).recieveProgress(1);
+                computers.get(currentPlayerMove).recieveProgress(1);
             }
         }
     }
@@ -319,9 +319,9 @@ public class MatchState implements Serializable, Cloneable {
         MatchState state = new MatchState(player1, player2, componentBoard, activeEntities, computers, decks);
         state.isGameOver = this.isGameOver;
         if (this.winner != null) {
-            state.winner = (Player) this.winner.clone();
+            state.winner = "" + this.winner;
         }
-        state.currentPlayerMove = (Player) this.currentPlayerMove.clone();
+        state.currentPlayerMove = "" + this.currentPlayerMove;
 
         MatchState.buildNeighbors(componentBoard);
         state.update();
@@ -361,10 +361,10 @@ public class MatchState implements Serializable, Cloneable {
         return null;
     }
 
-    public Player getOtherProfile(String uid) {
+    public String getOtherProfile(String uid) {
         for (Player player : players) {
             if (!player.getUID().equals(uid)) {
-                return player;
+                return player.getUID();
             }
         }
         return null;
@@ -402,9 +402,9 @@ public class MatchState implements Serializable, Cloneable {
     @Override
     public void read(Json json, JsonValue jsonData) {
         this.players = json.readValue("players", List.class, jsonData);
-        this.currentPlayerMove = json.readValue("currentPlayerMove", Player.class, jsonData);
+        this.currentPlayerMove = json.readValue("currentPlayerMove", String.class, jsonData);
         this.isGameOver = json.readValue("isGameOver", boolean.class, jsonData);
-        this.winner = json.readValue("winner", Player.class, jsonData);
+        this.winner = json.readValue("winner", String.class, jsonData);
         this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
         this.computers = json.readValue("computers", HashMap.class, Card.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);

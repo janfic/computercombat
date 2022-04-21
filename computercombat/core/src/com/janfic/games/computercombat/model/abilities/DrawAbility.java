@@ -77,7 +77,7 @@ public class DrawAbility extends Ability {
 
         for (Player player : state.players) {
             if (player.getUID().equals(move.getPlayerUID())) {
-                state.currentPlayerMove = state.getOtherProfile(player);
+                state.currentPlayerMove = state.getOtherProfile(player.getUID());
             }
         }
 

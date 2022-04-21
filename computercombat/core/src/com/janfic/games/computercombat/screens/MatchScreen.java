@@ -180,7 +180,7 @@ public class MatchScreen implements Screen {
         }
 
         String currentUID = game.getCurrentProfile().getUID();
-        String opponentUID = matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID();
+        String opponentUID = matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID());
         this.softwareActors.put(currentUID, new ArrayList<>());
         this.softwareActors.put(opponentUID, new ArrayList<>());
         this.computerActors.put(currentUID, new ComputerActor(skin, game, matchData.getCurrentState().computers.get(currentUID)));
@@ -209,7 +209,7 @@ public class MatchScreen implements Screen {
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
-        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())).expandY().growX().bottom();
+        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()))).expandY().growX().bottom();
 
         buttons = new Panel(skin);
         buttons.add(new Label(game.getCurrentProfile().getName() + " vs. " + matchData.getOpponentName(), skin));
@@ -351,7 +351,7 @@ public class MatchScreen implements Screen {
     }
 
     private void playerMatchComponentsMoveCheck() {
-        if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+        if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.equals(game.getCurrentProfile().getUID())) {
             Move move = board.getMove();
             game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             board.consumeMove();
@@ -424,7 +424,7 @@ public class MatchScreen implements Screen {
     }
 
     private void updateInfoText() {
-        if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+        if (matchData.getCurrentState().currentPlayerMove.equals(game.getCurrentProfile().getUID())) {
             board.setTouchable(Touchable.enabled);
             infoLabel.setText("Your Turn!");
             infoLabel.setFontScale(0.5f);
@@ -482,7 +482,7 @@ public class MatchScreen implements Screen {
                 public void run() {
                     int offset = 0;
                     for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
-                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen, animationSpeed);
+                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove, game.getCurrentProfile().getUID(), screen, animationSpeed);
                         int indexOfUpdate = animation.indexOf(a);
                         animation.addAll(indexOfUpdate + 1 + offset, animations);
                         offset += animations.size();
@@ -531,11 +531,11 @@ public class MatchScreen implements Screen {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             leftPanel.add(softwareActor).row();
         }
-        for (SoftwareActor softwareActor : softwareActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())) {
+        for (SoftwareActor softwareActor : softwareActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()))) {
             rightPanel.add(softwareActor).row();
         }
 
         leftPanel.add(computerActors.get(game.getCurrentProfile().getUID())).expandY().growX().bottom().row();
-        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())).expandY().growX().bottom().row();
+        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()))).expandY().growX().bottom().row();
     }
 }

@@ -35,7 +35,7 @@ public class ChangeDefenseAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
         String currentUID = move.getPlayerUID();
-        String opponentUID = state.getOtherProfile(state.currentPlayerMove).getUID();
+        String opponentUID = state.getOtherProfile(state.currentPlayerMove);
 
         List<MoveAnimation> animation = new ArrayList<>();
         MoveAnimation consume = Ability.consumeCardProgress(state, move);

@@ -47,12 +47,8 @@ public class ServerMatchRoom {
                 matchData.getMatchStates().add(MatchState.record(match.getCurrentState()));
 
                 // Start main match loop
-                Json json = new NullifyingJson();
                 isGameOver = false;
                 while (isGameOver == false) {
-
-                    System.out.println(match.getCurrentState().activeEntities.get(player1.getUID()));
-
                     // get move of current player
                     String whosMoveUID = match.whosMove();
                     Player currentPlayer = whosMoveUID.equals(player1.getUID()) ? player1 : player2;
@@ -92,7 +88,7 @@ public class ServerMatchRoom {
                 Timestamp endtime = new Timestamp(System.currentTimeMillis());
                 MatchState lastState = matchData.getMatchStates().get(matchData.getMatchStates().size() - 1);
                 if (lastState.winner != null) {
-                    matchData.setWinner(lastState.winner.getUID().equals(player2.getUID()));
+                    matchData.setWinner(lastState.winner.equals(player2.getUID()));
                 } else {
                     matchData.setWinner(false);
                 }

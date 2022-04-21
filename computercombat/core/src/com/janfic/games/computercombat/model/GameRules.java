@@ -36,11 +36,11 @@ public class GameRules {
         for (Integer[] match : matches) {
             Component a = state.getComponentBoard()[match[0]][match[1]];
             Component b = state.getComponentBoard()[match[2]][match[3]];
-            MatchComponentsMove m = new MatchComponentsMove(state.currentPlayerMove.getUID(), a, b);
+            MatchComponentsMove m = new MatchComponentsMove(state.currentPlayerMove, a, b);
             moves.add(m);
         }
         // Get UseAbilityMoves
-        String uid = state.currentPlayerMove.getUID();
+        String uid = state.currentPlayerMove;
         for (Card card : state.activeEntities.get(uid)) {
             if (card.getRunProgress() >= card.getRunRequirements()) {
                 List<UseAbilityMove> generatedMoves = generateMovesWithSelection(0, card, state, new ArrayList<>(), new ArrayList<>());
@@ -307,7 +307,7 @@ public class GameRules {
     private static List<UseAbilityMove> generateMovesWithSelection(int index, Card card, MatchState state, List<Component> selectedComponents, List<Card> selectedCards) {
         List<UseAbilityMove> moves = new ArrayList<>();
 
-        String uid = state.currentPlayerMove.getUID();
+        String uid = state.currentPlayerMove;
         System.out.println(card);
         System.out.println(card.getAbility());
         List<Filter> selectFilters = card.getAbility().getSelectFilters();
