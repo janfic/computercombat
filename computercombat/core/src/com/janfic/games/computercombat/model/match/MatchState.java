@@ -382,6 +382,7 @@ public class MatchState implements Serializable, Cloneable {
 
     @Override
     public void write(Json json) {
+        json.setTypeName(null);
         json.writeValue("players", players, List.class);
         json.writeValue("currentPlayerMove", currentPlayerMove, Player.class);
         json.writeValue("activeEntities", activeEntities, Map.class);
@@ -397,17 +398,29 @@ public class MatchState implements Serializable, Cloneable {
         }
         assert (board.length() == 64);
         json.writeValue("componentBoard", board);
+        json.setTypeName("class");
     }
 
     @Override
     public void read(Json json, JsonValue jsonData) {
-        this.players = json.readValue("players", List.class, jsonData);
-        this.currentPlayerMove = json.readValue("currentPlayerMove", String.class, jsonData);
+        json.setTypeName("class");
+        this.players = json.readValue("players", List.class, Player.class, jsonData);
+        json.setTypeName(null);
         this.isGameOver = json.readValue("isGameOver", boolean.class, jsonData);
         this.winner = json.readValue("winner", String.class, jsonData);
-        this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
-        this.computers = json.readValue("computers", HashMap.class, Card.class, jsonData);
+        this.currentPlayerMove = json.readValue("currentPlayerMove", String.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);
+        HashMap<String, List<JsonValue>> v = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
+        this.activeEntities = new HashMap<>();
+        for (String string : v.keySet()) {
+            List<Card> cards = new ArrayList<>();
+            for (JsonValue jsonValue : v.get(string)) {
+                Card c = json.readValue(Card.class, jsonValue);
+                cards.add(c);
+            }
+            activeEntities.put(string, cards);
+        }
+        this.computers = json.readValue("computers", HashMap.class, Card.class, jsonData);
         String boardString = json.readValue("componentBoard", String.class, jsonData);
         componentBoard = new Component[8][8];
         assert (boardString.length() == 64);
@@ -420,6 +433,7 @@ public class MatchState implements Serializable, Cloneable {
                 e.printStackTrace();
             }
         }
+        json.setTypeName("class");
     }
 
     public int countComponents(ComponentFilter filter, Move move) {
