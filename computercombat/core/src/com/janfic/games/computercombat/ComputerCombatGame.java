@@ -63,8 +63,6 @@ public class ComputerCombatGame extends Game {
         for (Entry<String, Color> entry : skin.getAll(Color.class).entries()) {
             Colors.put(entry.key, entry.value);
         }
-
-        System.out.println(SQLAPI.getSingleton().getAllBotCards());
     }
 
     public Screen popScreen() {
