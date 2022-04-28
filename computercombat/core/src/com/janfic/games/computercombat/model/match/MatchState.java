@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model.match;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
@@ -37,9 +38,9 @@ public class MatchState implements Serializable, Cloneable {
     public Map<String, Card> computers;
     public Map<String, Deck> decks;
     public List<Player> players;
-    public Player currentPlayerMove;
+    public String currentPlayerMove;
     public boolean isGameOver;
-    public Player winner;
+    public String winner;
 
     public MatchState() {
         this.componentBoard = null;
@@ -57,7 +58,7 @@ public class MatchState implements Serializable, Cloneable {
         this.activeEntities = activeEntities;
         this.computers = computers;
         this.decks = decks;
-        this.currentPlayerMove = player1;
+        this.currentPlayerMove = player1.getUID();
         this.players = new ArrayList<>();
         this.players.add(player1);
         this.players.add(player2);
@@ -126,7 +127,7 @@ public class MatchState implements Serializable, Cloneable {
                 }
             }
 
-            if (attack && activeEntities.get(currentPlayerMove.getUID()).isEmpty() == false) {
+            if (attack && activeEntities.get(currentPlayerMove).isEmpty() == false) {
                 results.addAll(attack(move));
             }
 
@@ -164,13 +165,13 @@ public class MatchState implements Serializable, Cloneable {
     }
 
     public List<MoveResult> attack(Move move) {
-        ObjectMap<Card, List<Card>> attacks = new ObjectMap<>();
-        Card attacker = activeEntities.get(currentPlayerMove.getUID()).get(0);
-        List<Card> attacked = new ArrayList<>();
-        if (activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).isEmpty()) {
-            attacked.add(computers.get(this.getOtherProfile(currentPlayerMove).getUID()));
+        Map<String, Array<Integer>> attacks = new HashMap<>();
+        String attacker = "" + activeEntities.get(currentPlayerMove).get(0).getMatchID();
+        Array<Integer> attacked = new Array<>();
+        if (activeEntities.get(this.getOtherProfile(currentPlayerMove)).isEmpty()) {
+            attacked.add(computers.get(this.getOtherProfile(currentPlayerMove)).getMatchID());
         } else {
-            attacked.add(activeEntities.get(this.getOtherProfile(currentPlayerMove).getUID()).get(0));
+            attacked.add(activeEntities.get(this.getOtherProfile(currentPlayerMove)).get(0).getMatchID());
         }
         attacks.put(attacker, attacked);
         AttackAbility attackAbility = new AttackAbility(new ArrayList<>(), attacks);
@@ -210,7 +211,7 @@ public class MatchState implements Serializable, Cloneable {
         Map<Component, Card> progress = collectAnimation.progress;
         for (Component c : collectAnimation.getAllComponents()) {
             boolean collectedByCard = false;
-            for (Card card : activeEntities.get(currentPlayerMove.getUID())) {
+            for (Card card : activeEntities.get(currentPlayerMove)) {
                 if (card.getRunProgress() < card.getRunRequirements()) {
                     for (Integer requirement : card.getRunComponents()) {
                         if (c.getColor() == requirement) {
@@ -226,7 +227,7 @@ public class MatchState implements Serializable, Cloneable {
                 }
             }
             if (collectedByCard == false) {
-                computers.get(currentPlayerMove.getUID()).recieveProgress(1);
+                computers.get(currentPlayerMove).recieveProgress(1);
             }
         }
     }
@@ -273,6 +274,15 @@ public class MatchState implements Serializable, Cloneable {
         return componentsInMatch;
     }
 
+    public MatchState clone(MatchState state, String playerUID) {
+        try {
+            MatchState cloned = (MatchState) clone();
+            return cloned;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         Player player1 = (Player) players.get(0).clone();
@@ -309,9 +319,9 @@ public class MatchState implements Serializable, Cloneable {
         MatchState state = new MatchState(player1, player2, componentBoard, activeEntities, computers, decks);
         state.isGameOver = this.isGameOver;
         if (this.winner != null) {
-            state.winner = (Player) this.winner.clone();
+            state.winner = "" + this.winner;
         }
-        state.currentPlayerMove = (Player) this.currentPlayerMove.clone();
+        state.currentPlayerMove = "" + this.currentPlayerMove;
 
         MatchState.buildNeighbors(componentBoard);
         state.update();
@@ -325,25 +335,6 @@ public class MatchState implements Serializable, Cloneable {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public MatchState(MatchState state) {
-        Json json = new NullifyingJson();
-        MatchState s = json.fromJson(MatchState.class, json.toJson(state));
-        this.componentBoard = s.componentBoard;
-        this.activeEntities = s.activeEntities;
-        this.computers = s.computers;
-        this.decks = s.decks;
-        this.currentPlayerMove = s.currentPlayerMove;
-        this.players = s.players;
-        this.winner = s.winner;
-        this.isGameOver = s.isGameOver;
-        MatchState.buildNeighbors(this.componentBoard);
-        this.update();
-    }
-
-    public MatchState(MatchState state, String playerUID) {
-        this(state);
     }
 
     public String toStringBoard() {
@@ -370,10 +361,10 @@ public class MatchState implements Serializable, Cloneable {
         return null;
     }
 
-    public Player getOtherProfile(String uid) {
+    public String getOtherProfile(String uid) {
         for (Player player : players) {
             if (!player.getUID().equals(uid)) {
-                return player;
+                return player.getUID();
             }
         }
         return null;
@@ -391,6 +382,7 @@ public class MatchState implements Serializable, Cloneable {
 
     @Override
     public void write(Json json) {
+        json.setTypeName(null);
         json.writeValue("players", players, List.class);
         json.writeValue("currentPlayerMove", currentPlayerMove, Player.class);
         json.writeValue("activeEntities", activeEntities, Map.class);
@@ -406,17 +398,29 @@ public class MatchState implements Serializable, Cloneable {
         }
         assert (board.length() == 64);
         json.writeValue("componentBoard", board);
+        json.setTypeName("class");
     }
 
     @Override
     public void read(Json json, JsonValue jsonData) {
-        this.players = json.readValue("players", List.class, jsonData);
-        this.currentPlayerMove = json.readValue("currentPlayerMove", Player.class, jsonData);
+        json.setTypeName("class");
+        this.players = json.readValue("players", List.class, Player.class, jsonData);
+        json.setTypeName(null);
         this.isGameOver = json.readValue("isGameOver", boolean.class, jsonData);
-        this.winner = json.readValue("winner", Player.class, jsonData);
-        this.activeEntities = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
-        this.computers = json.readValue("computers", HashMap.class, Card.class, jsonData);
+        this.winner = json.readValue("winner", String.class, jsonData);
+        this.currentPlayerMove = json.readValue("currentPlayerMove", String.class, jsonData);
         this.decks = json.readValue("decks", HashMap.class, Deck.class, jsonData);
+        HashMap<String, List<JsonValue>> v = json.readValue("activeEntities", HashMap.class, List.class, jsonData);
+        this.activeEntities = new HashMap<>();
+        for (String string : v.keySet()) {
+            List<Card> cards = new ArrayList<>();
+            for (JsonValue jsonValue : v.get(string)) {
+                Card c = json.readValue(Card.class, jsonValue);
+                cards.add(c);
+            }
+            activeEntities.put(string, cards);
+        }
+        this.computers = json.readValue("computers", HashMap.class, Card.class, jsonData);
         String boardString = json.readValue("componentBoard", String.class, jsonData);
         componentBoard = new Component[8][8];
         assert (boardString.length() == 64);
@@ -429,6 +433,7 @@ public class MatchState implements Serializable, Cloneable {
                 e.printStackTrace();
             }
         }
+        json.setTypeName("class");
     }
 
     public int countComponents(ComponentFilter filter, Move move) {
@@ -460,6 +465,22 @@ public class MatchState implements Serializable, Cloneable {
             cards.addAll(activeEntities.get(key));
         }
         return cards;
+    }
+
+    public Card getCardMyMatchID(int matchID) {
+        for (String key : activeEntities.keySet()) {
+            for (Card card : activeEntities.get(key)) {
+                if (card.getMatchID() == matchID) {
+                    return card;
+                }
+            }
+        }
+        for (String string : computers.keySet()) {
+            if (computers.get(string).getMatchID() == matchID) {
+                return computers.get(string);
+            }
+        }
+        return null;
     }
 
     public List<Card> getCardsByFilter(CardFilter filter, Move move) {

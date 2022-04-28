@@ -48,7 +48,7 @@ public class Match {
                 this.currentState = new MatchState(player1, player2, makeBoard(GameRules.componentFrequencies), activeEntities, computers, decks);
                 this.currentState.update();
             }
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 3; i++) {
                 Card c = decks.get(player1.getUID()).draw();
                 c.setOwnerUID(player1.getUID());
                 Card b = decks.get(player2.getUID()).draw();
@@ -90,7 +90,7 @@ public class Match {
     }
 
     public MatchState getPlayerMatchState(String playerUID) {
-        MatchState copy = new MatchState(currentState, playerUID);
+        MatchState copy = currentState.clone(currentState, playerUID);
         MatchState.buildNeighbors(copy.getComponentBoard());
         currentState.update();
         return copy;
@@ -106,7 +106,7 @@ public class Match {
     }
 
     public String whosMove() {
-        return currentState.currentPlayerMove.getUID();
+        return currentState.currentPlayerMove;
     }
 
     public boolean isValidMove(Move move) {

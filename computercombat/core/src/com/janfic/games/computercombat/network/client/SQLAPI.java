@@ -38,8 +38,8 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 public class SQLAPI {
 
 //    String url = "jdbc:mysql://137.184.137.169:30306";
-//    String url = "jdbc:mysql://67.205.183.72:3036";
-    String url = "jdbc:mysql://localhost:3036";
+//    String url = "jdbc:mysql://67.205.183.72:3306";
+    String url = "jdbc:mysql://localhost:30306";
 
     private static SQLAPI singleton;
     private Properties properties;
@@ -450,7 +450,7 @@ public class SQLAPI {
                 rows = statement.executeUpdate(sql);
 
                 sql = "DELETE FROM move \n"
-                        + "WHERE match_id = (SELECT id FROM `match` WHERE deck1_id = '" + deck.getID() + "' OR deck2_id = '" + deck.getID() + "' );";
+                        + "WHERE match_id IN (SELECT id FROM `match` WHERE deck1_id = '" + deck.getID() + "' OR deck2_id = '" + deck.getID() + "' );";
                 rows = statement.executeUpdate(sql);
 
                 sql = "DELETE FROM computer_combat.`match` \n"

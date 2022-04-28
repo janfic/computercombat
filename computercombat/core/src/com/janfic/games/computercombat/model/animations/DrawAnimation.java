@@ -15,6 +15,7 @@ import com.janfic.games.computercombat.actors.ComputerActor;
 import com.janfic.games.computercombat.actors.SoftwareActor;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.moves.MoveAnimation;
+import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.screens.MatchScreen;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,9 @@ public class DrawAnimation implements MoveAnimation {
             List<Action> cardAnimation = new ArrayList<>();
             Table t = new Table();
             t.setFillParent(true);
-            CollectionCard card = new CollectionCard(game, screen.getSkin(), newSoftware.get(0), 1);
+            Card loadNewCard = SQLAPI.getSingleton().getCardById(newSoftware.get(0).getID(), newSoftware.get(0).getOwnerUID());
+            loadNewCard.setMatchID(newSoftware.get(0).getMatchID());
+            CollectionCard card = new CollectionCard(game, screen.getSkin(), loadNewCard, 1);
             card.setTouchable(Touchable.disabled);
             Stage stage = screen.getMainStage();
             stage.addActor(t);
@@ -72,7 +75,7 @@ public class DrawAnimation implements MoveAnimation {
             List<SoftwareActor> softwareActors = screen.getSoftwareActors().get(currentPlayerUID);
             ComputerActor computerActor = screen.getComputerActors().get(currentPlayerUID);
             List<Action> softwareAnimation = new ArrayList<>();
-            SoftwareActor softwareActor = new SoftwareActor(screen.getSkin(), !playerUID.equals(currentPlayerUID), newSoftware.get(0), game);
+            SoftwareActor softwareActor = new SoftwareActor(screen.getSkin(), !playerUID.equals(currentPlayerUID), loadNewCard, game);
             panel.clear();
             for (SoftwareActor s : softwareActors) {
                 panel.add(s).row();
@@ -94,7 +97,6 @@ public class DrawAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
-        json.writeType(this.getClass());
         json.writeValue("playerUID", playerUID);
         json.writeValue("newSoftware", newSoftware);
     }

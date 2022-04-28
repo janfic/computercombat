@@ -78,7 +78,11 @@ public class HeuristicBotPlayer extends Player {
 
     @Override
     public void updateState(List<MoveResult> state) {
-        this.currentState = new MatchState(state.get(state.size() - 1).getState());
+        try {
+            this.currentState = (MatchState) state.get(state.size() - 1).getState().clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

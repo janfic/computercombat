@@ -1,6 +1,8 @@
 package com.janfic.games.computercombat.server;
 
+import com.badlogic.gdx.utils.Json;
 import com.janfic.games.computercombat.model.Ability;
+import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.Player;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.moves.MoveResult;
@@ -11,6 +13,7 @@ import com.janfic.games.computercombat.model.match.MatchState;
 import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.moves.UseAbilityMove;
 import com.janfic.games.computercombat.network.client.SQLAPI;
+import com.janfic.games.computercombat.util.NullifyingJson;
 import java.util.List;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -41,7 +44,7 @@ public class ServerMatchRoom {
                 // set up match data collection
                 Timestamp starttime = new Timestamp(System.currentTimeMillis());
                 matchData = new MatchData(player1, player2);
-                matchData.getMatchStates().add(new MatchState(match.getCurrentState()));
+                matchData.getMatchStates().add(MatchState.record(match.getCurrentState()));
 
                 // Start main match loop
                 isGameOver = false;
@@ -61,7 +64,14 @@ public class ServerMatchRoom {
                     // apply the move
                     if (move instanceof UseAbilityMove) {
                         UseAbilityMove m = (UseAbilityMove) move;
-                        m.getCard().setAbility(Ability.getAbilityFromCode(m.getCard().getAbility()));
+                        for (Card c : match.getCurrentState().activeEntities.get(m.getPlayerUID())) {
+                            if (c.getMatchID() == m.getCard().getMatchID()) {
+                                m.getCard().setAbility(Ability.getAbilityFromCode(c.getAbility()));
+                            }
+                        }
+                        if (m.getCard().getID() == 0) {
+                            m.getCard().setAbility(Ability.getAbilityFromCode(match.getCurrentState().computers.get(m.getPlayerUID()).getAbility()));
+                        }
                     }
                     boolean isValid = match.isValidMove(move);
                     if (isValid) {
@@ -79,7 +89,7 @@ public class ServerMatchRoom {
                 Timestamp endtime = new Timestamp(System.currentTimeMillis());
                 MatchState lastState = matchData.getMatchStates().get(matchData.getMatchStates().size() - 1);
                 if (lastState.winner != null) {
-                    matchData.setWinner(lastState.winner.getUID().equals(player2.getUID()));
+                    matchData.setWinner(lastState.winner.equals(player2.getUID()));
                 } else {
                     matchData.setWinner(false);
                 }

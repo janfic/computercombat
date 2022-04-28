@@ -81,8 +81,8 @@ public class Board extends BorderedGrid {
         super.act(delta); //To change body of generated methods, choose Tools | Templates.
         this.setCullingArea(new Rectangle(24, 24, getWidth() - 24, getHeight() - 24));
         this.newComponentSpawn.getActor().setCullingArea(new Rectangle(0, -getHeight(), getWidth(), getHeight() - 1));
-        canSelect = matchAnimations.isEmpty() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID());
-        if (!matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+        canSelect = matchAnimations.isEmpty() && matchData.getCurrentState().currentPlayerMove.equals(game.getCurrentProfile().getUID());
+        if (!matchData.getCurrentState().currentPlayerMove.equals(game.getCurrentProfile().getUID())) {
             selected.clear();
         }
     }

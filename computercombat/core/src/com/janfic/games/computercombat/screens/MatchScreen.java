@@ -73,6 +73,8 @@ public class MatchScreen implements Screen {
     List<ComponentActor> selectedComponents;
     List<SoftwareActor> selectedCards;
 
+    Json json;
+
     boolean startedMatch = false;
 
     float animationSpeed = 0.5f;
@@ -87,6 +89,8 @@ public class MatchScreen implements Screen {
         this.selectIndex = -1;
         this.selectedCards = new ArrayList<>();
         this.selectedComponents = new ArrayList<>();
+        this.json = new NullifyingJson();
+        json.setSerializer(Map.class, new ObjectMapSerializer());
     }
 
     @Override
@@ -163,10 +167,9 @@ public class MatchScreen implements Screen {
     }
 
     public void initializeStage(Message matchStateData) {
-        Json json = new NullifyingJson();
 
         MatchState state = json.fromJson(MatchState.class, matchStateData.getMessage());
-        this.matchData.setCurrentState(state);
+        this.matchData.initializeState(state);
 
         Component[][] componentBoard = this.matchData.getCurrentState().componentBoard;
         board = new Board(skin, matchData, game, animation);
@@ -177,7 +180,7 @@ public class MatchScreen implements Screen {
         }
 
         String currentUID = game.getCurrentProfile().getUID();
-        String opponentUID = matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID();
+        String opponentUID = matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID());
         this.softwareActors.put(currentUID, new ArrayList<>());
         this.softwareActors.put(opponentUID, new ArrayList<>());
         this.computerActors.put(currentUID, new ComputerActor(skin, game, matchData.getCurrentState().computers.get(currentUID)));
@@ -206,7 +209,7 @@ public class MatchScreen implements Screen {
         rightPanel.pad(7);
         rightPanel.top();
         rightPanel.defaults().space(2);
-        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())).expandY().growX().bottom();
+        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()))).expandY().growX().bottom();
 
         buttons = new Panel(skin);
         buttons.add(new Label(game.getCurrentProfile().getName() + " vs. " + matchData.getOpponentName(), skin));
@@ -309,7 +312,6 @@ public class MatchScreen implements Screen {
                             components,
                             cards
                     );
-                    Json json = new Json();
                     softwareActor.setActivatedAbility(false);
                     System.out.println("USED ABILITY MOVE");
                     if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
@@ -341,7 +343,6 @@ public class MatchScreen implements Screen {
                     new ArrayList<>(),
                     new ArrayList<>()
             );
-            Json json = new Json();
             computerActor.setActivatedAbility(false);
             if (GameRules.getAvailableMoves(matchData.getCurrentState()).contains(move)) {
                 game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
@@ -350,9 +351,8 @@ public class MatchScreen implements Screen {
     }
 
     private void playerMatchComponentsMoveCheck() {
-        if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+        if (board.attemptedMove() && matchData.getCurrentState().currentPlayerMove.equals(game.getCurrentProfile().getUID())) {
             Move move = board.getMove();
-            Json json = new NullifyingJson();
             game.getServerAPI().sendMessage(new Message(Type.MOVE_REQUEST, json.toJson(move)));
             board.consumeMove();
         }
@@ -363,16 +363,10 @@ public class MatchScreen implements Screen {
             Message serverMessage = game.getServerAPI().readMessage();
             System.out.println(serverMessage.getType());
             if (serverMessage.type == Type.MOVE_ACCEPT) {
-                Json json = new NullifyingJson();
-                json.setSerializer(ObjectMap.class,
-                        new ObjectMapSerializer());
                 List<MoveResult> results = json.fromJson(List.class, serverMessage.getMessage());
                 animate(results, this);
             } else if (serverMessage.type == Type.PING) {
             } else if (serverMessage.type == Type.MATCH_RESULTS) {
-                Json json = new NullifyingJson();
-                json.setSerializer(ObjectMap.class,
-                        new ObjectMapSerializer());
                 MatchResults results = json.fromJson(MatchResults.class, serverMessage.getMessage());
                 gameOver(results);
             }
@@ -430,7 +424,7 @@ public class MatchScreen implements Screen {
     }
 
     private void updateInfoText() {
-        if (matchData.getCurrentState().currentPlayerMove.getUID().equals(game.getCurrentProfile().getUID())) {
+        if (matchData.getCurrentState().currentPlayerMove.equals(game.getCurrentProfile().getUID())) {
             board.setTouchable(Touchable.enabled);
             infoLabel.setText("Your Turn!");
             infoLabel.setFontScale(0.5f);
@@ -488,7 +482,7 @@ public class MatchScreen implements Screen {
                 public void run() {
                     int offset = 0;
                     for (MoveAnimation moveAnimation : moveResult.getAnimations()) {
-                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove.getUID(), game.getCurrentProfile().getUID(), screen, animationSpeed);
+                        List<List<Action>> animations = moveAnimation.animate(matchData.getCurrentState().currentPlayerMove, game.getCurrentProfile().getUID(), screen, animationSpeed);
                         int indexOfUpdate = animation.indexOf(a);
                         animation.addAll(indexOfUpdate + 1 + offset, animations);
                         offset += animations.size();
@@ -499,7 +493,7 @@ public class MatchScreen implements Screen {
             Action update = Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    matchData.setCurrentState(moveResult.getState());
+                    matchData.updateState(moveResult.getState());
                     board.updateBoard(matchData);
                     for (String string : computerActors.keySet()) {
                         ComputerActor a = computerActors.get(string);
@@ -537,11 +531,11 @@ public class MatchScreen implements Screen {
         for (SoftwareActor softwareActor : softwareActors.get(game.getCurrentProfile().getUID())) {
             leftPanel.add(softwareActor).row();
         }
-        for (SoftwareActor softwareActor : softwareActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())) {
+        for (SoftwareActor softwareActor : softwareActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()))) {
             rightPanel.add(softwareActor).row();
         }
 
         leftPanel.add(computerActors.get(game.getCurrentProfile().getUID())).expandY().growX().bottom().row();
-        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()).getUID())).expandY().growX().bottom().row();
+        rightPanel.add(computerActors.get(matchData.getCurrentState().getOtherProfile(game.getCurrentProfile().getUID()))).expandY().growX().bottom().row();
     }
 }

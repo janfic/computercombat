@@ -30,7 +30,7 @@ public class DamageHeuristicAnalyzer extends HeuristicAnalyzer {
     public int getTotalHealths(MoveResult result) {
         int totalHealth = 0;
         String currentUID = result.getMove().getPlayerUID();
-        String opponentUID = result.getState().getOtherProfile(currentUID).getUID();
+        String opponentUID = result.getState().getOtherProfile(currentUID);
         for (Card card : result.getState().activeEntities.get(opponentUID)) {
             totalHealth += card.getHealth();
             totalHealth += card.getArmor();

@@ -1,5 +1,6 @@
 package com.janfic.games.computercombat.model.abilities;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.janfic.games.computercombat.model.Ability;
@@ -12,17 +13,18 @@ import com.janfic.games.computercombat.model.moves.MoveResult;
 import com.janfic.games.computercombat.util.Filter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AttackAbility extends Ability {
 
-    ObjectMap<Card, List<Card>> attacks;
+    Map<String, Array<Integer>> attacks;
 
     public AttackAbility() {
         super(new ArrayList<>());
         this.attacks = null;
     }
 
-    public AttackAbility(List<Filter> selectFilters, ObjectMap<Card, List<Card>> attacks) {
+    public AttackAbility(List<Filter> selectFilters, Map<String, Array<Integer>> attacks) {
         super(selectFilters);
         this.attacks = attacks;
     }
@@ -31,17 +33,18 @@ public class AttackAbility extends Ability {
     public List<MoveResult> doAbility(MatchState state, Move move) {
         List<MoveResult> results = new ArrayList<>();
         String currentUID = move.getPlayerUID();
-        String opponentUID = state.getOtherProfile(state.currentPlayerMove).getUID();
+        String opponentUID = state.getOtherProfile(state.currentPlayerMove);
 
         List<Card> destroyed = new ArrayList<>();
         List<MoveAnimation> animation = new ArrayList<>();
-        for (Entry<Card, List<Card>> entry : attacks.entries()) {
-            List<Card> attacked = entry.value;
-            for (Card c : attacked) {
-                if (c.getID() > 0) {
+        for (String key : attacks.keySet()) {
+            Array<Integer> attacked = attacks.get(key);
+            for (Integer c : attacked) {
+                Card att = state.getCardMyMatchID(Integer.parseInt(key));
+                if (att.getID() > 0) {
                     for (Card cardAttacked : state.activeEntities.get(opponentUID)) {
-                        if (c.equals(cardAttacked)) {
-                            cardAttacked.recieveDamage(entry.key.getAttack());
+                        if (c == cardAttacked.getMatchID()) {
+                            cardAttacked.recieveDamage(state.getCardMyMatchID(Integer.parseInt(key)).getAttack());
                             animation.add(new AttackAnimation(currentUID, opponentUID, attacks));
                             if (cardAttacked.isDead()) {
                                 destroyed.add(cardAttacked);
@@ -49,9 +52,9 @@ public class AttackAbility extends Ability {
                             break;
                         }
                     }
-                } else if (c.getID() == 0) {
+                } else if (att.getID() == 0) {
                     Card cardAttacked = state.computers.get(opponentUID);
-                    cardAttacked.recieveDamage(entry.key.getAttack());
+                    cardAttacked.recieveDamage(state.getCardMyMatchID(Integer.parseInt(key)).getAttack());
                     animation.add(new AttackAnimation(currentUID, opponentUID, attacks));
                 }
             }

@@ -20,7 +20,7 @@ public class ChargeAbilitiesHeuristicAnalyzer extends HeuristicAnalyzer {
     public int getCharges(MoveResult result) {
         int totalCharge = 0;
         String currentUID = result.getMove().getPlayerUID();
-        String opponentUID = result.getState().getOtherProfile(currentUID).getUID();
+        String opponentUID = result.getState().getOtherProfile(currentUID);
         for (Card card : result.getState().activeEntities.get(opponentUID)) {
             totalCharge += card.getRunProgress();
         }
@@ -31,7 +31,7 @@ public class ChargeAbilitiesHeuristicAnalyzer extends HeuristicAnalyzer {
     public int getMaxCharges(MoveResult result) {
         int totalCharge = 0;
         String currentUID = result.getMove().getPlayerUID();
-        String opponentUID = result.getState().getOtherProfile(currentUID).getUID();
+        String opponentUID = result.getState().getOtherProfile(currentUID);
         for (Card card : result.getState().activeEntities.get(opponentUID)) {
             totalCharge += card.getRunRequirements();
         }

@@ -54,15 +54,17 @@ public abstract class Player implements Serializable, Cloneable {
 
     @Override
     public void write(Json json) {
+        json.setTypeName("class");
         json.writeType(this.getClass());
-        json.writeValue("uid", uid);
-        json.writeValue("deck", deck);
+        json.writeValue("uid", uid, String.class);
+        //json.writeValue("deck", deck);
+        json.setTypeName(null);
     }
 
     @Override
     public void read(Json json, JsonValue jsonData) {
         this.uid = json.readValue("uid", String.class, jsonData);
-        this.deck = json.readValue("deck", Deck.class, jsonData);
+        //this.deck = json.readValue("deck", Deck.class, jsonData);
     }
 
     @Override

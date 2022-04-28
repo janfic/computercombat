@@ -171,7 +171,6 @@ public class CollectAnimation implements MoveAnimation {
 
     @Override
     public void write(Json json) {
-        json.writeType(this.getClass());
         json.writeValue("collected", this.collected, Map.class);
         json.writeValue("allComponents", this.allComponents, List.class);
         json.writeValue("progress", this.progress, Map.class);

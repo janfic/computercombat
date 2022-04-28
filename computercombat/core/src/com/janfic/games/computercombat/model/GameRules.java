@@ -36,11 +36,11 @@ public class GameRules {
         for (Integer[] match : matches) {
             Component a = state.getComponentBoard()[match[0]][match[1]];
             Component b = state.getComponentBoard()[match[2]][match[3]];
-            MatchComponentsMove m = new MatchComponentsMove(state.currentPlayerMove.getUID(), a, b);
+            MatchComponentsMove m = new MatchComponentsMove(state.currentPlayerMove, a, b);
             moves.add(m);
         }
         // Get UseAbilityMoves
-        String uid = state.currentPlayerMove.getUID();
+        String uid = state.currentPlayerMove;
         for (Card card : state.activeEntities.get(uid)) {
             if (card.getRunProgress() >= card.getRunRequirements()) {
                 List<UseAbilityMove> generatedMoves = generateMovesWithSelection(0, card, state, new ArrayList<>(), new ArrayList<>());
@@ -213,29 +213,35 @@ public class GameRules {
     }
 
     public static MatchState shuffleBoard(MatchState state) {
-        MatchState nextState = new MatchState(state);
-        Component[][] components = nextState.getComponentBoard();
+        try {
 
-        while (areAvailableComponentMatches(nextState).isEmpty() == false) {
+            MatchState nextState = (MatchState) state.clone();
+            Component[][] components = nextState.getComponentBoard();
 
-            List<Component> componentList = new ArrayList<>();
-            for (Component[] component : components) {
-                for (Component c : component) {
-                    componentList.add(c);
+            while (areAvailableComponentMatches(nextState).isEmpty() == false) {
+
+                List<Component> componentList = new ArrayList<>();
+                for (Component[] component : components) {
+                    for (Component c : component) {
+                        componentList.add(c);
+                    }
+                }
+
+                Collections.shuffle(componentList);
+
+                int index = 0;
+                for (int x = 0; x < components.length; x++) {
+                    for (int y = 0; y < components[x].length; y++) {
+                        components[x][y] = componentList.get(index);
+                        index++;
+                    }
                 }
             }
-
-            Collections.shuffle(componentList);
-
-            int index = 0;
-            for (int x = 0; x < components.length; x++) {
-                for (int y = 0; y < components[x].length; y++) {
-                    components[x][y] = componentList.get(index);
-                    index++;
-                }
-            }
+            return nextState;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return nextState;
     }
 
     public static List<MoveResult> makeMove(MatchState originalState, Move move) {
@@ -301,7 +307,9 @@ public class GameRules {
     private static List<UseAbilityMove> generateMovesWithSelection(int index, Card card, MatchState state, List<Component> selectedComponents, List<Card> selectedCards) {
         List<UseAbilityMove> moves = new ArrayList<>();
 
-        String uid = state.currentPlayerMove.getUID();
+        String uid = state.currentPlayerMove;
+        System.out.println(card);
+        System.out.println(card.getAbility());
         List<Filter> selectFilters = card.getAbility().getSelectFilters();
 
         if (index >= selectFilters.size()) {
