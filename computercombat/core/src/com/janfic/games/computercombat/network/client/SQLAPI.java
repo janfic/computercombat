@@ -610,7 +610,7 @@ public class SQLAPI {
 
                 // Insert Move
                 sql = "INSERT INTO move (`data`, `match_id`, `move_number`) "
-                        + "VALUES (JSON_QUOTE('" + json.toJson(moveResults) + "')," + match_id + "," + (i + 1) + ");";
+                        + "VALUES ('" + json.toJson(moveResults) + "'," + match_id + "," + (i + 1) + ");";
                 updates = statement.executeUpdate(sql);
                 r += updates;
             }
