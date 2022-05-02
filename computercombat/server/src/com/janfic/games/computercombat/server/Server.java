@@ -305,7 +305,7 @@ public class Server {
                         try {
                             MatchClient a = raidQueue.get(0);
                             Player playerA = new HumanPlayer(a.getProfile().getUID(), a);
-                            Player botPlayer = new HeuristicBotPlayer("botUID", (Deck) a.getDeck().clone());
+                            Player botPlayer = SQLAPI.getSingleton().createBotFromID(0);
                             ServerMatchRoom room = new ServerMatchRoom(playerA, botPlayer);
                             Message message2 = new Message(Type.FOUND_MATCH, "RAID BOT");
                             a.sendMessage(message2);
@@ -404,6 +404,15 @@ public class Server {
         maintainLiveQueue.start();
         maintainRaidQueue.start();
         maintainMatches.start();
+        addBotMatch();
+    }
+
+    public void addBotMatch() {
+        Player player1 = SQLAPI.getSingleton().createBotFromID(2);
+        Player player2 = SQLAPI.getSingleton().createBotFromID(1);
+        ServerMatchRoom room = new ServerMatchRoom(player1, player2);
+        matches.add(room);
+        room.start();
     }
 
     public static void main(String[] args) {

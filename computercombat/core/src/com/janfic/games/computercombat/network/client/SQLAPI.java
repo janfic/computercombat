@@ -7,11 +7,13 @@ import com.janfic.games.computercombat.model.Ability;
 import com.janfic.games.computercombat.model.Collection;
 import com.janfic.games.computercombat.model.Deck;
 import com.janfic.games.computercombat.model.match.MatchData;
-import com.janfic.games.computercombat.model.match.MatchState;
-import com.janfic.games.computercombat.model.moves.Move;
 import com.janfic.games.computercombat.model.Profile;
 import com.janfic.games.computercombat.model.Card;
 import com.janfic.games.computercombat.model.moves.MoveResult;
+import com.janfic.games.computercombat.model.players.BotCard;
+import com.janfic.games.computercombat.model.players.HeuristicBotPlayer;
+import com.janfic.games.computercombat.model.players.heuristicanalyzers.HeuristicAnalyzer;
+
 import groovy.lang.GroovyShell;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,10 +21,13 @@ import java.sql.ResultSet;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
+
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
@@ -32,7 +37,6 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
  */
 public class SQLAPI {
 
-//    String url = "jdbc:mysql://computer-combat-db.cloqezbutiub.us-east-1.rds.amazonaws.com:3306";
 //    String url = "jdbc:mysql://137.184.137.169:30306";
     String url = "jdbc:mysql://67.205.183.72:3306";
 //    String url = "jdbc:mysql://localhost:30306";
@@ -603,7 +607,7 @@ public class SQLAPI {
 
                 // Insert Move
                 sql = "INSERT INTO move (`data`, `match_id`, `move_number`) "
-                        + "VALUES (JSON_QUOTE('" + json.toJson(moveResults) + "')," + match_id + "," + (i + 1) + ");";
+                        + "VALUES ('" + json.toJson(moveResults) + "'," + match_id + "," + (i + 1) + ");";
                 updates = statement.executeUpdate(sql);
                 r += updates;
             }
@@ -759,5 +763,127 @@ public class SQLAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public List<Integer> getBotIDsByProfileUID(String profileUID) {
+        List<Integer> botIDs = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM bot WHERE profile_uid = '" + profileUID + "';";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            boolean hasNext = set.next();
+            while (hasNext) {
+                botIDs.add(set.getInt("id"));
+                hasNext = set.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return botIDs;
+    }
+
+    public HeuristicBotPlayer createBotFromID(Integer id) {
+        try {
+            String sql = "SELECT * FROM bot WHERE id = '" + id.toString() + "';";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            set.next();
+
+            String priorityListString = set.getString("priority_list");
+            String profileUID = set.getString("profile_uid");
+            Integer deckID = set.getInt("deck_id");
+
+            ArrayList<Integer> priorityList = new ArrayList<>();
+            Scanner s = new Scanner(priorityListString);
+            while (s.hasNextInt()) {
+                priorityList.add(s.nextInt());
+            }
+
+            List<BotCard> botCards = this.getBotCardsByIDs(priorityList);
+            List<HeuristicAnalyzer> heuristicAnalyzers = new ArrayList<>();
+            for (BotCard card: botCards) {
+                heuristicAnalyzers.add(card.getHeuristicAnalyzer());
+            }
+            Collections.reverse(heuristicAnalyzers);
+
+            Deck deck = this.getDeck(deckID, profileUID);
+
+            HeuristicBotPlayer bot = new HeuristicBotPlayer(profileUID, deck, heuristicAnalyzers);
+            return bot;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    public List<BotCard> getBotCardsByIDs(List<Integer> ids) {
+        List<BotCard> botCards = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM bot_card;";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            boolean hasNext = set.next();
+            while (hasNext) {
+
+                if (ids.contains(set.getInt("id"))) {
+                    BotCard botCard = new BotCard(
+                            set.getInt("id"),
+                            set.getString("name"),
+                            set.getString("textureName"),
+                            set.getString("description"),
+                            set.getString("code"));
+
+                    botCards.add(botCard);
+                }
+
+                hasNext = set.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return botCards;
+    }
+
+    public List<BotCard> getAllBotCards() {
+        List<BotCard> botCards = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM bot_card;";
+
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery(sql);
+
+            boolean hasNext = set.next();
+            while (hasNext) {
+
+                BotCard botCard = new BotCard(
+                        set.getInt("id"),
+                        set.getString("name"),
+                        set.getString("textureName"),
+                        set.getString("description"),
+                        set.getString("code"));
+
+                botCards.add(botCard);
+
+                hasNext = set.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return botCards;
     }
 }

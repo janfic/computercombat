@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.janfic.games.computercombat.model.Profile;
+import com.janfic.games.computercombat.model.players.BotCard;
 import com.janfic.games.computercombat.network.client.SQLAPI;
 import com.janfic.games.computercombat.network.client.ServerAPI;
 import com.janfic.games.computercombat.screens.LoadingScreen;
