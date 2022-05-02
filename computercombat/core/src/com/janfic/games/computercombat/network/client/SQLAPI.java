@@ -411,9 +411,6 @@ public class SQLAPI {
                     + "WHERE deck_has_card.deck_id = " + deck.getID() + ";";
 
             rows = statement.executeUpdate(sql);
-
-            System.out.println(deck.getStack());
-
             for (String card : deck.getCards().keySet()) {
                 sql = "INSERT INTO deck_has_card (deck_id, card_id, amount) \n"
                         + "VALUES (" + deck.getID() + "," + card + "," + deck.getCardCount(Integer.parseInt(card)) + ");";

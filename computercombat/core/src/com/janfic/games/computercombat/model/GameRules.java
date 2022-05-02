@@ -308,8 +308,6 @@ public class GameRules {
         List<UseAbilityMove> moves = new ArrayList<>();
 
         String uid = state.currentPlayerMove;
-        System.out.println(card);
-        System.out.println(card.getAbility());
         List<Filter> selectFilters = card.getAbility().getSelectFilters();
 
         if (index >= selectFilters.size()) {

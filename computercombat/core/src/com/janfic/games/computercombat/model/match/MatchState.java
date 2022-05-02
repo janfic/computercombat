@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Predicate;
 
@@ -510,4 +511,25 @@ public class MatchState implements Serializable, Cloneable {
         }
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        for (Component[] components : componentBoard) {
+            for (Component component : components) {
+                hash = 79 * hash + Objects.hashCode(component.getColor());
+            }
+        }
+        return hash;
+    }
+
+    public String boardAsString() {
+        String s = "";
+        for (Component[] components : componentBoard) {
+            for (Component component : components) {
+                s += "" + component.getColor();
+            }
+            s += "|";
+        }
+        return s;
+    }
 }

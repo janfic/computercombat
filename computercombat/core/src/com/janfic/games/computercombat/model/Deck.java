@@ -175,4 +175,14 @@ public class Deck implements Serializable, Cloneable {
         return clone;
     }
 
+    public void reset() {
+        this.stack.clear();
+        for (String string : cards.keySet()) {
+            Integer id = Integer.parseInt(string);
+            for (int i = 0; i < cards.get(string); i++) {
+                stack.add(id);
+            }
+        }
+    }
+
 }
