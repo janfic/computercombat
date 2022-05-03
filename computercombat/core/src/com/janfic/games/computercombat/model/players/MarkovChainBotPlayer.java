@@ -24,7 +24,9 @@ public class MarkovChainBotPlayer extends Player {
 
     MatchState currentState;
 
-    static Map<String, Map<String, Float>> markovChain = new HashMap<>();;
+    static Map<String, Map<String, Float>> markovChain = new HashMap<>();
+
+    ;
 
     public MarkovChainBotPlayer() {
     }
@@ -38,10 +40,21 @@ public class MarkovChainBotPlayer extends Player {
         currentState = state;
     }
 
+    
+    /**
+     * Markov Chain algorithm:
+     * 1. For every possible move:
+     *      a. calculate all possible match states to be in ( including randomness )
+     *      b. calculate all markov states these would belong to
+     *      c. 
+     * @return 
+     */
     @Override
     public Move getMove() {
         List<Move> moves = GameRules.getAvailableMoves(currentState);
-        int i = (int) (Math.random() * (moves.size() - 1));
+        
+        
+        
         return moves.get(i);
     }
 
@@ -77,4 +90,8 @@ public class MarkovChainBotPlayer extends Player {
         return player;
     }
 
+    public int measurePotential(MatchState state) {
+        
+        return 0;
+    }
 }
