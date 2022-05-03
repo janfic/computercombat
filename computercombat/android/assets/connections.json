@@ -1,7 +1,7 @@
 {
     "connections": [
         {
-            "ip": "localhost",
+            "ip": "161.35.101.2",
             "port": 7272
         },
         {
