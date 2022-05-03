@@ -55,7 +55,7 @@ public class MarkovChainBotPlayer extends Player {
         
         
         
-        return moves.get(i);
+        return moves.get(0);
     }
 
     @Override
