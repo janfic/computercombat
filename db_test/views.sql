@@ -20,7 +20,6 @@
 --
 
 USE `computer_combat`;
-
 DROP TABLE IF EXISTS `card_stats`;
 /*!50001 DROP VIEW IF EXISTS `card_stats`*/;
 SET @saved_cs_client     = @@character_set_client;
@@ -71,7 +70,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `card_stats` AS select `card`.`id` AS `id`,`deck_stats`.`match_id` AS `match_id`,`deck_stats`.`win` AS `win` from ((`card` join `deck_has_card` on((`deck_has_card`.`card_id` = `card`.`id`))) join `deck_stats` on((`deck_has_card`.`deck_id` = `deck_stats`.`id`))) */;
+/*!50001 VIEW `card_stats` AS select `card`.`id` AS `id`,`deck_stats`.`match_id` AS `match_id`,`deck_stats`.`win` AS `win` from ((`card` left join `deck_has_card` on((`deck_has_card`.`card_id` = `card`.`id`))) left join `deck_stats` on((`deck_has_card`.`deck_id` = `deck_stats`.`id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -121,4 +120,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-13  1:46:06
+-- Dump completed on 2022-05-03 11:21:29

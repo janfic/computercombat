@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: computer_combat
+-- Host: 67.205.183.72    Database: computer_combat
 -- ------------------------------------------------------
 -- Server version	8.0.28-0ubuntu0.21.10.3
 
@@ -15,41 +15,21 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE SCHEMA IF NOT EXISTS `computer_combat` DEFAULT CHARACTER SET utf8 ;
+--
+-- Table structure for table `ability`
+--
 
-USE `computer_combat`;
-SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
-
--- -----------------------------------------------------
--- Table `computer_combat`.`ability`
--- -----------------------------------------------------
+DROP TABLE IF EXISTS `ability`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE IF NOT EXISTS `computer_combat`.`ability` (
-  `id` INT NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `description` LONGTEXT NOT NULL,
-  `code` TEXT NOT NULL,
-  `textureName` VARCHAR(45) NULL DEFAULT NULL,
+CREATE TABLE `ability` (
+  `id` int NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `description` longtext NOT NULL,
+  `code` text NOT NULL,
+  `textureName` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
---
--- Table structure for table `profile`
---
-
-DROP TABLE IF EXISTS `profile`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `profile` (
-  `uid` varchar(45) NOT NULL,
-  `username` varchar(20) NOT NULL,
-  `email` tinytext NOT NULL,
-  `packets` int(10) unsigned zerofill NOT NULL,
-  PRIMARY KEY (`uid`),
-  UNIQUE KEY `idProfile_UNIQUE` (`uid`),
-  UNIQUE KEY `userName_UNIQUE` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -113,6 +93,20 @@ CREATE TABLE `card` (
   KEY `fk_Card_Ability1_idx` (`ability_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary view structure for view `card_stats`
+--
+
+DROP TABLE IF EXISTS `card_stats`;
+/*!50001 DROP VIEW IF EXISTS `card_stats`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `card_stats` AS SELECT 
+ 1 AS `id`,
+ 1 AS `match_id`,
+ 1 AS `win`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `collection`
@@ -184,6 +178,32 @@ CREATE TABLE `deck_has_card` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Temporary view structure for view `deck_stats`
+--
+
+DROP TABLE IF EXISTS `deck_stats`;
+/*!50001 DROP VIEW IF EXISTS `deck_stats`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `deck_stats` AS SELECT 
+ 1 AS `id`,
+ 1 AS `match_id`,
+ 1 AS `win`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `join_components`
+--
+
+DROP TABLE IF EXISTS `join_components`;
+/*!50001 DROP VIEW IF EXISTS `join_components`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `join_components` AS SELECT 
+ 1 AS `card`,
+ 1 AS `components`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `match`
@@ -213,7 +233,7 @@ CREATE TABLE `match` (
   CONSTRAINT `fk_Match_deck2` FOREIGN KEY (`deck2_id`) REFERENCES `deck` (`id`),
   CONSTRAINT `fk_Match_profile1` FOREIGN KEY (`player1_uid`) REFERENCES `profile` (`uid`),
   CONSTRAINT `fk_Match_profile2` FOREIGN KEY (`player2_uid`) REFERENCES `profile` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,72 +249,127 @@ CREATE TABLE `move` (
   `match_id` int unsigned NOT NULL,
   `move_number` int NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_move_match1_idx` (`match_id` ASC) VISIBLE,
-  CONSTRAINT `fk_move_match1`
-    FOREIGN KEY (`match_id`)
-    REFERENCES `computer_combat`.`match` (`id`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 21
-DEFAULT CHARACTER SET = utf8mb3;
+  KEY `fk_move_match1_idx` (`match_id`),
+  CONSTRAINT `fk_move_match1` FOREIGN KEY (`match_id`) REFERENCES `match` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `profile`
+--
 
--- -----------------------------------------------------
--- Table `computer_combat`.`player`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `computer_combat`.`player` (
-  `id` INT NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `deck_id` INT NOT NULL,
-  `bot` LONGTEXT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
+DROP TABLE IF EXISTS `profile`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `profile` (
+  `uid` varchar(45) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `email` tinytext NOT NULL,
+  `packets` int(10) unsigned zerofill NOT NULL,
+  PRIMARY KEY (`uid`),
+  UNIQUE KEY `idProfile_UNIQUE` (`uid`),
+  UNIQUE KEY `userName_UNIQUE` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `profile_owns_card`
+--
 
--- -----------------------------------------------------
--- Table `computer_combat`.`profile_owns_card`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `computer_combat`.`profile_owns_card` (
-  `profile_id` VARCHAR(45) NOT NULL,
-  `card_id` INT NOT NULL,
-  `amount` INT UNSIGNED NOT NULL DEFAULT '1',
-  PRIMARY KEY (`profile_id`, `card_id`),
-  INDEX `fk_Profile_has_Card_Profile1_idx` (`profile_id` ASC) VISIBLE,
-  INDEX `fk_Profile_has_Card_Card1_idx` (`card_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Profile_has_Card_Card1`
-    FOREIGN KEY (`card_id`)
-    REFERENCES `computer_combat`.`card` (`id`),
-  CONSTRAINT `fk_Profile_has_Card_Profile1`
-    FOREIGN KEY (`profile_id`)
-    REFERENCES `computer_combat`.`profile` (`uid`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
+DROP TABLE IF EXISTS `profile_owns_card`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `profile_owns_card` (
+  `profile_id` varchar(45) NOT NULL,
+  `card_id` int NOT NULL,
+  `amount` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`profile_id`,`card_id`),
+  KEY `fk_Profile_has_Card_Profile1_idx` (`profile_id`),
+  KEY `fk_Profile_has_Card_Card1_idx` (`card_id`),
+  CONSTRAINT `fk_Profile_has_Card_Card1` FOREIGN KEY (`card_id`) REFERENCES `card` (`id`),
+  CONSTRAINT `fk_Profile_has_Card_Profile1` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `run_requirements`
+--
 
--- -----------------------------------------------------
--- Table `computer_combat`.`run_requirements`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `computer_combat`.`run_requirements` (
-  `card_id` INT NOT NULL,
-  `component_id` INT NOT NULL,
-  PRIMARY KEY (`card_id`, `component_id`),
-  INDEX `fk_Card_has_Components_Components1_idx` (`component_id` ASC) VISIBLE,
-  INDEX `fk_Card_has_Components_Card1_idx` (`card_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Card_has_Components_Card1`
-    FOREIGN KEY (`card_id`)
-    REFERENCES `computer_combat`.`card` (`id`),
-  CONSTRAINT `fk_Card_has_Components_Components1`
-    FOREIGN KEY (`component_id`)
-    REFERENCES `computer_combat`.`components` (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
+DROP TABLE IF EXISTS `run_requirements`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `run_requirements` (
+  `card_id` int NOT NULL,
+  `component_id` int NOT NULL,
+  PRIMARY KEY (`card_id`,`component_id`),
+  KEY `fk_Card_has_Components_Components1_idx` (`component_id`),
+  KEY `fk_Card_has_Components_Card1_idx` (`card_id`),
+  CONSTRAINT `fk_Card_has_Components_Card1` FOREIGN KEY (`card_id`) REFERENCES `card` (`id`),
+  CONSTRAINT `fk_Card_has_Components_Components1` FOREIGN KEY (`component_id`) REFERENCES `components` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE VIEW `join_components` AS
-SELECT card.id as card, group_concat(components.id) as components FROM card
-JOIN run_requirements ON card.id = run_requirements.card_id
-JOIN components ON components.id = run_requirements.component_id GROUP BY card.id;
+--
+-- Final view structure for view `card_stats`
+--
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+/*!50001 DROP VIEW IF EXISTS `card_stats`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `card_stats` AS select `card`.`id` AS `id`,`deck_stats`.`match_id` AS `match_id`,`deck_stats`.`win` AS `win` from ((`card` left join `deck_has_card` on((`deck_has_card`.`card_id` = `card`.`id`))) left join `deck_stats` on((`deck_has_card`.`deck_id` = `deck_stats`.`id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `deck_stats`
+--
+
+/*!50001 DROP VIEW IF EXISTS `deck_stats`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `deck_stats` AS select `deck`.`id` AS `id`,`match`.`id` AS `match_id`,(((`match`.`winner` = 0) and (`match`.`deck1_id` = `deck`.`id`)) or ((`match`.`winner` = 1) and (`match`.`deck2_id` = `deck`.`id`))) AS `win` from (`deck` join `match` on(((`deck`.`id` = `match`.`deck1_id`) or (`deck`.`id` = `match`.`deck2_id`)))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `join_components`
+--
+
+/*!50001 DROP VIEW IF EXISTS `join_components`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `join_components` AS select `card`.`id` AS `card`,group_concat(`components`.`id` separator ',') AS `components` from ((`card` join `run_requirements` on((`card`.`id` = `run_requirements`.`card_id`))) join `components` on((`components`.`id` = `run_requirements`.`component_id`))) group by `card`.`id` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2022-05-03 11:19:51
